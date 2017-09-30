@@ -13,4 +13,7 @@ Keep the `?ssl=true...` stuff
 `spring.datasource.username=wmulcztjbomlgq`  
 `spring.datasource.password=51558e68b24797ef320fd80f633b425b2117da90ea1d768de39766b5885c8a61`
 
-
+## Launch:
+`gradle bootrun`
+http://localhost:8080
+http://localhost:8080/employees
