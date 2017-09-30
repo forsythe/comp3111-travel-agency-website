@@ -15,5 +15,5 @@ Keep the `?ssl=true...` stuff
 
 ## Launch:
 `gradle bootrun`
-http://localhost:8080
+http://localhost:8080  
 http://localhost:8080/employees
