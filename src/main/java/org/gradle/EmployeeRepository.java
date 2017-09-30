@@ -11,6 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 public interface EmployeeRepository extends CrudRepository<Employee, Long>  {
 
-	public String countByName(String string);;
+	public String countByName(String string);
 }
 
