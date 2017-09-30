@@ -1,22 +1,16 @@
-## References code of COMP3111 tutorial - spring.pdf / lecture Java Spring
+## Demo code with:  
+-Autowiring  
+-Hibernate ORM  
+-Spring boot  
 
-Import that in STS and build with gradlew. Type `run` in gradle task to run it.
-
-There are two branches: 
-1. **Master** works on DI with XML configuration
-2. **autowired** works on DI with autowired.
-3. **database** a simple ORM example with autowired.
-
-In this branch **database** you need to edit the file `\src\main\resources\applicaiton.properties` with the following lines
+## Setup:
+In src/main/resources/application.properties, change the following (refer to lab):
+  
+`spring.datasource.url=jdbc:postgresql://ec2-54-235-177-45.compute-1.amazonaws.com:5432/dajph5pjtpcf0k?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory`
+Keep the `?ssl=true...` stuff
  
-```
-#Change foobarDB to your database name, change the URL as well.
 
-spring.datasource.url=jdbc:postgresql://localhost:5432/foobardb
- 
-#Change your username and password here
-spring.datasource.username=programmer
-spring.datasource.password=iamaprogrammer
-```
+`spring.datasource.username=wmulcztjbomlgq`  
+`spring.datasource.password=51558e68b24797ef32*********************5c8a61`
 
-Besides, you also need to have a postgresql database installed with you. Please refer to the offline tutorial notes - database.pdf for how to install postsql / setup a user / create a database. 
+
