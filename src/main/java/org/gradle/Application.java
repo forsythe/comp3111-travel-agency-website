@@ -10,7 +10,7 @@ public class Application {
 	public static void main(String[] args) {
 		ConfigurableApplicationContext app = SpringApplication.run(Application.class, args);
 		// Obtain the EmployeeRepository Bean
-		EmployeeRepository repo = (EmployeeRepository) app.getBean("employeeRepository");
+		EmpRepo repo = (EmpRepo) app.getBean("empRepo"); //convention: class name, but start lowercase
 
 		// Create two POJO e and f
 		Employee e = new Employee();

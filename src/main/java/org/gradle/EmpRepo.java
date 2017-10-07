@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 //CRUD refers Create, Read, Update, Delete
 
 @Component
-public interface EmployeeRepository extends CrudRepository<Employee, Long>  {
+public interface EmpRepo extends CrudRepository<Employee, Long>  {
 
 	public String countByName(String string);
 }
