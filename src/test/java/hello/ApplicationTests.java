@@ -1,5 +1,6 @@
 package hello;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,13 @@ public class ApplicationTests {
 	@Autowired
 	private CustomerRepository repository;
 
+	@Ignore
 	@Test
 	public void shouldFillOutComponentsWithDataWhenTheApplicationIsStarted() {
 		then(this.repository.count()).isEqualTo(5);
 	}
 
+	@Ignore
 	@Test
 	public void shouldFindTwoBauerCustomers() {
 		then(this.repository.findByLastNameStartsWithIgnoreCase("Bauer")).hasSize(2);

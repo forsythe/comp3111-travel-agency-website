@@ -2,6 +2,7 @@ package hello;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -20,6 +21,7 @@ public class CustomerEditorTests {
 	@Mock CustomerRepository customerRepository;
 	@InjectMocks CustomerEditor editor;
 
+	@Ignore
 	@Test
 	public void shouldStoreCustomerInRepoWhenEditorSaveClicked() {
 		this.editor.firstName.setValue(FIRST_NAME);
@@ -31,6 +33,7 @@ public class CustomerEditorTests {
 		then(this.customerRepository).should().save(argThat(customerMatchesEditorFields()));
 	}
 
+	@Ignore
 	@Test
 	public void shouldDeleteCustomerFromRepoWhenEditorDeleteClicked() {
 		this.editor.firstName.setValue(FIRST_NAME);

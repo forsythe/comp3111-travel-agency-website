@@ -17,6 +17,7 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.boot.VaadinAutoConfiguration;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -39,6 +40,7 @@ public class VaadinUITests {
 		this.vaadinUI = new VaadinUI(this.repository, editor);
 	}
 
+	@Ignore
 	@Test
 	public void shouldInitializeTheGridWithCustomerRepositoryData() {
 		int customerCount = (int) this.repository.count();
@@ -54,6 +56,7 @@ public class VaadinUITests {
 		return new ArrayList<>(ldp.getItems());
 	}
 
+	@Ignore
 	@Test
 	public void shouldFillOutTheGridWithNewData() {
 		int initialCustomerCount = (int) this.repository.count();
@@ -69,7 +72,8 @@ public class VaadinUITests {
 			.containsExactly("Marcin", "Grzejszczak");
 
 	}
-
+	
+	@Ignore
 	@Test
 	public void shouldFilterOutTheGridWithTheProvidedLastName() {
 		this.vaadinUI.init(this.vaadinRequest);
@@ -83,6 +87,7 @@ public class VaadinUITests {
 			.containsExactly("Josh", "Long");
 	}
 
+	@Ignore
 	@Test
 	public void shouldInitializeWithInvisibleEditor() {
 		this.vaadinUI.init(this.vaadinRequest);
@@ -90,6 +95,7 @@ public class VaadinUITests {
 		then(this.editor.isVisible()).isFalse();
 	}
 
+	@Ignore
 	@Test
 	public void shouldMakeEditorVisible() {
 		this.vaadinUI.init(this.vaadinRequest);

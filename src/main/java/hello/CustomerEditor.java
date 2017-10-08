@@ -34,13 +34,14 @@ public class CustomerEditor extends VerticalLayout {
 	private Customer customer;
 
 	/* Fields to edit properties in Customer entity */
-	TextField firstName = new TextField("First name");
+	TextField firstName = new TextField("First names");
 	TextField lastName = new TextField("Last name");
 
 	/* Action buttons */
 	Button save = new Button("Save", FontAwesome.SAVE);
 	Button cancel = new Button("Cancel");
 	Button delete = new Button("Delete", FontAwesome.TRASH_O);
+	
 	CssLayout actions = new CssLayout(save, cancel, delete);
 
 	Binder<Customer> binder = new Binder<>(Customer.class);
