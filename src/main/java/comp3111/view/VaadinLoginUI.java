@@ -1,25 +1,15 @@
 package comp3111.view;
 
-import javax.servlet.annotation.WebServlet;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
 import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.navigator.Navigator;
 import com.vaadin.server.Page;
-import com.vaadin.server.Page.UriFragmentChangedEvent;
-import com.vaadin.server.Page.UriFragmentChangedListener;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
-import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
@@ -30,20 +20,11 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 
 import comp3111.auth.Authentication;
-import comp3111.repo.LoginUserRepository;
-
-import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewDisplay;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.annotation.SpringViewDisplay;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 @Theme("valo")
@@ -58,12 +39,50 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 	@Autowired
 	Authentication authentication;
 
+	HorizontalLayout root;
+	VerticalLayout navigationBar;
+
 	@Override
 	public void init(VaadinRequest request) {
-		final HorizontalLayout root = new HorizontalLayout();
+		// getUI().getNavigator().setErrorView(SecondaryView.class);
+
+		root = new HorizontalLayout();
 		root.setSizeFull();
 		setContent(root);
+		springViewDisplay = new Panel();
+		springViewDisplay.setSizeFull();
+		root.addComponent(springViewDisplay);
+		springViewDisplay.setVisible(false);
 
+		drawLoginForm();
+	}
+
+	private Button createNavigationButton(String caption, final String viewName) {
+		Button button = new Button(caption);
+		button.addStyleName(ValoTheme.BUTTON_SMALL);
+		button.addClickListener(event -> getUI().getNavigator().navigateTo(viewName));
+		return button;
+	}
+
+	private Button createLogoutButton() {
+		Button button = new Button("Logout");
+		button.addStyleName(ValoTheme.BUTTON_SMALL);
+
+		button.addClickListener(new ClickListener() {
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				navigationBar.setVisible(false);
+				springViewDisplay.setVisible(false);
+				getUI().getNavigator().navigateTo(HomeView.VIEW_NAME);
+				drawLoginForm();
+			}
+
+		});
+		return button;
+	}
+
+	private void drawLoginForm() {
 		Panel loginPanel = new Panel("Login");
 		loginPanel.setSizeUndefined();
 		root.addComponent(loginPanel);
@@ -71,55 +90,63 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 
 		FormLayout content = new FormLayout();
 		TextField username = new TextField("Username");
+		username.setId("tf_username");
 		content.addComponent(username);
 		PasswordField password = new PasswordField("Password");
+		password.setId("tf_password");
 		content.addComponent(password);
 
-		Button send = new Button("Enter");
+		Button submit = new Button("Enter");
+		submit.setId("btn_submit");
 
-		content.addComponent(send);
+		content.addComponent(submit);
 		content.setSizeUndefined();
 		content.setMargin(true);
 		loginPanel.setContent(content);
 		root.setComponentAlignment(loginPanel, Alignment.MIDDLE_CENTER);
 
-		final CssLayout navigationBar = new CssLayout();
-		navigationBar.addStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
-		root.addComponent(navigationBar);
-		springViewDisplay = new Panel();
-		springViewDisplay.setSizeFull();
-		root.addComponent(springViewDisplay);
-		root.setExpandRatio(springViewDisplay, 1.0f);
-
-		springViewDisplay.setVisible(false);
-
-		send.addClickListener(new ClickListener() {
+		submit.addClickListener(new ClickListener() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void buttonClick(ClickEvent event) {
 				if (authentication.authenticate(username.getValue(), password.getValue())) {
-					navigationBar.addComponent(createNavigationButton("HomeView", HomeView.VIEW_NAME));
-
+					drawLoggedInComponents();
+					username.clear();
+					password.clear();
 					loginPanel.setVisible(false);
-					springViewDisplay.setVisible(true);
-
 				} else {
 					Notification.show("Invalid credentials", Notification.Type.WARNING_MESSAGE);
 				}
 			}
 
 		});
-
 	}
 
-	private Button createNavigationButton(String caption, final String viewName) {
-		Button button = new Button(caption);
-		button.addStyleName(ValoTheme.BUTTON_SMALL);
-		// If you didn't choose Java 8 when creating the project, convert this
-		// to an anonymous listener class
-		button.addClickListener(event -> getUI().getNavigator().navigateTo(viewName));
-		return button;
+	private void drawLoggedInComponents() {
+		navigationBar = new VerticalLayout();
+		root.removeAllComponents();
+
+		Label title = new Label("COMP3111 travel agency");
+
+		navigationBar.addComponent(title);
+		navigationBar.addComponent(createNavigationButton("Home View", HomeView.VIEW_NAME));
+		navigationBar.addComponent(createNavigationButton("Secondary View", SecondaryView.VIEW_NAME));
+		navigationBar.addComponent(createLogoutButton());
+
+		navigationBar.setSizeUndefined();
+		navigationBar.setHeight("100%");
+		navigationBar.setSpacing(false);
+
+		root.addComponent(navigationBar);
+		root.addComponent(springViewDisplay);
+
+		navigationBar.setVisible(true);
+		springViewDisplay.setVisible(true);
+
+		root.setExpandRatio(navigationBar, 2);
+		root.setExpandRatio(springViewDisplay, 8);
+
 	}
 
 	@Override
