@@ -1,27 +1,19 @@
 package springboot;
 
 import org.junit.Before;
-import org.junit.Ignore;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.vaadin.spring.boot.VaadinAutoConfiguration;
-
-import springboot.repo.CustomerRepository;
-import springboot.Application;
-import springboot.model.Customer;
-import springboot.presenter.CustomerEditor;
-import springboot.presenter.VaadinUI;
+import comp3111.Application;
+import comp3111.model.Customer;
+import comp3111.model.LoginUser;
+import comp3111.repo.CustomerRepository;
+import comp3111.repo.LoginUserRepository;
 
 import static org.assertj.core.api.BDDAssertions.*;
-
-import javax.annotation.PostConstruct;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -30,6 +22,9 @@ public class ApplicationTests {
 
 	@Autowired
 	private CustomerRepository repository;
+	
+	@Autowired
+	private LoginUserRepository lurepo;
 
 	@Before
 	public void setup() {
@@ -39,6 +34,9 @@ public class ApplicationTests {
 		this.repository.save(new Customer("Kim", 30));
 		this.repository.save(new Customer("Kim", 34));
 		this.repository.save(new Customer("Michelle", 9));
+		
+		this.lurepo.deleteAll();
+		lurepo.save(new LoginUser("admin", "password"));
 	}
 
 	@Test

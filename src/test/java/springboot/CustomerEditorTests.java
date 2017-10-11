@@ -9,9 +9,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import springboot.model.Customer;
-import springboot.presenter.CustomerEditor;
-import springboot.repo.CustomerRepository;
+import comp3111.model.Customer;
+import comp3111.presenter.CustomerEditor;
+import comp3111.repo.CustomerRepository;
 
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Matchers.argThat;
