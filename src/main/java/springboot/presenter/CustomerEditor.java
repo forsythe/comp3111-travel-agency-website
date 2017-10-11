@@ -55,7 +55,7 @@ public class CustomerEditor extends VerticalLayout {
 	public CustomerEditor(CustomerRepository repository) {
 		this.repository = repository;
 
-		addComponents(getFirstName(), getAge(), actions);
+		addComponents(getName(), getAge(), actions);
 
 		// bind using naming convention
 		//binder.bindInstanceFields(this); can't use this
@@ -109,7 +109,7 @@ public class CustomerEditor extends VerticalLayout {
 		// A hack to ensure the whole form is visible
 		getSave().focus();
 		// Select all text in firstName field automatically
-		getFirstName().selectAll();
+		getName().selectAll();
 	}
 
 	public void setChangeHandler(ChangeHandler h) {
@@ -119,7 +119,7 @@ public class CustomerEditor extends VerticalLayout {
 		getDelete().addClickListener(e -> h.onChange());
 	}
 
-	public TextField getFirstName() {
+	public TextField getName() {
 		return name;
 	}
 

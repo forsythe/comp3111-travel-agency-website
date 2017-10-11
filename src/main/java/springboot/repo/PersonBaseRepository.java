@@ -11,7 +11,7 @@ import springboot.model.Person;
 @NoRepositoryBean
 public interface PersonBaseRepository<T extends Person> extends CrudRepository<T, Long> {
 
-	Collection<Customer> findByName(String name);
+	Collection<T> findByName(String name);
 
-	Collection<Person> findByLineId(String lineId);
+	Collection<T> findByLineId(String lineId);
 }

@@ -7,8 +7,10 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.BDDAssertions.*;
@@ -17,6 +19,7 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.boot.VaadinAutoConfiguration;
 
+import springboot.Application;
 import springboot.model.Customer;
 import springboot.presenter.CustomerEditor;
 import springboot.presenter.VaadinUI;
@@ -27,10 +30,17 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = VaadinUITests.Config.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@EnableJpaRepositories("springboot.repo") // need this to find the repos, since in different package!
+@EntityScan("springboot.model")
+// https://stackoverflow.com/questions/33997031/spring-data-jpa-no-qualifying-bean-found-for-dependency
+// @ComponentScan("other.components.package")
 public class VaadinUITests {
+	private static final Logger log = LoggerFactory.getLogger(Application.class);
 
 	@Autowired
 	CustomerRepository repository;
@@ -47,14 +57,13 @@ public class VaadinUITests {
 		this.vaadinUI = new VaadinUI(this.repository, editor);
 	}
 
-	@Ignore
 	@Test
 	public void shouldInitializeTheGridWithCustomerRepositoryData() {
 		int customerCount = (int) this.repository.count();
 
 		vaadinUI.init(this.vaadinRequest);
 
-		then(vaadinUI.getGrid().getColumns()).hasSize(3);
+		then(vaadinUI.getGrid().getColumns()).hasSize(2);
 		then(getCustomersInGrid()).hasSize(customerCount);
 	}
 
@@ -63,36 +72,36 @@ public class VaadinUITests {
 		return new ArrayList<>(ldp.getItems());
 	}
 
-	@Ignore
 	@Test
 	public void shouldFillOutTheGridWithNewData() {
+		this.repository.deleteAll();
+
 		int initialCustomerCount = (int) this.repository.count();
 		this.vaadinUI.init(this.vaadinRequest);
-		customerDataWasFilled(editor, "Marcin", "Grzejszczak");
+		customerDataWasFilled(editor, "Marcin", 20);
 
 		this.editor.getSave().click();
 
 		then(getCustomersInGrid()).hasSize(initialCustomerCount + 1);
 
-		then(getCustomersInGrid().get(getCustomersInGrid().size() - 1)).extracting("firstName", "lastName")
-				.containsExactly("Marcin", "Grzejszczak");
+		then(getCustomersInGrid().get(getCustomersInGrid().size() - 1)).extracting("name", "age")
+				.containsExactly("Marcin", 20);
 
 	}
 
-	@Ignore
 	@Test
-	public void shouldFilterOutTheGridWithTheProvidedLastName() {
+	public void shouldFilterOutTheGridWithTheProvidedName() {
 		this.vaadinUI.init(this.vaadinRequest);
+		this.repository.deleteAll();
 		this.repository.save(new Customer("Josh", 20));
 
-		vaadinUI.listCustomers("Long");
+		vaadinUI.listCustomers("Josh");
 
 		then(getCustomersInGrid()).hasSize(1);
-		then(getCustomersInGrid().get(getCustomersInGrid().size() - 1)).extracting("firstName", "lastName")
-				.containsExactly("Josh", "Long");
+		then(getCustomersInGrid().get(getCustomersInGrid().size() - 1)).extracting("name", "age")
+				.containsExactly("Josh", 20);
 	}
 
-	@Ignore
 	@Test
 	public void shouldInitializeWithInvisibleEditor() {
 		this.vaadinUI.init(this.vaadinRequest);
@@ -100,7 +109,6 @@ public class VaadinUITests {
 		then(this.editor.isVisible()).isFalse();
 	}
 
-	@Ignore
 	@Test
 	public void shouldMakeEditorVisible() {
 		this.vaadinUI.init(this.vaadinRequest);
@@ -110,9 +118,9 @@ public class VaadinUITests {
 		then(this.editor.isVisible()).isTrue();
 	}
 
-	private void customerDataWasFilled(CustomerEditor editor, String name, String age) {
-		this.editor.getFirstName().setValue(name);
-		this.editor.getAge().setValue(age);
+	private void customerDataWasFilled(CustomerEditor editor, String name, int age) {
+		this.editor.getName().setValue(name);
+		this.editor.getAge().setValue(Integer.toString(age));
 		editor.editCustomer(new Customer(name, age));
 	}
 
@@ -125,11 +133,11 @@ public class VaadinUITests {
 
 		@PostConstruct
 		public void initializeData() {
-			this.repository.save(new Customer("Jack", "Bauer"));
-			this.repository.save(new Customer("Chloe", "O'Brian"));
-			this.repository.save(new Customer("Kim", "Bauer"));
-			this.repository.save(new Customer("David", "Palmer"));
-			this.repository.save(new Customer("Michelle", "Dessler"));
+			this.repository.save(new Customer("Jack", 50));
+			this.repository.save(new Customer("Chloe", 20));
+			this.repository.save(new Customer("Kim", 30));
+			this.repository.save(new Customer("David", 5));
+			this.repository.save(new Customer("Michelle", 9));
 		}
 	}
 }

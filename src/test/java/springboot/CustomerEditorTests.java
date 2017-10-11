@@ -19,17 +19,18 @@ import static org.mockito.Matchers.argThat;
 @RunWith(MockitoJUnitRunner.class)
 public class CustomerEditorTests {
 
-	private static final String FIRST_NAME = "Marcin";
-	private static final String AGE_STRING = "20";
+	private static final String NAME = "Marcin";
+	private static final int AGE = 20;
 
-	@Mock CustomerRepository customerRepository;
-	@InjectMocks CustomerEditor editor;
+	@Mock
+	CustomerRepository customerRepository;
+	@InjectMocks
+	CustomerEditor editor;
 
-	@Ignore
 	@Test
 	public void shouldStoreCustomerInRepoWhenEditorSaveClicked() {
-		this.editor.getFirstName().setValue(FIRST_NAME);
-		this.editor.getAge().setValue(AGE_STRING);
+		this.editor.getName().setValue(NAME);
+		this.editor.getAge().setValue(Integer.toString(AGE));
 		customerDataWasFilled();
 
 		this.editor.getSave().click();
@@ -37,11 +38,10 @@ public class CustomerEditorTests {
 		then(this.customerRepository).should().save(argThat(customerMatchesEditorFields()));
 	}
 
-	@Ignore
 	@Test
 	public void shouldDeleteCustomerFromRepoWhenEditorDeleteClicked() {
-		this.editor.getFirstName().setValue(FIRST_NAME);
-		this.editor.getAge().setValue(AGE_STRING);
+		this.editor.getName().setValue(NAME);
+		this.editor.getAge().setValue(Integer.toString(AGE));
 		customerDataWasFilled();
 
 		editor.getDelete().click();
@@ -50,17 +50,18 @@ public class CustomerEditorTests {
 	}
 
 	private void customerDataWasFilled() {
-		this.editor.editCustomer(new Customer(FIRST_NAME, Integer.parseInt(AGE_STRING)));
+		this.editor.editCustomer(new Customer(NAME, Integer.toString(AGE)));
 	}
 
 	private TypeSafeMatcher<Customer> customerMatchesEditorFields() {
 		return new TypeSafeMatcher<Customer>() {
 			@Override
-			public void describeTo(Description description) {}
+			public void describeTo(Description description) {
+			}
 
 			@Override
 			protected boolean matchesSafely(Customer item) {
-				return FIRST_NAME.equals(item.getName()) && AGE_STRING.equals(item.getAge());
+				return NAME.equals(item.getName()) && AGE==item.getAge();
 			}
 		};
 	}
