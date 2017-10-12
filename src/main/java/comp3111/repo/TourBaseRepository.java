@@ -8,7 +8,7 @@ import comp3111.model.Tour;
 import java.util.Collection;
 import java.util.List;
 
-@NoRepositoryBean
+//@NoRepositoryBean
 public interface TourBaseRepository<T extends Tour> extends CrudRepository<T, Long> {
 
 	Collection<Tour> findByTourName(String tourName);

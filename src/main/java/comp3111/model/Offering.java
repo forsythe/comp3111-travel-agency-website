@@ -26,7 +26,7 @@ public class Offering {
 	private int minCustomers;
 	private int maxCustomers;
 
-    @OneToMany(mappedBy = "offering", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "offering", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Collection<CustomerOffering> offering;
 
 	public Long getId() {
@@ -91,6 +91,13 @@ public class Offering {
 
 	public void setOffering(Collection<CustomerOffering> offering) {
 		this.offering = offering;
+	}
+
+	// Observer pattern
+	public void notifyCustomersAboutStatus() {
+		for (CustomerOffering co : getOffering()) {
+			co.getCustomer().updateAboutOfferingStatus("statusOfTour");
+		}
 	}
 
 	@Override

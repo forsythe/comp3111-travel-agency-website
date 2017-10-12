@@ -17,10 +17,10 @@ public class CustomerOffering implements Serializable {
 	private long id;
 
 	@ManyToOne
-	//@JoinColumn(name = "customerId", referencedColumnName = "id")
+	// @JoinColumn(name = "customerId", referencedColumnName = "id")
 	private Customer customer;
 	@ManyToOne
-	//@JoinColumn(name = "offeringId", referencedColumnName = "id")	
+	// @JoinColumn(name = "offeringId", referencedColumnName = "id")
 	private Offering offering;
 
 	private int numAdults;
@@ -101,5 +101,10 @@ public class CustomerOffering implements Serializable {
 
 	public void setPaymentStatus(String paymentStatus) {
 		this.paymentStatus = paymentStatus;
+	}
+
+	@Override
+	public String toString() {
+		return offering.getStartDate().toString();
 	}
 }

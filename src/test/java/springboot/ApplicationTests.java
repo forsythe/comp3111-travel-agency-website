@@ -8,12 +8,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import comp3111.Application;
-import comp3111.model.Customer;
-import comp3111.model.LoginUser;
-import comp3111.repo.CustomerRepository;
-import comp3111.repo.LoginUserRepository;
+import comp3111.model.*;
+import comp3111.repo.*;
 
 import static org.assertj.core.api.BDDAssertions.*;
+
+import java.time.DayOfWeek;
+import java.util.Arrays;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -21,32 +22,54 @@ import static org.assertj.core.api.BDDAssertions.*;
 public class ApplicationTests {
 
 	@Autowired
-	private CustomerRepository repository;
-	
+	private CustomerRepository customerRepo;
 	@Autowired
-	private LoginUserRepository lurepo;
+	private CustomerOfferingRepository customerOfferingRepo;
+	@Autowired
+	private LimitedTourRepository limitedTourRepo;
+	@Autowired
+	private LoginUserRepository loginUserRepo;
+	@Autowired
+	private OfferingRepository offeringRepo;
+	@Autowired
+	private RepeatingTourRepository repeatingTourRepo;
+	@Autowired
+	private TourGuideRepository tourGuideRepo;
 
 	@Before
 	public void setup() {
-		this.repository.deleteAll();
-		this.repository.save(new Customer("Jack", 50));
-		this.repository.save(new Customer("Chloe", 20));
-		this.repository.save(new Customer("Kim", 30));
-		this.repository.save(new Customer("Kim", 34));
-		this.repository.save(new Customer("Michelle", 9));
+		this.customerRepo.deleteAll();
+		this.customerOfferingRepo.deleteAll();
+		this.limitedTourRepo.deleteAll();
+		//this.loginUserRepo.deleteAll();
+		this.offeringRepo.deleteAll();
+		this.repeatingTourRepo.deleteAll();
+		this.tourGuideRepo.deleteAll();
+
+		Customer peppaPig = new Customer("Peppa Pig", 35);
+		Customer emilyElephant = new Customer("Emily Elephant", 36);
+
+		RepeatingTour shimen = new RepeatingTour("Shimen Forest", "Colorful ponds", 2, null, 0.8, 0, 499, 599,
+				Arrays.asList(DayOfWeek.MONDAY, DayOfWeek.TUESDAY));
 		
-		this.lurepo.deleteAll();
-		lurepo.save(new LoginUser("admin", "password"));
+		this.customerRepo.save(peppaPig);
+		this.customerRepo.save(emilyElephant);
+		this.repeatingTourRepo.save(shimen);
+
+		// this.customerRepo.save(new Customer("Jack", 50));
+		// this.customerRepo.save(new Customer("Chloe", 20));
+		// this.customerRepo.save(new Customer("Kim", 30));
+		// this.customerRepo.save(new Customer("Kim", 34));
+		// this.customerRepo.save(new Customer("Michelle", 9));
+		//
+		// this.loginUserRepo.deleteAll();
+		//loginUserRepo.save(new LoginUser("admin", "password"));
+
 	}
 
 	@Test
-	public void shouldFillOutComponentsWithDataWhenTheApplicationIsStarted() {
-		then(this.repository.count()).isEqualTo(5);
-	}
-
-	@Test
-	public void shouldFindTwoKimCustomers() {
-		then(this.repository.findByName("Kim")).hasSize(2);
+	public void shouldHaveOneLoginUser() {
+		then(this.loginUserRepo.count()).isEqualTo(1);
 	}
 
 }

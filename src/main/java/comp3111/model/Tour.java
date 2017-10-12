@@ -3,6 +3,7 @@ package comp3111.model;
 import java.util.Collection;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -20,13 +21,29 @@ public abstract class Tour {
 	private String description;
 	private int days;
 
-	@OneToMany(mappedBy = "tour")
+	@OneToMany(mappedBy = "tour", fetch = FetchType.EAGER)
 	private Collection<Offering> offerings;
 
 	private double childDiscount;
 	private double toddlerDiscount;
 	private int weekdayPrice;
 	private int weekendPrice;
+
+	public Tour() {
+	}
+
+	public Tour(String tourName, String description, int days, Collection<Offering> offerings, double childDiscount,
+			double toddlerDiscount, int weekdayPrice, int weekendPrice) {
+		super();
+		this.tourName = tourName;
+		this.description = description;
+		this.days = days;
+		this.offerings = offerings;
+		this.childDiscount = childDiscount;
+		this.toddlerDiscount = toddlerDiscount;
+		this.weekdayPrice = weekdayPrice;
+		this.weekendPrice = weekendPrice;
+	}
 
 	public Long getId() {
 		return id;

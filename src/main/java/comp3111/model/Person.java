@@ -16,7 +16,14 @@ public abstract class Person {
 	private String name;
 	private String lineId;
 
+	public Person() {
+	}
 	
+	public Person(String name, String lineId) {
+		this.name = name;
+		this.lineId = lineId;
+	}
+
 	public Long getId() {
 		return id;
 	}

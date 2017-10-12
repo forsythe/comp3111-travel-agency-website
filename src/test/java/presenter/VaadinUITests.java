@@ -137,14 +137,16 @@ public class VaadinUITests {
 
 		@Autowired
 		CustomerRepository repository;
+	
 
 		@PostConstruct
 		public void initializeData() {
-			this.repository.save(new Customer("Jack", 50));
-			this.repository.save(new Customer("Chloe", 20));
-			this.repository.save(new Customer("Kim", 30));
-			this.repository.save(new Customer("David", 5));
-			this.repository.save(new Customer("Michelle", 9));
+//			this.repository.deleteAll();
+//			this.repository.save(new Customer("Jack", 50));
+//			this.repository.save(new Customer("Chloe", 20));
+//			this.repository.save(new Customer("Kim", 30));
+//			this.repository.save(new Customer("David", 5));
+//			this.repository.save(new Customer("Michelle", 9));
 		}
 	}
 }

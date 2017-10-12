@@ -44,7 +44,7 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 
 	@Override
 	public void init(VaadinRequest request) {
-		// getUI().getNavigator().setErrorView(SecondaryView.class);
+		//getUI().getNavigator().setErrorView("");
 
 		root = new HorizontalLayout();
 		root.setSizeFull();
@@ -132,7 +132,8 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 
 		navigationBar.addComponent(title);
 		navigationBar.addComponent(createNavigationButton("Home View", HomeView.VIEW_NAME));
-		navigationBar.addComponent(createNavigationButton("Secondary View", SecondaryView.VIEW_NAME));
+		navigationBar.addComponent(createNavigationButton("Tour Management", TourManagementView.VIEW_NAME));
+		navigationBar.addComponent(createNavigationButton("Third View", ThirdView.VIEW_NAME));		
 		navigationBar.addComponent(createLogoutButton());
 
 		navigationBar.setSizeUndefined();

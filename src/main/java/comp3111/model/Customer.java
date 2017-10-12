@@ -1,12 +1,10 @@
 package comp3111.model;
 
 import java.util.Collection;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
-
 
 @Entity
 @Inheritance
@@ -14,7 +12,7 @@ public class Customer extends Person {
 
 	private String phone;
 	private int age;
-	private String HKID;
+	private String hkid;
 
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Collection<CustomerOffering> customerOffering;
@@ -22,14 +20,18 @@ public class Customer extends Person {
 	protected Customer() { // needed to be a bean
 	}
 
-	public Customer(String name, String age) {
-		setName(name);
-		setAge(Integer.parseInt(age));
+	public Customer(String name, int age) {
+		super(name, null);
+		this.age = age;
 	}
 
-	public Customer(String name, int age) {
-		setName(name);
-		setAge(age);
+	public Customer(String name, String lineId, String phone, int age, String hkid,
+			Collection<CustomerOffering> customerOffering) {
+		super(name, lineId);
+		this.phone = phone;
+		this.age = age;
+		this.hkid = hkid;
+		this.customerOffering = customerOffering;
 	}
 
 	public String getPhone() {
@@ -48,12 +50,12 @@ public class Customer extends Person {
 		this.age = age;
 	}
 
-	public String getHKID() {
-		return HKID;
+	public String getHkid() {
+		return hkid;
 	}
 
-	public void setHKID(String hKID) {
-		HKID = hKID;
+	public void setHkid(String hkid) {
+		this.hkid = hkid;
 	}
 
 	@Override
@@ -67,6 +69,12 @@ public class Customer extends Person {
 
 	public void setCustomerOffering(Collection<CustomerOffering> customerOffering) {
 		this.customerOffering = customerOffering;
+	}
+
+	public void updateAboutOfferingStatus(String status) {
+		// do something with status
+		// e.g. get the line ID and send out the status
+		// TODO
 	}
 
 }
