@@ -59,14 +59,14 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 
 	private Button createNavigationButton(String caption, final String viewName) {
 		Button button = new Button(caption);
-		button.addStyleName(ValoTheme.BUTTON_SMALL);
+		button.addStyleName(ValoTheme.BUTTON_LINK);
 		button.addClickListener(event -> getUI().getNavigator().navigateTo(viewName));
 		return button;
 	}
 
 	private Button createLogoutButton() {
 		Button button = new Button("Logout");
-		button.addStyleName(ValoTheme.BUTTON_SMALL);
+		button.addStyleName(ValoTheme.BUTTON_LINK);
 
 		button.addClickListener(new ClickListener() {
 
@@ -125,6 +125,7 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 
 	private void drawLoggedInComponents() {
 		navigationBar = new VerticalLayout();
+
 		root.removeAllComponents();
 
 		Label title = new Label("COMP3111 travel agency");
@@ -135,18 +136,17 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 		navigationBar.addComponent(createLogoutButton());
 
 		navigationBar.setSizeUndefined();
-		navigationBar.setHeight("100%");
 		navigationBar.setSpacing(false);
 
+		springViewDisplay.setSizeFull();
 		root.addComponent(navigationBar);
 		root.addComponent(springViewDisplay);
 
 		navigationBar.setVisible(true);
 		springViewDisplay.setVisible(true);
 
-		root.setExpandRatio(navigationBar, 2);
-		root.setExpandRatio(springViewDisplay, 8);
-
+		root.setExpandRatio(navigationBar, 0);
+		root.setExpandRatio(springViewDisplay, 1);
 	}
 
 	@Override
