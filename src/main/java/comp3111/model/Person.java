@@ -4,9 +4,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.transaction.Transactional;
 
 @Entity
 @Inheritance
+@Transactional
 public abstract class Person {
 
 	@Id

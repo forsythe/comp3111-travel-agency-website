@@ -1,13 +1,17 @@
 package comp3111.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
+import javax.transaction.Transactional;
 
 @Entity
 @Inheritance
+@Transactional
 public class Customer extends Person {
 
 	private String phone;
@@ -15,7 +19,7 @@ public class Customer extends Person {
 	private String hkid;
 
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Collection<CustomerOffering> customerOffering;
+	private Collection<CustomerOffering> customerOffering = new ArrayList<CustomerOffering>();
 
 	protected Customer() { // needed to be a bean
 	}
@@ -25,13 +29,11 @@ public class Customer extends Person {
 		this.age = age;
 	}
 
-	public Customer(String name, String lineId, String phone, int age, String hkid,
-			Collection<CustomerOffering> customerOffering) {
+	public Customer(String name, String lineId, String phone, int age, String hkid) {
 		super(name, lineId);
 		this.phone = phone;
 		this.age = age;
 		this.hkid = hkid;
-		this.customerOffering = customerOffering;
 	}
 
 	public String getPhone() {

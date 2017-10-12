@@ -109,7 +109,6 @@ public class TourEditor extends VerticalLayout {
 					createTourButton.setEnabled(true);
 				}
 			}
-
 		});
 
 		this.addComponent(grid);

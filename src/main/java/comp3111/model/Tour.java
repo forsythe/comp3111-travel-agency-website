@@ -1,5 +1,6 @@
 package comp3111.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.Entity;
@@ -8,9 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
+import javax.transaction.Transactional;
 
 @Entity
 @Inheritance
+@Transactional
 public abstract class Tour {
 
 	@Id
@@ -22,7 +25,7 @@ public abstract class Tour {
 	private int days;
 
 	@OneToMany(mappedBy = "tour", fetch = FetchType.EAGER)
-	private Collection<Offering> offerings;
+	private Collection<Offering> offerings = new ArrayList<Offering>();
 
 	private double childDiscount;
 	private double toddlerDiscount;
@@ -32,13 +35,11 @@ public abstract class Tour {
 	public Tour() {
 	}
 
-	public Tour(String tourName, String description, int days, Collection<Offering> offerings, double childDiscount,
-			double toddlerDiscount, int weekdayPrice, int weekendPrice) {
-		super();
+	public Tour(String tourName, String description, int days, double childDiscount, double toddlerDiscount,
+			int weekdayPrice, int weekendPrice) {
 		this.tourName = tourName;
 		this.description = description;
 		this.days = days;
-		this.offerings = offerings;
 		this.childDiscount = childDiscount;
 		this.toddlerDiscount = toddlerDiscount;
 		this.weekdayPrice = weekdayPrice;
@@ -119,13 +120,14 @@ public abstract class Tour {
 
 	// http://www.java2s.com/Tutorial/Java/0355__JPA/OneToManyListCollection.htm
 	public void addOffering(Offering offering) {
-		if (!getOfferings().contains(offering)) {
-			getOfferings().add(offering);
-			if (offering.getTour() != null) { // should never be true
-				offering.getTour().getOfferings().remove(offering);
-			}
-			offering.setTour(this);
-		}
+		// if (!getOfferings().contains(offering)) {
+		// getOfferings().add(offering);
+		// if (offering.getTour() != null) { // should never be true
+		// offering.getTour().getOfferings().remove(offering);
+		// }
+		// offering.setTour(this);
+		// }
+		offerings.add(offering);
 	}
 
 	@Override

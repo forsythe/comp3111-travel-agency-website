@@ -1,9 +1,12 @@
 package comp3111.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 
@@ -11,8 +14,15 @@ import javax.persistence.OneToMany;
 @Inheritance
 public class TourGuide extends Person {
 
-	@OneToMany(mappedBy = "tourGuide")
-	private Collection<Offering> guidedOfferings;
+	public TourGuide() {
+	}
+
+	public TourGuide(String name, String lineId) {
+		super(name, lineId);
+	}
+
+	@OneToMany(mappedBy = "tourGuide", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Collection<Offering> guidedOfferings = new ArrayList<Offering>();
 
 	public Collection<Offering> getGuidedOfferings() {
 		return guidedOfferings;
@@ -23,15 +33,16 @@ public class TourGuide extends Person {
 	}
 
 	// http://www.java2s.com/Tutorial/Java/0355__JPA/OneToManyListCollection.htm
-	public void addGuidedOffering(Offering offering) {
-		if (!getGuidedOfferings().contains(offering)) {
-			getGuidedOfferings().add(offering);
-			if (offering.getTourGuide() != null) { // should never be true
-				offering.getTourGuide().getGuidedOfferings().remove(offering);
-			}
-			offering.setTourGuide(this);
-		}
-	}
+	// public void addGuidedOffering(Offering offering) {
+	// // if (!getGuidedOfferings().contains(offering)) {
+	// // getGuidedOfferings().add(offering);
+	// // if (offering.getTourGuide() != null) { // should never be true
+	// // offering.getTourGuide().getGuidedOfferings().remove(offering);
+	// // }
+	// // offering.setTourGuide(this);
+	// // }
+	// guidedOfferings.add(offering);
+	// }
 
 	@Override
 	public String toString() {

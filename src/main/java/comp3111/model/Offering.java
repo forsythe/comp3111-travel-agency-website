@@ -1,33 +1,51 @@
 package comp3111.model;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.transaction.Transactional;
 
 @Entity
+@Transactional
 public class Offering {
 	@Id
 	@GeneratedValue
 	private Long id;
 
-	@ManyToOne // many offerings to 1 tour
+	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}) // many offerings to 1 tour
 	private Tour tour;
 
-	@ManyToOne // many offerings to 1 tour guide
+	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}) // many offerings to 1 tour guide
 	private TourGuide tourGuide;
+
 	private Date startDate;
 	private String hotelName;
 	private int minCustomers;
 	private int maxCustomers;
 
-	@OneToMany(mappedBy = "offering", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Collection<CustomerOffering> offering;
+	@OneToMany(mappedBy = "offering", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	private Collection<CustomerOffering> customerOffering = new ArrayList<CustomerOffering>();
+
+	public Offering() {
+	}
+
+	public Offering(Tour tour, TourGuide tourGuide, Date startDate, String hotelName, int minCustomers,
+			int maxCustomers) {
+		this.tour = tour;
+		this.tourGuide = tourGuide;
+		this.startDate = startDate;
+		this.hotelName = hotelName;
+		this.minCustomers = minCustomers;
+		this.maxCustomers = maxCustomers;
+	}
 
 	public Long getId() {
 		return id;
@@ -85,17 +103,17 @@ public class Offering {
 		this.maxCustomers = maxCustomers;
 	}
 
-	public Collection<CustomerOffering> getOffering() {
-		return offering;
+	public Collection<CustomerOffering> getCustomerOffering() {
+		return customerOffering;
 	}
 
-	public void setOffering(Collection<CustomerOffering> offering) {
-		this.offering = offering;
+	public void setCustomerOffering(Collection<CustomerOffering> offering) {
+		this.customerOffering = offering;
 	}
 
 	// Observer pattern
 	public void notifyCustomersAboutStatus() {
-		for (CustomerOffering co : getOffering()) {
+		for (CustomerOffering co : getCustomerOffering()) {
 			co.getCustomer().updateAboutOfferingStatus("statusOfTour");
 		}
 	}
