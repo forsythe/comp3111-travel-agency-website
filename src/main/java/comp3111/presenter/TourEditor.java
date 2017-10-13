@@ -1,26 +1,24 @@
 package comp3111.presenter;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.Converter;
 import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.StyleGenerator;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.renderers.AbstractRenderer;
-import com.vaadin.ui.renderers.TextRenderer;
+import com.vaadin.ui.Window;
 
 import comp3111.model.Tour;
 import comp3111.repo.TourRepository;
@@ -47,7 +45,7 @@ public class TourEditor extends VerticalLayout {
 	HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createTourButton = new Button("Create new tour");
 	private Button editTourButton = new Button("Edit tour");
-	private Button manageOfferingButton = new Button("Manage offering for selected tour");
+	private Button manageOfferingButton = new Button("Manage offerings for selected tour");
 
 	// CssLayout actions = new CssLayout(getSave(), cancel, getDelete());
 
@@ -112,9 +110,33 @@ public class TourEditor extends VerticalLayout {
 
 		// grid.addColumn(Person::getBirthYear);
 		// The default renderer is TextRenderer
-
 		this.addComponent(tourGrid);
 
+		/************* make the subwindow **************/
+		Window subWindow = new Window("Create new tour");
+		VerticalLayout subContent = new VerticalLayout();
+		subWindow.setContent(subContent);
+		subWindow.center();
+		subWindow.setClosable(false);
+		subWindow.setModal(true);
+		subWindow.setResizable(false);
+		subWindow.setDraggable(false);
+		
+		subContent.addComponent(new Label("Meatball sub"));
+		subContent.addComponent(new TextField("Put stuff in here"));
+		subContent.addComponent(new Button("Close me", event -> subWindow.close()));
+
+
+		/*********** end ***********/
+
+		createTourButton.addClickListener(new ClickListener() {
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				getUI().getCurrent().addWindow(subWindow);
+			}
+
+		});
 		// addComponents(getName(), getAge(), actions);
 
 		// bind using naming convention
