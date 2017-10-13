@@ -13,17 +13,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Persistable;
+
 @Entity
 @Transactional
-public class Offering {
+public class Offering implements Persistable<Long> {
 	@Id
 	@GeneratedValue
 	private Long id;
 
-	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}) // many offerings to 1 tour
+	@ManyToOne(cascade = CascadeType.ALL) // many offerings to 1 tour
 	private Tour tour;
 
-	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}) // many offerings to 1 tour guide
+	@ManyToOne(cascade = CascadeType.ALL) // many offerings to 1 tour guide
 	private TourGuide tourGuide;
 
 	private Date startDate;
@@ -121,5 +123,15 @@ public class Offering {
 	@Override
 	public String toString() {
 		return String.format("Offering[id=%d, tourName='%s', date='%s']", id, getTour().getTourName(), startDate);
+	}
+
+	@Override
+	public boolean isNew() {
+		for (CustomerOffering co : customerOffering) {
+			if (null != co.getId()) {
+				return false;
+			}
+		}
+		return null == getId() && null == tour.getId() && null == tourGuide.getId();
 	}
 }

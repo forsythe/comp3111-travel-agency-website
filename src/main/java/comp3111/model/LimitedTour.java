@@ -8,6 +8,8 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 
+import org.springframework.data.domain.Persistable;
+
 @Entity
 @Inheritance
 public class LimitedTour extends Tour {
@@ -33,5 +35,6 @@ public class LimitedTour extends Tour {
 	public void setDatesOffered(Collection<Date> datesOffered) {
 		this.datesOffered = datesOffered;
 	}
+
 
 }

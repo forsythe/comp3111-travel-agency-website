@@ -5,20 +5,23 @@ import java.util.Collection;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Persistable;
+
 @Entity
 @Inheritance
 @Transactional
-public class Customer extends Person {
+public class Customer extends Person implements Persistable<Long> {
 
 	private String phone;
 	private int age;
 	private String hkid;
 
-	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	private Collection<CustomerOffering> customerOffering = new ArrayList<CustomerOffering>();
 
 	protected Customer() { // needed to be a bean
@@ -77,6 +80,18 @@ public class Customer extends Person {
 		// do something with status
 		// e.g. get the line ID and send out the status
 		// TODO
+	}
+
+	@Override
+	public boolean isNew() {
+		if (getId() != null) {
+			return false;
+		}
+		for (CustomerOffering co : customerOffering) {
+			if (co.getId() != null)
+				return false;
+		}
+		return true;
 	}
 
 }

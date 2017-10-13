@@ -10,18 +10,20 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Persistable;
+
 @Entity
 @Transactional
-public class CustomerOffering implements Serializable {
+public class CustomerOffering implements Serializable, Persistable<Long> {
 
 	@Id
 	@GeneratedValue
 	private long id;
 
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = CascadeType.ALL)
 	// @JoinColumn(name = "customerId", referencedColumnName = "id")
 	private Customer customer;
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(cascade = CascadeType.ALL)
 	// @JoinColumn(name = "offeringId", referencedColumnName = "id")
 	private Offering offering;
 
@@ -47,6 +49,14 @@ public class CustomerOffering implements Serializable {
 		this.amountPaid = amountPaid;
 		this.specialRequests = specialRequests;
 		this.paymentStatus = paymentStatus;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public Customer getCustomer() {
@@ -131,4 +141,16 @@ public class CustomerOffering implements Serializable {
 	public String toString() {
 		return offering.getStartDate().toString();
 	}
+
+	@Override
+	/*
+	 * This is needed in order to save new CustomerOffering objects with existing
+	 * customers and existing offerings hibernate will complain that you're trying
+	 * to save "already saved" (detached) customers otherwise
+	 * https://stackoverflow.com/questions/16559407/spring-data-jpa-save-new-entity-referencing-existing-one
+	 */
+	public boolean isNew() {
+		return null == getId() && customer.getId() == null && offering.getId() == null;
+	}
+
 }

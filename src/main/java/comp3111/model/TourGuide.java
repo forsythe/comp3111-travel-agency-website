@@ -10,9 +10,11 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 
+import org.springframework.data.domain.Persistable;
+
 @Entity
 @Inheritance
-public class TourGuide extends Person {
+public class TourGuide extends Person implements Persistable<Long> {
 
 	public TourGuide() {
 	}
@@ -47,6 +49,18 @@ public class TourGuide extends Person {
 	@Override
 	public String toString() {
 		return String.format("TourGuide[id=%d, name='%s']", getId(), getName());
+	}
+
+	@Override
+	public boolean isNew() {
+		if (getId() != null) {
+			return false;
+		}
+		for (Offering o : guidedOfferings) {
+			if (o.getId() != null)
+				return false;
+		}
+		return true;
 	}
 
 }

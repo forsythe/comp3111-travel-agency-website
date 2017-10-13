@@ -3,6 +3,7 @@ package comp3111.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -11,10 +12,12 @@ import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Persistable;
+
 @Entity
 @Inheritance
 @Transactional
-public abstract class Tour {
+public abstract class Tour implements Persistable<Long> {
 
 	@Id
 	@GeneratedValue
@@ -24,7 +27,7 @@ public abstract class Tour {
 	private String description;
 	private int days;
 
-	@OneToMany(mappedBy = "tour", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "tour", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Collection<Offering> offerings = new ArrayList<Offering>();
 
 	private double childDiscount;
@@ -133,6 +136,17 @@ public abstract class Tour {
 	@Override
 	public String toString() {
 		return String.format("Tour[id=%d, tourName='%s']", id, tourName);
+	}
+
+	@Override
+	public boolean isNew() {
+		if (null != getId())
+			return false;
+		for (Offering o : offerings) {
+			if (o.getId() != null)
+				return false;
+		}
+		return true;
 	}
 
 }
