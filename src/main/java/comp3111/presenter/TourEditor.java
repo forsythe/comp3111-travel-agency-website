@@ -5,6 +5,8 @@ import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.data.Binder;
+import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.spring.annotation.SpringComponent;
@@ -15,13 +17,14 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 import comp3111.model.Tour;
 import comp3111.repo.TourRepository;
+import comp3111.validators.ValidatorFactory;
+import comp3111.view.Utils;
 
 /**
  * A simple example to introduce building forms. As your real application is
@@ -49,9 +52,12 @@ public class TourEditor extends VerticalLayout {
 
 	// CssLayout actions = new CssLayout(getSave(), cancel, getDelete());
 
-	// Binder<Tour> binder = new Binder<>(Tour.class);
+	Binder<Tour> binder = new Binder<>(Tour.class);
 
 	Grid<Tour> tourGrid = new Grid<Tour>(Tour.class);
+
+	/* The currently edited tour */
+	Tour selectedTour;
 
 	@Autowired
 	public TourEditor(TourRepository repository) {
@@ -80,7 +86,7 @@ public class TourEditor extends VerticalLayout {
 			@Override
 			public void selectionChange(SelectionEvent event) {
 				Collection<Tour> selectedItems = tourGrid.getSelectionModel().getSelectedItems();
-				Tour selectedTour = null;
+				selectedTour = null;
 				for (Tour rt : selectedItems) { // easy way to get first element of set
 					selectedTour = rt;
 					break;
@@ -90,6 +96,7 @@ public class TourEditor extends VerticalLayout {
 					manageOfferingButton.setEnabled(true);
 					createTourButton.setEnabled(false);
 				} else {
+					selectedTour = null;
 					editTourButton.setEnabled(false);
 					manageOfferingButton.setEnabled(false);
 					createTourButton.setEnabled(true);
@@ -112,32 +119,40 @@ public class TourEditor extends VerticalLayout {
 		// The default renderer is TextRenderer
 		this.addComponent(tourGrid);
 
-		/************* make the subwindow **************/
-		Window subWindow = new Window("Create new tour");
+		/************* make the create tour subwindow **************/
+		Window createTourSubwindow = new Window("Create new tour");
 		VerticalLayout subContent = new VerticalLayout();
-		subWindow.setContent(subContent);
-		subWindow.center();
-		subWindow.setClosable(false);
-		subWindow.setModal(true);
-		subWindow.setResizable(false);
-		subWindow.setDraggable(false);
-		
-		subContent.addComponent(new Label("Meatball sub"));
-		subContent.addComponent(new TextField("Put stuff in here"));
-		subContent.addComponent(new Button("Close me", event -> subWindow.close()));
+		createTourSubwindow.setContent(subContent);
+		createTourSubwindow.center();
+		createTourSubwindow.setClosable(false);
+		createTourSubwindow.setModal(true);
+		createTourSubwindow.setResizable(false);
+		createTourSubwindow.setDraggable(false);
 
+		subContent.addComponent(new TextField("Tour Name"));
+		TextField dayDuration = new TextField("Day duration");
+		Utils.addValidator(dayDuration, ValidatorFactory.getIntegerRangeValidator(0, 50));
 
-		/*********** end ***********/
+		subContent.addComponent(dayDuration);
+		subContent.addComponent(new Button("Close me", event -> createTourSubwindow.close()));
+
+		/************* make the edit tour subwindow **************/
 
 		createTourButton.addClickListener(new ClickListener() {
-
 			@Override
 			public void buttonClick(ClickEvent event) {
-				getUI().getCurrent().addWindow(subWindow);
+				getUI().getCurrent().addWindow(createTourSubwindow);
 			}
 
 		});
-		// addComponents(getName(), getAge(), actions);
+
+		editTourButton.addClickListener(new ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+				getUI().getCurrent().addWindow(createTourSubwindow);
+			}
+
+		}); // addComponents(getName(), getAge(), actions);
 
 		// bind using naming convention
 		// binder.bindInstanceFields(this); can't use this
