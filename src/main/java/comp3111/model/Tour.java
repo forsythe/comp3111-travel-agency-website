@@ -19,6 +19,8 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.domain.Persistable;
 
+import comp3111.validators.Utils;
+
 @Entity
 @Transactional
 public class Tour implements Persistable<Long> {
@@ -116,29 +118,7 @@ public class Tour implements Persistable<Long> {
 	private ArrayList<String> getFormattedAllowedDaysOfWeek() {
 		ArrayList<String> ans = new ArrayList<>();
 		for (int day : allowedDaysOfWeek) {
-			switch (day) {
-			case Calendar.MONDAY:
-				ans.add("Monday");
-				break;
-			case Calendar.TUESDAY:
-				ans.add("Tuesday");
-				break;
-			case Calendar.WEDNESDAY:
-				ans.add("Wednesday");
-				break;
-			case Calendar.THURSDAY:
-				ans.add("Thursdsay");
-				break;
-			case Calendar.FRIDAY:
-				ans.add("Friday");
-				break;
-			case Calendar.SATURDAY:
-				ans.add("Saturday");
-				break;
-			case Calendar.SUNDAY:
-				ans.add("Sunday");
-				break;
-			}
+			ans.add(Utils.dayToString(day));
 		}
 		return ans;
 	}
