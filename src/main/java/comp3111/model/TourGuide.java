@@ -1,15 +1,15 @@
 package comp3111.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.domain.Persistable;
 
 @Entity
@@ -23,8 +23,9 @@ public class TourGuide extends Person implements Persistable<Long> {
 		super(name, lineId);
 	}
 
-	@OneToMany(mappedBy = "tourGuide", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Collection<Offering> guidedOfferings = new ArrayList<Offering>();
+	@OneToMany(mappedBy = "tourGuide", cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Collection<Offering> guidedOfferings = new HashSet<Offering>();
 
 	public Collection<Offering> getGuidedOfferings() {
 		return guidedOfferings;

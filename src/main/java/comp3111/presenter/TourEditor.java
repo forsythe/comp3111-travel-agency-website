@@ -1,40 +1,23 @@
 package comp3111.presenter;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.SelectionModel;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.components.grid.GridSelectionModel;
-import com.vaadin.ui.components.grid.SingleSelectionModel;
-import com.vaadin.ui.themes.ValoTheme;
 
-import comp3111.model.Customer;
-import comp3111.model.LimitedTour;
-import comp3111.model.RepeatingTour;
 import comp3111.model.Tour;
-import comp3111.repo.CustomerRepository;
-import comp3111.repo.LimitedTourRepository;
-import comp3111.repo.RepeatingTourRepository;
-import comp3111.repo.TourBaseRepository;
+import comp3111.repo.TourRepository;
 
 /**
  * A simple example to introduce building forms. As your real application is
@@ -62,12 +45,12 @@ public class TourEditor extends VerticalLayout {
 
 	// CssLayout actions = new CssLayout(getSave(), cancel, getDelete());
 
-	Binder<Tour> binder = new Binder<>(Tour.class);
+	// Binder<Tour> binder = new Binder<>(Tour.class);
 
-	Grid<RepeatingTour> grid = new Grid(Tour.class);
+	Grid<Tour> tourGrid = new Grid<Tour>(Tour.class);
 
 	@Autowired
-	public TourEditor(RepeatingTourRepository repository) {
+	public TourEditor(TourRepository repository) {
 		// adding components
 		rowOfButtons.addComponent(createTourButton);
 		rowOfButtons.addComponent(editTourButton);
@@ -80,22 +63,21 @@ public class TourEditor extends VerticalLayout {
 		this.addComponent(rowOfButtons);
 
 		// get the repetaingTours from DB
-		Iterable<RepeatingTour> tours = repository.findAll();
-		Collection<RepeatingTour> toursCollection = new ArrayList<RepeatingTour>();
+		Iterable<Tour> tours = repository.findAll();
+		Collection<Tour> toursCollection = new HashSet<Tour>();
 		tours.forEach(toursCollection::add);
-		grid.setItems(toursCollection);
-		
-		
-		grid.setWidth("100%");
-		grid.setSelectionMode(SelectionMode.SINGLE);
-		GridSelectionModel<RepeatingTour> selection = grid.getSelectionModel();
+		tourGrid.setItems(toursCollection);
 
-		grid.addSelectionListener(new SelectionListener<RepeatingTour>() {
+		tourGrid.setWidth("100%");
+		tourGrid.setCaption("Repeating Tours");
+		tourGrid.setSelectionMode(SelectionMode.SINGLE);
+
+		tourGrid.addSelectionListener(new SelectionListener<Tour>() {
 			@Override
 			public void selectionChange(SelectionEvent event) {
-				Collection<RepeatingTour> selectedItems = selection.getSelectedItems();
-				RepeatingTour selectedTour = null;
-				for (RepeatingTour rt : selectedItems) { // easy way to get first element of set
+				Collection<Tour> selectedItems = tourGrid.getSelectionModel().getSelectedItems();
+				Tour selectedTour = null;
+				for (Tour rt : selectedItems) { // easy way to get first element of set
 					selectedTour = rt;
 					break;
 				}
@@ -104,14 +86,17 @@ public class TourEditor extends VerticalLayout {
 					manageOfferingButton.setEnabled(true);
 					createTourButton.setEnabled(false);
 				} else {
-					editTourButton.setEnabled(true);
-					manageOfferingButton.setEnabled(true);
+					editTourButton.setEnabled(false);
+					manageOfferingButton.setEnabled(false);
 					createTourButton.setEnabled(true);
 				}
 			}
 		});
 
-		this.addComponent(grid);
+		tourGrid.setColumnOrder("id", "tourName", "days", "allowedDaysOfWeek", "allowedDates", "offerings",
+				"description", "weekdayPrice", "weekendPrice", "childDiscount", "toddlerDiscount");
+
+		this.addComponent(tourGrid);
 
 		// addComponents(getName(), getAge(), actions);
 

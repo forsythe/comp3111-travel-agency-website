@@ -1,18 +1,19 @@
 package comp3111.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.transaction.Transactional;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.domain.Persistable;
 
 @Entity
@@ -33,8 +34,9 @@ public class Offering implements Persistable<Long> {
 	private int minCustomers;
 	private int maxCustomers;
 
-	@OneToMany(mappedBy = "offering", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	private Collection<CustomerOffering> customerOffering = new ArrayList<CustomerOffering>();
+	@OneToMany(mappedBy = "offering", cascade = CascadeType.ALL, orphanRemoval = true)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Collection<CustomerOffering> customerOffering = new HashSet<CustomerOffering>();
 
 	public Offering() {
 	}

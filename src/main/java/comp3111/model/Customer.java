@@ -1,15 +1,16 @@
 package comp3111.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 import javax.transaction.Transactional;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.domain.Persistable;
 
 @Entity
@@ -21,8 +22,10 @@ public class Customer extends Person implements Persistable<Long> {
 	private int age;
 	private String hkid;
 
-	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	private Collection<CustomerOffering> customerOffering = new ArrayList<CustomerOffering>();
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Collection<CustomerOffering> customerOffering = new HashSet<CustomerOffering>();
+	//use hashset to allow eager fetching
 
 	protected Customer() { // needed to be a bean
 	}

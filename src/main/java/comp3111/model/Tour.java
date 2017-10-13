@@ -1,23 +1,24 @@
 package comp3111.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
 
 import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 import javax.transaction.Transactional;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.domain.Persistable;
 
 @Entity
-@Inheritance
 @Transactional
-public abstract class Tour implements Persistable<Long> {
+public class Tour implements Persistable<Long> {
 
 	@Id
 	@GeneratedValue
@@ -27,8 +28,20 @@ public abstract class Tour implements Persistable<Long> {
 	private String description;
 	private int days;
 
-	@OneToMany(mappedBy = "tour", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Collection<Offering> offerings = new ArrayList<Offering>();
+	@OneToMany(mappedBy = "tour", cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Collection<Offering> offerings = new HashSet<Offering>();
+
+	@ElementCollection(targetClass = Integer.class)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Collection<Integer> allowedDaysOfWeek = new HashSet<Integer>();
+	// for an offering of this tour, is it allowed on MONDAY, TUESDAY, etc
+
+	@ElementCollection(targetClass = Date.class)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Collection<Date> allowedDates = new HashSet<Date>();
+	// for an offering of this tour, is it only allowed on specific dates
+	// null for ANY date
 
 	private double childDiscount;
 	private double toddlerDiscount;
@@ -38,11 +51,15 @@ public abstract class Tour implements Persistable<Long> {
 	public Tour() {
 	}
 
-	public Tour(String tourName, String description, int days, double childDiscount, double toddlerDiscount,
-			int weekdayPrice, int weekendPrice) {
+	public Tour(String tourName, String description, int days, Collection<Integer> allowedDaysOfWeek,
+			Collection<Date> allowedDates, double childDiscount, double toddlerDiscount, int weekdayPrice,
+			int weekendPrice) {
+		super();
 		this.tourName = tourName;
 		this.description = description;
 		this.days = days;
+		this.allowedDaysOfWeek = allowedDaysOfWeek;
+		this.allowedDates = allowedDates;
 		this.childDiscount = childDiscount;
 		this.toddlerDiscount = toddlerDiscount;
 		this.weekdayPrice = weekdayPrice;
@@ -87,6 +104,22 @@ public abstract class Tour implements Persistable<Long> {
 
 	public void setOfferings(Collection<Offering> offerings) {
 		this.offerings = offerings;
+	}
+
+	public Collection<Integer> getAllowedDaysOfWeek() {
+		return allowedDaysOfWeek;
+	}
+
+	public void setAllowedDaysOfWeek(Collection<Integer> allowedDaysOfWeek) {
+		this.allowedDaysOfWeek = allowedDaysOfWeek;
+	}
+
+	public Collection<Date> getAllowedDates() {
+		return allowedDates;
+	}
+
+	public void setAllowedDates(Collection<Date> allowedDates) {
+		this.allowedDates = allowedDates;
 	}
 
 	public double getChildDiscount() {
