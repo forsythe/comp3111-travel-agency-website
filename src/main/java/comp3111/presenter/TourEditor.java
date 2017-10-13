@@ -1,20 +1,26 @@
 package comp3111.presenter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.data.Converter;
 import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.StyleGenerator;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.renderers.AbstractRenderer;
+import com.vaadin.ui.renderers.TextRenderer;
 
 import comp3111.model.Tour;
 import comp3111.repo.TourRepository;
@@ -93,8 +99,19 @@ public class TourEditor extends VerticalLayout {
 			}
 		});
 
-		tourGrid.setColumnOrder("id", "tourName", "days", "allowedDaysOfWeek", "allowedDates", "offerings",
-				"description", "weekdayPrice", "weekendPrice", "childDiscount", "toddlerDiscount");
+		tourGrid.removeColumn("new"); // hibernate attributes, we don't care about it
+		tourGrid.removeColumn("allowedDaysOfWeek"); // we'll combine into one column
+		tourGrid.removeColumn("allowedDates");
+
+		// Column<Tour, ArrayList<String>> daysAllowedCol =
+		// tourGrid.addColumn(Tour::getFormattedAllowedDaysOfWeek);
+
+		tourGrid.setColumnOrder("id", "tourName", "days", "offeringAvailability", "offerings", "description",
+				"weekdayPrice", "weekendPrice", "childDiscount", "toddlerDiscount");
+		tourGrid.getColumn("offerings").setWidth(150);
+
+		// grid.addColumn(Person::getBirthYear);
+		// The default renderer is TextRenderer
 
 		this.addComponent(tourGrid);
 

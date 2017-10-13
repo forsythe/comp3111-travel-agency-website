@@ -1,5 +1,8 @@
 package comp3111.model;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -110,12 +113,58 @@ public class Tour implements Persistable<Long> {
 		return allowedDaysOfWeek;
 	}
 
+	private ArrayList<String> getFormattedAllowedDaysOfWeek() {
+		ArrayList<String> ans = new ArrayList<>();
+		for (int day : allowedDaysOfWeek) {
+			switch (day) {
+			case Calendar.MONDAY:
+				ans.add("Monday");
+				break;
+			case Calendar.TUESDAY:
+				ans.add("Tuesday");
+				break;
+			case Calendar.WEDNESDAY:
+				ans.add("Wednesday");
+				break;
+			case Calendar.THURSDAY:
+				ans.add("Thursdsay");
+				break;
+			case Calendar.FRIDAY:
+				ans.add("Friday");
+				break;
+			case Calendar.SATURDAY:
+				ans.add("Saturday");
+				break;
+			case Calendar.SUNDAY:
+				ans.add("Sunday");
+				break;
+			}
+		}
+		return ans;
+	}
+
+	public ArrayList<String> getOfferingAvailability() {
+		if (!allowedDates.isEmpty())
+			return this.getFormattedAllowedDates();
+		else
+			return this.getFormattedAllowedDaysOfWeek();
+	}
+
 	public void setAllowedDaysOfWeek(Collection<Integer> allowedDaysOfWeek) {
 		this.allowedDaysOfWeek = allowedDaysOfWeek;
 	}
 
 	public Collection<Date> getAllowedDates() {
 		return allowedDates;
+	}
+
+	private ArrayList<String> getFormattedAllowedDates() {
+		ArrayList<String> ans = new ArrayList<>();
+		for (Date day : allowedDates) {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			ans.add(sdf.format(day));
+		}
+		return ans;
 	}
 
 	public void setAllowedDates(Collection<Date> allowedDates) {
