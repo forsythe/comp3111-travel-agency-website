@@ -34,7 +34,7 @@ import comp3111.validators.ValidatorFactory;
 @SpringComponent
 @UIScope
 public class TourGuidesEditor extends VerticalLayout {
-	private static final Logger log = LoggerFactory.getLogger(TourEditor.class);
+	private static final Logger log = LoggerFactory.getLogger(TourGuidesEditor.class);
 	
 	//Editable fields
 	private TextField tourGuideName;
@@ -92,7 +92,6 @@ public class TourGuidesEditor extends VerticalLayout {
 					viewGuidedToursButton.setEnabled(true);
 					createTourGuideButton.setEnabled(false);
 				} else {
-					selectedTourGuide = null;
 					editTourGuideButton.setEnabled(false);
 					viewGuidedToursButton.setEnabled(false);
 					createTourGuideButton.setEnabled(true);
@@ -145,8 +144,8 @@ public class TourGuidesEditor extends VerticalLayout {
 		tourGuideName.setRequiredIndicatorVisible(true);
 		tourGuideLineId.setRequiredIndicatorVisible(true);
 		
-		Utils.addValidator(tourGuideName, ValidatorFactory.getStringLengthValidator());
-		Utils.addValidator(tourGuideLineId, ValidatorFactory.getStringLengthValidator());
+		Utils.addValidator(tourGuideName, ValidatorFactory.getStringLengthValidator(255));
+		Utils.addValidator(tourGuideLineId, ValidatorFactory.getStringLengthValidator(255));
 		
 		subwindowConfirmCreateTourGuide.addClickListener(new ClickListener() {
 			@Override
@@ -208,47 +207,24 @@ public class TourGuidesEditor extends VerticalLayout {
 		return tourGuideName;
 	}
 
-	public void setTourGuideName(TextField tourGuideName) {
-		this.tourGuideName = tourGuideName;
-	}
-
 	public TextField getTourGuideLineId() {
 		return tourGuideLineId;
-	}
-
-	public void setTourGuideLineId(TextField tourGuideLineId) {
-		this.tourGuideLineId = tourGuideLineId;
 	}
 
 	public Button getSubwindowConfirmCreateTourGuide() {
 		return subwindowConfirmCreateTourGuide;
 	}
 
-	public void setSubwindowConfirmCreateTourGuide(Button subwindowConfirmCreateTourGuide) {
-		this.subwindowConfirmCreateTourGuide = subwindowConfirmCreateTourGuide;
-	}
-
 	public Button getCreateTourGuideButton() {
 		return createTourGuideButton;
-	}
-
-	public void setCreateTourGuideButton(Button createTourGuideButton) {
-		this.createTourGuideButton = createTourGuideButton;
 	}
 
 	public Button getEditTourGuideButton() {
 		return editTourGuideButton;
 	}
 
-	public void setEditTourGuideButton(Button editTourGuideButton) {
-		this.editTourGuideButton = editTourGuideButton;
-	}
-
 	public Button getViewGuidedToursButton() {
 		return viewGuidedToursButton;
 	}
 
-	public void setViewGuidedToursButton(Button viewGuidedToursButton) {
-		this.viewGuidedToursButton = viewGuidedToursButton;
-	}
 }

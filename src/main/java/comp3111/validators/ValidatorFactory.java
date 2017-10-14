@@ -18,7 +18,7 @@ public class ValidatorFactory {
 		return new ListOfDatesValidator();
 	}
 	
-	public static StringLengthValidator getStringLengthValidator() {
-		return new StringLengthValidator();
+	public static StringLengthValidator getStringLengthValidator(int maxLength) {
+		return new StringLengthValidator(maxLength);
 	}
 }

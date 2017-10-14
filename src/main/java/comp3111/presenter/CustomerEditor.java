@@ -45,7 +45,7 @@ import comp3111.validators.ValidatorFactory;
 @SpringComponent
 @UIScope
 public class CustomerEditor extends VerticalLayout {
-	private static final Logger log = LoggerFactory.getLogger(TourEditor.class);
+	private static final Logger log = LoggerFactory.getLogger(CustomerEditor.class);
 	
 	private Window createCustomerSubwindow;
 	
@@ -108,7 +108,6 @@ public class CustomerEditor extends VerticalLayout {
 					viewCustomerBookingsButton.setEnabled(true);
 					createNewCustomerButton.setEnabled(false);
 				} else {
-					selectedCustomer = null;
 					editCustomerButton.setEnabled(false);
 					viewCustomerBookingsButton.setEnabled(false);
 					createNewCustomerButton.setEnabled(true);
@@ -165,16 +164,15 @@ public class CustomerEditor extends VerticalLayout {
 		subContent.addComponent(buttonActions);
 		
 		customerName.setRequiredIndicatorVisible(true);
-		customerLineId.setRequiredIndicatorVisible(true);
 		customerHkid.setRequiredIndicatorVisible(true);
 		customerPhone.setRequiredIndicatorVisible(true);
 		customerAge.setRequiredIndicatorVisible(true);
 		
-		Utils.addValidator(customerName, ValidatorFactory.getStringLengthValidator());
-		Utils.addValidator(customerLineId, ValidatorFactory.getStringLengthValidator());
-		Utils.addValidator(customerHkid, ValidatorFactory.getStringLengthValidator());
-		Utils.addValidator(customerPhone, ValidatorFactory.getStringLengthValidator());
-		Utils.addValidator(customerAge, ValidatorFactory.getStringLengthValidator());
+		Utils.addValidator(customerName, ValidatorFactory.getStringLengthValidator(255));
+		Utils.addValidator(customerLineId, ValidatorFactory.getStringLengthValidator(255));
+		Utils.addValidator(customerHkid, ValidatorFactory.getStringLengthValidator(255));
+		Utils.addValidator(customerPhone, ValidatorFactory.getStringLengthValidator(255));
+		Utils.addValidator(customerAge, ValidatorFactory.getStringLengthValidator(255));
 		Utils.addValidator(customerAge, ValidatorFactory.getIntegerLowerBoundValidator(0));
 
 		subwindowConfirmCreateCustomer.addClickListener(new ClickListener() {
@@ -184,7 +182,7 @@ public class CustomerEditor extends VerticalLayout {
 				ArrayList<String> errorMsgs = new ArrayList<String>();
 				ArrayList<TextField> nonNullableComponents = new ArrayList<TextField>();
 				nonNullableComponents.addAll(
-						Arrays.asList(customerName, customerLineId, customerHkid, customerPhone, customerAge ));
+						Arrays.asList(customerName, customerHkid, customerPhone, customerAge ));
 				
 				for (TextField field : nonNullableComponents) {
 					if (field.isEmpty()) {
@@ -241,79 +239,40 @@ public class CustomerEditor extends VerticalLayout {
 		return createCustomerSubwindow;
 	}
 
-	public void setCreateCustomerSubwindow(Window createCustomerSubwindow) {
-		this.createCustomerSubwindow = createCustomerSubwindow;
-	}
-
 	public TextField getCustomerName() {
 		return customerName;
-	}
-
-	public void setCustomerName(TextField customerName) {
-		this.customerName = customerName;
 	}
 
 	public TextField getCustomerLineId() {
 		return customerLineId;
 	}
 
-	public void setCustomerLineId(TextField customerLineId) {
-		this.customerLineId = customerLineId;
-	}
-
 	public TextField getCustomerHkid() {
 		return customerHkid;
-	}
-
-	public void setCustomerHkid(TextField customerHkid) {
-		this.customerHkid = customerHkid;
 	}
 
 	public TextField getCustomerPhone() {
 		return customerPhone;
 	}
 
-	public void setCustomerPhone(TextField customerPhone) {
-		this.customerPhone = customerPhone;
-	}
-
 	public TextField getCustomerAge() {
 		return customerAge;
-	}
-
-	public void setCustomerAge(TextField customerAge) {
-		this.customerAge = customerAge;
 	}
 
 	public Button getCreateNewCustomerButton() {
 		return createNewCustomerButton;
 	}
 
-	public void setCreateNewCustomerButton(Button createNewCustomerButton) {
-		this.createNewCustomerButton = createNewCustomerButton;
-	}
-
 	public Button getEditCustomerButton() {
 		return editCustomerButton;
-	}
-
-	public void setEditCustomerButton(Button editCustomerButton) {
-		this.editCustomerButton = editCustomerButton;
 	}
 
 	public Button getViewCustomerBookingsButton() {
 		return viewCustomerBookingsButton;
 	}
 
-	public void setViewCustomerBookingsButton(Button viewCustomerBookingsButton) {
-		this.viewCustomerBookingsButton = viewCustomerBookingsButton;
-	}
-
 	public Button getSubwindowConfirmCreateCustomer() {
 		return subwindowConfirmCreateCustomer;
 	}
 
-	public void setSubwindowConfirmCreateCustomer(Button subwindowConfirmCreateCustomer) {
-		this.subwindowConfirmCreateCustomer = subwindowConfirmCreateCustomer;
-	}
 }

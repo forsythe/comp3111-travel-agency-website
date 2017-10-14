@@ -24,7 +24,7 @@ import comp3111.repo.CustomerOfferingRepository;
 @SpringComponent
 @UIScope
 public class CustomerOfferingEditor extends VerticalLayout {
-	private static final Logger log = LoggerFactory.getLogger(TourEditor.class);
+	private static final Logger log = LoggerFactory.getLogger(CustomerOfferingEditor.class);
 	
 	/* Action buttons */
 	HorizontalLayout rowOfButtons = new HorizontalLayout();
@@ -62,15 +62,14 @@ public class CustomerOfferingEditor extends VerticalLayout {
 			public void selectionChange(SelectionEvent event) {
 				Collection<CustomerOffering> selectedItems = customerOfferingGrid.getSelectionModel().getSelectedItems();
 				selectedCustomerOffering = null;
-				for (CustomerOffering rt : selectedItems) { // easy way to get first element of set
-					selectedCustomerOffering = rt;
+				for (CustomerOffering rc : selectedItems) { // easy way to get first element of set
+					selectedCustomerOffering = rc;
 					break;
 				}
 				if (selectedCustomerOffering != null) {
 					editBookingButton.setEnabled(true);
 					createBookingButton.setEnabled(false);
 				} else {
-					selectedCustomerOffering = null;
 					editBookingButton.setEnabled(false);
 					createBookingButton.setEnabled(true);
 				}

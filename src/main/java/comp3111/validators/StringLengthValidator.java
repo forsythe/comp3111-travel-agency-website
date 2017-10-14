@@ -1,15 +1,15 @@
 package comp3111.validators;
 
-import java.util.IllegalFormatException;
-
 import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
 
+/* Validates if a string is within a certain length, number inclusive*/
 public class StringLengthValidator implements Validator<String> {
-	private final int maxLength = 255;
+	private int maxLength;
 
-	public StringLengthValidator() {
+	public StringLengthValidator(int maxLength) {
+		this.maxLength = maxLength;
 	}
 
 	@Override
@@ -20,7 +20,7 @@ public class StringLengthValidator implements Validator<String> {
 		} catch (Exception e) {
 			return ValidationResult.error("Something went wrong");
 		}
-		return ValidationResult.error("The string must be <= 255 characters");
+		return ValidationResult.error("The string must be <= " + maxLength + " characters");
 
 	}
 }

@@ -18,7 +18,7 @@ import comp3111.presenter.TourGuidesEditor;
 @SpringView(name = TourGuidesManagementView.VIEW_NAME)
 public class TourGuidesManagementView extends VerticalLayout implements View {
 	public static final String VIEW_NAME = "tourGuidesManagement";
-	private static final Logger log = LoggerFactory.getLogger(CustomersManagementView.class);
+	private static final Logger log = LoggerFactory.getLogger(TourGuidesManagementView.class);
 	
 	@Autowired
 	TourGuidesEditor tourGuidesEditor;

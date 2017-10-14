@@ -19,7 +19,7 @@ import comp3111.presenter.TourEditor;
 @SpringView(name = BookingsManagementView.VIEW_NAME)
 public class BookingsManagementView extends VerticalLayout implements View {
 	public static final String VIEW_NAME = "bookingsManagement";
-	private static final Logger log = LoggerFactory.getLogger(TourManagementView.class);
+	private static final Logger log = LoggerFactory.getLogger(BookingsManagementView.class);
 	
 	@Autowired
 	CustomerOfferingEditor customerOfferingEditor;

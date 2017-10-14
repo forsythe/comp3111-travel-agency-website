@@ -60,11 +60,11 @@ public class CustomerOffering implements Serializable, Persistable<Long> {
 	}
 
 	public String getCustomerName() {
-		return customer.getName();
+		return customer != null ? customer.getName() : null;
 	}
 	
 	public String getCustomerHkid() {
-		return customer.getHkid();
+		return customer != null ? customer.getHkid() : null;
 	}
 	
 	public Customer getCustomer() {
@@ -76,15 +76,25 @@ public class CustomerOffering implements Serializable, Persistable<Long> {
 	}
 
 	public Long getOfferingId() {
-		return getOffering().getId();
+		return getOffering() != null ? getOffering().getId() : null;
 	}
 	
 	public Long getTourId() {
-		return getOffering().getTour().getId();
+		if(getOffering() != null) {
+			if(getOffering().getTour() != null) {
+				return getOffering().getTour().getId();
+			}
+		}
+		return null;
 	}
 	
 	public String getTourName() {
-		return getOffering().getTour().getTourName();
+		if(getOffering() != null) {
+			if(getOffering().getTour() != null) {
+				return getOffering().getTour().getTourName();
+			}
+		}
+		return null;
 	}
 	
 	public Offering getOffering() {
