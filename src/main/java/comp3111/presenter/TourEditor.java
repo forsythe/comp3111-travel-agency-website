@@ -54,6 +54,9 @@ import comp3111.validators.ValidatorFactory;
 public class TourEditor extends VerticalLayout {
 	private static final Logger log = LoggerFactory.getLogger(TourEditor.class);
 
+	/* the popup "Create tour" window */
+	private Window createTourSubwindow;
+
 	/* Fields to edit properties in Tour entity */
 	private TextField tourName;
 	private TextField days;
@@ -64,14 +67,13 @@ public class TourEditor extends VerticalLayout {
 	private TextField toddlerDiscount;
 	private TextField weekdayPrice;
 	private TextField weekendPrice;
-	private TextArea description;
+	private TextArea descrip;
 
 	/* Action buttons */
 	HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createTourButton = new Button("Create new tour");
 	private Button editTourButton = new Button("Edit tour");
 	private Button manageOfferingButton = new Button("Manage offerings for selected tour");
-
 	/* subwindow action buttons */
 	private Button subwindowConfirmCreateTour;
 
@@ -192,10 +194,11 @@ public class TourEditor extends VerticalLayout {
 		toddlerDiscount = new TextField("Toddler Discount Multiplier");
 		weekdayPrice = new TextField("Weekday Price");
 		weekendPrice = new TextField("Weekend Price");
-		description = new TextArea("Description");
+		descrip = new TextArea("Description");
 
+		createTourSubwindow = new Window("Create new tour");
 		FormLayout subContent = new FormLayout();
-		Window createTourSubwindow = new Window("Create new tour");
+
 		createTourSubwindow.setWidth("40%");
 		createTourSubwindow.setContent(subContent);
 		createTourSubwindow.center();
@@ -213,7 +216,7 @@ public class TourEditor extends VerticalLayout {
 		subContent.addComponent(toddlerDiscount);
 		subContent.addComponent(weekdayPrice);
 		subContent.addComponent(weekendPrice);
-		subContent.addComponent(description);
+		subContent.addComponent(descrip);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
 		buttonActions.addComponent(subwindowConfirmCreateTour);
@@ -295,8 +298,8 @@ public class TourEditor extends VerticalLayout {
 				log.info("errorMsgs.size() is [{}]", errorMsgs.size());
 
 				if (errorMsgs.size() == 0) {
-					Tour newTour = new Tour(tourName.getValue(), description.getValue(),
-							Integer.parseInt(days.getValue()), Double.parseDouble(childDiscount.getValue()),
+					Tour newTour = new Tour(tourName.getValue(), descrip.getValue(), Integer.parseInt(days.getValue()),
+							Double.parseDouble(childDiscount.getValue()),
 							Double.parseDouble(toddlerDiscount.getValue()), Integer.parseInt(weekdayPrice.getValue()),
 							Integer.parseInt(weekendPrice.getValue()));
 
@@ -315,7 +318,7 @@ public class TourEditor extends VerticalLayout {
 					toddlerDiscount.clear();
 					weekdayPrice.clear();
 					weekendPrice.clear();
-					description.clear();
+					descrip.clear();
 					/* bug in vaadin: need to force the grid to update cosmetically */
 					tourCollectionCached.add(tourRepo.save(newTour));
 					tourGrid.setItems(tourCollectionCached);
@@ -369,36 +372,72 @@ public class TourEditor extends VerticalLayout {
 	// getSave().addClickListener(e -> h.onChange());
 	// getDelete().addClickListener(e -> h.onChange());
 	// }
+	public Window getCreateTourSubwindow() {
+		return createTourSubwindow;
+	}
 
-	public TextField getName() {
+	public TextField getTourName() {
 		return tourName;
 	}
 
-	public void setName(TextField name) {
-		this.tourName = name;
+	public TextField getDays() {
+		return days;
+	}
+
+	public RadioButtonGroup<String> getTourType() {
+		return tourType;
+	}
+
+	public CheckBoxGroup<String> getAllowedDaysOfWeek() {
+		return allowedDaysOfWeek;
+	}
+
+	public TextField getAllowedDates() {
+		return allowedDates;
+	}
+
+	public TextField getChildDiscount() {
+		return childDiscount;
+	}
+
+	public TextField getToddlerDiscount() {
+		return toddlerDiscount;
+	}
+
+	public TextField getWeekdayPrice() {
+		return weekdayPrice;
+	}
+
+	public TextField getWeekendPrice() {
+		return weekendPrice;
+	}
+
+	public TextArea getDescrip() {
+		return descrip;
 	}
 
 	public Button getCreateTourButton() {
 		return createTourButton;
 	}
 
-	public void setCreateTourButton(Button createTourButton) {
-		this.createTourButton = createTourButton;
-	}
-
 	public Button getEditTourButton() {
 		return editTourButton;
-	}
-
-	public void setEditTourButton(Button editTourButton) {
-		this.editTourButton = editTourButton;
 	}
 
 	public Button getManageOfferingButton() {
 		return manageOfferingButton;
 	}
 
-	public void setManageOfferingButton(Button manageOfferingButton) {
-		this.manageOfferingButton = manageOfferingButton;
+	public Button getSubwindowConfirmCreateTour() {
+		return subwindowConfirmCreateTour;
 	}
+
+	public Grid<Tour> getTourGrid() {
+		return tourGrid;
+	}
+
+	public Tour getSelectedTour() {
+		return selectedTour;
+	}
+
 }
