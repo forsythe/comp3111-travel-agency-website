@@ -95,4 +95,48 @@ public class Utils {
 		else
 			return -1;
 	}
+
+	public static Boolean containsIgnoreCase(String fullString, String search) {
+		return fullString.toLowerCase().contains(search.toLowerCase());
+	}
+
+	public static String simpleDateFormat(Date d) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		return sdf.format(d);
+	}
+
+	public static Boolean safeParseIntEquals(int val, String s) {
+		try {
+			if (Integer.parseInt(s) == val) {
+				return true;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return false;
+	}
+
+	public static Boolean safeParseLongEquals(Long val, String s) {
+		try {
+			if (Long.parseLong(s) == val) {
+				return true;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return false;
+	}
+
+	public static Boolean safeParseDoubleEquals(Double val, String s) {
+		try {
+			if (Double.parseDouble(s) == val) {
+				return true;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return false;
+	}
+
+
 }

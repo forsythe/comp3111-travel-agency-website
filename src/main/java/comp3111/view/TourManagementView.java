@@ -45,5 +45,8 @@ public class TourManagementView extends VerticalLayout implements View {
 	// called AFTER init()
 	public void enter(ViewChangeEvent event) {
 		// This view is constructed in the init() method()
+		//everytime we enter this page, we want to update the data in the grid
+		this.tourEditor.refreshData();
+
 	}
 }

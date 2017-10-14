@@ -104,6 +104,15 @@ public class Tour implements Persistable<Long> {
 		return offerings;
 	}
 
+	public String getOfferingsString() {
+		String ans = "[";
+
+		for (Offering x : offerings) {
+			ans += x.toString() + ", ";
+		}
+		return ans.substring(0, ans.length() - 2) + "]";
+	}
+
 	public void setOfferings(Collection<Offering> offerings) {
 		this.offerings = offerings;
 	}
@@ -127,6 +136,13 @@ public class Tour implements Persistable<Long> {
 			return this.getFormattedAllowedDaysOfWeek();
 	}
 
+	public String getOfferingAvailabilityString() {
+		if (!allowedDates.isEmpty())
+			return this.getFormattedAllowedDates().toString();
+		else
+			return this.getFormattedAllowedDaysOfWeek().toString();
+	}
+
 	public void setAllowedDaysOfWeek(Collection<Integer> allowedDaysOfWeek) {
 		this.allowedDaysOfWeek = allowedDaysOfWeek;
 	}
@@ -138,8 +154,7 @@ public class Tour implements Persistable<Long> {
 	private ArrayList<String> getFormattedAllowedDates() {
 		ArrayList<String> ans = new ArrayList<>();
 		for (Date day : allowedDates) {
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-			ans.add(sdf.format(day));
+			ans.add(Utils.simpleDateFormat(day));
 		}
 		return ans;
 	}
