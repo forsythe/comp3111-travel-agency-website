@@ -1,5 +1,7 @@
 package comp3111.presenter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -12,13 +14,23 @@ import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid.SelectionMode;
 
 import comp3111.model.Customer;
+import comp3111.model.Tour;
 import comp3111.repo.CustomerRepository;
+import comp3111.repo.TourRepository;
+import comp3111.validators.Utils;
+import comp3111.validators.ValidatorFactory;
 
 /**
  * A simple example to introduce building forms. As your real application is
@@ -35,11 +47,23 @@ import comp3111.repo.CustomerRepository;
 public class CustomerEditor extends VerticalLayout {
 	private static final Logger log = LoggerFactory.getLogger(TourEditor.class);
 	
+	private Window createCustomerSubwindow;
+	
+	/* Fields to edit properties in Tour entity */
+	private TextField customerName;
+	private TextField customerLineId;
+	private TextField customerHkid;
+	private TextField customerPhone;
+	private TextField customerAge;
+	
+	/* action buttons */
 	HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createNewCustomerButton = new Button("Create new customer");
 	private Button editCustomerButton = new Button("Edit customer");
 	private Button viewCustomerBookingsButton = new Button("View bookings made by customer");
 	
+	/* subwindow action buttons */
+	private Button subwindowConfirmCreateCustomer;
 	
 	Grid<Customer> customersGrid = new Grid<Customer>(Customer.class);
 	
@@ -98,5 +122,198 @@ public class CustomerEditor extends VerticalLayout {
 		customersGrid.setColumnOrder("id", "name", "lineId", "hkid", "phone", "age");
 		
 		this.addComponent(customersGrid);
+		
+		createNewCustomerButton.addClickListener(new ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+				getUI().getCurrent().addWindow(getCreateCustomerWindow(customerRepo, customerCollectionCached));
+			}
+
+		});
+	}
+	
+	private Window getCreateCustomerWindow(CustomerRepository customerRepo, Collection<Customer> customerCollectionCached) {
+		subwindowConfirmCreateCustomer = new Button("Confirm");
+		
+		customerName = new TextField("Customer Name");
+		customerLineId = new TextField("Customer Line Id");
+		customerHkid = new TextField("Customer HKID");
+		customerPhone = new TextField("Customer Phone");
+		customerAge = new TextField("Customer Age");
+		
+		createCustomerSubwindow = new Window("Create new customer");
+		FormLayout subContent = new FormLayout();
+		
+		createCustomerSubwindow.setWidth("800px");
+		
+		createCustomerSubwindow.setContent(subContent);
+		createCustomerSubwindow.center();
+		createCustomerSubwindow.setClosable(false);
+		createCustomerSubwindow.setModal(true);
+		createCustomerSubwindow.setResizable(false);
+		createCustomerSubwindow.setDraggable(false);
+		
+		subContent.addComponent(customerName);
+		subContent.addComponent(customerLineId);
+		subContent.addComponent(customerHkid);
+		subContent.addComponent(customerPhone);
+		subContent.addComponent(customerAge);
+		
+		HorizontalLayout buttonActions = new HorizontalLayout();
+		buttonActions.addComponent(subwindowConfirmCreateCustomer);
+		buttonActions.addComponent(new Button("Cancel", event -> createCustomerSubwindow.close()));
+		subContent.addComponent(buttonActions);
+		
+		customerName.setRequiredIndicatorVisible(true);
+		customerLineId.setRequiredIndicatorVisible(true);
+		customerHkid.setRequiredIndicatorVisible(true);
+		customerPhone.setRequiredIndicatorVisible(true);
+		customerAge.setRequiredIndicatorVisible(true);
+		
+		Utils.addValidator(customerName, ValidatorFactory.getStringLengthValidator());
+		Utils.addValidator(customerLineId, ValidatorFactory.getStringLengthValidator());
+		Utils.addValidator(customerHkid, ValidatorFactory.getStringLengthValidator());
+		Utils.addValidator(customerPhone, ValidatorFactory.getStringLengthValidator());
+		Utils.addValidator(customerAge, ValidatorFactory.getStringLengthValidator());
+		Utils.addValidator(customerAge, ValidatorFactory.getIntegerLowerBoundValidator(0));
+
+		subwindowConfirmCreateCustomer.addClickListener(new ClickListener() {
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				ArrayList<String> errorMsgs = new ArrayList<String>();
+				ArrayList<TextField> nonNullableComponents = new ArrayList<TextField>();
+				nonNullableComponents.addAll(
+						Arrays.asList(customerName, customerLineId, customerHkid, customerPhone, customerAge ));
+				
+				for (TextField field : nonNullableComponents) {
+					if (field.isEmpty()) {
+						log.info(field.getCaption() + ": cannot be empty");
+						errorMsgs.add(field.getCaption() + ": cannot be empty");
+					}
+				}
+				
+				ArrayList<TextField> fieldsWithValidators = new ArrayList<TextField>();
+				fieldsWithValidators.addAll(
+						Arrays.asList(customerName, customerLineId, customerHkid, customerPhone, customerAge ));
+				
+				for (TextField field : fieldsWithValidators) {
+					if (field.getErrorMessage() != null) {
+						log.info(field.getCaption() + ": " + field.getErrorMessage().toString());
+						errorMsgs.add(field.getCaption() + ": " + field.getErrorMessage().toString());
+					}
+				}
+				
+				log.info("errorMsgs.size() is [{}]", errorMsgs.size());
+
+				if (errorMsgs.size() == 0) {
+					Customer newCustomer = new Customer(customerName.getValue(), 
+							customerLineId.getValue(), customerPhone.getValue(), 
+							Integer.parseInt(customerAge.getValue()), customerHkid.getValue());
+					
+					log.info("Saved a new customer [{}] successfully", customerName.getValue());
+					customerName.clear();
+					customerLineId.clear();
+					customerHkid.clear();
+					customerAge.clear();
+					customerPhone.clear();
+					
+					customerCollectionCached.add(customerRepo.save(newCustomer));
+					customersGrid.setItems(customerCollectionCached);
+					createCustomerSubwindow.close();
+				} else {
+					String errorString = "";
+					for (String err : errorMsgs) {
+						errorString += err + "\n";
+					}
+					Notification.show("Could not create customer!", errorString, Notification.TYPE_ERROR_MESSAGE);
+				}
+			}
+		});
+		return createCustomerSubwindow;
+	}
+	
+	public interface ChangeHandler {
+		void onChange();
+	}
+	
+	public Window getCreateCustomerSubwindow() {
+		return createCustomerSubwindow;
+	}
+
+	public void setCreateCustomerSubwindow(Window createCustomerSubwindow) {
+		this.createCustomerSubwindow = createCustomerSubwindow;
+	}
+
+	public TextField getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(TextField customerName) {
+		this.customerName = customerName;
+	}
+
+	public TextField getCustomerLineId() {
+		return customerLineId;
+	}
+
+	public void setCustomerLineId(TextField customerLineId) {
+		this.customerLineId = customerLineId;
+	}
+
+	public TextField getCustomerHkid() {
+		return customerHkid;
+	}
+
+	public void setCustomerHkid(TextField customerHkid) {
+		this.customerHkid = customerHkid;
+	}
+
+	public TextField getCustomerPhone() {
+		return customerPhone;
+	}
+
+	public void setCustomerPhone(TextField customerPhone) {
+		this.customerPhone = customerPhone;
+	}
+
+	public TextField getCustomerAge() {
+		return customerAge;
+	}
+
+	public void setCustomerAge(TextField customerAge) {
+		this.customerAge = customerAge;
+	}
+
+	public Button getCreateNewCustomerButton() {
+		return createNewCustomerButton;
+	}
+
+	public void setCreateNewCustomerButton(Button createNewCustomerButton) {
+		this.createNewCustomerButton = createNewCustomerButton;
+	}
+
+	public Button getEditCustomerButton() {
+		return editCustomerButton;
+	}
+
+	public void setEditCustomerButton(Button editCustomerButton) {
+		this.editCustomerButton = editCustomerButton;
+	}
+
+	public Button getViewCustomerBookingsButton() {
+		return viewCustomerBookingsButton;
+	}
+
+	public void setViewCustomerBookingsButton(Button viewCustomerBookingsButton) {
+		this.viewCustomerBookingsButton = viewCustomerBookingsButton;
+	}
+
+	public Button getSubwindowConfirmCreateCustomer() {
+		return subwindowConfirmCreateCustomer;
+	}
+
+	public void setSubwindowConfirmCreateCustomer(Button subwindowConfirmCreateCustomer) {
+		this.subwindowConfirmCreateCustomer = subwindowConfirmCreateCustomer;
 	}
 }

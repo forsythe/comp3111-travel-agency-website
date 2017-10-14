@@ -40,6 +40,8 @@ public class TourGuidesEditor extends VerticalLayout {
 	private TextField tourGuideName;
 	private TextField tourGuideLineId;
 	
+	Window createTourGuideSubwindow;
+	
 	HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createTourGuideButton = new Button("Create new tour guide");
 	private Button editTourGuideButton = new Button("Edit tour guide");
@@ -120,8 +122,10 @@ public class TourGuidesEditor extends VerticalLayout {
 		tourGuideName = new TextField("Name");
 		tourGuideLineId = new TextField("Line Id");
 		
+		
+		createTourGuideSubwindow = new Window("Create new tour guide");
+		
 		FormLayout subContent = new FormLayout();
-		Window createTourGuideSubwindow = new Window("Create new tour guide");
 		createTourGuideSubwindow.setWidth("800px");
 		createTourGuideSubwindow.setContent(subContent);
 		createTourGuideSubwindow.center();
@@ -200,6 +204,30 @@ public class TourGuidesEditor extends VerticalLayout {
 		void onChange();
 	}
 	
+	public TextField getTourGuideName() {
+		return tourGuideName;
+	}
+
+	public void setTourGuideName(TextField tourGuideName) {
+		this.tourGuideName = tourGuideName;
+	}
+
+	public TextField getTourGuideLineId() {
+		return tourGuideLineId;
+	}
+
+	public void setTourGuideLineId(TextField tourGuideLineId) {
+		this.tourGuideLineId = tourGuideLineId;
+	}
+
+	public Button getSubwindowConfirmCreateTourGuide() {
+		return subwindowConfirmCreateTourGuide;
+	}
+
+	public void setSubwindowConfirmCreateTourGuide(Button subwindowConfirmCreateTourGuide) {
+		this.subwindowConfirmCreateTourGuide = subwindowConfirmCreateTourGuide;
+	}
+
 	public Button getCreateTourGuideButton() {
 		return createTourGuideButton;
 	}

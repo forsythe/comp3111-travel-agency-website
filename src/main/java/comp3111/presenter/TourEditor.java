@@ -198,8 +198,7 @@ public class TourEditor extends VerticalLayout {
 
 		createTourSubwindow = new Window("Create new tour");
 		FormLayout subContent = new FormLayout();
-
-		Window createTourSubwindow = new Window("Create new tour");
+		
 		createTourSubwindow.setWidth("800px");
 
 		createTourSubwindow.setContent(subContent);
