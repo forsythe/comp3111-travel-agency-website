@@ -15,7 +15,7 @@ public class StringLengthValidator implements Validator<String> {
 	@Override
 	public ValidationResult apply(String value, ValueContext context) {
 		try {
-			if(value.length() <= 255)
+			if(value.length() <= maxLength)
 				return ValidationResult.ok();
 		} catch (Exception e) {
 			return ValidationResult.error("Something went wrong");
