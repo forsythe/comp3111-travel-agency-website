@@ -105,6 +105,9 @@ public class Tour implements Persistable<Long> {
 	}
 
 	public String getOfferingsString() {
+		if (offerings.isEmpty())
+			return "[]";
+
 		String ans = "[";
 
 		for (Offering x : offerings) {
