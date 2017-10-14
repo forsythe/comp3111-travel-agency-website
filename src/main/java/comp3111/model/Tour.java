@@ -56,15 +56,12 @@ public class Tour implements Persistable<Long> {
 	public Tour() {
 	}
 
-	public Tour(String tourName, String description, int days, Collection<Integer> allowedDaysOfWeek,
-			Collection<Date> allowedDates, double childDiscount, double toddlerDiscount, int weekdayPrice,
-			int weekendPrice) {
+	public Tour(String tourName, String description, int days, double childDiscount, double toddlerDiscount,
+			int weekdayPrice, int weekendPrice) {
 		super();
 		this.tourName = tourName;
 		this.description = description;
 		this.days = days;
-		this.allowedDaysOfWeek = allowedDaysOfWeek;
-		this.allowedDates = allowedDates;
 		this.childDiscount = childDiscount;
 		this.toddlerDiscount = toddlerDiscount;
 		this.weekdayPrice = weekdayPrice;
