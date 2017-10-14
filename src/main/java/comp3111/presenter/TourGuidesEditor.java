@@ -176,7 +176,7 @@ public class TourGuidesEditor extends VerticalLayout {
 				if (errorMsgs.size() == 0) {
 					TourGuide newTourGuide = new TourGuide(tourGuideName.getValue(), tourGuideLineId.getValue());
 				
-					log.info("Saved a new tour [{}] successfully", tourGuideName.getValue());
+					log.info("Saved a new tour guide [{}] successfully", tourGuideName.getValue());
 					tourGuideName.clear();
 					tourGuideLineId.clear();
 					
@@ -188,7 +188,7 @@ public class TourGuidesEditor extends VerticalLayout {
 					for (String err : errorMsgs) {
 						errorString += err + "\n";
 					}
-					Notification.show("Could not create tour!", errorString, Notification.TYPE_ERROR_MESSAGE);
+					Notification.show("Could not create tour guide!", errorString, Notification.TYPE_ERROR_MESSAGE);
 				}			
 			}
 		});

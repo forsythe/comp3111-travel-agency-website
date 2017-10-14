@@ -27,6 +27,7 @@ import comp3111.repo.LoginUserRepository;
 import comp3111.repo.OfferingRepository;
 import comp3111.repo.TourGuideRepository;
 import comp3111.repo.TourRepository;
+import comp3111.validators.Utils;
 
 @Component
 public class ActionManager {
@@ -54,17 +55,29 @@ public class ActionManager {
 
 		// check that the day of week is correct
 		Collection<Integer> supportedDaysOfWeek = tour.getAllowedDaysOfWeek();
-		if (null != supportedDaysOfWeek) {
+		if (!supportedDaysOfWeek.isEmpty()) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(startDate);
 			int startDateDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
 			// Sunday: 1, Monday: 2, Tuesday: 3...
+			log.info("For offering for tour[{}], proposed startDate = [{}]", tour.getTourName(),
+					Utils.dayToString(startDateDayOfWeek));
 			if (!supportedDaysOfWeek.contains(startDateDayOfWeek)) {
+				log.error("Error! only the following days are supported");
+				for (Integer i : supportedDaysOfWeek) {
+					log.error("\t[{}]", Utils.dayToString(i));
+				}
+
 				throw new OfferingDayOfWeekUnsupportedException();
 			}
 		}
 		Collection<Date> supportedDates = tour.getAllowedDates();
-		if (null != supportedDates && !supportedDates.contains(startDate)) {
+		log.info("For offering for tour[{}], proposed startDate is [{}]", tour.getTourName(), startDate);
+		if (!supportedDates.isEmpty() && !supportedDates.contains(startDate)) {
+			log.error("Error! only the following dates are supported");
+			for (Date d : supportedDates) {
+				log.error("\t[{}]", d);
+			}
 			throw new OfferingDateUnsupportedException();
 		}
 		for (Offering of : tg.getGuidedOfferings()) {
@@ -76,18 +89,18 @@ public class ActionManager {
 
 		}
 
-		Offering o = new Offering(tour, tg, startDate, hotelName, minCustomers, maxCustomers);
+		Offering o = offeringRepo.save(new Offering(tour, tg, startDate, hotelName, minCustomers, maxCustomers));
 
 		tour.addOffering(o);
+		tg.getGuidedOfferings().add(o);
 		o.setTour(tour);
 		o.setTourGuide(tg);
-		tg.getGuidedOfferings().add(o);
 
 		tourRepo.save(tour);
 		tourGuideRepo.save(tg);
 
 		log.info("successfully created offering on [{}] for tour [{}]", startDate, tour.getTourName());
-		return offeringRepo.save(o);
+		return o;
 
 	}
 
@@ -95,8 +108,9 @@ public class ActionManager {
 	// /*
 	// * will save or update the offering and customer into db
 	// */
-	public void createBookingForOffering(Offering o, Customer c, int numAdults, int numChildren, int numToddlers,
-			double amountPaid, String specialRequests, String paymentStatus) throws OfferingOutOfRoomException {
+	public CustomerOffering createBookingForOffering(Offering o, Customer c, int numAdults, int numChildren,
+			int numToddlers, double amountPaid, String specialRequests, String paymentStatus)
+			throws OfferingOutOfRoomException {
 		int totalWantToJoin = numAdults + numChildren + numToddlers;
 		int spotsTaken = 0;
 		for (CustomerOffering rec : o.getCustomerOffering()) {
@@ -107,12 +121,10 @@ public class ActionManager {
 			throw new OfferingOutOfRoomException();
 		}
 
-		CustomerOffering bookingRecord = new CustomerOffering(c, o, numAdults, numChildren, numToddlers, amountPaid,
-				specialRequests, paymentStatus);
 		// save the customerOffering first, which will automatically save offering and
 		// customer (IMPORTANT)
-		customerOfferingRepo.save(bookingRecord);
-
+		CustomerOffering bookingRecord = customerOfferingRepo.save(new CustomerOffering(c, o, numAdults, numChildren,
+				numToddlers, amountPaid, specialRequests, paymentStatus));
 		o.getCustomerOffering().add(bookingRecord);
 		c.getCustomerOffering().add(bookingRecord);
 
@@ -121,6 +133,9 @@ public class ActionManager {
 		// customerRepo.save(c);
 		log.info("customer [{}] succesfully made a booking for tour [{}], offering [{}]", c.getName(),
 				o.getTour().getTourName(), o.getStartDate());
+
+		return bookingRecord;
+
 	}
 
 	public void deleteAll() {

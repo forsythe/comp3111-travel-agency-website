@@ -49,7 +49,7 @@ public class Authentication {
 	void ensureAdminHasAccount() {
 		LoginUser user = loginUserRepository.findByUsername("admin");
 		if (null == user) {
-			log.info("admin didn't have an acconut, so we made one");
+			log.info("admin didn't have an account, so we made one");
 			loginUserRepository.save(new LoginUser("admin", "Q1w2e3r4"));
 		}
 	}
