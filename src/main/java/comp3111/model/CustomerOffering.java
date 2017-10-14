@@ -59,6 +59,14 @@ public class CustomerOffering implements Serializable, Persistable<Long> {
 		this.id = id;
 	}
 
+	public String getCustomerName() {
+		return customer.getName();
+	}
+	
+	public String getCustomerHkid() {
+		return customer.getHkid();
+	}
+	
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -67,6 +75,18 @@ public class CustomerOffering implements Serializable, Persistable<Long> {
 		this.customer = customer;
 	}
 
+	public Long getOfferingId() {
+		return getOffering().getId();
+	}
+	
+	public Long getTourId() {
+		return getOffering().getTour().getId();
+	}
+	
+	public String getTourName() {
+		return getOffering().getTour().getTourName();
+	}
+	
 	public Offering getOffering() {
 		return offering;
 	}
@@ -75,6 +95,10 @@ public class CustomerOffering implements Serializable, Persistable<Long> {
 		this.offering = offering;
 	}
 
+	public String getPeople() {
+		return (this.getNumAdults() + ", " + this.getNumChildren() + ", " + this.getNumToddlers());
+	}
+	
 	public int getNumAdults() {
 		return numAdults;
 	}

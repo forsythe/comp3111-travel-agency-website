@@ -1,18 +1,21 @@
 package comp3111.presenter;
 
+import java.util.Collection;
+import java.util.HashSet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.server.FontAwesome;
+import com.vaadin.event.selection.SelectionEvent;
+import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.ui.Grid.SelectionMode;
 
 import comp3111.model.Customer;
 import comp3111.repo.CustomerRepository;
@@ -30,125 +33,70 @@ import comp3111.repo.CustomerRepository;
 @SpringComponent
 @UIScope
 public class CustomerEditor extends VerticalLayout {
-
-	private final CustomerRepository repository;
-
-	/**
-	 * The currently edited customer
-	 */
-	private Customer customer;
-
-	/* Fields to edit properties in Customer entity */
-	private TextField name = new TextField("name");
-	private TextField age = new TextField("age");
-
-	/* Action buttons */
-	private Button save = new Button("Save", FontAwesome.SAVE);
-	Button cancel = new Button("Cancel");
-	private Button delete = new Button("Delete", FontAwesome.TRASH_O);
-
-	CssLayout actions = new CssLayout(getSave(), cancel, getDelete());
-
-	Binder<Customer> binder = new Binder<>(Customer.class);
-
+	private static final Logger log = LoggerFactory.getLogger(TourEditor.class);
+	
+	HorizontalLayout rowOfButtons = new HorizontalLayout();
+	private Button createNewCustomerButton = new Button("Create new customer");
+	private Button editCustomerButton = new Button("Edit customer");
+	private Button viewCustomerBookingsButton = new Button("View bookings made by customer");
+	
+	
+	Grid<Customer> customersGrid = new Grid<Customer>(Customer.class);
+	
+	Customer selectedCustomer;
+	
+	@SuppressWarnings("unchecked")
 	@Autowired
-	public CustomerEditor(CustomerRepository repository) {
-		this.repository = repository;
-
-		addComponents(getName(), getAge(), actions);
-
-		// bind using naming convention
-		//binder.bindInstanceFields(this); can't use this
-
-		// age is a string here, but is an int in Customer.class
-		binder.forField(age).withNullRepresentation("")
-				.withConverter(new StringToIntegerConverter(Integer.valueOf(0), "integers only"))
-				.bind(Customer::getAge, Customer::setAge);
+	public CustomerEditor(CustomerRepository customerRepo) {
+		// adding components
+		rowOfButtons.addComponent(createNewCustomerButton);
+		rowOfButtons.addComponent(editCustomerButton);
+		rowOfButtons.addComponent(viewCustomerBookingsButton);
 		
-		binder.forField(name).bind(Customer::getName, Customer::setName);
+		//Shouldn't be enabled unless selected
+		editCustomerButton.setEnabled(false);
+		viewCustomerBookingsButton.setEnabled(false);
+		
+		//Render component
+		this.addComponent(rowOfButtons);
+		
+		//Get from DB
+		Iterable<Customer> customers = customerRepo.findAll();
+		Collection<Customer> customerCollectionCached = new HashSet<Customer>();
+		customers.forEach(customerCollectionCached::add);
+		customersGrid.setItems(customerCollectionCached);
 
-		// Configure and style components
-		setSpacing(true);
-		actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
-		getSave().setStyleName(ValoTheme.BUTTON_PRIMARY);
-		getSave().setClickShortcut(ShortcutAction.KeyCode.ENTER);
-
-		// wire action buttons to save, delete and reset
-		getSave().addClickListener(e -> repository.save(customer));
-		getDelete().addClickListener(e -> repository.delete(customer));
-		cancel.addClickListener(e -> editCustomer(customer));
-		setVisible(false);
+		customersGrid.setWidth("100%");
+		customersGrid.setSelectionMode(SelectionMode.SINGLE);
+		
+		customersGrid.addSelectionListener(new SelectionListener<Customer>() {
+			@Override
+			public void selectionChange(SelectionEvent event) {
+				Collection<Customer> selectedItems = 
+						customersGrid.getSelectionModel().getSelectedItems();
+				selectedCustomer = null;
+				for (Customer rt : selectedItems) { // easy way to get first element of set
+					selectedCustomer = rt;
+					break;
+				}
+				if (selectedCustomer != null) {
+					editCustomerButton.setEnabled(true);
+					viewCustomerBookingsButton.setEnabled(true);
+					createNewCustomerButton.setEnabled(false);
+				} else {
+					selectedCustomer = null;
+					editCustomerButton.setEnabled(false);
+					viewCustomerBookingsButton.setEnabled(false);
+					createNewCustomerButton.setEnabled(true);
+				}
+			}
+		});
+		
+		customersGrid.removeColumn("new");
+		customersGrid.removeColumn("customerOffering");
+		
+		customersGrid.setColumnOrder("id", "name", "lineId", "hkid", "phone", "age");
+		
+		this.addComponent(customersGrid);
 	}
-
-	public interface ChangeHandler {
-
-		void onChange();
-	}
-
-	public final void editCustomer(Customer c) {
-		if (c == null) {
-			setVisible(false);
-			return;
-		}
-		final boolean persisted = c.getId() != null;
-		if (persisted) {
-			// Find fresh entity for editing
-			customer = repository.findOne(c.getId());
-		} else {
-			customer = c;
-		}
-		cancel.setVisible(persisted);
-
-		// Bind customer properties to similarly named fields
-		// Could also use annotation or "manual binding" or programmatically
-		// moving values from fields to entities before saving
-		binder.setBean(customer);
-
-		setVisible(true);
-
-		// A hack to ensure the whole form is visible
-		getSave().focus();
-		// Select all text in firstName field automatically
-		getName().selectAll();
-	}
-
-	public void setChangeHandler(ChangeHandler h) {
-		// ChangeHandler is notified when either save or delete
-		// is clicked
-		getSave().addClickListener(e -> h.onChange());
-		getDelete().addClickListener(e -> h.onChange());
-	}
-
-	public TextField getName() {
-		return name;
-	}
-
-	public void setFirstName(TextField firstName) {
-		this.name = firstName;
-	}
-
-	public TextField getAge() {
-		return age;
-	}
-
-	public void setAge(TextField age) {
-		this.age = age;
-	}
-
-	public Button getSave() {
-		return save;
-	}
-
-	public void setSave(Button save) {
-		this.save = save;
-	}
-
-	public Button getDelete() {
-		return delete;
-	}
-
-	public void setDelete(Button delete) {
-		this.delete = delete;
-	}
-
 }

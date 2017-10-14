@@ -196,7 +196,7 @@ public class TourEditor extends VerticalLayout {
 
 		FormLayout subContent = new FormLayout();
 		Window createTourSubwindow = new Window("Create new tour");
-		createTourSubwindow.setWidth("40%");
+		createTourSubwindow.setWidth("800px");
 		createTourSubwindow.setContent(subContent);
 		createTourSubwindow.center();
 		createTourSubwindow.setClosable(false);
@@ -249,13 +249,21 @@ public class TourEditor extends VerticalLayout {
 				}
 			}
 		});
-
+		
 		Utils.addValidator(days, ValidatorFactory.getIntegerLowerBoundValidator(0));
 		Utils.addValidator(allowedDates, ValidatorFactory.getListOfDatesValidator());
 		Utils.addValidator(childDiscount, ValidatorFactory.getDoubleRangeValidator(0, 1));
 		Utils.addValidator(toddlerDiscount, ValidatorFactory.getDoubleRangeValidator(0, 1));
 		Utils.addValidator(weekdayPrice, ValidatorFactory.getIntegerLowerBoundValidator(0));
 		Utils.addValidator(weekendPrice, ValidatorFactory.getIntegerLowerBoundValidator(0));
+		Utils.addValidator(tourName, ValidatorFactory.getStringLengthValidator());
+		Utils.addValidator(days, ValidatorFactory.getStringLengthValidator());
+		Utils.addValidator(allowedDates, ValidatorFactory.getStringLengthValidator());
+		Utils.addValidator(childDiscount, ValidatorFactory.getStringLengthValidator());
+		Utils.addValidator(toddlerDiscount, ValidatorFactory.getStringLengthValidator());
+		Utils.addValidator(weekdayPrice, ValidatorFactory.getStringLengthValidator());
+		Utils.addValidator(weekendPrice, ValidatorFactory.getStringLengthValidator());
+		Utils.addValidator(description, ValidatorFactory.getStringLengthValidator());
 
 		subwindowConfirmCreateTour.addClickListener(new ClickListener() {
 
@@ -284,8 +292,9 @@ public class TourEditor extends VerticalLayout {
 
 				ArrayList<TextField> fieldsWithValidators = new ArrayList<TextField>();
 				fieldsWithValidators.addAll(
-						Arrays.asList(days, allowedDates, childDiscount, toddlerDiscount, weekdayPrice, weekendPrice));
-
+						Arrays.asList(tourName, days, allowedDates, childDiscount, toddlerDiscount, 
+								weekdayPrice, weekendPrice));
+				
 				for (TextField field : fieldsWithValidators) {
 					if (field.getErrorMessage() != null) {
 						log.info(field.getCaption() + ": " + field.getErrorMessage().toString());
