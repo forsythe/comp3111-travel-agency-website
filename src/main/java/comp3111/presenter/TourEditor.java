@@ -198,8 +198,9 @@ public class TourEditor extends VerticalLayout {
 
 		createTourSubwindow = new Window("Create new tour");
 		FormLayout subContent = new FormLayout();
+		
+		createTourSubwindow.setWidth("800px");
 
-		createTourSubwindow.setWidth("40%");
 		createTourSubwindow.setContent(subContent);
 		createTourSubwindow.center();
 		createTourSubwindow.setClosable(false);
@@ -252,13 +253,15 @@ public class TourEditor extends VerticalLayout {
 				}
 			}
 		});
-
+		
 		Utils.addValidator(days, ValidatorFactory.getIntegerLowerBoundValidator(0));
 		Utils.addValidator(allowedDates, ValidatorFactory.getListOfDatesValidator());
 		Utils.addValidator(childDiscount, ValidatorFactory.getDoubleRangeValidator(0, 1));
 		Utils.addValidator(toddlerDiscount, ValidatorFactory.getDoubleRangeValidator(0, 1));
 		Utils.addValidator(weekdayPrice, ValidatorFactory.getIntegerLowerBoundValidator(0));
 		Utils.addValidator(weekendPrice, ValidatorFactory.getIntegerLowerBoundValidator(0));
+		Utils.addValidator(tourName, ValidatorFactory.getStringLengthValidator(255));
+		Utils.addValidator(descrip, ValidatorFactory.getStringLengthValidator(255));
 
 		subwindowConfirmCreateTour.addClickListener(new ClickListener() {
 
@@ -287,14 +290,21 @@ public class TourEditor extends VerticalLayout {
 
 				ArrayList<TextField> fieldsWithValidators = new ArrayList<TextField>();
 				fieldsWithValidators.addAll(
-						Arrays.asList(days, allowedDates, childDiscount, toddlerDiscount, weekdayPrice, weekendPrice));
-
+						Arrays.asList(tourName, days, allowedDates, childDiscount, toddlerDiscount, 
+								weekdayPrice, weekendPrice));
+				
 				for (TextField field : fieldsWithValidators) {
 					if (field.getErrorMessage() != null) {
 						log.info(field.getCaption() + ": " + field.getErrorMessage().toString());
 						errorMsgs.add(field.getCaption() + ": " + field.getErrorMessage().toString());
 					}
 				}
+				
+				if(descrip.getErrorMessage() != null) {
+					log.info(descrip.getCaption() + ": " + descrip.getErrorMessage().toString());
+					errorMsgs.add(descrip.getCaption() + ": " + descrip.getErrorMessage().toString());
+				}
+				
 				log.info("errorMsgs.size() is [{}]", errorMsgs.size());
 
 				if (errorMsgs.size() == 0) {
