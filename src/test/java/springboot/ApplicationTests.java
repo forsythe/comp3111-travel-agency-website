@@ -7,8 +7,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,8 @@ import comp3111.exceptions.OfferingDateUnsupportedException;
 import comp3111.exceptions.OfferingDayOfWeekUnsupportedException;
 import comp3111.exceptions.OfferingOutOfRoomException;
 import comp3111.exceptions.TourGuideUnavailableException;
-import comp3111.exceptions.UsernameTakenException;
 import comp3111.model.Customer;
+import comp3111.model.CustomerOffering;
 import comp3111.model.Offering;
 import comp3111.model.Tour;
 import comp3111.model.TourGuide;
@@ -52,64 +54,89 @@ public class ApplicationTests {
 	@Autowired
 	private ActionManager actionManager;
 
-	@Before
+	@Before // called before each test
 	public void setup() {
-		//// Customer c = new Customer("PLS WORK", 10);
-		//// customerRepo.save(c);
-		//// customerRepo.save(c);
-		// Collection<Customer> col = customerRepo.findByName("PLS WORK");
-		// Customer c = null;
-		// for (Customer cus : col) {
-		// c = cus;
-		// break;
-		// }
-		// c.setAge(20);
-		// CustomerOffering co = new CustomerOffering();
-		// co.setNumAdults(60);
-		// co.setCustomer(c);
-		// c.getCustomerOffering().add(co);
-		// //customerRepo.save(c);
-		// customerOfferingRepo.save(co);
+		actionManager.deleteAll();
+	}
 
-		// actionManager.deleteAll();
-		//
-		Customer peppaPig = new Customer("Peppa Pig", 35);
-		Customer emilyElephant = new Customer("Emily Elephant", 36);
-		customerRepo.save(emilyElephant);
+	@Test
+	public void testSuccessShouldHaveOneLoginUser() {
+		then(this.loginUserRepo.count()).isEqualTo(1);
+	}
 
-		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2,
-				Arrays.asList(Calendar.MONDAY, Calendar.SUNDAY), null, 0.8, 0, 499, 599);
-
-		Tour yangshanTour = new Tour("Yangshan", "Many hotsprings", 3, null,
-				Arrays.asList(new GregorianCalendar(2017, Calendar.DECEMBER, 9).getTime(),
-						new GregorianCalendar(2017, Calendar.DECEMBER, 12).getTime()),
-				0.8, 0.0, 599, 699);
-		tourRepo.save(yangshanTour);
-
+	@Test
+	public void testSuccessCreateOfferingAndBookingForUnsavedEntities() throws OfferingOutOfRoomException,
+			OfferingDateUnsupportedException, OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
 		TourGuide amber = new TourGuide("Amber", "LINEID123");
+		Customer peppaPig = new Customer("Peppa Pig", 35);
+		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
+		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.MONDAY, Calendar.SUNDAY)));
 
-		try {
+		// testing with unsaved offering object (peppaPig, shimenTour)
+		Offering shimenOffering = actionManager.createOfferingForTour(shimenTour, amber,
+				new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hotel chep", 4, 20);
+		CustomerOffering booking = actionManager.createBookingForOffering(shimenOffering, peppaPig, 5, 2, 3, 0,
+				"no smoking", "pending");
 
-			// testing with unsaved offering object (shimenTour, amber)
-			Offering shimenOffering = actionManager.createOfferingForTour(shimenTour, amber,
-					new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hotel chep", 4, 20);
-			actionManager.createBookingForOffering(shimenOffering, peppaPig, 5, 2, 3, 0, "no smoking", "pending");
+		then(this.tourGuideRepo.findByName("Amber").size()).isEqualTo(1);
+		then(this.customerRepo.findByName("Peppa Pig").size()).isEqualTo(1);
+		then(this.tourRepo.findByTourName("Shimen Forest").size()).isEqualTo(1);
+		then(this.tourGuideRepo.findByName("Amber").size()).isEqualTo(1);
 
-			// testing with saved offering object (detached): yangshanTour, emilyElephant
-			Offering yangShanOffering = actionManager.createOfferingForTour(yangshanTour, amber,
-					new ArrayList<Date>(yangshanTour.getAllowedDates()).get(0), "hotel bob", 5, 18);
-			actionManager.createBookingForOffering(yangShanOffering, customerRepo.findOne(emilyElephant.getId()), 3, 4,
-					2, 0, "kids meal", "pending");
-		} catch (OfferingOutOfRoomException | OfferingDateUnsupportedException | OfferingDayOfWeekUnsupportedException
-				| TourGuideUnavailableException e) {
-			e.printStackTrace();
-		}
+		then(this.offeringRepo.findByHotelName(shimenOffering.getHotelName()).size()).isEqualTo(1);
+		then(this.customerOfferingRepo.findByPaymentStatus(booking.getPaymentStatus()).size()).isEqualTo(1);
 
 	}
 
 	@Test
-	public void shouldHaveOneLoginUser() {
-		then(this.loginUserRepo.count()).isEqualTo(1);
+	public void testSuccessCreateOfferingAndBookingForSavedEntities() throws OfferingOutOfRoomException,
+			OfferingDateUnsupportedException, OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
+
+		Customer emilyElephant = new Customer("Emily Elephant", 36);
+		TourGuide bob = new TourGuide("Bob", "LINEID1211");
+		customerRepo.save(emilyElephant);
+		tourGuideRepo.save(bob);
+
+		Tour yangshanTour = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
+		yangshanTour.setAllowedDates(
+				new HashSet<Date>(Arrays.asList(new GregorianCalendar(2017, Calendar.DECEMBER, 9).getTime(),
+						new GregorianCalendar(2017, Calendar.DECEMBER, 12).getTime())));
+
+		tourRepo.save(yangshanTour);
+
+		then(this.customerRepo.findByName("Emily Elephant").size()).isEqualTo(1);
+		then(this.tourRepo.findByTourName("Yangshan").size()).isEqualTo(1);
+		then(this.tourGuideRepo.findByName("Bob").size()).isEqualTo(1);
+
+		Offering yangShanOffering = actionManager.createOfferingForTour(tourRepo.findOne(yangshanTour.getId()),
+				tourGuideRepo.findOne(bob.getId()), new ArrayList<Date>(yangshanTour.getAllowedDates()).get(0),
+				"hotel bob", 5, 18);
+		CustomerOffering booking = actionManager.createBookingForOffering(
+				offeringRepo.findOne(yangShanOffering.getId()), customerRepo.findOne(emilyElephant.getId()), 3, 4, 2, 0,
+				"kids meal", "pending");
+
+		then(this.offeringRepo.findByHotelName(yangShanOffering.getHotelName()).size()).isEqualTo(1);
+		then(this.customerOfferingRepo.findByPaymentStatus(booking.getPaymentStatus()).size()).isEqualTo(1);
+	}
+
+	@Test
+	public void testFailureTryToAssignBusyTourGuide() {
+		// want exception
+	}
+
+	@Test
+	public void testFailureTryToMakeOfferingForUnsupportedDate() {
+		// want exception
+	}
+
+	@Test
+	public void testFailureTryToMakeOfferingForUnsupportedDayOfWeek() {
+		// want exception
+	}
+
+	@Test
+	public void testFailureOfferingOutOfRoomWhenBooking() {
+
 	}
 
 }

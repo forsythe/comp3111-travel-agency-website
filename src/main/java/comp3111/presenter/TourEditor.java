@@ -294,21 +294,17 @@ public class TourEditor extends VerticalLayout {
 				}
 				log.info("errorMsgs.size() is [{}]", errorMsgs.size());
 
-				Collection<Integer> allowedDaysOfWeekSet;
-				Collection<Date> allowedDatesSet;
 				if (errorMsgs.size() == 0) {
-					if (isRepeatingTourType) {
-						allowedDaysOfWeekSet = Utils.stringDayNameSetToIntegerSet(allowedDaysOfWeek.getValue());
-						allowedDatesSet = new HashSet<Date>();
-					} else {
-						allowedDaysOfWeekSet = new HashSet<Integer>();
-						allowedDatesSet = Utils.stringToDateSet(allowedDates.getValue());
-					}
 					Tour newTour = new Tour(tourName.getValue(), description.getValue(),
-							Integer.parseInt(days.getValue()), allowedDaysOfWeekSet, allowedDatesSet,
-							Double.parseDouble(childDiscount.getValue()),
+							Integer.parseInt(days.getValue()), Double.parseDouble(childDiscount.getValue()),
 							Double.parseDouble(toddlerDiscount.getValue()), Integer.parseInt(weekdayPrice.getValue()),
 							Integer.parseInt(weekendPrice.getValue()));
+
+					if (isRepeatingTourType) {
+						newTour.setAllowedDaysOfWeek(Utils.stringDayNameSetToIntegerSet(allowedDaysOfWeek.getValue()));
+					} else {
+						newTour.setAllowedDates(Utils.stringToDateSet(allowedDates.getValue()));
+					}
 
 					log.info("Saved a new tour [{}] successfully", tourName.getValue());
 					tourName.clear();
