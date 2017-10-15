@@ -100,6 +100,15 @@ public class Utils {
 		return fullString.toLowerCase().contains(search.toLowerCase());
 	}
 
+	public static <T> Boolean collectionContainsIgnoreCase(Collection<T> arr, String search) {
+		for (Object s : arr) {
+			if (containsIgnoreCase(s.toString(), search)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static String simpleDateFormat(Date d) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		return sdf.format(d);
@@ -137,6 +146,5 @@ public class Utils {
 		}
 		return false;
 	}
-
 
 }

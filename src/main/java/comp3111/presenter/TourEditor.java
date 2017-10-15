@@ -36,7 +36,7 @@ import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
-import comp3111.model.Tour;
+import comp3111.model.*;
 import comp3111.repo.TourRepository;
 import comp3111.validators.Utils;
 import comp3111.validators.ValidatorFactory;
@@ -139,16 +139,14 @@ public class TourEditor extends VerticalLayout {
 			}
 		});
 
-		tourGrid.removeColumn("new"); // hibernate attributes, we don't care about it
-		tourGrid.removeColumn("allowedDaysOfWeek"); // we'll combine into one column
-		tourGrid.removeColumn("allowedDates");
+		tourGrid.removeColumn(DB.HIBERNATE_NEW_COL); // hibernate attributes, we don't care about it
+		tourGrid.removeColumn(DB.TOUR_ALLOWED_DAYS_OF_WEEK); // we'll combine days of week and dates
+		tourGrid.removeColumn(DB.TOUR_ALLOWED_DATES);
 
-		tourGrid.removeColumn("offeringsString"); // used for grid filtering (substring search)
-		tourGrid.removeColumn("offeringAvailabilityString"); // ditto
-
-		tourGrid.setColumnOrder("id", "tourName", "days", "offeringAvailability", "offerings", "description",
-				"weekdayPrice", "weekendPrice", "childDiscount", "toddlerDiscount");
-		tourGrid.getColumn("offerings").setWidth(150);
+		tourGrid.setColumnOrder(DB.TOUR_ID, DB.TOUR_TOUR_NAME, DB.TOUR_DAYS, DB.TOUR_OFFERING_AVAILABILITY,
+				DB.TOUR_OFFERINGS, DB.TOUR_DESCRIPTION, DB.TOUR_WEEKDAY_PRICE, DB.TOUR_WEEKEND_PRICE,
+				DB.TOUR_CHILD_DISCOUNT, DB.TOUR_TODDLER_DISCOUNT);
+		tourGrid.getColumn(DB.TOUR_OFFERINGS).setWidth(150);
 
 		HeaderRow filterRow = tourGrid.appendHeaderRow();
 
@@ -171,9 +169,9 @@ public class TourEditor extends VerticalLayout {
 
 			filterField.addValueChangeListener(change -> {
 				String searchVal = change.getValue();
-				String coln = col.getCaption();
+				String colId = col.getId();
 
-				log.info("Value change in col [{}], val=[{}]", coln, searchVal);
+				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
 				ListDataProvider<Tour> dataProvider = (ListDataProvider<Tour>) tourGrid.getDataProvider();
 
 				if (!filterField.isEmpty()) {
@@ -181,59 +179,60 @@ public class TourEditor extends VerticalLayout {
 						// note: if we keep typing into same textfield, we will overwrite the old filter
 						// for this column, which is desirable (rather than having filters for "h",
 						// "he", "hel", etc
-						if (coln.equals("Id")) {
+						if (colId.equals(DB.TOUR_ID)) {
 
-							gridFilters.put(coln, new ProviderAndPredicate<Tour, Long>(Tour::getId,
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, Long>(Tour::getId,
 									t -> Utils.safeParseLongEquals(t, searchVal)));
 							// cannot do try catch here, because the callback function is done outside of
 							// our control. need to make the function itself self (Utils.safeParse...)
 
-						} else if (coln.equals("Tour Name")) {
-							gridFilters.put(coln, new ProviderAndPredicate<Tour, String>(Tour::getTourName,
+						} else if (colId.equals(DB.TOUR_TOUR_NAME)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, String>(Tour::getTourName,
 									t -> Utils.containsIgnoreCase(t, searchVal)));
 
-						} else if (coln.equals("Days")) {
-							gridFilters.put(coln, new ProviderAndPredicate<Tour, Integer>(Tour::getDays,
+						} else if (colId.equals(DB.TOUR_DAYS)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, Integer>(Tour::getDays,
 									t -> Utils.safeParseIntEquals(t, searchVal)));
 
-						} else if (coln.equals("Offering Availability")) {
-							gridFilters.put(coln, new ProviderAndPredicate<Tour, String>(
-									Tour::getOfferingAvailabilityString, t -> Utils.containsIgnoreCase(t, searchVal)));
+						} else if (colId.equals(DB.TOUR_OFFERING_AVAILABILITY)) {
+							gridFilters.put(colId,
+									new ProviderAndPredicate<Tour, ArrayList<String>>(Tour::getOfferingAvailability,
+											t -> Utils.collectionContainsIgnoreCase(t, searchVal)));
 
-						} else if (coln.equals("Offerings")) {
-							gridFilters.put(coln, new ProviderAndPredicate<Tour, String>(Tour::getOfferingsString,
+						} else if (colId.equals(DB.TOUR_OFFERINGS)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, Collection<Offering>>(
+									Tour::getOfferings, t -> Utils.collectionContainsIgnoreCase(t, searchVal)));
+
+						} else if (colId.equals(DB.TOUR_DESCRIPTION)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, String>(Tour::getDescription,
 									t -> Utils.containsIgnoreCase(t, searchVal)));
 
-						} else if (coln.equals("Description")) {
-							gridFilters.put(coln, new ProviderAndPredicate<Tour, String>(Tour::getDescription,
-									t -> Utils.containsIgnoreCase(t, searchVal)));
-
-						} else if (coln.equals("Weekday Price")) {
-							gridFilters.put(coln, new ProviderAndPredicate<Tour, Integer>(Tour::getWeekdayPrice,
+						} else if (colId.equals(DB.TOUR_WEEKDAY_PRICE)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, Integer>(Tour::getWeekdayPrice,
 									t -> Utils.safeParseIntEquals(t, searchVal)));
 
-						} else if (coln.equals("Weekend Price")) {
-							gridFilters.put(coln, new ProviderAndPredicate<Tour, Integer>(Tour::getWeekendPrice,
+						} else if (colId.equals(DB.TOUR_WEEKEND_PRICE)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, Integer>(Tour::getWeekendPrice,
 									t -> Utils.safeParseIntEquals(t, searchVal)));
 
-						} else if (coln.equals("Child Discount")) {
-							gridFilters.put(coln, new ProviderAndPredicate<Tour, Double>(Tour::getChildDiscount,
+						} else if (colId.equals(DB.TOUR_CHILD_DISCOUNT)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, Double>(Tour::getChildDiscount,
 									t -> Utils.safeParseDoubleEquals(t, searchVal)));
 
-						} else if (coln.equals("Toddler Discount")) {
-							gridFilters.put(coln, new ProviderAndPredicate<Tour, Double>(Tour::getToddlerDiscount,
+						} else if (colId.equals(DB.TOUR_TODDLER_DISCOUNT)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, Double>(Tour::getToddlerDiscount,
 									t -> Utils.safeParseDoubleEquals(t, searchVal)));
 						}
-						log.info("updated filter on attribute [{}]", coln);
+						log.info("updated filter on attribute [{}]", colId);
 
 					} catch (Exception e) {
-						log.info("ignoring [{}], mismatched datatype for col [{}]", searchVal, coln);
+						log.info("ignoring [{}], mismatched datatype for col [{}]", searchVal, colId);
 					}
 				} else {
 					// the filter field was empty, so try
 					// removing the filter associated with this col
-					gridFilters.remove(coln);
-					log.info("removed filter on attribute [{}]", coln);
+					gridFilters.remove(colId);
+					log.info("removed filter on attribute [{}]", colId);
 
 				}
 				dataProvider.clearFilters();
