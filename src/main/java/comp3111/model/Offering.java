@@ -1,5 +1,6 @@
 package comp3111.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -15,6 +16,8 @@ import javax.transaction.Transactional;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.domain.Persistable;
+
+import comp3111.validators.Utils;
 
 @Entity
 @Transactional
@@ -124,7 +127,7 @@ public class Offering implements Persistable<Long> {
 
 	@Override
 	public String toString() {
-		return String.format("Offering[id=%d, tourName='%s', date='%s']", id, getTour().getTourName(), startDate);
+		return String.format("Offering[id=%d, '%s']", id, Utils.simpleDateFormat(startDate));
 	}
 
 	@Override

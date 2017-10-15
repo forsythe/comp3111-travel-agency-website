@@ -3,7 +3,7 @@ package comp3111.presenter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.slf4j.Logger;
@@ -12,17 +12,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.HasValue.ValueChangeEvent;
 import com.vaadin.data.HasValue.ValueChangeListener;
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBoxGroup;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
@@ -31,10 +32,11 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
-import comp3111.Application;
-import comp3111.model.Tour;
+import comp3111.model.*;
 import comp3111.repo.TourRepository;
 import comp3111.validators.Utils;
 import comp3111.validators.ValidatorFactory;
@@ -79,14 +81,25 @@ public class TourEditor extends VerticalLayout {
 
 	// Binder<Tour> binder = new Binder<>(Tour.class);
 
-	Grid<Tour> tourGrid = new Grid<Tour>(Tour.class);
+	// this is FINAL so we can access it inside our filtering callback function
+	private final Grid<Tour> tourGrid = new Grid<Tour>(Tour.class);
 
 	/* The currently edited tour */
 	Tour selectedTour;
 
+	private TourRepository tourRepo;
+
+	// final just means we cant rebind the var name. we can still add/remove
+	// IMPORTANT: this is FINAL so we can access it inside the filtering callback
+	// function
+	private final HashSet<Tour> tourCollectionCached = new HashSet<Tour>();
+	// the set of filters to apply on our table
+	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
+
 	@SuppressWarnings("unchecked")
 	@Autowired
-	public TourEditor(TourRepository tourRepo) {
+	public TourEditor(TourRepository tr) {
+		this.tourRepo = tr;
 		// adding components
 		rowOfButtons.addComponent(createTourButton);
 		rowOfButtons.addComponent(editTourButton);
@@ -99,10 +112,7 @@ public class TourEditor extends VerticalLayout {
 		this.addComponent(rowOfButtons);
 
 		// get the repetaingTours from DB
-		Iterable<Tour> tours = tourRepo.findAll();
-		Collection<Tour> tourCollectionCached = new HashSet<Tour>();
-		tours.forEach(tourCollectionCached::add);
-		tourGrid.setItems(tourCollectionCached);
+		this.refreshData();
 
 		tourGrid.setWidth("100%");
 		tourGrid.setSelectionMode(SelectionMode.SINGLE);
@@ -129,13 +139,116 @@ public class TourEditor extends VerticalLayout {
 			}
 		});
 
-		tourGrid.removeColumn("new"); // hibernate attributes, we don't care about it
-		tourGrid.removeColumn("allowedDaysOfWeek"); // we'll combine into one column
-		tourGrid.removeColumn("allowedDates");
+		tourGrid.removeColumn(DB.HIBERNATE_NEW_COL); // hibernate attributes, we don't care about it
+		tourGrid.removeColumn(DB.TOUR_ALLOWED_DAYS_OF_WEEK); // we'll combine days of week and dates
+		tourGrid.removeColumn(DB.TOUR_ALLOWED_DATES);
 
-		tourGrid.setColumnOrder("id", "tourName", "days", "offeringAvailability", "offerings", "description",
-				"weekdayPrice", "weekendPrice", "childDiscount", "toddlerDiscount");
-		tourGrid.getColumn("offerings").setWidth(150);
+		tourGrid.setColumnOrder(DB.TOUR_ID, DB.TOUR_TOUR_NAME, DB.TOUR_DAYS, DB.TOUR_OFFERING_AVAILABILITY,
+				DB.TOUR_OFFERINGS, DB.TOUR_DESCRIPTION, DB.TOUR_WEEKDAY_PRICE, DB.TOUR_WEEKEND_PRICE,
+				DB.TOUR_CHILD_DISCOUNT, DB.TOUR_TODDLER_DISCOUNT);
+		tourGrid.getColumn(DB.TOUR_OFFERINGS).setWidth(150);
+
+		HeaderRow filterRow = tourGrid.appendHeaderRow();
+
+		/*
+		 * every column has a header, which has a textfield. every textfield is
+		 * associated with a value change listener. if the listener detects change, it
+		 * adds a filter to the list of filters (gridFilters). if it detects change and
+		 * the textfield is empty, it removes from the list of filters.
+		 * 
+		 * the list of tilers is reapplied everytime on any textfield change.
+		 */
+		for (Column<Tour, ?> col : tourGrid.getColumns()) {
+
+			HeaderCell cell = filterRow.getCell(col.getId());
+
+			// Have an input field to use for filter
+			TextField filterField = new TextField();
+			filterField.setWidth(100, Unit.PIXELS);
+			filterField.setHeight(30, Unit.PIXELS);
+
+			filterField.addValueChangeListener(change -> {
+				String searchVal = change.getValue();
+				String colId = col.getId();
+
+				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
+				ListDataProvider<Tour> dataProvider = (ListDataProvider<Tour>) tourGrid.getDataProvider();
+
+				if (!filterField.isEmpty()) {
+					try {
+						// note: if we keep typing into same textfield, we will overwrite the old filter
+						// for this column, which is desirable (rather than having filters for "h",
+						// "he", "hel", etc
+						if (colId.equals(DB.TOUR_ID)) {
+
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, Long>(Tour::getId,
+									t -> Utils.safeParseLongEquals(t, searchVal)));
+							// cannot do try catch here, because the callback function is done outside of
+							// our control. need to make the function itself self (Utils.safeParse...)
+
+						} else if (colId.equals(DB.TOUR_TOUR_NAME)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, String>(Tour::getTourName,
+									t -> Utils.containsIgnoreCase(t, searchVal)));
+
+						} else if (colId.equals(DB.TOUR_DAYS)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, Integer>(Tour::getDays,
+									t -> Utils.safeParseIntEquals(t, searchVal)));
+
+						} else if (colId.equals(DB.TOUR_OFFERING_AVAILABILITY)) {
+							gridFilters.put(colId,
+									new ProviderAndPredicate<Tour, ArrayList<String>>(Tour::getOfferingAvailability,
+											t -> Utils.collectionContainsIgnoreCase(t, searchVal)));
+
+						} else if (colId.equals(DB.TOUR_OFFERINGS)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, Collection<Offering>>(
+									Tour::getOfferings, t -> Utils.collectionContainsIgnoreCase(t, searchVal)));
+
+						} else if (colId.equals(DB.TOUR_DESCRIPTION)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, String>(Tour::getDescription,
+									t -> Utils.containsIgnoreCase(t, searchVal)));
+
+						} else if (colId.equals(DB.TOUR_WEEKDAY_PRICE)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, Integer>(Tour::getWeekdayPrice,
+									t -> Utils.safeParseIntEquals(t, searchVal)));
+
+						} else if (colId.equals(DB.TOUR_WEEKEND_PRICE)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, Integer>(Tour::getWeekendPrice,
+									t -> Utils.safeParseIntEquals(t, searchVal)));
+
+						} else if (colId.equals(DB.TOUR_CHILD_DISCOUNT)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, Double>(Tour::getChildDiscount,
+									t -> Utils.safeParseDoubleEquals(t, searchVal)));
+
+						} else if (colId.equals(DB.TOUR_TODDLER_DISCOUNT)) {
+							gridFilters.put(colId, new ProviderAndPredicate<Tour, Double>(Tour::getToddlerDiscount,
+									t -> Utils.safeParseDoubleEquals(t, searchVal)));
+						}
+						log.info("updated filter on attribute [{}]", colId);
+
+					} catch (Exception e) {
+						log.info("ignoring [{}], mismatched datatype for col [{}]", searchVal, colId);
+					}
+				} else {
+					// the filter field was empty, so try
+					// removing the filter associated with this col
+					gridFilters.remove(colId);
+					log.info("removed filter on attribute [{}]", colId);
+
+				}
+				dataProvider.clearFilters();
+				for (String colFilter : gridFilters.keySet()) {
+					ProviderAndPredicate paf = gridFilters.get(colFilter);
+					dataProvider.addFilter(paf.provider, paf.predicate);
+				}
+				dataProvider.refreshAll();
+
+				// dataProvider.refreshAll();
+				// tourGrid.setItems(dataProvider.getItems());
+
+			});
+			cell.setComponent(filterField);
+
+		}
 
 		this.addComponent(tourGrid);
 
@@ -198,7 +311,7 @@ public class TourEditor extends VerticalLayout {
 
 		createTourSubwindow = new Window("Create new tour");
 		FormLayout subContent = new FormLayout();
-		
+
 		createTourSubwindow.setWidth("800px");
 
 		createTourSubwindow.setContent(subContent);
@@ -253,7 +366,7 @@ public class TourEditor extends VerticalLayout {
 				}
 			}
 		});
-		
+
 		Utils.addValidator(days, ValidatorFactory.getIntegerLowerBoundValidator(0));
 		Utils.addValidator(allowedDates, ValidatorFactory.getListOfDatesValidator());
 		Utils.addValidator(childDiscount, ValidatorFactory.getDoubleRangeValidator(0, 1));
@@ -289,22 +402,21 @@ public class TourEditor extends VerticalLayout {
 				}
 
 				ArrayList<TextField> fieldsWithValidators = new ArrayList<TextField>();
-				fieldsWithValidators.addAll(
-						Arrays.asList(tourName, days, allowedDates, childDiscount, toddlerDiscount, 
-								weekdayPrice, weekendPrice));
-				
+				fieldsWithValidators.addAll(Arrays.asList(tourName, days, allowedDates, childDiscount, toddlerDiscount,
+						weekdayPrice, weekendPrice));
+
 				for (TextField field : fieldsWithValidators) {
 					if (field.getErrorMessage() != null) {
 						log.info(field.getCaption() + ": " + field.getErrorMessage().toString());
 						errorMsgs.add(field.getCaption() + ": " + field.getErrorMessage().toString());
 					}
 				}
-				
-				if(descrip.getErrorMessage() != null) {
+
+				if (descrip.getErrorMessage() != null) {
 					log.info(descrip.getCaption() + ": " + descrip.getErrorMessage().toString());
 					errorMsgs.add(descrip.getCaption() + ": " + descrip.getErrorMessage().toString());
 				}
-				
+
 				log.info("errorMsgs.size() is [{}]", errorMsgs.size());
 
 				if (errorMsgs.size() == 0) {
@@ -448,6 +560,16 @@ public class TourEditor extends VerticalLayout {
 
 	public Tour getSelectedTour() {
 		return selectedTour;
+	}
+
+	public void refreshData() {
+		Iterable<Tour> tours = tourRepo.findAll();
+		tourCollectionCached.clear();
+		tours.forEach(tourCollectionCached::add);
+		ListDataProvider<Tour> provider = new ListDataProvider<Tour>(tourCollectionCached);
+		tourGrid.setDataProvider(provider);
+		// tourGrid.setItems(tourCollectionCached);
+
 	}
 
 }
