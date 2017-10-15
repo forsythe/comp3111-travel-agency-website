@@ -13,7 +13,7 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-import comp3111.presenter.TourGuidesEditor;
+import comp3111.editors.TourGuidesEditor;
 
 @SpringView(name = TourGuidesManagementView.VIEW_NAME)
 public class TourGuidesManagementView extends VerticalLayout implements View {

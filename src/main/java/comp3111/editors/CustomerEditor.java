@@ -1,4 +1,4 @@
-package comp3111.presenter;
+package comp3111.editors;
 
 import java.util.ArrayList;
 import java.util.Arrays;

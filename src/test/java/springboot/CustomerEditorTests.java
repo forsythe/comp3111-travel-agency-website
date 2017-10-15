@@ -9,8 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import comp3111.editors.CustomerEditor;
 import comp3111.model.Customer;
-import comp3111.presenter.CustomerEditor;
 import comp3111.repo.CustomerRepository;
 
 import static org.mockito.BDDMockito.*;
