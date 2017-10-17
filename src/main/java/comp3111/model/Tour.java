@@ -93,7 +93,7 @@ public class Tour implements Persistable<Long> {
 	}
 
 	public int getDays() {
-		return days;
+		return this.days;
 	}
 
 	public void setDays(int days) {
@@ -101,7 +101,7 @@ public class Tour implements Persistable<Long> {
 	}
 
 	public Collection<Offering> getOfferings() {
-		return offerings;
+		return this.offerings;
 	}
 
 	public void setOfferings(Collection<Offering> offerings) {
@@ -109,22 +109,7 @@ public class Tour implements Persistable<Long> {
 	}
 
 	public Collection<Integer> getAllowedDaysOfWeek() {
-		return allowedDaysOfWeek;
-	}
-
-	private ArrayList<String> getFormattedAllowedDaysOfWeek() {
-		ArrayList<String> ans = new ArrayList<>();
-		for (int day : allowedDaysOfWeek) {
-			ans.add(Utils.dayToString(day));
-		}
-		return ans;
-	}
-
-	public ArrayList<String> getOfferingAvailability() {
-		if (!allowedDates.isEmpty())
-			return this.getFormattedAllowedDates();
-		else
-			return this.getFormattedAllowedDaysOfWeek();
+		return this.allowedDaysOfWeek;
 	}
 
 	public void setAllowedDaysOfWeek(Collection<Integer> allowedDaysOfWeek) {
@@ -133,15 +118,6 @@ public class Tour implements Persistable<Long> {
 
 	public Collection<Date> getAllowedDates() {
 		return allowedDates;
-	}
-
-	private ArrayList<String> getFormattedAllowedDates() {
-		ArrayList<String> ans = new ArrayList<>();
-		for (Date day : allowedDates) {
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-			ans.add(sdf.format(day));
-		}
-		return ans;
 	}
 
 	public void setAllowedDates(Collection<Date> allowedDates) {
@@ -180,6 +156,16 @@ public class Tour implements Persistable<Long> {
 		this.weekendPrice = weekendPrice;
 	}
 
+	/*
+	 * not an attribute, but helper function for vaadin column
+	 */
+	public ArrayList<String> getOfferingAvailability() {
+		if (!allowedDates.isEmpty())
+			return this.getFormattedAllowedDates();
+		else
+			return this.getFormattedAllowedDaysOfWeek();
+	}
+
 	// http://www.java2s.com/Tutorial/Java/0355__JPA/OneToManyListCollection.htm
 	public void addOffering(Offering offering) {
 		// if (!getOfferings().contains(offering)) {
@@ -190,6 +176,22 @@ public class Tour implements Persistable<Long> {
 		// offering.setTour(this);
 		// }
 		offerings.add(offering);
+	}
+
+	private ArrayList<String> getFormattedAllowedDates() {
+		ArrayList<String> ans = new ArrayList<>();
+		for (Date day : allowedDates) {
+			ans.add(Utils.simpleDateFormat(day));
+		}
+		return ans;
+	}
+
+	private ArrayList<String> getFormattedAllowedDaysOfWeek() {
+		ArrayList<String> ans = new ArrayList<>();
+		for (int day : allowedDaysOfWeek) {
+			ans.add(Utils.dayToString(day));
+		}
+		return ans;
 	}
 
 	@Override

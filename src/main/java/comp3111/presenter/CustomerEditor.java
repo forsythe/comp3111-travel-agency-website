@@ -172,7 +172,6 @@ public class CustomerEditor extends VerticalLayout {
 		Utils.addValidator(customerLineId, ValidatorFactory.getStringLengthValidator(255));
 		Utils.addValidator(customerHkid, ValidatorFactory.getStringLengthValidator(255));
 		Utils.addValidator(customerPhone, ValidatorFactory.getStringLengthValidator(255));
-		Utils.addValidator(customerAge, ValidatorFactory.getStringLengthValidator(255));
 		Utils.addValidator(customerAge, ValidatorFactory.getIntegerLowerBoundValidator(0));
 
 		subwindowConfirmCreateCustomer.addClickListener(new ClickListener() {
