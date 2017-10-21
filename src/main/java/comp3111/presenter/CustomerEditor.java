@@ -18,6 +18,7 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -31,6 +32,7 @@ import comp3111.repo.CustomerRepository;
 import comp3111.repo.TourRepository;
 import comp3111.validators.Utils;
 import comp3111.validators.ValidatorFactory;
+import comp3111.field.PhoneNumberField;
 
 /**
  * A simple example to introduce building forms. As your real application is
@@ -48,13 +50,6 @@ public class CustomerEditor extends VerticalLayout {
 	private static final Logger log = LoggerFactory.getLogger(CustomerEditor.class);
 	
 	private Window createCustomerSubwindow;
-	
-	/* Fields to edit properties in Tour entity */
-	private TextField customerName;
-	private TextField customerLineId;
-	private TextField customerHkid;
-	private TextField customerPhone;
-	private TextField customerAge;
 	
 	/* action buttons */
 	HorizontalLayout rowOfButtons = new HorizontalLayout();
@@ -134,11 +129,11 @@ public class CustomerEditor extends VerticalLayout {
 	private Window getCreateCustomerWindow(CustomerRepository customerRepo, Collection<Customer> customerCollectionCached) {
 		subwindowConfirmCreateCustomer = new Button("Confirm");
 		
-		customerName = new TextField("Customer Name");
-		customerLineId = new TextField("Customer Line Id");
-		customerHkid = new TextField("Customer HKID");
-		customerPhone = new TextField("Customer Phone");
-		customerAge = new TextField("Customer Age");
+		TextField customerName = new TextField("Customer Name");
+		TextField customerLineId = new TextField("Customer Line Id");
+		TextField customerHkid = new TextField("Customer HKID");
+		PhoneNumberField customerPhone = new PhoneNumberField("Phone Number");
+		TextField customerAge = new TextField("Customer Age");
 		
 		createCustomerSubwindow = new Window("Create new customer");
 		FormLayout subContent = new FormLayout();
@@ -167,7 +162,7 @@ public class CustomerEditor extends VerticalLayout {
 		customerHkid.setRequiredIndicatorVisible(true);
 		customerPhone.setRequiredIndicatorVisible(true);
 		customerAge.setRequiredIndicatorVisible(true);
-		
+
 		Utils.addValidator(customerName, ValidatorFactory.getStringLengthValidator(255));
 		Utils.addValidator(customerLineId, ValidatorFactory.getStringLengthValidator(255));
 		Utils.addValidator(customerHkid, ValidatorFactory.getStringLengthValidator(255));
@@ -179,22 +174,22 @@ public class CustomerEditor extends VerticalLayout {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				ArrayList<String> errorMsgs = new ArrayList<String>();
-				ArrayList<TextField> nonNullableComponents = new ArrayList<TextField>();
+				ArrayList<AbstractField<String>> nonNullableComponents = new ArrayList<AbstractField<String>>();
 				nonNullableComponents.addAll(
 						Arrays.asList(customerName, customerHkid, customerPhone, customerAge ));
-				
-				for (TextField field : nonNullableComponents) {
+
+				for (AbstractField<String> field : nonNullableComponents) {
 					if (field.isEmpty()) {
 						log.info(field.getCaption() + ": cannot be empty");
 						errorMsgs.add(field.getCaption() + ": cannot be empty");
 					}
 				}
-				
-				ArrayList<TextField> fieldsWithValidators = new ArrayList<TextField>();
+
+				ArrayList<AbstractField<String>> fieldsWithValidators = new ArrayList<AbstractField<String>>();
 				fieldsWithValidators.addAll(
 						Arrays.asList(customerName, customerLineId, customerHkid, customerPhone, customerAge ));
-				
-				for (TextField field : fieldsWithValidators) {
+
+				for (AbstractField<String> field : fieldsWithValidators) {
 					if (field.getErrorMessage() != null) {
 						log.info(field.getCaption() + ": " + field.getErrorMessage().toString());
 						errorMsgs.add(field.getCaption() + ": " + field.getErrorMessage().toString());
@@ -236,26 +231,6 @@ public class CustomerEditor extends VerticalLayout {
 	
 	public Window getCreateCustomerSubwindow() {
 		return createCustomerSubwindow;
-	}
-
-	public TextField getCustomerName() {
-		return customerName;
-	}
-
-	public TextField getCustomerLineId() {
-		return customerLineId;
-	}
-
-	public TextField getCustomerHkid() {
-		return customerHkid;
-	}
-
-	public TextField getCustomerPhone() {
-		return customerPhone;
-	}
-
-	public TextField getCustomerAge() {
-		return customerAge;
 	}
 
 	public Button getCreateNewCustomerButton() {
