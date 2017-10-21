@@ -1,16 +1,16 @@
 package comp3111.presenter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
+import com.vaadin.data.Binder;
+import com.vaadin.data.BinderValidationStatus;
+import com.vaadin.data.BindingValidationStatus;
+import com.vaadin.data.converter.StringToIntegerConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.event.selection.SelectionEvent;
-import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
@@ -22,17 +22,14 @@ import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid.SelectionMode;
 
 import comp3111.model.Customer;
-import comp3111.model.Tour;
 import comp3111.repo.CustomerRepository;
-import comp3111.repo.TourRepository;
 import comp3111.validators.Utils;
 import comp3111.validators.ValidatorFactory;
-import comp3111.field.PhoneNumberField;
+import comp3111.field.PhoneNumberEntryField;
+import comp3111.field.HKIDEntryField;
 
 /**
  * A simple example to introduce building forms. As your real application is
@@ -52,17 +49,17 @@ public class CustomerEditor extends VerticalLayout {
 	private Window createCustomerSubwindow;
 	
 	/* action buttons */
-	HorizontalLayout rowOfButtons = new HorizontalLayout();
+	private HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createNewCustomerButton = new Button("Create new customer");
 	private Button editCustomerButton = new Button("Edit customer");
 	private Button viewCustomerBookingsButton = new Button("View bookings made by customer");
 	
 	/* subwindow action buttons */
 	private Button subwindowConfirmCreateCustomer;
-	
-	Grid<Customer> customersGrid = new Grid<Customer>(Customer.class);
-	
-	Customer selectedCustomer;
+
+	private Grid<Customer> customersGrid = new Grid<Customer>(Customer.class);
+
+	private Customer selectedCustomer;
 	
 	@SuppressWarnings("unchecked")
 	@Autowired
@@ -88,25 +85,19 @@ public class CustomerEditor extends VerticalLayout {
 		customersGrid.setWidth("100%");
 		customersGrid.setSelectionMode(SelectionMode.SINGLE);
 		
-		customersGrid.addSelectionListener(new SelectionListener<Customer>() {
-			@Override
-			public void selectionChange(SelectionEvent event) {
-				Collection<Customer> selectedItems = 
-						customersGrid.getSelectionModel().getSelectedItems();
+		customersGrid.addSelectionListener(event -> {
+			if (event.getFirstSelectedItem().isPresent()) {
+				selectedCustomer = event.getFirstSelectedItem().get();
+
+				editCustomerButton.setEnabled(true);
+				viewCustomerBookingsButton.setEnabled(true);
+				createNewCustomerButton.setEnabled(false);
+			} else {
 				selectedCustomer = null;
-				for (Customer rt : selectedItems) { // easy way to get first element of set
-					selectedCustomer = rt;
-					break;
-				}
-				if (selectedCustomer != null) {
-					editCustomerButton.setEnabled(true);
-					viewCustomerBookingsButton.setEnabled(true);
-					createNewCustomerButton.setEnabled(false);
-				} else {
-					editCustomerButton.setEnabled(false);
-					viewCustomerBookingsButton.setEnabled(false);
-					createNewCustomerButton.setEnabled(true);
-				}
+
+				editCustomerButton.setEnabled(false);
+				viewCustomerBookingsButton.setEnabled(false);
+				createNewCustomerButton.setEnabled(true);
 			}
 		});
 		
@@ -117,12 +108,8 @@ public class CustomerEditor extends VerticalLayout {
 		
 		this.addComponent(customersGrid);
 		
-		createNewCustomerButton.addClickListener(new ClickListener() {
-			@Override
-			public void buttonClick(ClickEvent event) {
-				getUI().getCurrent().addWindow(getCreateCustomerWindow(customerRepo, customerCollectionCached));
-			}
-
+		createNewCustomerButton.addClickListener(event -> {
+			getUI().getCurrent().addWindow(getCreateCustomerWindow(customerRepo, customerCollectionCached));
 		});
 	}
 	
@@ -131,8 +118,8 @@ public class CustomerEditor extends VerticalLayout {
 		
 		TextField customerName = new TextField("Customer Name");
 		TextField customerLineId = new TextField("Customer Line Id");
-		TextField customerHkid = new TextField("Customer HKID");
-		PhoneNumberField customerPhone = new PhoneNumberField("Phone Number");
+		HKIDEntryField customerHkid = new HKIDEntryField("Customer HKID");
+		PhoneNumberEntryField customerPhone = new PhoneNumberEntryField("Phone Number");
 		TextField customerAge = new TextField("Customer Age");
 		
 		createCustomerSubwindow = new Window("Create new customer");
@@ -157,69 +144,65 @@ public class CustomerEditor extends VerticalLayout {
 		buttonActions.addComponent(subwindowConfirmCreateCustomer);
 		buttonActions.addComponent(new Button("Cancel", event -> createCustomerSubwindow.close()));
 		subContent.addComponent(buttonActions);
-		
-		customerName.setRequiredIndicatorVisible(true);
-		customerHkid.setRequiredIndicatorVisible(true);
-		customerPhone.setRequiredIndicatorVisible(true);
-		customerAge.setRequiredIndicatorVisible(true);
 
-		Utils.addValidator(customerName, ValidatorFactory.getStringLengthValidator(255));
-		Utils.addValidator(customerLineId, ValidatorFactory.getStringLengthValidator(255));
-		Utils.addValidator(customerHkid, ValidatorFactory.getStringLengthValidator(255));
-		Utils.addValidator(customerPhone, ValidatorFactory.getStringLengthValidator(255));
-		Utils.addValidator(customerAge, ValidatorFactory.getIntegerLowerBoundValidator(0));
+		Binder<Customer> binder = new Binder<>();
+		binder.forField(customerName)
+				.withValidator(ValidatorFactory.getStringLengthValidator(255))
+				.asRequired(Utils.generateRequiredError())
+				.bind(Customer::getName, Customer::setName);
 
-		subwindowConfirmCreateCustomer.addClickListener(new ClickListener() {
+		binder.forField(customerLineId)
+				.withValidator(ValidatorFactory.getStringLengthValidator(255))
+				.bind(Customer::getLineId, Customer::setLineId);
 
-			@Override
-			public void buttonClick(ClickEvent event) {
-				ArrayList<String> errorMsgs = new ArrayList<String>();
-				ArrayList<AbstractField<String>> nonNullableComponents = new ArrayList<AbstractField<String>>();
-				nonNullableComponents.addAll(
-						Arrays.asList(customerName, customerHkid, customerPhone, customerAge ));
+		binder.forField(customerHkid)
+				.withValidator(ValidatorFactory.getStringLengthValidator(255))
+				.withValidator(ValidatorFactory.getHKIDValidator())
+				.asRequired(Utils.generateRequiredError())
+				.bind(Customer::getHkid, Customer::setHkid);
 
-				for (AbstractField<String> field : nonNullableComponents) {
-					if (field.isEmpty()) {
-						log.info(field.getCaption() + ": cannot be empty");
-						errorMsgs.add(field.getCaption() + ": cannot be empty");
+		binder.forField(customerPhone)
+				.withValidator(ValidatorFactory.getStringLengthValidator(255))
+				.withValidator(ValidatorFactory.getPhoneNumberValidator())
+				.asRequired(Utils.generateRequiredError())
+				.bind(Customer::getPhone, Customer::setPhone);
+
+		binder.forField(customerAge)
+				.withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
+				.asRequired(Utils.generateRequiredError())
+				.withConverter(new StringToIntegerConverter("Must be an integer"))
+				.bind(Customer::getAge, Customer::setAge);
+
+		subwindowConfirmCreateCustomer.addClickListener(event -> {
+			BinderValidationStatus<Customer> validationStatus = binder.validate();
+			log.info(customerHkid.getValue());
+
+			if (validationStatus.isOk()) {
+				//Customer must be created by Spring, otherwise it cannot be saved.
+				//I do not have access to an empty constructor here
+				Customer newCustomer = new Customer("foo", 999);
+				binder.writeBeanIfValid(newCustomer);
+
+				log.info("About to save customer [{}]", customerName.getValue());
+
+				customerCollectionCached.add(customerRepo.save(newCustomer));
+				customersGrid.setItems(customerCollectionCached);
+				createCustomerSubwindow.close();
+				log.info("Saved a new customer [{}] successfully", customerName.getValue());
+
+				binder.removeBean();
+			} else {
+				StringBuilder stringBuilder = new StringBuilder();
+
+				for (BindingValidationStatus<?> result : validationStatus.getFieldValidationErrors()) {
+					if (result.getField() instanceof AbstractField && result.getMessage().isPresent()) {
+						stringBuilder.append(((AbstractField) result.getField()).getCaption())
+								.append(" ")
+								.append(result.getMessage().get())
+								.append("\n");
 					}
 				}
-
-				ArrayList<AbstractField<String>> fieldsWithValidators = new ArrayList<AbstractField<String>>();
-				fieldsWithValidators.addAll(
-						Arrays.asList(customerName, customerLineId, customerHkid, customerPhone, customerAge ));
-
-				for (AbstractField<String> field : fieldsWithValidators) {
-					if (field.getErrorMessage() != null) {
-						log.info(field.getCaption() + ": " + field.getErrorMessage().toString());
-						errorMsgs.add(field.getCaption() + ": " + field.getErrorMessage().toString());
-					}
-				}
-				
-				log.info("errorMsgs.size() is [{}]", errorMsgs.size());
-
-				if (errorMsgs.size() == 0) {
-					Customer newCustomer = new Customer(customerName.getValue(), 
-							customerLineId.getValue(), customerPhone.getValue(), 
-							Integer.parseInt(customerAge.getValue()), customerHkid.getValue());
-					
-					log.info("Saved a new customer [{}] successfully", customerName.getValue());
-					customerName.clear();
-					customerLineId.clear();
-					customerHkid.clear();
-					customerAge.clear();
-					customerPhone.clear();
-					
-					customerCollectionCached.add(customerRepo.save(newCustomer));
-					customersGrid.setItems(customerCollectionCached);
-					createCustomerSubwindow.close();
-				} else {
-					String errorString = "";
-					for (String err : errorMsgs) {
-						errorString += err + "\n";
-					}
-					Notification.show("Could not create customer!", errorString, Notification.TYPE_ERROR_MESSAGE);
-				}
+				Notification.show("Could not create customer!", stringBuilder.toString(), Notification.TYPE_ERROR_MESSAGE);
 			}
 		});
 		return createCustomerSubwindow;
