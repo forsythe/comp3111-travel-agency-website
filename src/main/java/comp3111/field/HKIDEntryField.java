@@ -51,4 +51,9 @@ public class HKIDEntryField extends CustomField<String> {
 		mainPart.setValue("");
 		checkDigit.setValue("");
     }
+
+	@Override
+	public void setValue(String value) {
+		doSetValue(value);
+	}
 }

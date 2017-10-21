@@ -47,7 +47,13 @@ public class CustomerEditor extends VerticalLayout {
 	private static final Logger log = LoggerFactory.getLogger(CustomerEditor.class);
 	
 	private Window createCustomerSubwindow;
-	
+
+	private TextField customerName ;
+	private TextField customerLineId;
+	private HKIDEntryField customerHKID;
+	private PhoneNumberEntryField customerPhone;
+	private TextField customerAge;
+
 	/* action buttons */
 	private HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createNewCustomerButton = new Button("Create new customer");
@@ -116,11 +122,11 @@ public class CustomerEditor extends VerticalLayout {
 	private Window getCreateCustomerWindow(CustomerRepository customerRepo, Collection<Customer> customerCollectionCached) {
 		subwindowConfirmCreateCustomer = new Button("Confirm");
 		
-		TextField customerName = new TextField("Customer Name");
-		TextField customerLineId = new TextField("Customer Line Id");
-		HKIDEntryField customerHkid = new HKIDEntryField("Customer HKID");
-		PhoneNumberEntryField customerPhone = new PhoneNumberEntryField("Phone Number");
-		TextField customerAge = new TextField("Customer Age");
+		customerName = new TextField("Customer Name");
+		customerLineId = new TextField("Customer Line Id");
+		customerHKID = new HKIDEntryField("Customer HKID");
+		customerPhone = new PhoneNumberEntryField("Phone Number", "852");
+		customerAge = new TextField("Customer Age");
 		
 		createCustomerSubwindow = new Window("Create new customer");
 		FormLayout subContent = new FormLayout();
@@ -136,7 +142,7 @@ public class CustomerEditor extends VerticalLayout {
 		
 		subContent.addComponent(customerName);
 		subContent.addComponent(customerLineId);
-		subContent.addComponent(customerHkid);
+		subContent.addComponent(customerHKID);
 		subContent.addComponent(customerPhone);
 		subContent.addComponent(customerAge);
 		
@@ -155,7 +161,7 @@ public class CustomerEditor extends VerticalLayout {
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.bind(Customer::getLineId, Customer::setLineId);
 
-		binder.forField(customerHkid)
+		binder.forField(customerHKID)
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.withValidator(ValidatorFactory.getHKIDValidator())
 				.asRequired(Utils.generateRequiredError())
@@ -175,7 +181,7 @@ public class CustomerEditor extends VerticalLayout {
 
 		subwindowConfirmCreateCustomer.addClickListener(event -> {
 			BinderValidationStatus<Customer> validationStatus = binder.validate();
-			log.info(customerHkid.getValue());
+			log.info(customerHKID.getValue());
 
 			if (validationStatus.isOk()) {
 				//Customer must be created by Spring, otherwise it cannot be saved.
@@ -211,7 +217,27 @@ public class CustomerEditor extends VerticalLayout {
 	public interface ChangeHandler {
 		void onChange();
 	}
-	
+
+	public TextField getCustomerName() {
+		return customerName;
+	}
+
+	public TextField getCustomerLineId() {
+		return customerLineId;
+	}
+
+	public HKIDEntryField getCustomerHKID() {
+		return customerHKID;
+	}
+
+	public PhoneNumberEntryField getCustomerPhone() {
+		return customerPhone;
+	}
+
+	public TextField getCustomerAge() {
+		return customerAge;
+	}
+
 	public Window getCreateCustomerSubwindow() {
 		return createCustomerSubwindow;
 	}

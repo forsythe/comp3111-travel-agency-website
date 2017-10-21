@@ -80,4 +80,9 @@ public class PhoneNumberEntryField extends CustomField<String> {
 			phoneNumber.setValue("");
 		}
     }
+
+	@Override
+	public void setValue(String value) {
+		doSetValue(value);
+	}
 }
