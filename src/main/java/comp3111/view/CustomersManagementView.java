@@ -14,7 +14,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-import comp3111.presenter.CustomerEditor;
+import comp3111.editors.CustomerEditor;
 
 @SpringView(name = CustomersManagementView.VIEW_NAME)
 public class CustomersManagementView extends VerticalLayout implements View{

@@ -26,6 +26,7 @@ repositories {
     mavenCentral()
     maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
     maven { url "http://oss.sonatype.org/content/repositories/vaadin-snapshots/" }
+    maven { url "http://vaadin.com/nexus/content/repositories/vaadin-addons/"}
 }
 
 sourceCompatibility = 1.8
