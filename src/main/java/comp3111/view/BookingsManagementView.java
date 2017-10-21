@@ -13,8 +13,8 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-import comp3111.presenter.CustomerOfferingEditor;
-import comp3111.presenter.TourEditor;
+import comp3111.editors.CustomerOfferingEditor;
+import comp3111.editors.TourEditor;
 
 @SpringView(name = BookingsManagementView.VIEW_NAME)
 public class BookingsManagementView extends VerticalLayout implements View {

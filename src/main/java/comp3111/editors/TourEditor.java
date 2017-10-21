@@ -1,4 +1,4 @@
-package comp3111.presenter;
+package comp3111.editors;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -159,12 +159,15 @@ public class TourEditor extends VerticalLayout {
 		 * the list of tilers is reapplied everytime on any textfield change.
 		 */
 		for (Column<Tour, ?> col : tourGrid.getColumns()) {
-
+			col.setWidth(120);
+			col.setMinimumWidth(120);
+			col.setHidable(true);
+			col.setHidingToggleCaption(col.getCaption());
 			HeaderCell cell = filterRow.getCell(col.getId());
 
 			// Have an input field to use for filter
 			TextField filterField = new TextField();
-			filterField.setWidth(100, Unit.PIXELS);
+			filterField.setWidth(80, Unit.PIXELS);
 			filterField.setHeight(30, Unit.PIXELS);
 
 			filterField.addValueChangeListener(change -> {
@@ -179,54 +182,11 @@ public class TourEditor extends VerticalLayout {
 						// note: if we keep typing into same textfield, we will overwrite the old filter
 						// for this column, which is desirable (rather than having filters for "h",
 						// "he", "hel", etc
-						if (colId.equals(DB.TOUR_ID)) {
-
-							gridFilters.put(colId, new ProviderAndPredicate<Tour, Long>(Tour::getId,
-									t -> Utils.safeParseLongEquals(t, searchVal)));
-							// cannot do try catch here, because the callback function is done outside of
-							// our control. need to make the function itself self (Utils.safeParse...)
-
-						} else if (colId.equals(DB.TOUR_TOUR_NAME)) {
-							gridFilters.put(colId, new ProviderAndPredicate<Tour, String>(Tour::getTourName,
-									t -> Utils.containsIgnoreCase(t, searchVal)));
-
-						} else if (colId.equals(DB.TOUR_DAYS)) {
-							gridFilters.put(colId, new ProviderAndPredicate<Tour, Integer>(Tour::getDays,
-									t -> Utils.safeParseIntEquals(t, searchVal)));
-
-						} else if (colId.equals(DB.TOUR_OFFERING_AVAILABILITY)) {
-							gridFilters.put(colId,
-									new ProviderAndPredicate<Tour, ArrayList<String>>(Tour::getOfferingAvailability,
-											t -> Utils.collectionContainsIgnoreCase(t, searchVal)));
-
-						} else if (colId.equals(DB.TOUR_OFFERINGS)) {
-							gridFilters.put(colId, new ProviderAndPredicate<Tour, Collection<Offering>>(
-									Tour::getOfferings, t -> Utils.collectionContainsIgnoreCase(t, searchVal)));
-
-						} else if (colId.equals(DB.TOUR_DESCRIPTION)) {
-							gridFilters.put(colId, new ProviderAndPredicate<Tour, String>(Tour::getDescription,
-									t -> Utils.containsIgnoreCase(t, searchVal)));
-
-						} else if (colId.equals(DB.TOUR_WEEKDAY_PRICE)) {
-							gridFilters.put(colId, new ProviderAndPredicate<Tour, Integer>(Tour::getWeekdayPrice,
-									t -> Utils.safeParseIntEquals(t, searchVal)));
-
-						} else if (colId.equals(DB.TOUR_WEEKEND_PRICE)) {
-							gridFilters.put(colId, new ProviderAndPredicate<Tour, Integer>(Tour::getWeekendPrice,
-									t -> Utils.safeParseIntEquals(t, searchVal)));
-
-						} else if (colId.equals(DB.TOUR_CHILD_DISCOUNT)) {
-							gridFilters.put(colId, new ProviderAndPredicate<Tour, Double>(Tour::getChildDiscount,
-									t -> Utils.safeParseDoubleEquals(t, searchVal)));
-
-						} else if (colId.equals(DB.TOUR_TODDLER_DISCOUNT)) {
-							gridFilters.put(colId, new ProviderAndPredicate<Tour, Double>(Tour::getToddlerDiscount,
-									t -> Utils.safeParseDoubleEquals(t, searchVal)));
-						}
+						gridFilters.put(colId, FilterFactory.getFilterForTour(colId, searchVal));
 						log.info("updated filter on attribute [{}]", colId);
 
 					} catch (Exception e) {
-						log.info("ignoring [{}], mismatched datatype for col [{}]", searchVal, colId);
+						log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
 					}
 				} else {
 					// the filter field was empty, so try

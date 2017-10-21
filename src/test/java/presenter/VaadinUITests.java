@@ -19,8 +19,8 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.boot.VaadinAutoConfiguration;
 
+import comp3111.editors.CustomerEditor;
 import comp3111.model.Customer;
-import comp3111.presenter.CustomerEditor;
 import comp3111.repo.CustomerRepository;
 import comp3111.view.VaadinLoginUI;
 
