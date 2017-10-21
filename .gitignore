@@ -54,4 +54,3 @@ local.properties
 .buildpath
 
 gradle/wrapper/gradle-wrapper\.properties
-!gradle-wrapper.jar

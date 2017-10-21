@@ -50,7 +50,7 @@ public class Authentication {
 		LoginUser user = loginUserRepository.findByUsername("admin");
 		if (null == user) {
 			log.info("admin didn't have an account, so we made one");
-			loginUserRepository.save(new LoginUser("admin2", "Q1w2e3r4"));
+			loginUserRepository.save(new LoginUser("admin", "Q1w2e3r4"));
 		}
 	}
 
