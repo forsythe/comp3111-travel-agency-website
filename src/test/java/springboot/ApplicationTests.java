@@ -17,12 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import comp3111.ActionManager;
 import comp3111.Application;
 import comp3111.exceptions.OfferingDateUnsupportedException;
 import comp3111.exceptions.OfferingDayOfWeekUnsupportedException;
 import comp3111.exceptions.OfferingOutOfRoomException;
 import comp3111.exceptions.TourGuideUnavailableException;
+import comp3111.model.ActionManager;
 import comp3111.model.Customer;
 import comp3111.model.CustomerOffering;
 import comp3111.model.Offering;

@@ -1,4 +1,4 @@
-package comp3111;
+package comp3111.model;
 
 import java.util.Calendar;
 import java.util.Collection;
@@ -15,12 +15,6 @@ import comp3111.exceptions.OfferingDayOfWeekUnsupportedException;
 import comp3111.exceptions.OfferingOutOfRoomException;
 import comp3111.exceptions.TourGuideUnavailableException;
 import comp3111.exceptions.UsernameTakenException;
-import comp3111.model.Customer;
-import comp3111.model.CustomerOffering;
-import comp3111.model.LoginUser;
-import comp3111.model.Offering;
-import comp3111.model.Tour;
-import comp3111.model.TourGuide;
 import comp3111.repo.CustomerOfferingRepository;
 import comp3111.repo.CustomerRepository;
 import comp3111.repo.LoginUserRepository;
