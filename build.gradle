@@ -47,6 +47,7 @@ dependencies {
 	compile group: 'postgresql', name: 'postgresql', version: '9.0-801.jdbc4'
 	dev("org.springframework.boot:spring-boot-devtools")
     compile 'org.springframework.security:spring-security-core:4.0.1.RELEASE'
+    testCompile group: 'com.vaadin', name: 'vaadin-testbench', version: '4.2.0'
  }
 
 
