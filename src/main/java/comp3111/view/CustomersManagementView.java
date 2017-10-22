@@ -16,13 +16,13 @@ import com.vaadin.ui.VerticalLayout;
 import comp3111.editors.CustomerEditor;
 
 @SpringView(name = CustomersManagementView.VIEW_NAME)
-public class CustomersManagementView extends VerticalLayout implements View{
+public class CustomersManagementView extends VerticalLayout implements View {
 	public static final String VIEW_NAME = "customersManagement";
 	private static final Logger log = LoggerFactory.getLogger(CustomersManagementView.class);
-	
+
 	@Autowired
 	CustomerEditor customerEditor;
-	
+
 	@PostConstruct
 	void init() {
 		Label titleLabel = new Label("<h1>Customers Management</h1>", ContentMode.HTML);
@@ -36,7 +36,7 @@ public class CustomersManagementView extends VerticalLayout implements View{
 
 		this.addComponent(layout);
 	}
-	
+
 	@Override
 	// called AFTER init()
 	public void enter(ViewChangeEvent event) {
