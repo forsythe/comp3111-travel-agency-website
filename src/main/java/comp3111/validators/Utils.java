@@ -30,6 +30,10 @@ public class Utils {
 		});
 	}
 
+	public static String generateRequiredError(){
+		return "is required.";
+	}
+
 	public static Set<Date> stringToDateSet(String listOfDates) {
 		Set<Date> dates = new HashSet<Date>();
 		String[] temp = listOfDates.replace(" ", "").split(",");

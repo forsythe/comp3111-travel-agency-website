@@ -85,7 +85,7 @@ public class CustomerOfferingEditor extends VerticalLayout {
 		customerOfferingGrid.removeColumn("id");
 		
 //		customerOfferingGrid.addColumn(CustomerOffering::getCustomerName).setCaption("customerName");
-//		customerOfferingGrid.addColumn(CustomerOffering::getCustomerHkid).setCaption("customerHkid");
+//		customerOfferingGrid.addColumn(CustomerOffering::getCustomerHKID).setCaption("customerHkid");
 //		customerOfferingGrid.addColumn(CustomerOffering::getOfferingId).setCaption("offeringId");
 //		customerOfferingGrid.addColumn(CustomerOffering::getTourId).setCaption("tourId");
 //		customerOfferingGrid.addColumn(CustomerOffering::getTourName).setCaption("tourName");
