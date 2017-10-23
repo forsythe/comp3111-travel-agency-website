@@ -21,4 +21,12 @@ public class ValidatorFactory {
 	public static StringLengthValidator getStringLengthValidator(int maxLength) {
 		return new StringLengthValidator(maxLength);
 	}
+
+	public static PhoneNumberValidator getPhoneNumberValidator() {
+		return new PhoneNumberValidator();
+	}
+
+	public static HKIDValidator getHKIDValidator() {
+		return new HKIDValidator();
+	}
 }

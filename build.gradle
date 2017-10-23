@@ -26,6 +26,7 @@ repositories {
     mavenCentral()
     maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
     maven { url "http://oss.sonatype.org/content/repositories/vaadin-snapshots/" }
+    maven { url "http://vaadin.com/nexus/content/repositories/vaadin-addons/"}
 }
 
 sourceCompatibility = 1.8
@@ -46,6 +47,7 @@ dependencies {
 	compile group: 'postgresql', name: 'postgresql', version: '9.0-801.jdbc4'
 	dev("org.springframework.boot:spring-boot-devtools")
     compile 'org.springframework.security:spring-security-core:4.0.1.RELEASE'
+    testCompile group: 'com.vaadin', name: 'vaadin-testbench', version: '4.2.0'
  }
 
 
@@ -53,4 +55,3 @@ bootRun {
     // Use Spring Boot DevTool only when we run Gradle bootRun task
     classpath = sourceSets.main.runtimeClasspath + configurations.dev
 }
-

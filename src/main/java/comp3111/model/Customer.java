@@ -27,7 +27,7 @@ public class Customer extends Person implements Persistable<Long> {
 	private Collection<CustomerOffering> customerOffering = new HashSet<CustomerOffering>();
 	//use hashset to allow eager fetching
 
-	protected Customer() { // needed to be a bean
+	public Customer() { // needed to be a bean
 	}
 
 	public Customer(String name, int age) {

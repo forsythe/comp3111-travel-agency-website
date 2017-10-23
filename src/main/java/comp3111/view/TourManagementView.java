@@ -17,7 +17,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import comp3111.Application;
-import comp3111.presenter.TourEditor;
+import comp3111.editors.TourEditor;
 
 @SpringView(name = TourManagementView.VIEW_NAME)
 public class TourManagementView extends VerticalLayout implements View {
