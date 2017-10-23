@@ -60,6 +60,7 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 		Button button = new Button(caption);
 		button.addStyleName(ValoTheme.BUTTON_LINK);
 		button.addClickListener(event -> getUI().getNavigator().navigateTo(viewName));
+		button.setId(caption);
 		return button;
 	}
 

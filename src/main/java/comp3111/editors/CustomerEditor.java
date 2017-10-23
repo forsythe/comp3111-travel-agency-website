@@ -41,20 +41,10 @@ public class CustomerEditor extends VerticalLayout {
 
 	private Window createCustomerSubwindow;
 
-	private TextField customerName;
-	private TextField customerLineId;
-	private HKIDEntryField customerHKID;
-	private PhoneNumberEntryField customerPhone;
-	private TextField customerAge;
-
 	/* action buttons */
-	private HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createNewCustomerButton = new Button("Create new customer");
 	private Button editCustomerButton = new Button("Edit customer");
 	private Button viewCustomerBookingsButton = new Button("View bookings made by customer");
-
-	/* subwindow action buttons */
-	private Button subwindowConfirmCreateCustomer;
 
 	private Grid<Customer> customersGrid = new Grid<Customer>(Customer.class);
 
@@ -64,9 +54,16 @@ public class CustomerEditor extends VerticalLayout {
 	@Autowired
 	public CustomerEditor(CustomerRepository customerRepo) {
 		// adding components
+		HorizontalLayout rowOfButtons = new HorizontalLayout();
+
 		rowOfButtons.addComponent(createNewCustomerButton);
 		rowOfButtons.addComponent(editCustomerButton);
 		rowOfButtons.addComponent(viewCustomerBookingsButton);
+
+		//Setting ids
+		createNewCustomerButton.setId("create_new_customer_button");
+		editCustomerButton.setId("edit_customer_button");
+		viewCustomerBookingsButton.setId("view_customer_bookings_button");
 
 		// Shouldn't be enabled unless selected
 		editCustomerButton.setEnabled(false);
@@ -118,13 +115,13 @@ public class CustomerEditor extends VerticalLayout {
 
 	private Window getCreateCustomerWindow(CustomerRepository customerRepo,
 			Collection<Customer> customerCollectionCached) {
-		subwindowConfirmCreateCustomer = new Button("Confirm");
+		Button subwindowConfirmCreateCustomer = new Button("Confirm");
 
-		customerName = new TextField("Customer Name");
-		customerLineId = new TextField("Customer Line Id");
-		customerHKID = new HKIDEntryField("Customer HKID");
-		customerPhone = new PhoneNumberEntryField("Phone Number", "852");
-		customerAge = new TextField("Customer Age");
+		TextField customerName = new TextField("Customer Name");
+		TextField customerLineId = new TextField("Customer Line Id");
+		HKIDEntryField customerHKID = new HKIDEntryField("Customer HKID");
+		PhoneNumberEntryField customerPhone = new PhoneNumberEntryField("Phone Number", "852");
+		TextField customerAge = new TextField("Customer Age");
 
 		createCustomerSubwindow = new Window("Create new customer");
 		FormLayout subContent = new FormLayout();
@@ -143,6 +140,13 @@ public class CustomerEditor extends VerticalLayout {
 		subContent.addComponent(customerHKID);
 		subContent.addComponent(customerPhone);
 		subContent.addComponent(customerAge);
+
+		customerName.setId("customer_name");
+		customerLineId.setId("customer_line_id");
+		customerHKID.setId("customer_hkid");
+		customerPhone.setId("customer_phone");
+		customerAge.setId("customer_age");
+		subwindowConfirmCreateCustomer.setId("confirm_create_button");
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
 		buttonActions.addComponent(subwindowConfirmCreateCustomer);
@@ -175,7 +179,6 @@ public class CustomerEditor extends VerticalLayout {
 
 			if (validationStatus.isOk()) {
 				// Customer must be created by Spring, otherwise it cannot be saved.
-				// I do not have access to an empty constructor here
 				Customer newCustomer = new Customer();
 				binder.writeBeanIfValid(newCustomer);
 
@@ -205,46 +208,6 @@ public class CustomerEditor extends VerticalLayout {
 
 	public interface ChangeHandler {
 		void onChange();
-	}
-
-	public TextField getCustomerName() {
-		return customerName;
-	}
-
-	public TextField getCustomerLineId() {
-		return customerLineId;
-	}
-
-	public HKIDEntryField getCustomerHKID() {
-		return customerHKID;
-	}
-
-	public PhoneNumberEntryField getCustomerPhone() {
-		return customerPhone;
-	}
-
-	public TextField getCustomerAge() {
-		return customerAge;
-	}
-
-	public Window getCreateCustomerSubwindow() {
-		return createCustomerSubwindow;
-	}
-
-	public Button getCreateNewCustomerButton() {
-		return createNewCustomerButton;
-	}
-
-	public Button getEditCustomerButton() {
-		return editCustomerButton;
-	}
-
-	public Button getViewCustomerBookingsButton() {
-		return viewCustomerBookingsButton;
-	}
-
-	public Button getSubwindowConfirmCreateCustomer() {
-		return subwindowConfirmCreateCustomer;
 	}
 
 }

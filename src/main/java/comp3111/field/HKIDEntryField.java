@@ -19,6 +19,9 @@ public class HKIDEntryField extends CustomField<String> {
 		HorizontalLayout layout = new HorizontalLayout();
 		checkDigit.setWidth("50px");
 
+		mainPart.setId("hkid_main_part");
+		checkDigit.setId("hkid_check_digit");
+
 		//Sample format: 852-12345678
 		layout.addComponent(mainPart);
 		layout.addComponent(new Label("("));

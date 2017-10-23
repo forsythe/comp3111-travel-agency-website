@@ -1,0 +1,8 @@
+do{
+	waiting[i] = true;
+	key = true
+	while(waiting[i] && key){
+		swap(&key, &lock);
+	}
+	waiting[i] = false;
+}
