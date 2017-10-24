@@ -14,6 +14,9 @@ public class ListOfDatesValidator implements Validator<String> {
 
 	@Override
 	public ValidationResult apply(String listOfDates, ValueContext context) {
+		if (listOfDates == null || listOfDates.isEmpty()) {
+			return ValidationResult.ok();
+		}
 		try {
 			String[] dates = listOfDates.replace(" ", "").split(",");
 	
@@ -25,7 +28,7 @@ public class ListOfDatesValidator implements Validator<String> {
 			}
 
 		} catch (ParseException e) {
-			return ValidationResult.error("Provide at least 1 date, dd/mm/yy, separated by commas");
+			return ValidationResult.error("Provide at least 1 date, dd/mm/yyyy, separated by commas");
 		}
 		return ValidationResult.ok();
 
