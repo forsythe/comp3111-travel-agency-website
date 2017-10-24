@@ -113,15 +113,20 @@ public class Tour implements Persistable<Long> {
 	}
 
 	public void setAllowedDaysOfWeek(Collection<Integer> allowedDaysOfWeek) {
-		this.allowedDaysOfWeek = allowedDaysOfWeek;
-	}
+		if (allowedDaysOfWeek == null)
+			allowedDaysOfWeek = new HashSet<Integer>();
+		else
+			this	.allowedDaysOfWeek = allowedDaysOfWeek;	}
 
 	public Collection<Date> getAllowedDates() {
 		return allowedDates;
 	}
 
 	public void setAllowedDates(Collection<Date> allowedDates) {
-		this.allowedDates = allowedDates;
+		if (allowedDates == null)
+			allowedDates = new HashSet<Date>();
+		else
+			this	.allowedDates = allowedDates;
 	}
 
 	public double getChildDiscount() {
@@ -159,7 +164,7 @@ public class Tour implements Persistable<Long> {
 	/*
 	 * not an attribute, but helper function for vaadin column
 	 */
-	public ArrayList<String> getOfferingAvailability() {
+	public String getOfferingAvailability() {
 		if (!allowedDates.isEmpty())
 			return this.getFormattedAllowedDates();
 		else
@@ -178,20 +183,12 @@ public class Tour implements Persistable<Long> {
 		offerings.add(offering);
 	}
 
-	private ArrayList<String> getFormattedAllowedDates() {
-		ArrayList<String> ans = new ArrayList<>();
-		for (Date day : allowedDates) {
-			ans.add(Utils.simpleDateFormat(day));
-		}
-		return ans;
+	private String getFormattedAllowedDates() {
+		return Utils.dateCollectionToString(allowedDates);
 	}
 
-	private ArrayList<String> getFormattedAllowedDaysOfWeek() {
-		ArrayList<String> ans = new ArrayList<>();
-		for (int day : allowedDaysOfWeek) {
-			ans.add(Utils.dayToString(day));
-		}
-		return ans;
+	private String getFormattedAllowedDaysOfWeek() {
+		return Utils.integerCollectionToString(allowedDaysOfWeek);
 	}
 
 	@Override

@@ -3,8 +3,8 @@
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="src" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/"/>
 	<classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Forsythe/.gradle/caches/modules-2/files-2.1/com.vaadin/vaadin-testbench-core/5.0.0/5153e2e748e25e8c0d92da0dea639abaadc7cdd0/vaadin-testbench-core-5.0.0.jar" sourcepath="C:/Users/Forsythe/.gradle/caches/modules-2/files-2.1/com.vaadin/vaadin-testbench-core/5.0.0/cff28bd0bb6951a26dfb13befbbe1987cb79f3b/vaadin-testbench-core-5.0.0-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

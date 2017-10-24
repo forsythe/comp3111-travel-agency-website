@@ -32,8 +32,8 @@ public class FilterFactory {
 		if (colId.equals(DB.TOUR_DAYS))
 			return new ProviderAndPredicate<Tour, Integer>(Tour::getDays, t -> Utils.safeParseIntEquals(t, searchVal));
 		if (colId.equals(DB.TOUR_OFFERING_AVAILABILITY))
-			return new ProviderAndPredicate<Tour, ArrayList<String>>(Tour::getOfferingAvailability,
-					t -> Utils.collectionContainsIgnoreCase(t, searchVal));
+			return new ProviderAndPredicate<Tour, String>(Tour::getOfferingAvailability,
+					t -> Utils.containsIgnoreCase(t, searchVal));
 		if (colId.equals(DB.TOUR_OFFERINGS))
 			return new ProviderAndPredicate<Tour, Collection<Offering>>(Tour::getOfferings,
 					t -> Utils.collectionContainsIgnoreCase(t, searchVal));
