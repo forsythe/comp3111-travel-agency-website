@@ -1,7 +1,5 @@
 package comp3111.editors;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -9,10 +7,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.data.Binder;
+import com.vaadin.data.BinderValidationStatus;
+import com.vaadin.data.BindingValidationStatus;
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
@@ -25,6 +28,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid.SelectionMode;
 
+import comp3111.model.DB;
 import comp3111.model.TourGuide;
 import comp3111.repo.TourGuideRepository;
 import comp3111.validators.Utils;
@@ -36,11 +40,11 @@ import comp3111.validators.ValidatorFactory;
 public class TourGuidesEditor extends VerticalLayout {
 	private static final Logger log = LoggerFactory.getLogger(TourGuidesEditor.class);
 	
+	private Window subwindow;
+	
 	//Editable fields
 	private TextField tourGuideName;
 	private TextField tourGuideLineId;
-	
-	Window createTourGuideSubwindow;
 	
 	HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createTourGuideButton = new Button("Create new tour guide");
@@ -48,19 +52,26 @@ public class TourGuidesEditor extends VerticalLayout {
 	private Button viewGuidedToursButton = new Button("View guided tours");
 	
 	/* subwindow action buttons */
-	private Button subwindowConfirmCreateTourGuide;
+	private Button subwindowConfirm;
 	
 	Grid<TourGuide> tourGuideGrid = new Grid<TourGuide>(TourGuide.class);
 	
 	TourGuide selectedTourGuide;
 	
+	private TourGuideRepository tourGuideRepo;
+	private final HashSet<TourGuide> tourGuideCollectionCached = new HashSet<TourGuide>();
+	
 	@SuppressWarnings("unchecked")
 	@Autowired
-	public TourGuidesEditor(TourGuideRepository tourGuideRepo) {
+	public TourGuidesEditor(TourGuideRepository tgr) {
+		this.tourGuideRepo = tgr;
 		// adding components
 		rowOfButtons.addComponent(createTourGuideButton);
 		rowOfButtons.addComponent(editTourGuideButton);
 		rowOfButtons.addComponent(viewGuidedToursButton);	
+		createTourGuideButton.setId("button_create_tour_guide");
+		editTourGuideButton.setId("button_edit_tour_guide");
+		viewGuidedToursButton.setId("button_view_guided_tours");
 		
 		// edit and manage shouldn't be enabled with no tour guide selected
 		editTourGuideButton.setEnabled(false);
@@ -69,10 +80,7 @@ public class TourGuidesEditor extends VerticalLayout {
 		this.addComponent(rowOfButtons);
 		
 		//Get from db
-		Iterable<TourGuide> tourGuides = tourGuideRepo.findAll();
-		Collection<TourGuide> tourGuideCollectionCached = new HashSet<TourGuide>();
-		tourGuides.forEach(tourGuideCollectionCached::add);
-		tourGuideGrid.setItems(tourGuideCollectionCached);
+		refreshData();
 		
 		tourGuideGrid.setWidth("100%");
 		tourGuideGrid.setSelectionMode(SelectionMode.SINGLE);
@@ -99,106 +107,105 @@ public class TourGuidesEditor extends VerticalLayout {
 			}
 		});
 		
-		tourGuideGrid.removeColumn("new"); // hibernate attributes, we don't care about it
-		tourGuideGrid.removeColumn("guidedOfferings");
+		tourGuideGrid.removeColumn(DB.HIBERNATE_NEW_COL); // hibernate attributes, we don't care about it
+		tourGuideGrid.removeColumn(DB.TOURGUIDE_GUIDED_OFFERINGS);
 		
-		tourGuideGrid.setColumnOrder("id", "name", "lineId");
+		tourGuideGrid.setColumnOrder(DB.TOURGUIDE_ID, DB.TOURGUIDE_NAME, DB.TOURGUIDE_LINEID);
 		
 		this.addComponent(tourGuideGrid);
 		
 		createTourGuideButton.addClickListener(new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
-				getUI().getCurrent().addWindow(getCreateTourGuideWindow(tourGuideRepo, tourGuideCollectionCached));
+				getUI().getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, new TourGuide()));
 			}
 
 		});
+		
+		editTourGuideButton.addClickListener(new ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+				getUI().getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, selectedTourGuide ));
+			}
+		});
 	}
 	
-	private Window getCreateTourGuideWindow(TourGuideRepository tourGuideRepo, Collection<TourGuide> tourGuideCollectionCached) {
-		subwindowConfirmCreateTourGuide = new Button("Confirm");
+	private Window getSubwindow(TourGuideRepository tourGuideRepo, Collection<TourGuide> tourGuideCollectionCached, TourGuide tourGuideToSave) {
+		//Creating the confirm button
+		subwindowConfirm = new Button("Confirm");
+		subwindowConfirm.setId("button_confirm_tour_guide");
 		
 		tourGuideName = new TextField("Name");
+		tourGuideName.setId("tf_tour_guide_name");
 		tourGuideLineId = new TextField("Line Id");
+		tourGuideLineId.setId("tf_tour_guide_line_id");
 		
-		
-		createTourGuideSubwindow = new Window("Create new tour guide");
+		if (tourGuideToSave.getId() == null) { // passed in an unsaved object
+			subwindow = new Window("Create new tour guide");
+		}
+		else {
+			subwindow = new Window("Edit a tour guide");
+		}
 		
 		FormLayout subContent = new FormLayout();
-		createTourGuideSubwindow.setWidth("800px");
-		createTourGuideSubwindow.setContent(subContent);
-		createTourGuideSubwindow.center();
-		createTourGuideSubwindow.setClosable(false);
-		createTourGuideSubwindow.setModal(true);
-		createTourGuideSubwindow.setResizable(false);
-		createTourGuideSubwindow.setDraggable(false);
+		subwindow.setWidth("400px");
+		subwindow.setContent(subContent);
+		subwindow.center();
+		subwindow.setClosable(false);
+		subwindow.setModal(true);
+		subwindow.setResizable(false);
+		subwindow.setDraggable(false);
 		
 		subContent.addComponent(tourGuideName);
 		subContent.addComponent(tourGuideLineId);
 		
 		HorizontalLayout buttonActions = new HorizontalLayout();
-		buttonActions.addComponent(subwindowConfirmCreateTourGuide);
-		buttonActions.addComponent(new Button("Cancel", event -> createTourGuideSubwindow.close()));
+		buttonActions.addComponent(subwindowConfirm);
+		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
 		subContent.addComponent(buttonActions);
+	
+		Binder<TourGuide> binder = new Binder<>();
+		binder.forField(tourGuideName).withValidator(ValidatorFactory.getStringLengthValidator(255))
+			.asRequired(Utils.generateRequiredError()).bind(TourGuide::getName, TourGuide::setName);
+
+		binder.forField(tourGuideLineId).withValidator(ValidatorFactory.getStringLengthValidator(255))
+			.asRequired(Utils.generateRequiredError()).bind(TourGuide::getLineId, TourGuide::setLineId);
 		
-		tourGuideName.setRequiredIndicatorVisible(true);
-		tourGuideLineId.setRequiredIndicatorVisible(true);
+		binder.setBean(tourGuideToSave);
 		
-		Utils.addValidator(tourGuideName, ValidatorFactory.getStringLengthValidator(255));
-		Utils.addValidator(tourGuideLineId, ValidatorFactory.getStringLengthValidator(255));
-		
-		subwindowConfirmCreateTourGuide.addClickListener(new ClickListener() {
-			@Override
-			public void buttonClick(ClickEvent event) {
-				
-				ArrayList<String> errorMsgs = new ArrayList<String>();
-				ArrayList<TextField> nonNullableComponents = new ArrayList<TextField>();
-				
-				nonNullableComponents.addAll(
-						Arrays.asList(tourGuideName, tourGuideLineId));
-				
-				for (TextField field : nonNullableComponents) {
-					if (field.isEmpty()) {
-						log.info(field.getCaption() + ": cannot be empty");
-						errorMsgs.add(field.getCaption() + ": cannot be empty");
+		subwindowConfirm.addClickListener(event -> {
+			BinderValidationStatus<TourGuide> validationStatus = binder.validate();
+			
+			if (validationStatus.isOk()) {
+				// Customer must be created by Spring, otherwise it cannot be saved.
+				// I do not have access to an empty constructor here
+				binder.writeBeanIfValid(tourGuideToSave);
+
+				log.info("About to save tour guide [{}]", tourGuideName.getValue());
+
+				tourGuideRepo.save(tourGuideToSave);
+				this.refreshData();
+				subwindow.close();
+				log.info("Saved a new/edited tour guide [{}] successfully", tourGuideName.getValue());
+
+				binder.removeBean();
+			} else {
+				StringBuilder stringBuilder = new StringBuilder();
+
+				for (BindingValidationStatus<?> result : validationStatus.getFieldValidationErrors()) {
+					if (result.getField() instanceof AbstractField && result.getMessage().isPresent()) {
+						stringBuilder.append(((AbstractField) result.getField()).getCaption()).append(" ")
+								.append(result.getMessage().get()).append("\n");
 					}
 				}
-				
-				ArrayList<TextField> fieldsWithValidators = new ArrayList<TextField>();
-				fieldsWithValidators.addAll(
-						Arrays.asList(tourGuideName, tourGuideLineId));
-				
-				for (TextField field : fieldsWithValidators) {
-					if (field.getErrorMessage() != null) {
-						log.info(field.getCaption() + ": " + field.getErrorMessage().toString());
-						errorMsgs.add(field.getCaption() + ": " + field.getErrorMessage().toString());
-					}
-				}
-				log.info("errorMsgs.size() is [{}]", errorMsgs.size());
-				
-				if (errorMsgs.size() == 0) {
-					TourGuide newTourGuide = new TourGuide(tourGuideName.getValue(), tourGuideLineId.getValue());
-				
-					log.info("Saved a new tour guide [{}] successfully", tourGuideName.getValue());
-					tourGuideName.clear();
-					tourGuideLineId.clear();
-					
-					tourGuideCollectionCached.add(tourGuideRepo.save(newTourGuide));
-					tourGuideGrid.setItems(tourGuideCollectionCached);
-					createTourGuideSubwindow.close();
-				} else {
-					String errorString = "";
-					for (String err : errorMsgs) {
-						errorString += err + "\n";
-					}
-					Notification.show("Could not create tour guide!", errorString, Notification.TYPE_ERROR_MESSAGE);
-				}			
+				Notification.show("Could not create/edit tour guide!", stringBuilder.toString(),
+						Notification.TYPE_ERROR_MESSAGE);
 			}
 		});
 		
-		return createTourGuideSubwindow;
+		return subwindow;
 	}
-	
+		
 	public interface ChangeHandler {
 		void onChange();
 	}
@@ -209,10 +216,6 @@ public class TourGuidesEditor extends VerticalLayout {
 
 	public TextField getTourGuideLineId() {
 		return tourGuideLineId;
-	}
-
-	public Button getSubwindowConfirmCreateTourGuide() {
-		return subwindowConfirmCreateTourGuide;
 	}
 
 	public Button getCreateTourGuideButton() {
@@ -227,4 +230,14 @@ public class TourGuidesEditor extends VerticalLayout {
 		return viewGuidedToursButton;
 	}
 
+	public void refreshData() {
+		Iterable<TourGuide> tourGuides = tourGuideRepo.findAll();
+		tourGuideCollectionCached.clear();
+		tourGuides.forEach(tourGuideCollectionCached::add);
+		ListDataProvider<TourGuide> provider = new ListDataProvider<TourGuide>(tourGuideCollectionCached);
+		tourGuideGrid.setDataProvider(provider);
+		// tourGrid.setItems(tourCollectionCached);
+
+	}
+	
 }

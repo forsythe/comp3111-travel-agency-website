@@ -36,9 +36,10 @@ public class Utils {
 
 	public static Set<Date> stringToDateSet(String listOfDates) {
 		Set<Date> dates = new HashSet<Date>();
+		if(listOfDates.equals("")) return dates;
 		String[] temp = listOfDates.replace(" ", "").split(",");
-
-		SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yy");
+		
+		SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy");
 		parser.setLenient(false);
 
 		for (String s : temp) {
@@ -50,6 +51,14 @@ public class Utils {
 			}
 		}
 		return dates;
+	}
+	
+	public static Set<String> integerSetToStringDayNameSet(Collection<Integer> integers) {
+		Set<String> strings = new HashSet<String>();
+		for (Integer i : integers) {
+			strings.add(dayToString(i));
+		}
+		return strings;
 	}
 
 	public static Set<Integer> stringDayNameSetToIntegerSet(Collection<String> strings) {
@@ -117,6 +126,12 @@ public class Utils {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		return sdf.format(d);
 	}
+	
+	public static Date parseSimpleDateFormat(String s ) throws ParseException{
+		SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy");
+		parser.setLenient(false);
+		return parser.parse(s);
+	}
 
 	public static Boolean safeParseIntEquals(int val, String s) {
 		try {
@@ -149,6 +164,23 @@ public class Utils {
 			return false;
 		}
 		return false;
+	}
+	
+	public static String dateCollectionToString(Collection<Date> dates) {
+		ArrayList<String> dateList = new ArrayList<>();
+		for (Date day : dates) {
+			dateList.add(Utils.simpleDateFormat(day));
+		}
+		return String.join(", ", dateList);
+	}
+	
+	public static String integerCollectionToString(Collection<Integer> integerCollection) {
+		ArrayList<String> integerList = new ArrayList<>();
+		for (int integer : integerCollection) {
+			integerList.add(Utils.dayToString(integer));
+		}
+		
+		return String.join(", ", integerList);
 	}
 
 }
