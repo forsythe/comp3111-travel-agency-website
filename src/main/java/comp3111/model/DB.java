@@ -8,7 +8,8 @@ public class DB {
 	 * e.g. <Class>'s getTourName() ---> <CLASS>_TOUR_NAME = "tourName"
 	 */
 	public static final String HIBERNATE_NEW_COL = "new";
-
+	
+	//Tour
 	/* shown in grid */
 	public static final String TOUR_ID = "id";
 	public static final String TOUR_TOUR_NAME = "tourName";
@@ -23,5 +24,25 @@ public class DB {
 	/* hidden from grid */
 	public static final String TOUR_ALLOWED_DAYS_OF_WEEK = "allowedDaysOfWeek";
 	public static final String TOUR_ALLOWED_DATES = "allowedDates";
-
+	
+	//Customer
+	/* shown in grid */
+	public static final String CUSTOMER_ID = "id";
+	public static final String CUSTOMER_NAME = "name";
+	public static final String CUSTOMER_LINEID = "lineId";
+	public static final String CUSTOMER_HKID = "hkid";
+	public static final String CUSTOMER_PHONE = "phone";
+	public static final String CUSTOMER_AGE = "age";
+	/* hidden from grid */
+	public static final String CUSTOMER_OFFERINGS = "customerOffering";
+	
+	
+	// TourGuide
+	/* shown in grid */
+	public static final String TOURGUIDE_ID = "id";
+	public static final String TOURGUIDE_NAME = "name";
+	public static final String TOURGUIDE_LINEID = "lineId";
+	
+	/* hidden from grid */
+	public static final String TOURGUIDE_GUIDED_OFFERINGS = "guidedOfferings";
 }
