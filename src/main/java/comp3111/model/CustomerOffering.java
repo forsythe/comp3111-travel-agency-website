@@ -1,16 +1,11 @@
 package comp3111.model;
 
+import org.springframework.data.domain.Persistable;
+
+import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.util.Calendar;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.transaction.Transactional;
-
-import org.springframework.data.domain.Persistable;
 
 @Entity
 @Transactional

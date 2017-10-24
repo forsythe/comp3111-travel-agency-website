@@ -1,27 +1,17 @@
 package comp3111.model;
 
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
+import comp3111.exceptions.*;
+import comp3111.repo.*;
+import comp3111.validators.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import comp3111.exceptions.OfferingDateUnsupportedException;
-import comp3111.exceptions.OfferingDayOfWeekUnsupportedException;
-import comp3111.exceptions.OfferingOutOfRoomException;
-import comp3111.exceptions.TourGuideUnavailableException;
-import comp3111.exceptions.UsernameTakenException;
-import comp3111.repo.CustomerOfferingRepository;
-import comp3111.repo.CustomerRepository;
-import comp3111.repo.LoginUserRepository;
-import comp3111.repo.OfferingRepository;
-import comp3111.repo.TourGuideRepository;
-import comp3111.repo.TourRepository;
-import comp3111.validators.Utils;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 @Component
 public class ActionManager {

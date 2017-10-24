@@ -1,13 +1,12 @@
 package comp3111.converters;
 
-import java.util.Collection;
-import java.util.Set;
-
 import com.vaadin.data.Converter;
 import com.vaadin.data.Result;
 import com.vaadin.data.ValueContext;
-
 import comp3111.validators.Utils;
+
+import java.util.Collection;
+import java.util.Set;
 
 public class StringCollectionToIntegerCollectionConverter implements Converter<Set<String>, Collection<Integer>> {
 	

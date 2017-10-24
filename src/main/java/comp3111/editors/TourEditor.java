@@ -1,13 +1,5 @@
 package comp3111.editors;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
@@ -20,32 +12,29 @@ import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.CheckBoxGroup;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.RadioButtonGroup;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
-
 import comp3111.converters.StringCollectionToIntegerCollectionConverter;
 import comp3111.converters.StringToDateCollectionConverter;
-import comp3111.model.*;
+import comp3111.model.DB;
+import comp3111.model.Offering;
+import comp3111.model.Tour;
 import comp3111.repo.TourRepository;
 import comp3111.validators.Utils;
 import comp3111.validators.ValidatorFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * A simple example to introduce building forms. As your real application is
@@ -236,7 +225,11 @@ public class TourEditor extends VerticalLayout {
 				getUI().getCurrent().addWindow(getSubwindow(tourRepo, tourCollectionCached, selectedTour));
 			}
 
-		}); 
+		});
+
+		manageOfferingButton.addClickListener(event -> {
+			getUI().getCurrent().addWindow(new OfferingEditor().getSubWindow(selectedTour, new Offering()));
+		});
 	}
 
 	private Window getSubwindow(TourRepository tourRepo, Collection<Tour> tourCollectionCached, Tour tourToSave) {
@@ -398,8 +391,6 @@ public class TourEditor extends VerticalLayout {
 						Notification.TYPE_ERROR_MESSAGE);
 			}			
 			else if (validationStatus.isOk()) {
-				// Customer must be created by Spring, otherwise it cannot be saved.
-				// I do not have access to an empty constructor here
 				binder.writeBeanIfValid(tourToSave);
 
 				log.info("About to save tour [{}]", tourName.getValue());
@@ -431,107 +422,6 @@ public class TourEditor extends VerticalLayout {
 		void onChange();
 	}
 
-	// public final void editCustomer(Customer c) {
-	// if (c == null) {
-	// setVisible(false);
-	// return;
-	// }
-	// final boolean persisted = c.getId() != null;
-	// if (persisted) {
-	// // Find fresh entity for editing
-	// customer = repository.findOne(c.getId());
-	// } else {
-	// customer = c;
-	// }
-	// cancel.setVisible(persisted);
-	//
-	// // Bind customer properties to similarly named fields
-	// // Could also use annotation or "manual binding" or programmatically
-	// // moving values from fields to entities before saving
-	// binder.setBean(customer);
-	//
-	// setVisible(true);
-	//
-	// // A hack to ensure the whole form is visible
-	// getSave().focus();
-	// // Select all text in firstName field automatically
-	// getName().selectAll();
-	// }
-
-	// public void setChangeHandler(ChangeHandler h) {
-	// // ChangeHandler is notified when either save or delete
-	// // is clicked
-	// getSave().addClickListener(e -> h.onChange());
-	// getDelete().addClickListener(e -> h.onChange());
-	// }
-	public Window getSubwindow() {
-		return subwindow;
-	}
-
-	public TextField getTourName() {
-		return tourName;
-	}
-
-	public TextField getDays() {
-		return days;
-	}
-
-	public RadioButtonGroup<String> getTourType() {
-		return tourType;
-	}
-
-	public CheckBoxGroup<String> getAllowedDaysOfWeek() {
-		return allowedDaysOfWeek;
-	}
-
-	public TextField getAllowedDates() {
-		return allowedDates;
-	}
-
-	public TextField getChildDiscount() {
-		return childDiscount;
-	}
-
-	public TextField getToddlerDiscount() {
-		return toddlerDiscount;
-	}
-
-	public TextField getWeekdayPrice() {
-		return weekdayPrice;
-	}
-
-	public TextField getWeekendPrice() {
-		return weekendPrice;
-	}
-
-	public TextArea getDescrip() {
-		return descrip;
-	}
-
-	public Button getCreateTourButton() {
-		return createTourButton;
-	}
-
-	public Button getEditTourButton() {
-		return editTourButton;
-	}
-
-	public Button getManageOfferingButton() {
-		return manageOfferingButton;
-	}
-
-	public Button getSubwindowConfirm() {
-		return subwindowConfirm;
-	}
-
-	public Grid<Tour> getTourGrid() {
-		return tourGrid;
-	}
-
-	public Tour getSelectedTour() {
-		return selectedTour;
-	}
-
 	public void refreshData() {
 		Iterable<Tour> tours = tourRepo.findAll();
 		tourCollectionCached.clear();
@@ -539,7 +429,6 @@ public class TourEditor extends VerticalLayout {
 		ListDataProvider<Tour> provider = new ListDataProvider<Tour>(tourCollectionCached);
 		tourGrid.setDataProvider(provider);
 		// tourGrid.setItems(tourCollectionCached);
-
 	}
 
 }

@@ -1,13 +1,12 @@
 package comp3111.converters;
 
-import java.util.Collection;
-import java.util.Date;
-
 import com.vaadin.data.Converter;
 import com.vaadin.data.Result;
 import com.vaadin.data.ValueContext;
-
 import comp3111.validators.Utils;
+
+import java.util.Collection;
+import java.util.Date;
 
 public class StringToDateCollectionConverter implements Converter<String, Collection<Date>>  {
 	

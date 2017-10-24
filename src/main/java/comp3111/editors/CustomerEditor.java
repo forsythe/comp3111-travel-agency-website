@@ -1,12 +1,5 @@
 package comp3111.editors;
 
-import java.util.Collection;
-import java.util.HashSet;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
@@ -15,17 +8,8 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Grid;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-
 import comp3111.field.HKIDEntryField;
 import comp3111.field.PhoneNumberEntryField;
 import comp3111.model.Customer;
@@ -33,6 +17,12 @@ import comp3111.model.DB;
 import comp3111.repo.CustomerRepository;
 import comp3111.validators.Utils;
 import comp3111.validators.ValidatorFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 @SuppressWarnings("serial")
 @SpringComponent
@@ -47,9 +37,6 @@ public class CustomerEditor extends VerticalLayout {
 	private Button createNewCustomerButton = new Button("Create new customer");
 	private Button editCustomerButton = new Button("Edit customer");
 	private Button viewCustomerBookingsButton = new Button("View bookings made by customer");
-
-	/* subwindow action buttons */
-	private Button subwindowConfirm;
 
 	private Grid<Customer> customersGrid = new Grid<Customer>(Customer.class);
 
@@ -72,11 +59,6 @@ public class CustomerEditor extends VerticalLayout {
 		createNewCustomerButton.setId("button_create_customer");
 		editCustomerButton.setId("button_edit_customer");
 		viewCustomerBookingsButton.setId("button_view_customer_bookings");
-
-		//Setting ids
-		createNewCustomerButton.setId("create_new_customer_button");
-		editCustomerButton.setId("edit_customer_button");
-		viewCustomerBookingsButton.setId("view_customer_bookings_button");
 
 		// Shouldn't be enabled unless selected
 		editCustomerButton.setEnabled(false);
@@ -122,7 +104,7 @@ public class CustomerEditor extends VerticalLayout {
 
 	private Window getSubwindow(CustomerRepository customerRepo, Collection<Customer> customerCollectionCached, Customer customerToSave) {
 		//Creating the confirm button
-		subwindowConfirm = new Button("Confirm");
+		Button subwindowConfirm = new Button("Confirm");
 		subwindowConfirm.setId("confirm_customer");
 		
 		TextField customerName = new TextField("Customer Name");
@@ -243,7 +225,5 @@ public class CustomerEditor extends VerticalLayout {
 		customers.forEach(customerCollectionCached::add);
 		ListDataProvider<Customer> provider = new ListDataProvider<Customer>(customerCollectionCached);
 		customersGrid.setDataProvider(provider);
-		// tourGrid.setItems(tourCollectionCached);
-
 	}
 }

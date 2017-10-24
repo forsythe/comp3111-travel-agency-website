@@ -3,7 +3,6 @@ package integration;
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.elements.*;
-import comp3111.field.HKIDEntryField;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -11,9 +10,6 @@ import org.junit.Test;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class CustomerEditorTests extends TestBenchTestCase {
 
@@ -47,24 +43,28 @@ public class CustomerEditorTests extends TestBenchTestCase {
 		$(VerticalLayoutElement.class).$(ButtonElement.class).id("Customers").click();
 
 		WebDriverWait wait4 = new WebDriverWait(getDriver(), 10);
-		wait4.until(ExpectedConditions.presenceOfElementLocated(By.id("create_new_customer_button")));
-		$(ButtonElement.class).id("create_new_customer_button").click();
+		wait4.until(ExpectedConditions.presenceOfElementLocated(By.id("button_create_customer")));
+		$(ButtonElement.class).id("button_create_customer").click();
 
 		WebDriverWait wait5 = new WebDriverWait(getDriver(), 10);
-		wait5.until(ExpectedConditions.presenceOfElementLocated(By.id("customer_name")));
+		wait5.until(ExpectedConditions.presenceOfElementLocated(By.id("tf_customer_name")));
 
-		$(FormLayoutElement.class).$(TextFieldElement.class).id("customer_name").setValue("Peter");
-		$(FormLayoutElement.class).$(TextFieldElement.class).id("customer_line_id").setValue("123452334");
+		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_name").setValue("Peter");
+		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_line_id").setValue("123452334");
 
-		$(FormLayoutElement.class).$(TextFieldElement.class).id("hkid_main_part").setValue("G1234567");
-		$(FormLayoutElement.class).$(TextFieldElement.class).id("hkid_check_digit").setValue("A");
+		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_hkid")
+				.$(TextFieldElement.class).get(0).setValue("G123456");
 
-		$(FormLayoutElement.class).$(CustomComponentElement.class).id("customer_phone")
-				.$(TextFieldElement.class).child($(TextFieldElement.class)).get(0).setValue("852");
-		$(FormLayoutElement.class).$(CustomComponentElement.class).id("customer_phone")
-				.$(TextFieldElement.class).child($(TextFieldElement.class)).get(1).setValue("12345678");
+		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_hkid")
+				.$(TextFieldElement.class).get(1).setValue("A");
 
-		$(FormLayoutElement.class).$(TextFieldElement.class).id("customer_age").setValue("23");
+		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_phone")
+				.$(TextFieldElement.class).get(0).setValue("852");
+
+		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_phone")
+				.$(TextFieldElement.class).get(1).setValue("12345678");
+
+		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_age").setValue("23");
 	}
 
 	@After

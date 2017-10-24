@@ -1,19 +1,14 @@
 package comp3111.auth;
 
-import javax.annotation.PostConstruct;
-
+import com.vaadin.spring.annotation.SpringComponent;
+import comp3111.model.LoginUser;
+import comp3111.repo.LoginUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
 
-import com.vaadin.spring.annotation.SpringComponent;
-import com.vaadin.spring.annotation.ViewScope;
-
-import comp3111.model.LoginUser;
-import comp3111.repo.LoginUserRepository;
+import javax.annotation.PostConstruct;
 
 @SpringComponent
 public class Authentication {
