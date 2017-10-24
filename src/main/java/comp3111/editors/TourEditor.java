@@ -417,7 +417,7 @@ public class TourEditor extends VerticalLayout {
 			
 			//Special case for tours only to ensure that this field must be filled
 			if(allowedDates.isEmpty() && allowedDaysOfWeek.isEmpty()) {
-				Notification.show("Could not create/edit tour, offering availability is required!",
+				Notification.show("Could not edit tour, offering availability is required!",
 						Notification.TYPE_ERROR_MESSAGE);
 			}			
 			else if (validationStatus.isOk()) {
