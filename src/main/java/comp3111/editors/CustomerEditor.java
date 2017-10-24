@@ -30,9 +30,7 @@ import comp3111.field.HKIDEntryField;
 import comp3111.field.PhoneNumberEntryField;
 import comp3111.model.Customer;
 import comp3111.model.DB;
-import comp3111.model.TourGuide;
 import comp3111.repo.CustomerRepository;
-import comp3111.repo.TourGuideRepository;
 import comp3111.validators.Utils;
 import comp3111.validators.ValidatorFactory;
 
@@ -43,9 +41,8 @@ import comp3111.validators.ValidatorFactory;
 public class CustomerEditor extends VerticalLayout {
 	private static final Logger log = LoggerFactory.getLogger(CustomerEditor.class);
 
-	private Window createCustomerSubwindow;
-	private Window editCustomerSubwindow;
-
+	private Window subwindow;
+	
 	private TextField customerName;
 	private TextField customerLineId;
 	private HKIDEntryField customerHKID;
@@ -59,8 +56,7 @@ public class CustomerEditor extends VerticalLayout {
 	private Button viewCustomerBookingsButton = new Button("View bookings made by customer");
 
 	/* subwindow action buttons */
-	private Button subwindowConfirmCreateCustomer;
-	private Button subwindowConfirmEditCustomer;
+	private Button subwindowConfirm;
 
 	private Grid<Customer> customersGrid = new Grid<Customer>(Customer.class);
 
@@ -78,12 +74,14 @@ public class CustomerEditor extends VerticalLayout {
 		rowOfButtons.addComponent(createNewCustomerButton);
 		rowOfButtons.addComponent(editCustomerButton);
 		rowOfButtons.addComponent(viewCustomerBookingsButton);
+		createNewCustomerButton.setId("button_create_customer");
+		editCustomerButton.setId("button_edit_customer");
+		viewCustomerBookingsButton.setId("button_view_customer_bookings");
 
 		// Shouldn't be enabled unless selected
 		editCustomerButton.setEnabled(false);
 		viewCustomerBookingsButton.setEnabled(false);
 	
-
 		// Render component
 		this.addComponent(rowOfButtons);
 
@@ -96,13 +94,11 @@ public class CustomerEditor extends VerticalLayout {
 		customersGrid.addSelectionListener(event -> {
 			if (event.getFirstSelectedItem().isPresent()) {
 				selectedCustomer = event.getFirstSelectedItem().get();
-
 				editCustomerButton.setEnabled(true);
 				viewCustomerBookingsButton.setEnabled(true);
 				createNewCustomerButton.setEnabled(false);
 			} else {
 				selectedCustomer = null;
-
 				editCustomerButton.setEnabled(false);
 				viewCustomerBookingsButton.setEnabled(false);
 				createNewCustomerButton.setEnabled(true);
@@ -117,34 +113,46 @@ public class CustomerEditor extends VerticalLayout {
 		this.addComponent(customersGrid);
 
 		createNewCustomerButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(getCreateCustomerWindow(customerRepo, customerCollectionCached));
+			getUI().getCurrent().addWindow(getSubwindow(customerRepo, customerCollectionCached, new Customer()));
 		});
 		editCustomerButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(getEditCustomerWindow(customerRepo, customerCollectionCached));
+			getUI().getCurrent().addWindow(getSubwindow(customerRepo, customerCollectionCached, selectedCustomer));
 		});
 	}
 
-	private Window getCreateCustomerWindow(CustomerRepository customerRepo,
-			Collection<Customer> customerCollectionCached) {
-		subwindowConfirmCreateCustomer = new Button("Confirm");
-
+	private Window getSubwindow(CustomerRepository customerRepo, Collection<Customer> customerCollectionCached, Customer customerToSave) {
+		//Creating the confirm button
+		subwindowConfirm = new Button("Confirm");
+		subwindowConfirm.setId("confirm_customer");
+		
 		customerName = new TextField("Customer Name");
+		customerName.setId("tf_customer_name");
 		customerLineId = new TextField("Customer Line Id");
+		customerLineId.setId("tf_customer_line_id");
 		customerHKID = new HKIDEntryField("Customer HKID");
+		customerHKID.setId("tf_customer_hkid");
 		customerPhone = new PhoneNumberEntryField("Phone Number", "852");
+		customerPhone.setId("tf_customer_phone");
 		customerAge = new TextField("Customer Age");
+		customerAge.setId("tf_customer_age");
+		
+		if (customerToSave.getId() == null) { // passed in an unsaved object
+			subwindow = new Window("Create new customer");
+		}
+		else {
+			subwindow = new Window("Edit a customer");
+		}
 
-		createCustomerSubwindow = new Window("Create new customer");
 		FormLayout subContent = new FormLayout();
 
-		createCustomerSubwindow.setWidth("800px");
+		subwindow.setWidth("800px");
 
-		createCustomerSubwindow.setContent(subContent);
-		createCustomerSubwindow.center();
-		createCustomerSubwindow.setClosable(false);
-		createCustomerSubwindow.setModal(true);
-		createCustomerSubwindow.setResizable(false);
-		createCustomerSubwindow.setDraggable(false);
+		subwindow.setContent(subContent);
+		subwindow.center();
+		subwindow.setClosable(false);
+		subwindow.setModal(true);
+		subwindow.setResizable(false);
+		subwindow.setDraggable(false);
 
 		subContent.addComponent(customerName);
 		subContent.addComponent(customerLineId);
@@ -153,106 +161,12 @@ public class CustomerEditor extends VerticalLayout {
 		subContent.addComponent(customerAge);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
-		buttonActions.addComponent(subwindowConfirmCreateCustomer);
-		buttonActions.addComponent(new Button("Cancel", event -> createCustomerSubwindow.close()));
-		subContent.addComponent(buttonActions);
-
-		Binder<Customer> binder = new Binder<>();
-		binder.forField(customerName).withValidator(ValidatorFactory.getStringLengthValidator(255))
-				.asRequired(Utils.generateRequiredError()).bind(Customer::getName, Customer::setName);
-
-		binder.forField(customerLineId).withValidator(ValidatorFactory.getStringLengthValidator(255))
-				.bind(Customer::getLineId, Customer::setLineId);
-
-		binder.forField(customerHKID).withValidator(ValidatorFactory.getStringLengthValidator(255))
-				.withValidator(ValidatorFactory.getHKIDValidator()).asRequired(Utils.generateRequiredError())
-				.bind(Customer::getHkid, Customer::setHkid);
-
-		binder.forField(customerPhone).withValidator(ValidatorFactory.getStringLengthValidator(255))
-				.withValidator(ValidatorFactory.getPhoneNumberValidator()).asRequired(Utils.generateRequiredError())
-				.bind(Customer::getPhone, Customer::setPhone);
-
-		binder.forField(customerAge).withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
-				.asRequired(Utils.generateRequiredError())
-				.withConverter(new StringToIntegerConverter("Must be an integer"))
-				.bind(Customer::getAge, Customer::setAge);
-
-		subwindowConfirmCreateCustomer.addClickListener(event -> {
-			BinderValidationStatus<Customer> validationStatus = binder.validate();
-			log.info(customerHKID.getValue());
-
-			if (validationStatus.isOk()) {
-				// Customer must be created by Spring, otherwise it cannot be saved.
-				// I do not have access to an empty constructor here
-				Customer newCustomer = new Customer();
-				binder.writeBeanIfValid(newCustomer);
-
-				log.info("About to save customer [{}]", customerName.getValue());
-
-				customerCollectionCached.add(customerRepo.save(newCustomer));
-				customersGrid.setItems(customerCollectionCached);
-				createCustomerSubwindow.close();
-				log.info("Saved a new customer [{}] successfully", customerName.getValue());
-
-				binder.removeBean();
-			} else {
-				StringBuilder stringBuilder = new StringBuilder();
-
-				for (BindingValidationStatus<?> result : validationStatus.getFieldValidationErrors()) {
-					if (result.getField() instanceof AbstractField && result.getMessage().isPresent()) {
-						stringBuilder.append(((AbstractField) result.getField()).getCaption()).append(" ")
-								.append(result.getMessage().get()).append("\n");
-					}
-				}
-				Notification.show("Could not create customer!", stringBuilder.toString(),
-						Notification.TYPE_ERROR_MESSAGE);
-			}
-		});
-		return createCustomerSubwindow;
-	}
-	
-	private Window getEditCustomerWindow(CustomerRepository customerRepo,
-			Collection<Customer> customerCollectionCached) {
-		subwindowConfirmEditCustomer = new Button("Confirm");
-
-		customerName = new TextField("Customer Name");
-		customerLineId = new TextField("Customer Line Id");
-		customerHKID = new HKIDEntryField("Customer HKID");
-		customerPhone = new PhoneNumberEntryField("Phone Number", "852");
-		customerAge = new TextField("Customer Age");
-		
-		customerName.setValue(selectedCustomer.getName());
-		customerLineId.setValue(selectedCustomer.getLineId());
-		//This line is not setting the value, making the hkid blank
-		//can't call the func in HKID field as it is protected.
-		customerHKID.setValue(selectedCustomer.getHkid());
-		customerPhone.setValue(selectedCustomer.getPhone());
-		customerAge.setValue(String.valueOf(selectedCustomer.getAge()));
-
-		editCustomerSubwindow = new Window("Edit customer");
-		FormLayout subContent = new FormLayout();
-
-		editCustomerSubwindow.setWidth("800px");
-
-		editCustomerSubwindow.setContent(subContent);
-		editCustomerSubwindow.center();
-		editCustomerSubwindow.setClosable(false);
-		editCustomerSubwindow.setModal(true);
-		editCustomerSubwindow.setResizable(false);
-		editCustomerSubwindow.setDraggable(false);
-
-		subContent.addComponent(customerName);
-		subContent.addComponent(customerLineId);
-		subContent.addComponent(customerHKID);
-		subContent.addComponent(customerPhone);
-		subContent.addComponent(customerAge);
-
-		HorizontalLayout buttonActions = new HorizontalLayout();
-		buttonActions.addComponent(subwindowConfirmEditCustomer);
-		buttonActions.addComponent(new Button("Cancel", event -> editCustomerSubwindow.close()));
+		buttonActions.addComponent(subwindowConfirm);
+		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
 		subContent.addComponent(buttonActions);
 		
 		Binder<Customer> binder = new Binder<>();
+		
 		binder.forField(customerName).withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.asRequired(Utils.generateRequiredError()).bind(Customer::getName, Customer::setName);
 
@@ -272,23 +186,25 @@ public class CustomerEditor extends VerticalLayout {
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
 				.bind(Customer::getAge, Customer::setAge);
 		
-		subwindowConfirmEditCustomer.addClickListener(event -> {
+		binder.setBean(customerToSave);
+		
+		subwindowConfirm.addClickListener(event -> {
 			BinderValidationStatus<Customer> validationStatus = binder.validate();
 			log.info(customerHKID.getValue());
 
 			if (validationStatus.isOk()) {
 				// Customer must be created by Spring, otherwise it cannot be saved.
 				// I do not have access to an empty constructor here
-				binder.writeBeanIfValid(selectedCustomer);
+				binder.writeBeanIfValid(customerToSave);
 
 				log.info("About to save customer [{}]", customerName.getValue());
 
-				customerCollectionCached.add(customerRepo.save(selectedCustomer));
-				customersGrid.setItems(customerCollectionCached);
-				editCustomerSubwindow.close();
-				log.info("Saved a new customer [{}] successfully", customerName.getValue());
+				customerRepo.save(customerToSave);
+				this.refreshData();
+				subwindow.close();
+				
+				log.info("Saved a new/edited customer [{}] successfully", customerName.getValue());
 
-				refreshData();
 				binder.removeBean();
 			} else {
 				StringBuilder stringBuilder = new StringBuilder();
@@ -299,12 +215,12 @@ public class CustomerEditor extends VerticalLayout {
 								.append(result.getMessage().get()).append("\n");
 					}
 				}
-				Notification.show("Could not create customer!", stringBuilder.toString(),
+				Notification.show("Could not create/edit customer!", stringBuilder.toString(),
 						Notification.TYPE_ERROR_MESSAGE);
 			}
 		});
 		
-		return editCustomerSubwindow;
+		return subwindow;
 	}
 
 	public interface ChangeHandler {
@@ -331,10 +247,6 @@ public class CustomerEditor extends VerticalLayout {
 		return customerAge;
 	}
 
-	public Window getCreateCustomerSubwindow() {
-		return createCustomerSubwindow;
-	}
-
 	public Button getCreateNewCustomerButton() {
 		return createNewCustomerButton;
 	}
@@ -347,10 +259,6 @@ public class CustomerEditor extends VerticalLayout {
 		return viewCustomerBookingsButton;
 	}
 
-	public Button getSubwindowConfirmCreateCustomer() {
-		return subwindowConfirmCreateCustomer;
-	}
-	
 	public void refreshData() {
 		Iterable<Customer> customers = customerRepo.findAll();
 		//it's possible the customerRepo can return null!

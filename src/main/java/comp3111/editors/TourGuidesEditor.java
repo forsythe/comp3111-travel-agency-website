@@ -1,7 +1,5 @@
 package comp3111.editors;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -30,12 +28,9 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid.SelectionMode;
 
-import comp3111.model.Customer;
 import comp3111.model.DB;
-import comp3111.model.Tour;
 import comp3111.model.TourGuide;
 import comp3111.repo.TourGuideRepository;
-import comp3111.repo.TourRepository;
 import comp3111.validators.Utils;
 import comp3111.validators.ValidatorFactory;
 
@@ -45,12 +40,11 @@ import comp3111.validators.ValidatorFactory;
 public class TourGuidesEditor extends VerticalLayout {
 	private static final Logger log = LoggerFactory.getLogger(TourGuidesEditor.class);
 	
+	private Window subwindow;
+	
 	//Editable fields
 	private TextField tourGuideName;
 	private TextField tourGuideLineId;
-	
-	Window createTourGuideSubwindow;
-	Window editTourGuideSubwindow;
 	
 	HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createTourGuideButton = new Button("Create new tour guide");
@@ -58,8 +52,7 @@ public class TourGuidesEditor extends VerticalLayout {
 	private Button viewGuidedToursButton = new Button("View guided tours");
 	
 	/* subwindow action buttons */
-	private Button subwindowConfirmCreateTourGuide;
-	private Button subwindowConfirmEditTourGuide;
+	private Button subwindowConfirm;
 	
 	Grid<TourGuide> tourGuideGrid = new Grid<TourGuide>(TourGuide.class);
 	
@@ -76,6 +69,9 @@ public class TourGuidesEditor extends VerticalLayout {
 		rowOfButtons.addComponent(createTourGuideButton);
 		rowOfButtons.addComponent(editTourGuideButton);
 		rowOfButtons.addComponent(viewGuidedToursButton);	
+		createTourGuideButton.setId("button_create_tour_guide");
+		editTourGuideButton.setId("button_edit_tour_guide");
+		viewGuidedToursButton.setId("button_view_guided_tours");
 		
 		// edit and manage shouldn't be enabled with no tour guide selected
 		editTourGuideButton.setEnabled(false);
@@ -121,7 +117,7 @@ public class TourGuidesEditor extends VerticalLayout {
 		createTourGuideButton.addClickListener(new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
-				getUI().getCurrent().addWindow(getCreateTourGuideWindow(tourGuideRepo, tourGuideCollectionCached));
+				getUI().getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, new TourGuide()));
 			}
 
 		});
@@ -129,122 +125,45 @@ public class TourGuidesEditor extends VerticalLayout {
 		editTourGuideButton.addClickListener(new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
-				getUI().getCurrent().addWindow(getEditTourGuideWindow(tourGuideRepo, tourGuideCollectionCached ));
+				getUI().getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, selectedTourGuide ));
 			}
 		});
 	}
 	
-	private Window getCreateTourGuideWindow(TourGuideRepository tourGuideRepo, Collection<TourGuide> tourGuideCollectionCached) {
-		subwindowConfirmCreateTourGuide = new Button("Confirm");
+	private Window getSubwindow(TourGuideRepository tourGuideRepo, Collection<TourGuide> tourGuideCollectionCached, TourGuide tourGuideToSave) {
+		//Creating the confirm button
+		subwindowConfirm = new Button("Confirm");
+		subwindowConfirm.setId("button_confirm_tour_guide");
 		
 		tourGuideName = new TextField("Name");
+		tourGuideName.setId("tf_tour_guide_name");
 		tourGuideLineId = new TextField("Line Id");
+		tourGuideLineId.setId("tf_tour_guide_line_id");
 		
-		createTourGuideSubwindow = new Window("Create new tour guide");
+		if (tourGuideToSave.getId() == null) { // passed in an unsaved object
+			subwindow = new Window("Create new tour guide");
+		}
+		else {
+			subwindow = new Window("Edit a tour guide");
+		}
 		
 		FormLayout subContent = new FormLayout();
-		createTourGuideSubwindow.setWidth("400px");
-		createTourGuideSubwindow.setContent(subContent);
-		createTourGuideSubwindow.center();
-		createTourGuideSubwindow.setClosable(false);
-		createTourGuideSubwindow.setModal(true);
-		createTourGuideSubwindow.setResizable(false);
-		createTourGuideSubwindow.setDraggable(false);
+		subwindow.setWidth("400px");
+		subwindow.setContent(subContent);
+		subwindow.center();
+		subwindow.setClosable(false);
+		subwindow.setModal(true);
+		subwindow.setResizable(false);
+		subwindow.setDraggable(false);
 		
 		subContent.addComponent(tourGuideName);
 		subContent.addComponent(tourGuideLineId);
 		
 		HorizontalLayout buttonActions = new HorizontalLayout();
-		buttonActions.addComponent(subwindowConfirmCreateTourGuide);
-		buttonActions.addComponent(new Button("Cancel", event -> createTourGuideSubwindow.close()));
+		buttonActions.addComponent(subwindowConfirm);
+		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
 		subContent.addComponent(buttonActions);
-		
-		tourGuideName.setRequiredIndicatorVisible(true);
-		tourGuideLineId.setRequiredIndicatorVisible(true);
-		
-		Utils.addValidator(tourGuideName, ValidatorFactory.getStringLengthValidator(255));
-		Utils.addValidator(tourGuideLineId, ValidatorFactory.getStringLengthValidator(255));
-		
-		subwindowConfirmCreateTourGuide.addClickListener(new ClickListener() {
-			@Override
-			public void buttonClick(ClickEvent event) {
-				
-				ArrayList<String> errorMsgs = new ArrayList<String>();
-				ArrayList<TextField> nonNullableComponents = new ArrayList<TextField>();
-				
-				nonNullableComponents.addAll(
-						Arrays.asList(tourGuideName, tourGuideLineId));
-				
-				for (TextField field : nonNullableComponents) {
-					if (field.isEmpty()) {
-						log.info(field.getCaption() + ": cannot be empty");
-						errorMsgs.add(field.getCaption() + ": cannot be empty");
-					}
-				}
-				
-				ArrayList<TextField> fieldsWithValidators = new ArrayList<TextField>();
-				fieldsWithValidators.addAll(
-						Arrays.asList(tourGuideName, tourGuideLineId));
-				
-				for (TextField field : fieldsWithValidators) {
-					if (field.getErrorMessage() != null) {
-						log.info(field.getCaption() + ": " + field.getErrorMessage().toString());
-						errorMsgs.add(field.getCaption() + ": " + field.getErrorMessage().toString());
-					}
-				}
-				log.info("errorMsgs.size() is [{}]", errorMsgs.size());
-				
-				if (errorMsgs.size() == 0) {
-					TourGuide newTourGuide = new TourGuide(tourGuideName.getValue(), tourGuideLineId.getValue());
-				
-					log.info("Saved a new tour guide [{}] successfully", tourGuideName.getValue());
-					tourGuideName.clear();
-					tourGuideLineId.clear();
-					
-					tourGuideCollectionCached.add(tourGuideRepo.save(newTourGuide));
-					tourGuideGrid.setItems(tourGuideCollectionCached);
-					createTourGuideSubwindow.close();
-				} else {
-					String errorString = "";
-					for (String err : errorMsgs) {
-						errorString += err + "\n";
-					}
-					Notification.show("Could not create tour guide!", errorString, Notification.TYPE_ERROR_MESSAGE);
-				}			
-			}
-		});
-		
-		return createTourGuideSubwindow;
-	}
 	
-	private Window getEditTourGuideWindow (TourGuideRepository tourGuideRepo, Collection<TourGuide> tourGuideCollectionCached) {
-		subwindowConfirmEditTourGuide = new Button("Confirm");
-		
-		tourGuideName = new TextField("Name");
-		tourGuideLineId = new TextField("Line Id");
-		
-		tourGuideName.setValue(selectedTourGuide.getName());
-		tourGuideLineId.setValue(selectedTourGuide.getLineId());
-		
-		editTourGuideSubwindow = new Window("Edit a tour guide");
-		
-		FormLayout subContent = new FormLayout();
-		editTourGuideSubwindow.setWidth("400px");
-		editTourGuideSubwindow.setContent(subContent);
-		editTourGuideSubwindow.center();
-		editTourGuideSubwindow.setClosable(false);
-		editTourGuideSubwindow.setModal(true);
-		editTourGuideSubwindow.setResizable(false);
-		editTourGuideSubwindow.setDraggable(false);
-		
-		subContent.addComponent(tourGuideName);
-		subContent.addComponent(tourGuideLineId);
-		
-		HorizontalLayout buttonActions = new HorizontalLayout();
-		buttonActions.addComponent(subwindowConfirmEditTourGuide);
-		buttonActions.addComponent(new Button("Cancel", event -> editTourGuideSubwindow.close()));
-		subContent.addComponent(buttonActions);
-		
 		Binder<TourGuide> binder = new Binder<>();
 		binder.forField(tourGuideName).withValidator(ValidatorFactory.getStringLengthValidator(255))
 			.asRequired(Utils.generateRequiredError()).bind(TourGuide::getName, TourGuide::setName);
@@ -252,22 +171,23 @@ public class TourGuidesEditor extends VerticalLayout {
 		binder.forField(tourGuideLineId).withValidator(ValidatorFactory.getStringLengthValidator(255))
 			.asRequired(Utils.generateRequiredError()).bind(TourGuide::getLineId, TourGuide::setLineId);
 		
-		subwindowConfirmEditTourGuide.addClickListener(event -> {
+		binder.setBean(tourGuideToSave);
+		
+		subwindowConfirm.addClickListener(event -> {
 			BinderValidationStatus<TourGuide> validationStatus = binder.validate();
 			
 			if (validationStatus.isOk()) {
 				// Customer must be created by Spring, otherwise it cannot be saved.
 				// I do not have access to an empty constructor here
-				binder.writeBeanIfValid(selectedTourGuide);
+				binder.writeBeanIfValid(tourGuideToSave);
 
 				log.info("About to save tour guide [{}]", tourGuideName.getValue());
 
-				tourGuideCollectionCached.add(tourGuideRepo.save(selectedTourGuide));
-				tourGuideGrid.setItems(tourGuideCollectionCached);
-				editTourGuideSubwindow.close();
-				log.info("Saved a new tour guide [{}] successfully", tourGuideName.getValue());
+				tourGuideRepo.save(tourGuideToSave);
+				this.refreshData();
+				subwindow.close();
+				log.info("Saved a new/edited tour guide [{}] successfully", tourGuideName.getValue());
 
-				refreshData();
 				binder.removeBean();
 			} else {
 				StringBuilder stringBuilder = new StringBuilder();
@@ -278,14 +198,14 @@ public class TourGuidesEditor extends VerticalLayout {
 								.append(result.getMessage().get()).append("\n");
 					}
 				}
-				Notification.show("Could not edit tour guide!", stringBuilder.toString(),
+				Notification.show("Could not create/edit tour guide!", stringBuilder.toString(),
 						Notification.TYPE_ERROR_MESSAGE);
 			}
 		});
 		
-		return editTourGuideSubwindow;
+		return subwindow;
 	}
-	
+		
 	public interface ChangeHandler {
 		void onChange();
 	}
@@ -296,10 +216,6 @@ public class TourGuidesEditor extends VerticalLayout {
 
 	public TextField getTourGuideLineId() {
 		return tourGuideLineId;
-	}
-
-	public Button getSubwindowConfirmCreateTourGuide() {
-		return subwindowConfirmCreateTourGuide;
 	}
 
 	public Button getCreateTourGuideButton() {

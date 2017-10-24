@@ -1,14 +1,9 @@
 package comp3111.editors;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
-import org.hibernate.boot.model.naming.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
-import com.vaadin.data.Converter;
 import com.vaadin.data.HasValue.ValueChangeEvent;
 import com.vaadin.data.HasValue.ValueChangeListener;
-import com.vaadin.data.ValidationException;
-import com.vaadin.data.ValidationResult;
 import com.vaadin.data.converter.StringToDoubleConverter;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
@@ -28,7 +20,6 @@ import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -123,6 +114,9 @@ public class TourEditor extends VerticalLayout {
 		rowOfButtons.addComponent(createTourButton);
 		rowOfButtons.addComponent(editTourButton);
 		rowOfButtons.addComponent(manageOfferingButton);
+		createTourButton.setId("button_create_tour");
+		editTourButton.setId("button_edit_tour");
+		manageOfferingButton.setId("button_manage_tour_offerings");
 
 		// edit and manage shouldn't be enabled with no tour selected
 		editTourButton.setEnabled(false);
@@ -243,52 +237,34 @@ public class TourEditor extends VerticalLayout {
 			}
 
 		}); 
-		
-		//Old Stuff
-		// addComponents(getName(), getAge(), actions);
-
-		// bind using naming convention
-		// binder.bindInstanceFields(this); can't use this
-
-		// age is a string here, but is an int in Customer.class
-		// binder.forField(age).withNullRepresentation("")
-		// .withConverter(new StringToIntegerConverter(Integer.valueOf(0), "integers
-		// only"))
-		// .bind(Customer::getAge, Customer::setAge);
-		//
-		// binder.forField(name).bind(Customer::getName, Customer::setName);
-		//
-		// // Configure and style components
-		// setSpacing(true);
-		// actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
-		// getSave().setStyleName(ValoTheme.BUTTON_PRIMARY);
-		// getSave().setClickShortcut(ShortcutAction.KeyCode.ENTER);
-		//
-		// // wire action buttons to save, delete and reset
-		// getSave().addClickListener(e -> repository.save(customer));
-		// getDelete().addClickListener(e -> repository.delete(customer));
-		// // cancel.addClickListener(e -> editCustomer(customer));
-		// setVisible(false);
 	}
 
 	private Window getSubwindow(TourRepository tourRepo, Collection<Tour> tourCollectionCached, Tour tourToSave) {
 		//Creating the confirm button
 		subwindowConfirm = new Button("Confirm");
+		subwindowConfirm.setId("confirm_tour");
 
 		//Creating the fields
 		tourName = new TextField("Tour Name");
+		tourName.setId("tf_tour_name");
 		days = new TextField("Duration (days)");
+		days.setId("tf_days");
 		tourType = new RadioButtonGroup<String>("Tour Type");
+		tourType.setId("rbgrp_tour_type");
 		allowedDaysOfWeek = new CheckBoxGroup<String>("Offering Availability");
 		allowedDaysOfWeek.setId("chkbxgrp_allowed_days_of_week");
 		allowedDates = new TextField("Offering Availability");
 		allowedDates.setId("tf_allowed_dates");
-
 		childDiscount = new TextField("Child Discount Multiplier");
+		childDiscount.setId("tf_child_discount");
 		toddlerDiscount = new TextField("Toddler Discount Multiplier");
+		toddlerDiscount.setId("tf_toddler_discount");
 		weekdayPrice = new TextField("Weekday Price");
+		weekdayPrice.setId("tf_weekday_price");
 		weekendPrice = new TextField("Weekend Price");
+		weekendPrice.setId("tf_weekend_price");
 		descrip = new TextArea("Description");
+		descrip.setId("tf_description");
 
 		tourType.setItems(LIMITED_TOUR_TYPE, REPEATING_TOUR_TYPE);
 		allowedDaysOfWeek.setItems("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
@@ -410,6 +386,7 @@ public class TourEditor extends VerticalLayout {
 		binder.forField(descrip).withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.asRequired(Utils.generateRequiredError()).bind(Tour::getDescription, Tour::setDescription);
 
+		//Do set bean to assign value to fields
 		binder.setBean(tourToSave);
 
 		subwindowConfirm.addClickListener(event -> {
