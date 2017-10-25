@@ -34,7 +34,7 @@ public class ActionManager {
 	 * will save or update the tour and tourguide and set up the connections
 	 */
 	public Offering createOfferingForTour(Tour tour, TourGuide tg, Date startDate, String hotelName, int minCustomers,
-			int maxCustomers) throws OfferingOutOfRoomException, OfferingDateUnsupportedException,
+			int maxCustomers) throws OfferingDateUnsupportedException,
 			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
 
 		// check that the day of week is correct
@@ -85,7 +85,13 @@ public class ActionManager {
 
 		log.info("successfully created offering on [{}] for tour [{}]", startDate, tour.getTourName());
 		return o;
+	}
 
+	public Offering createOfferingForTour(Offering offering) throws OfferingDateUnsupportedException,
+			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
+
+		return createOfferingForTour(offering.getTour(), offering.getTourGuide(), offering.getStartDate()
+				, offering.getHotelName(), offering.getMinCustomers(), offering.getMaxCustomers());
 	}
 
 	//

@@ -11,15 +11,22 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import comp3111.converters.LocalDateToUtilDateConverter;
 import comp3111.converters.TourGuideIDToTourGuideConverter;
+import comp3111.exceptions.OfferingDateUnsupportedException;
+import comp3111.exceptions.OfferingDayOfWeekUnsupportedException;
+import comp3111.exceptions.OfferingOutOfRoomException;
+import comp3111.exceptions.TourGuideUnavailableException;
+import comp3111.model.ActionManager;
 import comp3111.model.Offering;
 import comp3111.model.Tour;
 import comp3111.repo.OfferingRepository;
+import comp3111.validators.IntegerLowerBoundedByAnotherFieldValidator;
 import comp3111.validators.Utils;
 import comp3111.validators.ValidatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.swing.*;
 import java.util.HashSet;
 
 @SuppressWarnings("serial")
@@ -30,6 +37,9 @@ public class OfferingEditor {
 
 	private OfferingRepository offeringRepo;
 	private final HashSet<Offering> offeringsCollectionCached = new HashSet<>();
+
+	@Autowired
+	private TourGuideIDToTourGuideConverter tourGuideIDToTourGuideConverter;
 
 	public OfferingEditor(){
 
@@ -84,7 +94,7 @@ public class OfferingEditor {
 		binder.forField(tourGuideName).withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.asRequired(Utils.generateRequiredError())
 				.withConverter(new StringToLongConverter("Must be an integer"))
-				.withConverter(new TourGuideIDToTourGuideConverter())
+				.withConverter(tourGuideIDToTourGuideConverter)
 				.bind(Offering::getTourGuide, Offering::setTourGuide);
 
 		binder.forField(startDate).asRequired(Utils.generateRequiredError())
@@ -92,6 +102,7 @@ public class OfferingEditor {
 				.bind(Offering::getStartDate, Offering::setStartDate);
 
 		binder.forField(hotelName).asRequired(Utils.generateRequiredError())
+				.withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.bind(Offering::getHotelName, Offering::setHotelName);
 
 		binder.forField(minCustomer).asRequired(Utils.generateRequiredError())
@@ -99,6 +110,7 @@ public class OfferingEditor {
 				.bind(Offering::getMinCustomers, Offering::setMinCustomers);
 
 		binder.forField(maxCustomer).asRequired(Utils.generateRequiredError())
+				.withValidator(new IntegerLowerBoundedByAnotherFieldValidator(minCustomer))
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
 				.bind(Offering::getMaxCustomers, Offering::setMaxCustomers);
 
@@ -108,29 +120,38 @@ public class OfferingEditor {
 		confirm.addClickListener(event -> {
 			BinderValidationStatus<Offering> validationStatus = binder.validate();
 
+			StringBuilder errorStringBuilder = new StringBuilder();
 			if (validationStatus.isOk()) {
 				binder.writeBeanIfValid(offeringToSave);
 
 				log.info("About to save tour [{}]", tourName.getValue());
 
-				offeringRepo.save(offeringToSave);
-				this.refreshData();
-				subWindow.close();
-				log.info("created/edited tour [{}] successfully", tourName.getValue());
-				binder.removeBean();
-			} else {
-				StringBuilder stringBuilder = new StringBuilder();
+				try{
+					new ActionManager().createOfferingForTour(offeringToSave);
 
-				for (BindingValidationStatus<?> result : validationStatus.getFieldValidationErrors()) {
-					if (result.getField() instanceof AbstractField && result.getMessage().isPresent()) {
-						stringBuilder.append(((AbstractField) result.getField()).getCaption()).append(" ")
-								.append(result.getMessage().get()).append("\n");
-					}
+					this.refreshData();
+					subWindow.close();
+					log.info("created/edited tour [{}] successfully", tourName.getValue());
+					binder.removeBean();
+					return; //This return skip the error reporting procedure below
+				}catch (OfferingDayOfWeekUnsupportedException e){
+					errorStringBuilder.append("The Day of Week is unsupported");
+				}catch (TourGuideUnavailableException e){
+					errorStringBuilder.append("THe tour guide is unavailable");
+				}catch (OfferingDateUnsupportedException e){
+					errorStringBuilder.append("The date is unsupported");
 				}
-
-				Notification.show("Could not create/edit tour!", stringBuilder.toString(),
-						Notification.TYPE_ERROR_MESSAGE);
 			}
+
+			for (BindingValidationStatus<?> result : validationStatus.getFieldValidationErrors()) {
+				if (result.getField() instanceof AbstractField && result.getMessage().isPresent()) {
+					errorStringBuilder.append(((AbstractField) result.getField()).getCaption()).append(" ")
+							.append(result.getMessage().get()).append("\n");
+				}
+			}
+
+			Notification.show("Could not create/edit tour!", errorStringBuilder.toString(),
+					Notification.TYPE_ERROR_MESSAGE);
 		});
 
 		return subWindow;
