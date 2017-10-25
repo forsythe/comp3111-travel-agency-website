@@ -3,9 +3,10 @@ package integration;
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.elements.*;
+import com.vaadin.ui.TextArea;
 import comp3111.Application;
-import comp3111.model.Customer;
 import comp3111.repo.CustomerRepository;
+import comp3111.repo.TourRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -22,10 +23,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class CustomerEditorTests extends TestBenchTestCase {
+public class TourEditorTests extends TestBenchTestCase {
 
 	@Autowired
-	private CustomerRepository customerRepo;
+	private TourRepository tourRepo;
 
 	@BeforeClass
 	public static void init() {
@@ -39,7 +40,7 @@ public class CustomerEditorTests extends TestBenchTestCase {
 	}
 
 	@Test
-	public void testCreateCustomer() {
+	public void testCreateTour() {
 		getDriver().get(TestConstants.HOME_URL);
 
 		WebDriverWait wait1 = new WebDriverWait(getDriver(), 10);
@@ -53,36 +54,29 @@ public class CustomerEditorTests extends TestBenchTestCase {
 		wait2.until(ExpectedConditions.presenceOfElementLocated(By.id("lbl_title")));
 
 		WebDriverWait wait3 = new WebDriverWait(getDriver(), 10);
-		wait3.until(ExpectedConditions.presenceOfElementLocated(By.id("Customers")));
-		$(VerticalLayoutElement.class).$(ButtonElement.class).id("Customers").click();
+		wait3.until(ExpectedConditions.presenceOfElementLocated(By.id("Tour Management")));
+		$(VerticalLayoutElement.class).$(ButtonElement.class).id("Tour Management").click();
 
 		WebDriverWait wait4 = new WebDriverWait(getDriver(), 10);
-		wait4.until(ExpectedConditions.presenceOfElementLocated(By.id("button_create_customer")));
-		$(ButtonElement.class).id("button_create_customer").click();
+		wait4.until(ExpectedConditions.presenceOfElementLocated(By.id("button_create_tour")));
+		$(ButtonElement.class).id("button_create_tour").click();
 
 		WebDriverWait wait5 = new WebDriverWait(getDriver(), 10);
-		wait5.until(ExpectedConditions.presenceOfElementLocated(By.id("tf_customer_name")));
+		wait5.until(ExpectedConditions.presenceOfElementLocated(By.id("tf_tour_name")));
 
-		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_name").setValue("Peter The Great Tester");
-		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_line_id").setValue("123452334");
+		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_tour_name").setValue("One Day Trip to Mars");
+		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_days").setValue("1");
+		$(FormLayoutElement.class).$(RadioButtonGroupElement.class).id("rbgrp_tour_type").selectByText("Repeating");
+		$(FormLayoutElement.class).$(CheckBoxGroupElement.class).id("chkbxgrp_allowed_days_of_week").selectByText("Mon");
+		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_child_discount").setValue("1");
+		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_toddler_discount").setValue("0.2");
+		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_weekday_price").setValue("555");
+		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_weekend_price").setValue("666");
+		$(FormLayoutElement.class).$(TextAreaElement.class).id("tf_description").setValue("Martians not welcomed!");
 
-		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_hkid")
-				.$(TextFieldElement.class).get(0).setValue("G123456");
+		$(FormLayoutElement.class).$(ButtonElement.class).id("confirm_tour").click();
 
-		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_hkid")
-				.$(TextFieldElement.class).get(1).setValue("A");
-
-		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_phone")
-				.$(TextFieldElement.class).get(0).setValue("852");
-
-		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_phone")
-				.$(TextFieldElement.class).get(1).setValue("12345678");
-
-		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_age").setValue("23");
-
-		$(FormLayoutElement.class).$(ButtonElement.class).id("confirm_customer").click();
-
-		assertThat (customerRepo.findByName("Peter The Great Tester").size() != 0);
+		assertThat (tourRepo.findByTourName("One Day Trip to Mars").size() != 0);
 	}
 
 	@After
