@@ -31,6 +31,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 
+import static comp3111.validators.Utils.simpleDateFormat;
+
 @SuppressWarnings("serial")
 @SpringComponent
 @UIScope
@@ -123,7 +125,7 @@ public class CustomerOfferingEditor extends VerticalLayout {
 
 		if (today.after(threeDayBeforeStart)) {
 			Notification.show("It's too late to edit this offering. It cannot be edited after "
-					+ new SimpleDateFormat("dd-MM-yyyy").format(threeDayBeforeStart));
+					+ simpleDateFormat(threeDayBeforeStart));
 			return false;
 		}
 		return true;
