@@ -41,6 +41,9 @@ public class OfferingEditor {
 	@Autowired
 	private TourGuideIDToTourGuideConverter tourGuideIDToTourGuideConverter;
 
+	@Autowired
+	private ActionManager actionManager;
+
 	public OfferingEditor(){
 
 	}
@@ -58,7 +61,7 @@ public class OfferingEditor {
 
 		//Creating the fields
 		Label tourName = new Label(hostTour.getTourName());
-		TextField tourGuideName = new TextField("Tour Guide Name");
+		TextField tourGuideName = new TextField("Tour Guide ID");
 		DateField startDate = new DateField("Start Date");
 		TextField hotelName = new TextField("Hotel Name");
 		TextField minCustomer = new TextField("Min number of customer");
@@ -123,11 +126,12 @@ public class OfferingEditor {
 			StringBuilder errorStringBuilder = new StringBuilder();
 			if (validationStatus.isOk()) {
 				binder.writeBeanIfValid(offeringToSave);
+				offeringToSave.setTour(hostTour);
 
 				log.info("About to save tour [{}]", tourName.getValue());
 
 				try{
-					new ActionManager().createOfferingForTour(offeringToSave);
+					actionManager.createOfferingForTour(offeringToSave);
 
 					this.refreshData();
 					subWindow.close();
