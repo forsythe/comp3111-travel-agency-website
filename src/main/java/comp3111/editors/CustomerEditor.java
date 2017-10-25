@@ -179,9 +179,6 @@ public class CustomerEditor extends VerticalLayout {
 			log.info(customerHKID.getValue());
 
 			if (validationStatus.isOk()) {
-				// Customer must be created by Spring, otherwise it cannot be saved.
-
-				// I do not have access to an empty constructor here
 				binder.writeBeanIfValid(customerToSave);
 
 				log.info("About to save customer [{}]", customerName.getValue());
@@ -218,7 +215,7 @@ public class CustomerEditor extends VerticalLayout {
 		Iterable<Customer> customers = customerRepo.findAll();
 		//it's possible the customerRepo can return null!
 		if (null == customers) {
-			customers = new HashSet<Customer>();
+			customers = new HashSet<>();
 		}
 		Collection<Customer> customerCollectionCached = new HashSet<Customer>();
 		customerCollectionCached.clear();

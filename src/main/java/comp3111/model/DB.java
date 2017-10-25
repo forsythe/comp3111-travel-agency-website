@@ -35,7 +35,26 @@ public class DB {
 	public static final String CUSTOMER_AGE = "age";
 	/* hidden from grid */
 	public static final String CUSTOMER_OFFERINGS = "customerOffering";
-	
+
+	//Customer Offering
+	/* shown in grid */
+	public static final String CUSTOMER_OFFERING_NUM_CHILDREN = "numChildren";
+	public static final String CUSTOMER_OFFERING_NUM_ADULTS = "numAdults";
+	public static final String CUSTOMER_OFFERING_NUM_TODDLERS = "numToddlers";
+	public static final String CUSTOMER_OFFERING_CUSTOMER = "customer";
+	public static final String CUSTOMER_OFFERING_OFFERING = "offering";
+	public static final String CUSTOMER_OFFERING_ID = "id";
+	public static final String CUSTOMER_OFFERING_CUSTOMER_HKID = "customerHkid";
+	public static final String CUSTOMER_OFFERING_CUSTOMER_NAME = "customerName";
+	public static final String CUSTOMER_OFFERING_OFFERING_ID = "offeringId";
+	public static final String CUSTOMER_OFFERING_TOUR_ID = "tourId";
+	public static final String CUSTOMER_OFFERING_TOUR_NAME = "tourName";
+	public static final String CUSTOMER_OFFERING_PEOPLE = "people";
+	public static final String CUSTOMER_OFFERING_AMOUNT_PAID = "amountPaid";
+	public static final String CUSTOMER_OFFERING_TOTAL_COST = "totalCost";
+	public static final String CUSTOMER_OFFERING_SPECIAL_REQUEST = "specialRequests";
+	public static final String CUSTOMER_OFFERING_PAYMENT_STATUS = "paymentStatus";
+	/* hidden from grid */
 	
 	// TourGuide
 	/* shown in grid */

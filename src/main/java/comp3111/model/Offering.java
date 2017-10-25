@@ -7,6 +7,7 @@ import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -108,6 +109,13 @@ public class Offering implements Persistable<Long> {
 
 	public void setCustomerOffering(Collection<CustomerOffering> offering) {
 		this.customerOffering = offering;
+	}
+
+	public Date getLastEditableDate(){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(getStartDate());
+		cal.add(Calendar.DATE, -3);
+		return cal.getTime();
 	}
 
 	// Observer pattern

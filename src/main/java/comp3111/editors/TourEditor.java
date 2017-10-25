@@ -61,7 +61,7 @@ public class TourEditor extends VerticalLayout {
 	private Window subwindow;
 
 	@Autowired
-	private OfferingEditor offeringEditor;
+	private TourOfferingEditor tourOfferingEditor;
 
 	/* Fields to edit properties in Tour entity */
 	private TextField tourName;
@@ -231,7 +231,7 @@ public class TourEditor extends VerticalLayout {
 		});
 
 		manageOfferingButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(offeringEditor.getSubWindow(selectedTour, new Offering()));
+			getUI().getCurrent().addWindow(tourOfferingEditor.getSubWindow(selectedTour, new Offering(), this));
 		});
 	}
 

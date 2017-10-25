@@ -87,10 +87,9 @@ public class ActionManager {
 		return o;
 	}
 
-	public Offering createOfferingForTour(Offering offering) throws OfferingDateUnsupportedException,
+	public void createOfferingForTour(Offering offering) throws OfferingDateUnsupportedException,
 			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
-
-		return createOfferingForTour(offering.getTour(), offering.getTourGuide(), offering.getStartDate()
+		createOfferingForTour(offering.getTour(), offering.getTourGuide(), offering.getStartDate()
 				, offering.getHotelName(), offering.getMinCustomers(), offering.getMaxCustomers());
 	}
 
@@ -126,6 +125,12 @@ public class ActionManager {
 
 		return bookingRecord;
 
+	}
+
+	public void createBookingForOffering(CustomerOffering customerOffering) throws OfferingOutOfRoomException {
+		createBookingForOffering(customerOffering.getOffering(), customerOffering.getCustomer(),
+				customerOffering.getNumAdults(), customerOffering.getNumChildren(), customerOffering.getNumToddlers(),
+				customerOffering.getAmountPaid(), customerOffering.getSpecialRequests(), customerOffering.getPaymentStatus());
 	}
 
 	public void deleteAll() {

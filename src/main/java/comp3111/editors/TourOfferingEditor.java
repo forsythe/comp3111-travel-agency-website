@@ -10,10 +10,9 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import comp3111.converters.LocalDateToUtilDateConverter;
-import comp3111.converters.TourGuideIDToTourGuideConverter;
+import comp3111.converters.TourGuideIDConverter;
 import comp3111.exceptions.OfferingDateUnsupportedException;
 import comp3111.exceptions.OfferingDayOfWeekUnsupportedException;
-import comp3111.exceptions.OfferingOutOfRoomException;
 import comp3111.exceptions.TourGuideUnavailableException;
 import comp3111.model.ActionManager;
 import comp3111.model.Offering;
@@ -26,35 +25,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.swing.*;
+import java.time.Instant;
+import java.util.Date;
 import java.util.HashSet;
 
 @SuppressWarnings("serial")
 @SpringComponent
 @UIScope
-public class OfferingEditor {
-	private static final Logger log = LoggerFactory.getLogger(OfferingEditor.class);
+public class TourOfferingEditor {
+	private static final Logger log = LoggerFactory.getLogger(TourOfferingEditor.class);
 
 	private OfferingRepository offeringRepo;
 	private final HashSet<Offering> offeringsCollectionCached = new HashSet<>();
 
 	@Autowired
-	private TourGuideIDToTourGuideConverter tourGuideIDToTourGuideConverter;
+	private TourGuideIDConverter tourGuideIDConverter;
 
 	@Autowired
 	private ActionManager actionManager;
 
-	public OfferingEditor(){
-
-	}
-
 	@SuppressWarnings("unchecked")
 	@Autowired
-	public OfferingEditor(OfferingRepository tr) {
+	public TourOfferingEditor(OfferingRepository tr) {
 		this.offeringRepo = tr;
 	}
 
-	Window getSubWindow(Tour hostTour, Offering offeringToSave) {
+	Window getSubWindow(Tour hostTour, Offering offeringToSave, TourEditor tourEditor) {
 		//Creating the confirm button
 		Button confirm = new Button("Confirm");
 		confirm.setId("confirm_offering");
@@ -97,11 +93,12 @@ public class OfferingEditor {
 		binder.forField(tourGuideName).withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.asRequired(Utils.generateRequiredError())
 				.withConverter(new StringToLongConverter("Must be an integer"))
-				.withConverter(tourGuideIDToTourGuideConverter)
+				.withConverter(tourGuideIDConverter)
 				.bind(Offering::getTourGuide, Offering::setTourGuide);
 
 		binder.forField(startDate).asRequired(Utils.generateRequiredError())
 				.withConverter(new LocalDateToUtilDateConverter())
+				.withValidator(ValidatorFactory.getDateNotEarlierThanValidator(Date.from(Instant.now())))
 				.bind(Offering::getStartDate, Offering::setStartDate);
 
 		binder.forField(hotelName).asRequired(Utils.generateRequiredError())
@@ -109,11 +106,13 @@ public class OfferingEditor {
 				.bind(Offering::getHotelName, Offering::setHotelName);
 
 		binder.forField(minCustomer).asRequired(Utils.generateRequiredError())
+				.withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
 				.bind(Offering::getMinCustomers, Offering::setMinCustomers);
 
 		binder.forField(maxCustomer).asRequired(Utils.generateRequiredError())
 				.withValidator(new IntegerLowerBoundedByAnotherFieldValidator(minCustomer))
+				.withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
 				.bind(Offering::getMaxCustomers, Offering::setMaxCustomers);
 
@@ -133,6 +132,7 @@ public class OfferingEditor {
 				try{
 					actionManager.createOfferingForTour(offeringToSave);
 
+					tourEditor.refreshData();
 					this.refreshData();
 					subWindow.close();
 					log.info("created/edited tour [{}] successfully", tourName.getValue());
@@ -165,7 +165,7 @@ public class OfferingEditor {
 		void onChange();
 	}
 
-	public void refreshData() {
+	private void refreshData() {
 		Iterable<Offering> offerings = offeringRepo.findAll();
 		offeringsCollectionCached.clear();
 		offerings.forEach(offeringsCollectionCached::add);
