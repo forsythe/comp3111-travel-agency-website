@@ -20,9 +20,9 @@ public class DoubleRangeValidator implements Validator<String> {
 			if (val >= min && val <= max)
 				return ValidationResult.ok();
 		} catch (NumberFormatException e) {
-			return ValidationResult.error("Must be a double");
+			return ValidationResult.error("Must be a number");
 		}
-		return ValidationResult.error("The double must be [" + min + ", " + max + "]");
+		return ValidationResult.error("The number must be [" + min + ", " + max + "]");
 
 	}
 }

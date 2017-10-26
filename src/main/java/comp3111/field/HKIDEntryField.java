@@ -19,7 +19,7 @@ public class HKIDEntryField extends CustomField<String> {
 		HorizontalLayout layout = new HorizontalLayout();
 		checkDigit.setWidth("50px");
 
-		//Sample format: 852-12345678 <--- bad comment
+		//Sample format: G123456(A)
 		layout.addComponent(mainPart);
 		layout.addComponent(new Label("("));
 		layout.addComponent(checkDigit);
@@ -44,10 +44,10 @@ public class HKIDEntryField extends CustomField<String> {
 			int pos = value.indexOf("(");
 			if (pos != -1 && value.length() > pos + 1){
 				mainPart.setValue(value.substring(0, pos));
-				checkDigit.setValue(value.substring(pos+1));
+				checkDigit.setValue(value.substring(pos+1, value.length()-1));
+				return;
 			}
 		}
-
 		mainPart.setValue("");
 		checkDigit.setValue("");
     }

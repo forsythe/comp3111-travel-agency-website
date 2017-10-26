@@ -1,11 +1,11 @@
 package comp3111.validators;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
 import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class ListOfDatesValidator implements Validator<String> {
 

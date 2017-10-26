@@ -1,23 +1,16 @@
 package comp3111.model;
 
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.transaction.Transactional;
-
+import comp3111.validators.Utils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.domain.Persistable;
 
-import comp3111.validators.Utils;
+import javax.persistence.*;
+import javax.transaction.Transactional;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
 
 @Entity
 @Transactional
@@ -116,6 +109,13 @@ public class Offering implements Persistable<Long> {
 
 	public void setCustomerOffering(Collection<CustomerOffering> offering) {
 		this.customerOffering = offering;
+	}
+
+	public Date getLastEditableDate(){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(getStartDate());
+		cal.add(Calendar.DATE, -3);
+		return cal.getTime();
 	}
 
 	// Observer pattern
