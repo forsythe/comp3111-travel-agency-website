@@ -1,13 +1,12 @@
 package comp3111.editors;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import comp3111.exceptions.ColumnNameNotFoundException;
 import comp3111.model.DB;
 import comp3111.model.Offering;
 import comp3111.model.Tour;
 import comp3111.validators.Utils;
+
+import java.util.Collection;
 
 /*
  * a class for getting filters, based on a vaadin grid column

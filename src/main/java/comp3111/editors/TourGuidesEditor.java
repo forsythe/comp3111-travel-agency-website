@@ -1,12 +1,5 @@
 package comp3111.editors;
 
-import java.util.Collection;
-import java.util.HashSet;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
@@ -15,24 +8,21 @@ import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid.SelectionMode;
-
 import comp3111.model.DB;
 import comp3111.model.TourGuide;
 import comp3111.repo.TourGuideRepository;
 import comp3111.validators.Utils;
 import comp3111.validators.ValidatorFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 @SuppressWarnings("serial")
 @SpringComponent
