@@ -1,10 +1,6 @@
 package comp3111.field;
 
-import com.vaadin.ui.CustomField;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Component;
+import com.vaadin.ui.*;
 
 public class PhoneNumberEntryField extends CustomField<String> {
 	private final TextField countryCode = new TextField();

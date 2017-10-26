@@ -1,12 +1,5 @@
 package comp3111.editors;
 
-import java.util.Collection;
-import java.util.HashSet;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
@@ -15,17 +8,8 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Grid;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-
 import comp3111.field.HKIDEntryField;
 import comp3111.field.PhoneNumberEntryField;
 import comp3111.model.Customer;
@@ -33,6 +17,12 @@ import comp3111.model.DB;
 import comp3111.repo.CustomerRepository;
 import comp3111.validators.Utils;
 import comp3111.validators.ValidatorFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 @SuppressWarnings("serial")
 @SpringComponent
@@ -42,21 +32,11 @@ public class CustomerEditor extends VerticalLayout {
 	private static final Logger log = LoggerFactory.getLogger(CustomerEditor.class);
 
 	private Window subwindow;
-	
-	private TextField customerName;
-	private TextField customerLineId;
-	private HKIDEntryField customerHKID;
-	private PhoneNumberEntryField customerPhone;
-	private TextField customerAge;
 
 	/* action buttons */
-	private HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createNewCustomerButton = new Button("Create new customer");
 	private Button editCustomerButton = new Button("Edit customer");
 	private Button viewCustomerBookingsButton = new Button("View bookings made by customer");
-
-	/* subwindow action buttons */
-	private Button subwindowConfirm;
 
 	private Grid<Customer> customersGrid = new Grid<Customer>(Customer.class);
 
@@ -71,6 +51,8 @@ public class CustomerEditor extends VerticalLayout {
 		this.customerRepo = cr;
 		
 		// adding components
+		HorizontalLayout rowOfButtons = new HorizontalLayout();
+
 		rowOfButtons.addComponent(createNewCustomerButton);
 		rowOfButtons.addComponent(editCustomerButton);
 		rowOfButtons.addComponent(viewCustomerBookingsButton);
@@ -122,18 +104,22 @@ public class CustomerEditor extends VerticalLayout {
 
 	private Window getSubwindow(CustomerRepository customerRepo, Collection<Customer> customerCollectionCached, Customer customerToSave) {
 		//Creating the confirm button
-		subwindowConfirm = new Button("Confirm");
+		Button subwindowConfirm = new Button("Confirm");
 		subwindowConfirm.setId("confirm_customer");
 		
-		customerName = new TextField("Customer Name");
+		TextField customerName = new TextField("Customer Name");
 		customerName.setId("tf_customer_name");
-		customerLineId = new TextField("Customer Line Id");
+
+		TextField customerLineId = new TextField("Customer Line Id");
 		customerLineId.setId("tf_customer_line_id");
-		customerHKID = new HKIDEntryField("Customer HKID");
+
+		HKIDEntryField customerHKID = new HKIDEntryField("Customer HKID");
 		customerHKID.setId("tf_customer_hkid");
-		customerPhone = new PhoneNumberEntryField("Phone Number", "852");
+
+		PhoneNumberEntryField customerPhone = new PhoneNumberEntryField("Phone Number", "852");
 		customerPhone.setId("tf_customer_phone");
-		customerAge = new TextField("Customer Age");
+
+		TextField customerAge = new TextField("Customer Age");
 		customerAge.setId("tf_customer_age");
 		
 		if (customerToSave.getId() == null) { // passed in an unsaved object
@@ -193,8 +179,6 @@ public class CustomerEditor extends VerticalLayout {
 			log.info(customerHKID.getValue());
 
 			if (validationStatus.isOk()) {
-				// Customer must be created by Spring, otherwise it cannot be saved.
-				// I do not have access to an empty constructor here
 				binder.writeBeanIfValid(customerToSave);
 
 				log.info("About to save customer [{}]", customerName.getValue());
@@ -227,51 +211,16 @@ public class CustomerEditor extends VerticalLayout {
 		void onChange();
 	}
 
-	public TextField getCustomerName() {
-		return customerName;
-	}
-
-	public TextField getCustomerLineId() {
-		return customerLineId;
-	}
-
-	public HKIDEntryField getCustomerHKID() {
-		return customerHKID;
-	}
-
-	public PhoneNumberEntryField getCustomerPhone() {
-		return customerPhone;
-	}
-
-	public TextField getCustomerAge() {
-		return customerAge;
-	}
-
-	public Button getCreateNewCustomerButton() {
-		return createNewCustomerButton;
-	}
-
-	public Button getEditCustomerButton() {
-		return editCustomerButton;
-	}
-
-	public Button getViewCustomerBookingsButton() {
-		return viewCustomerBookingsButton;
-	}
-
 	public void refreshData() {
 		Iterable<Customer> customers = customerRepo.findAll();
 		//it's possible the customerRepo can return null!
 		if (null == customers) {
-			customers = new HashSet<Customer>();
+			customers = new HashSet<>();
 		}
 		Collection<Customer> customerCollectionCached = new HashSet<Customer>();
 		customerCollectionCached.clear();
 		customers.forEach(customerCollectionCached::add);
 		ListDataProvider<Customer> provider = new ListDataProvider<Customer>(customerCollectionCached);
 		customersGrid.setDataProvider(provider);
-		// tourGrid.setItems(tourCollectionCached);
-
 	}
-
 }

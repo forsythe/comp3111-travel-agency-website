@@ -1,16 +1,15 @@
 package comp3111.model;
 
-import java.util.Collection;
-import java.util.HashSet;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+import org.springframework.data.domain.Persistable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
-
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.data.domain.Persistable;
+import java.util.Collection;
+import java.util.HashSet;
 
 @Entity
 @Inheritance

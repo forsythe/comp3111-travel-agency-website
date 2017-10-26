@@ -1,27 +1,17 @@
 package comp3111.model;
 
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
+import comp3111.exceptions.*;
+import comp3111.repo.*;
+import comp3111.validators.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import comp3111.exceptions.OfferingDateUnsupportedException;
-import comp3111.exceptions.OfferingDayOfWeekUnsupportedException;
-import comp3111.exceptions.OfferingOutOfRoomException;
-import comp3111.exceptions.TourGuideUnavailableException;
-import comp3111.exceptions.UsernameTakenException;
-import comp3111.repo.CustomerOfferingRepository;
-import comp3111.repo.CustomerRepository;
-import comp3111.repo.LoginUserRepository;
-import comp3111.repo.OfferingRepository;
-import comp3111.repo.TourGuideRepository;
-import comp3111.repo.TourRepository;
-import comp3111.validators.Utils;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 @Component
 public class ActionManager {
@@ -44,7 +34,7 @@ public class ActionManager {
 	 * will save or update the tour and tourguide and set up the connections
 	 */
 	public Offering createOfferingForTour(Tour tour, TourGuide tg, Date startDate, String hotelName, int minCustomers,
-			int maxCustomers) throws OfferingOutOfRoomException, OfferingDateUnsupportedException,
+			int maxCustomers) throws OfferingDateUnsupportedException,
 			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
 
 		// check that the day of week is correct
@@ -95,7 +85,12 @@ public class ActionManager {
 
 		log.info("successfully created offering on [{}] for tour [{}]", startDate, tour.getTourName());
 		return o;
+	}
 
+	public void createOfferingForTour(Offering offering) throws OfferingDateUnsupportedException,
+			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
+		createOfferingForTour(offering.getTour(), offering.getTourGuide(), offering.getStartDate()
+				, offering.getHotelName(), offering.getMinCustomers(), offering.getMaxCustomers());
 	}
 
 	//
@@ -130,6 +125,12 @@ public class ActionManager {
 
 		return bookingRecord;
 
+	}
+
+	public void createBookingForOffering(CustomerOffering customerOffering) throws OfferingOutOfRoomException {
+		createBookingForOffering(customerOffering.getOffering(), customerOffering.getCustomer(),
+				customerOffering.getNumAdults(), customerOffering.getNumChildren(), customerOffering.getNumToddlers(),
+				customerOffering.getAmountPaid(), customerOffering.getSpecialRequests(), customerOffering.getPaymentStatus());
 	}
 
 	public void deleteAll() {

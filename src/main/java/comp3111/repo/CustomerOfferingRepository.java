@@ -1,12 +1,9 @@
 package comp3111.repo;
 
-import java.util.Collection;
-
-import javax.transaction.Transactional;
-
+import comp3111.model.CustomerOffering;
 import org.springframework.data.repository.CrudRepository;
 
-import comp3111.model.CustomerOffering;
+import java.util.Collection;
 
 public interface CustomerOfferingRepository extends CrudRepository<CustomerOffering, Long> {
 	Collection<CustomerOffering> findByPaymentStatus(String paymentStatus);

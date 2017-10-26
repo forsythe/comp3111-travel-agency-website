@@ -1,5 +1,7 @@
 package comp3111.validators;
 
+import java.util.Date;
+
 public class ValidatorFactory {
 
 	public static IntegerRangeValidator getIntegerRangeValidator(int minInclusive, int maxExclusive) {
@@ -12,6 +14,10 @@ public class ValidatorFactory {
 
 	public static DoubleRangeValidator getDoubleRangeValidator(double minInclusive, double maxInclusive) {
 		return new DoubleRangeValidator(minInclusive, maxInclusive);
+	}
+
+	public static DoubleLowerBoundValidator getDoubleRangeValidator(double minInclusive) {
+		return new DoubleLowerBoundValidator(minInclusive);
 	}
 
 	public static ListOfDatesValidator getListOfDatesValidator( ) {
@@ -28,5 +34,13 @@ public class ValidatorFactory {
 
 	public static HKIDValidator getHKIDValidator() {
 		return new HKIDValidator();
+	}
+
+	public static DateNotEarlierThanValidator getDateNotEarlierThanValidator (Date notEarlierThanThis) {
+		return new DateNotEarlierThanValidator(notEarlierThanThis);
+	}
+
+	public static OfferingStillOpenValidator getOfferingStillOpenValidator (){
+		return new OfferingStillOpenValidator();
 	}
 }

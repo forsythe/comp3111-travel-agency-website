@@ -1,13 +1,13 @@
 package comp3111.view;
 
-import javax.annotation.PostConstruct;
-
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+
+import javax.annotation.PostConstruct;
 
 @SpringView(name = HomeView.VIEW_NAME)
 @UIScope
