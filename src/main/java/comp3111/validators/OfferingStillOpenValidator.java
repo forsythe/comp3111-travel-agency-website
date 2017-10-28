@@ -3,7 +3,8 @@ package comp3111.validators;
 import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
-import comp3111.model.Offering;
+
+import comp3111.data.model.Offering;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;

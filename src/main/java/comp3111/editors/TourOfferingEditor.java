@@ -9,17 +9,18 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
+
+import comp3111.Utils;
 import comp3111.converters.LocalDateToUtilDateConverter;
 import comp3111.converters.TourGuideIDConverter;
+import comp3111.data.DBManager;
+import comp3111.data.model.Offering;
+import comp3111.data.model.Tour;
+import comp3111.data.repo.OfferingRepository;
 import comp3111.exceptions.OfferingDateUnsupportedException;
 import comp3111.exceptions.OfferingDayOfWeekUnsupportedException;
 import comp3111.exceptions.TourGuideUnavailableException;
-import comp3111.model.ActionManager;
-import comp3111.model.Offering;
-import comp3111.model.Tour;
-import comp3111.repo.OfferingRepository;
 import comp3111.validators.IntegerLowerBoundedByAnotherFieldValidator;
-import comp3111.validators.Utils;
 import comp3111.validators.ValidatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ public class TourOfferingEditor {
 	private TourGuideIDConverter tourGuideIDConverter;
 
 	@Autowired
-	private ActionManager actionManager;
+	private DBManager actionManager;
 
 	@SuppressWarnings("unchecked")
 	@Autowired

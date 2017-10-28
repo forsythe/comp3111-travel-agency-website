@@ -1,5 +1,13 @@
 package comp3111.editors;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
@@ -12,29 +20,35 @@ import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.*;
+import com.vaadin.ui.AbstractField;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.CheckBoxGroup;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.RadioButtonGroup;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
+
+import comp3111.Utils;
 import comp3111.converters.StringCollectionToIntegerCollectionConverter;
 import comp3111.converters.StringToDateCollectionConverter;
-import comp3111.model.DB;
-import comp3111.model.Offering;
-import comp3111.model.Tour;
-import comp3111.repo.TourRepository;
-import comp3111.validators.Utils;
+import comp3111.data.DB;
+import comp3111.data.DBManager;
+import comp3111.data.model.Offering;
+import comp3111.data.model.Tour;
+import comp3111.data.repo.TourRepository;
 import comp3111.validators.ValidatorFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * A simple example to introduce building forms. As your real application is
@@ -49,8 +63,6 @@ import java.util.HashSet;
 @SpringComponent
 @UIScope
 public class TourEditor extends VerticalLayout {
-	private static final String REPEATING_TOUR_TYPE = "Repeating";
-
 	public static final String LIMITED_TOUR_TYPE = "Limited";
 
 	private static final Logger log = LoggerFactory.getLogger(TourEditor.class);
@@ -59,6 +71,9 @@ public class TourEditor extends VerticalLayout {
 	// private Window createTourSubwindow;
 	// private Window editTourSubwindow;
 	private Window subwindow;
+
+	@Autowired
+	private DBManager dbManager;
 
 	@Autowired
 	private TourOfferingEditor tourOfferingEditor;
@@ -144,14 +159,16 @@ public class TourEditor extends VerticalLayout {
 			}
 		});
 
-		tourGrid.removeColumn(DB.HIBERNATE_NEW_COL); // hibernate attributes, we don't care about it
 		tourGrid.removeColumn(DB.TOUR_ALLOWED_DAYS_OF_WEEK); // we'll combine days of week and dates
 		tourGrid.removeColumn(DB.TOUR_ALLOWED_DATES);
 
 		tourGrid.setColumnOrder(DB.TOUR_ID, DB.TOUR_TOUR_NAME, DB.TOUR_DAYS, DB.TOUR_OFFERING_AVAILABILITY,
-				DB.TOUR_OFFERINGS, DB.TOUR_DESCRIPTION, DB.TOUR_WEEKDAY_PRICE, DB.TOUR_WEEKEND_PRICE,
-				DB.TOUR_CHILD_DISCOUNT, DB.TOUR_TODDLER_DISCOUNT);
-		tourGrid.getColumn(DB.TOUR_OFFERINGS).setWidth(150);
+				DB.TOUR_DESCRIPTION, DB.TOUR_WEEKDAY_PRICE, DB.TOUR_WEEKEND_PRICE, DB.TOUR_CHILD_DISCOUNT,
+				DB.TOUR_TODDLER_DISCOUNT);
+
+		tourGrid.addColumn(tour -> {
+			return dbManager.countNumOfferingsForTour(tour);
+		}).setId("NUM_OFFERINGS").setCaption("Offering Count");
 
 		HeaderRow filterRow = tourGrid.appendHeaderRow();
 
@@ -212,8 +229,9 @@ public class TourEditor extends VerticalLayout {
 		}
 
 		this.addComponent(tourGrid);
-		
-		//Both buttons should call the same window function now, difference is what is passed to the window
+
+		// Both buttons should call the same window function now, difference is what is
+		// passed to the window
 		createTourButton.addClickListener(new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
@@ -236,11 +254,11 @@ public class TourEditor extends VerticalLayout {
 	}
 
 	private Window getSubwindow(TourRepository tourRepo, Collection<Tour> tourCollectionCached, Tour tourToSave) {
-		//Creating the confirm button
+		// Creating the confirm button
 		subwindowConfirm = new Button("Confirm");
 		subwindowConfirm.setId("confirm_tour");
 
-		//Creating the fields
+		// Creating the fields
 		tourName = new TextField("Tour Name");
 		tourName.setId("tf_tour_name");
 		days = new TextField("Duration (days)");
@@ -262,7 +280,7 @@ public class TourEditor extends VerticalLayout {
 		descrip = new TextArea("Description");
 		descrip.setId("tf_description");
 
-		tourType.setItems(LIMITED_TOUR_TYPE, REPEATING_TOUR_TYPE);
+		tourType.setItems(LIMITED_TOUR_TYPE, Tour.REPEATING_TOUR_TYPE);
 		allowedDaysOfWeek.setItems("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
 		tourType.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
 		allowedDaysOfWeek.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
@@ -270,7 +288,7 @@ public class TourEditor extends VerticalLayout {
 		if (tourToSave.getId() == null) { // passed in an unsaved object
 			subwindow = new Window("Create new tour");
 			allowedDates.setVisible(false);
-			tourType.setSelectedItem(REPEATING_TOUR_TYPE);
+			tourType.setSelectedItem(Tour.REPEATING_TOUR_TYPE);
 
 		} else { // passed in an object which already exists in db, just need to edit it
 			subwindow = new Window("Edit tour");
@@ -279,7 +297,7 @@ public class TourEditor extends VerticalLayout {
 				for (int day : tourToSave.getAllowedDaysOfWeek()) {
 					allowedDaysOfWeek.select(Utils.dayToString(day));
 				}
-				tourType.setSelectedItem(REPEATING_TOUR_TYPE);
+				tourType.setSelectedItem(Tour.REPEATING_TOUR_TYPE);
 				allowedDates.setVisible(false);
 			} else { // if it's a limited type
 				allowedDates.setValue(Utils.dateCollectionToString(tourToSave.getAllowedDates()));
@@ -324,7 +342,7 @@ public class TourEditor extends VerticalLayout {
 		weekdayPrice.setRequiredIndicatorVisible(true);
 		weekendPrice.setRequiredIndicatorVisible(true);
 
-		//For the radio button
+		// For the radio button
 		tourType.addValueChangeListener(new ValueChangeListener<String>() {
 			@Override
 			public void valueChange(ValueChangeEvent event) {
@@ -341,7 +359,7 @@ public class TourEditor extends VerticalLayout {
 			}
 		});
 
-		//Binding method according to docs
+		// Binding method according to docs
 		Binder<Tour> binder = new Binder<>(Tour.class);
 
 		binder.forField(tourName).withValidator(ValidatorFactory.getStringLengthValidator(255))
@@ -355,8 +373,7 @@ public class TourEditor extends VerticalLayout {
 				.withConverter(new StringToDateCollectionConverter())
 				.bind(Tour::getAllowedDates, Tour::setAllowedDates);
 
-		binder.forField(allowedDaysOfWeek)
-				.withConverter(new StringCollectionToIntegerCollectionConverter())
+		binder.forField(allowedDaysOfWeek).withConverter(new StringCollectionToIntegerCollectionConverter())
 				.bind(Tour::getAllowedDaysOfWeek, Tour::setAllowedDaysOfWeek);
 
 		binder.forField(childDiscount).withValidator(ValidatorFactory.getDoubleRangeValidator(0, 1))
@@ -382,18 +399,17 @@ public class TourEditor extends VerticalLayout {
 		binder.forField(descrip).withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.asRequired(Utils.generateRequiredError()).bind(Tour::getDescription, Tour::setDescription);
 
-		//Do set bean to assign value to fields
+		// Do set bean to assign value to fields
 		binder.setBean(tourToSave);
 
 		subwindowConfirm.addClickListener(event -> {
 			BinderValidationStatus<Tour> validationStatus = binder.validate();
-			
-			//Special case for tours only to ensure that this field must be filled
-			if(allowedDates.isEmpty() && allowedDaysOfWeek.isEmpty()) {
+
+			// Special case for tours only to ensure that this field must be filled
+			if (allowedDates.isEmpty() && allowedDaysOfWeek.isEmpty()) {
 				Notification.show("Could not edit tour, offering availability is required!",
 						Notification.TYPE_ERROR_MESSAGE);
-			}			
-			else if (validationStatus.isOk()) {
+			} else if (validationStatus.isOk()) {
 				binder.writeBeanIfValid(tourToSave);
 
 				log.info("About to save tour [{}]", tourName.getValue());
@@ -412,7 +428,7 @@ public class TourEditor extends VerticalLayout {
 								.append(result.getMessage().get()).append("\n");
 					}
 				}
-				
+
 				Notification.show("Could not create/edit tour!", stringBuilder.toString(),
 						Notification.TYPE_ERROR_MESSAGE);
 			}

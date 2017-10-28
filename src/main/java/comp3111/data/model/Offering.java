@@ -1,9 +1,10 @@
-package comp3111.model;
+package comp3111.data.model;
 
-import comp3111.validators.Utils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.domain.Persistable;
+
+import comp3111.Utils;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
@@ -13,26 +14,19 @@ import java.util.Date;
 import java.util.HashSet;
 
 @Entity
-@Transactional
-public class Offering implements Persistable<Long> {
+public class Offering {
 	@Id
 	@GeneratedValue
 	private Long id;
-
-	@ManyToOne(cascade = CascadeType.ALL) // many offerings to 1 tour
+	@ManyToOne // many offerings to 1 tour
 	private Tour tour;
-
-	@ManyToOne(cascade = CascadeType.ALL) // many offerings to 1 tour guide
+	@ManyToOne // many offerings to 1 tour guide
 	private TourGuide tourGuide;
 
 	private Date startDate;
 	private String hotelName;
 	private int minCustomers;
 	private int maxCustomers;
-
-	@OneToMany(mappedBy = "offering", cascade = CascadeType.ALL, orphanRemoval = true)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private Collection<CustomerOffering> customerOffering = new HashSet<CustomerOffering>();
 
 	public Offering() {
 	}
@@ -103,26 +97,11 @@ public class Offering implements Persistable<Long> {
 		this.maxCustomers = maxCustomers;
 	}
 
-	public Collection<CustomerOffering> getCustomerOffering() {
-		return customerOffering;
-	}
-
-	public void setCustomerOffering(Collection<CustomerOffering> offering) {
-		this.customerOffering = offering;
-	}
-
-	public Date getLastEditableDate(){
+	public Date getLastEditableDate() {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(getStartDate());
 		cal.add(Calendar.DATE, -3);
 		return cal.getTime();
-	}
-
-	// Observer pattern
-	public void notifyCustomersAboutStatus() {
-		for (CustomerOffering co : getCustomerOffering()) {
-			co.getCustomer().updateAboutOfferingStatus("statusOfTour");
-		}
 	}
 
 	@Override
@@ -130,13 +109,4 @@ public class Offering implements Persistable<Long> {
 		return String.format("Offering[id=%d, '%s']", id, Utils.simpleDateFormat(startDate));
 	}
 
-	@Override
-	public boolean isNew() {
-		for (CustomerOffering co : customerOffering) {
-			if (null != co.getId()) {
-				return false;
-			}
-		}
-		return null == getId() && null == tour.getId() && null == tourGuide.getId();
-	}
 }

@@ -1,4 +1,4 @@
-package comp3111.model;
+package comp3111.data.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,7 +8,6 @@ import javax.transaction.Transactional;
 
 @Entity
 @Inheritance
-@Transactional
 public abstract class Person {
 
 	@Id

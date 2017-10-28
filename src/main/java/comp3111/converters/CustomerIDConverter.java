@@ -3,8 +3,10 @@ package comp3111.converters;
 import com.vaadin.data.Converter;
 import com.vaadin.data.Result;
 import com.vaadin.data.ValueContext;
-import comp3111.model.Customer;
-import comp3111.repo.CustomerRepository;
+
+import comp3111.data.model.Customer;
+import comp3111.data.repo.CustomerRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

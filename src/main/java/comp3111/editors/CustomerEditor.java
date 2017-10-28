@@ -10,12 +10,13 @@ import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Grid.SelectionMode;
+
+import comp3111.Utils;
+import comp3111.data.DB;
+import comp3111.data.model.Customer;
+import comp3111.data.repo.CustomerRepository;
 import comp3111.field.HKIDEntryField;
 import comp3111.field.PhoneNumberEntryField;
-import comp3111.model.Customer;
-import comp3111.model.DB;
-import comp3111.repo.CustomerRepository;
-import comp3111.validators.Utils;
 import comp3111.validators.ValidatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,12 +45,12 @@ public class CustomerEditor extends VerticalLayout {
 
 	private CustomerRepository customerRepo;
 	private final HashSet<Customer> customerCollectionCached = new HashSet<Customer>();
-	
+
 	@SuppressWarnings("unchecked")
 	@Autowired
 	public CustomerEditor(CustomerRepository cr) {
 		this.customerRepo = cr;
-		
+
 		// adding components
 		HorizontalLayout rowOfButtons = new HorizontalLayout();
 
@@ -63,7 +64,7 @@ public class CustomerEditor extends VerticalLayout {
 		// Shouldn't be enabled unless selected
 		editCustomerButton.setEnabled(false);
 		viewCustomerBookingsButton.setEnabled(false);
-	
+
 		// Render component
 		this.addComponent(rowOfButtons);
 
@@ -87,10 +88,9 @@ public class CustomerEditor extends VerticalLayout {
 			}
 		});
 
-		customersGrid.removeColumn(DB.HIBERNATE_NEW_COL);
-		customersGrid.removeColumn(DB.CUSTOMER_OFFERINGS);
 
-		customersGrid.setColumnOrder(DB.CUSTOMER_ID, DB.CUSTOMER_NAME, DB.CUSTOMER_LINEID, DB.CUSTOMER_HKID, DB.CUSTOMER_PHONE, DB.CUSTOMER_AGE);
+		customersGrid.setColumnOrder(DB.CUSTOMER_ID, DB.CUSTOMER_NAME, DB.CUSTOMER_LINEID, DB.CUSTOMER_HKID,
+				DB.CUSTOMER_PHONE, DB.CUSTOMER_AGE);
 
 		this.addComponent(customersGrid);
 
@@ -102,11 +102,12 @@ public class CustomerEditor extends VerticalLayout {
 		});
 	}
 
-	private Window getSubwindow(CustomerRepository customerRepo, Collection<Customer> customerCollectionCached, Customer customerToSave) {
-		//Creating the confirm button
+	private Window getSubwindow(CustomerRepository customerRepo, Collection<Customer> customerCollectionCached,
+			Customer customerToSave) {
+		// Creating the confirm button
 		Button subwindowConfirm = new Button("Confirm");
 		subwindowConfirm.setId("confirm_customer");
-		
+
 		TextField customerName = new TextField("Customer Name");
 		customerName.setId("tf_customer_name");
 
@@ -121,11 +122,10 @@ public class CustomerEditor extends VerticalLayout {
 
 		TextField customerAge = new TextField("Customer Age");
 		customerAge.setId("tf_customer_age");
-		
+
 		if (customerToSave.getId() == null) { // passed in an unsaved object
 			subwindow = new Window("Create new customer");
-		}
-		else {
+		} else {
 			subwindow = new Window("Edit a customer");
 		}
 
@@ -150,9 +150,9 @@ public class CustomerEditor extends VerticalLayout {
 		buttonActions.addComponent(subwindowConfirm);
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
 		subContent.addComponent(buttonActions);
-		
+
 		Binder<Customer> binder = new Binder<>();
-		
+
 		binder.forField(customerName).withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.asRequired(Utils.generateRequiredError()).bind(Customer::getName, Customer::setName);
 
@@ -171,9 +171,9 @@ public class CustomerEditor extends VerticalLayout {
 				.asRequired(Utils.generateRequiredError())
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
 				.bind(Customer::getAge, Customer::setAge);
-		
+
 		binder.setBean(customerToSave);
-		
+
 		subwindowConfirm.addClickListener(event -> {
 			BinderValidationStatus<Customer> validationStatus = binder.validate();
 			log.info(customerHKID.getValue());
@@ -186,7 +186,7 @@ public class CustomerEditor extends VerticalLayout {
 				customerRepo.save(customerToSave);
 				this.refreshData();
 				subwindow.close();
-				
+
 				log.info("Saved a new/edited customer [{}] successfully", customerName.getValue());
 
 				binder.removeBean();
@@ -203,7 +203,7 @@ public class CustomerEditor extends VerticalLayout {
 						Notification.TYPE_ERROR_MESSAGE);
 			}
 		});
-		
+
 		return subwindow;
 	}
 
@@ -213,7 +213,7 @@ public class CustomerEditor extends VerticalLayout {
 
 	public void refreshData() {
 		Iterable<Customer> customers = customerRepo.findAll();
-		//it's possible the customerRepo can return null!
+		// it's possible the customerRepo can return null!
 		if (null == customers) {
 			customers = new HashSet<>();
 		}
