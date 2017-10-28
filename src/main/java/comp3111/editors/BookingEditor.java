@@ -135,7 +135,7 @@ public class BookingEditor extends VerticalLayout {
 
 		// Creating the confirm button
 		Button confirmButton = new Button("Confirm");
-		confirmButton.setId("confirm_BOOKING");
+		confirmButton.setId("confirm_booking");
 
 		TextField customerID = new TextField("Customer ID");
 
