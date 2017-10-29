@@ -1,14 +1,23 @@
 package comp3111;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
 import com.vaadin.server.UserError;
 import com.vaadin.ui.AbstractField;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 public class Utils {
 
@@ -26,7 +35,11 @@ public class Utils {
 	}
 
 	public static String generateRequiredError() {
-		return "is required.";
+		return "cannot be empty";
+	}
+	
+	public static String generateNoTourGuideAvailableError() {
+		return "no tour guides are free for this date";
 	}
 
 	public static Set<Date> stringToDateSet(String listOfDates) {
@@ -103,6 +116,10 @@ public class Utils {
 			return Calendar.SUNDAY;
 		else
 			return -1;
+	}
+
+	public static Collection<String> getDaysOfWeek() {
+		return Arrays.asList("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
 	}
 
 	public static Boolean containsIgnoreCase(String fullString, String search) {
@@ -184,6 +201,14 @@ public class Utils {
 		cal.setTime(d);
 		cal.add(Calendar.DATE, days);
 		return cal.getTime();
+	}
+
+	public static Date localDateToDate(LocalDate local) {
+		return java.sql.Date.valueOf(local);
+	}
+
+	public static Date addDate(LocalDate value, int days) {
+		return addDate(localDateToDate(value), days);
 	}
 
 }

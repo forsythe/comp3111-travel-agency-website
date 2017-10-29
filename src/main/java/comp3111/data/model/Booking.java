@@ -14,9 +14,9 @@ public class Booking {
 	@GeneratedValue
 	private long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Customer customer;
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Offering offering;
 
 	private int numAdults;
@@ -166,6 +166,13 @@ public class Booking {
 	@Override
 	public String toString() {
 		return offering.getStartDate().toString();
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof Booking)
+			return other != null && this.getId() != null && ((Booking) other).getId().equals(this.getId());
+		return false;
 	}
 
 }

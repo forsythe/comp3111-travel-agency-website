@@ -18,9 +18,9 @@ public class Offering {
 	@Id
 	@GeneratedValue
 	private Long id;
-	@ManyToOne // many offerings to 1 tour
+	@ManyToOne(fetch = FetchType.EAGER) // many offerings to 1 tour
 	private Tour tour;
-	@ManyToOne // many offerings to 1 tour guide
+	@ManyToOne(fetch = FetchType.EAGER) // many offerings to 1 tour guide
 	private TourGuide tourGuide;
 
 	private Date startDate;
@@ -106,7 +106,14 @@ public class Offering {
 
 	@Override
 	public String toString() {
-		return String.format("Offering[id=%d, '%s']", id, Utils.simpleDateFormat(startDate));
+		return String.format("Offering[id=%d, %s, %s]", id, Utils.simpleDateFormat(startDate), this.tour.getTourName());
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof Offering)
+			return other != null && this.getId() != null && ((Offering) other).getId().equals(this.getId());
+		return false;
 	}
 	
 	//Helper functions for vaadin columns

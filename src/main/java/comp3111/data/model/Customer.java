@@ -61,7 +61,7 @@ public class Customer extends Person {
 
 	@Override
 	public String toString() {
-		return String.format("Customer[id=%d, name='%s', age='%s']", getId(), getName(), age);
+		return String.format("Customer[%s, id=%d]", getName(), getId());
 	}
 
 	public void updateAboutOfferingStatus(String status) {
@@ -69,5 +69,8 @@ public class Customer extends Person {
 		// e.g. get the line ID and send out the status
 		// TODO
 	}
+	
+	
+
 
 }
