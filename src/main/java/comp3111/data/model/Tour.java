@@ -173,12 +173,5 @@ public class Tour {
 			return other != null && this.getId() != null && ((Tour) other).getId().equals(this.getId());
 		return false;
 	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		return this.id == ((Tour)obj).getId();
-	}
-
-
 
 }
