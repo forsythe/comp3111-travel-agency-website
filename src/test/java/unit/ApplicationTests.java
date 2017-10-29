@@ -87,7 +87,7 @@ public class ApplicationTests {
 	}
 
 	@Test
-	public void testSuccessDataSaved() {
+	public void testSuccessDefaultDataSaved() {
 		then(this.customerRepo.findById(c1.getId()).size()).isEqualTo(1);
 		then(this.customerRepo.findById(c2.getId()).size()).isEqualTo(1);
 
