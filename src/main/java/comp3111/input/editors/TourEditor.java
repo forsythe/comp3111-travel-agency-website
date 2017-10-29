@@ -251,9 +251,9 @@ public class TourEditor extends VerticalLayout {
 		});
 
 		manageOfferingButton.addClickListener(event -> {
-			getUI().getNavigator().navigateTo(OfferingManagementView.VIEW_NAME);
 			offeringEditor.setSelectedTour(selectedTour);
 			offeringEditor.setTourEditor(this);
+			getUI().getNavigator().navigateTo(OfferingManagementView.VIEW_NAME);
 			refreshData();
 		});
 	}
@@ -261,7 +261,7 @@ public class TourEditor extends VerticalLayout {
 	private Window getSubwindow(TourRepository tourRepo, Collection<Tour> tourCollectionCached, Tour tourToSave) {
 		// Creating the confirm button
 		subwindowConfirm = new Button("Confirm");
-		subwindowConfirm.setId("confirm_tour");
+		subwindowConfirm.setId("btn_confirm_tour");
 
 		// Creating the fields
 		tourName = new TextField("Tour Name");

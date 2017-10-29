@@ -65,9 +65,9 @@ public class TourGuidesEditor extends VerticalLayout {
 		rowOfButtons.addComponent(createTourGuideButton);
 		rowOfButtons.addComponent(editTourGuideButton);
 		rowOfButtons.addComponent(viewGuidedToursButton);
-		createTourGuideButton.setId("button_create_tour_guide");
-		editTourGuideButton.setId("button_edit_tour_guide");
-		viewGuidedToursButton.setId("button_view_guided_tours");
+		createTourGuideButton.setId("btn_create_tour_guide");
+		editTourGuideButton.setId("btn_edit_tour_guide");
+		viewGuidedToursButton.setId("btn_view_guided_tours");
 
 		// edit and manage shouldn't be enabled with no tour guide selected
 		editTourGuideButton.setEnabled(false);
@@ -133,7 +133,7 @@ public class TourGuidesEditor extends VerticalLayout {
 			TourGuide tourGuideToSave) {
 		// Creating the confirm button
 		subwindowConfirm = new Button("Confirm");
-		subwindowConfirm.setId("button_confirm_tour_guide");
+		subwindowConfirm.setId("btn_confirm_tour_guide");
 
 		tourGuideName = new TextField("Name");
 		tourGuideName.setId("tf_tour_guide_name");
