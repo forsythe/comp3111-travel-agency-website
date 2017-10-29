@@ -40,7 +40,7 @@ import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.input.converters.CustomerIDConverter;
-import comp3111.input.converters.TourOfferingIDConverter;
+import comp3111.input.converters.OfferingIDConverter;
 import comp3111.input.exceptions.OfferingOutOfRoomException;
 import comp3111.input.validators.ValidatorFactory;
 
@@ -63,7 +63,7 @@ public class BookingEditor extends VerticalLayout {
 	@Autowired
 	private DBManager actionManager;
 	@Autowired
-	private TourOfferingIDConverter tourOfferingIDConverter;
+	private OfferingIDConverter offeringIdConverter;
 	@Autowired
 	private CustomerIDConverter customerIDConverter;
 
@@ -220,7 +220,7 @@ public class BookingEditor extends VerticalLayout {
 
 		binder.forField(offeringID).asRequired(Utils.generateRequiredError())
 				.withConverter(new StringToLongConverter("Must be an integer")) //
-				.withConverter(tourOfferingIDConverter) //
+				.withConverter(offeringIdConverter) //
 				.withValidator(ValidatorFactory.getOfferingStillOpenValidator())
 				.bind(Booking::getOffering, Booking::setOffering);
 
@@ -244,7 +244,7 @@ public class BookingEditor extends VerticalLayout {
 				.withConverter(new StringToDoubleConverter("Must be an Number"))
 				.bind(Booking::getAmountPaid, Booking::setAmountPaid);
 
-		binder.forField(specialRequest).asRequired(Utils.generateRequiredError())
+		binder.forField(specialRequest)
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.bind(Booking::getSpecialRequests, Booking::setSpecialRequests);
 
@@ -271,7 +271,7 @@ public class BookingEditor extends VerticalLayout {
 
 					} else {
 						bookingRepo.save(bookingToSave);
-						log.info("Saved a edited booking [{}] successfully", bookingToSave);
+						log.info("Saved an edited booking [{}] successfully", bookingToSave);
 
 					}
 					binder.removeBean();

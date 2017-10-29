@@ -34,8 +34,8 @@ import java.util.HashSet;
 @SuppressWarnings("serial")
 @SpringComponent
 @UIScope
-public class TourOfferingEditor {
-	private static final Logger log = LoggerFactory.getLogger(TourOfferingEditor.class);
+public class OfferingEditor {
+	private static final Logger log = LoggerFactory.getLogger(OfferingEditor.class);
 
 	private OfferingRepository offeringRepo;
 	private final HashSet<Offering> offeringsCollectionCached = new HashSet<>();
@@ -48,7 +48,7 @@ public class TourOfferingEditor {
 
 	@SuppressWarnings("unchecked")
 	@Autowired
-	public TourOfferingEditor(OfferingRepository tr) {
+	public OfferingEditor(OfferingRepository tr) {
 		this.offeringRepo = tr;
 	}
 

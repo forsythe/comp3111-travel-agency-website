@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TourOfferingIDConverter implements Converter<Long, Offering> {
+public class OfferingIDConverter implements Converter<Long, Offering> {
 
     @Autowired
     private OfferingRepository offeringRepo;

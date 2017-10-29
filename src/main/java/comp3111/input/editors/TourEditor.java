@@ -76,7 +76,7 @@ public class TourEditor extends VerticalLayout {
 	private DBManager dbManager;
 
 	@Autowired
-	private TourOfferingEditor tourOfferingEditor;
+	private OfferingEditor offeringEditor;
 
 	/* Fields to edit properties in Tour entity */
 	private TextField tourName;
@@ -249,7 +249,7 @@ public class TourEditor extends VerticalLayout {
 		});
 
 		manageOfferingButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(tourOfferingEditor.getSubWindow(selectedTour, new Offering(), this));
+			getUI().getCurrent().addWindow(offeringEditor.getSubWindow(selectedTour, new Offering(), this));
 		});
 	}
 
