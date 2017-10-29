@@ -1,10 +1,6 @@
 package comp3111.data.model;
 
-import org.springframework.data.domain.Persistable;
-
 import javax.persistence.*;
-import javax.transaction.Transactional;
-import java.io.Serializable;
 import java.util.Calendar;
 
 @Entity
