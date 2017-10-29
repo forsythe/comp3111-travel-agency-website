@@ -52,12 +52,7 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 				if (newViewName.equals(OfferingManagementView.VIEW_NAME)) {
 					// prevent a user from directly accessing offering management view without
 					// selecting a tour for the offerings
-					if (((OfferingManagementView) newView).userHasSelectedTour()) {
-						return true;
-					} else {
-						// getUI().getNavigator().navigateTo(HomeView.VIEW_NAME)
-						return false;
-					}
+					return ((OfferingManagementView) newView).userHasSelectedTour();
 				}
 				return true;
 			}
