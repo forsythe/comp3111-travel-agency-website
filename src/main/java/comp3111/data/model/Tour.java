@@ -104,7 +104,7 @@ public class Tour {
 
 	public void setAllowedDates(Collection<Date> allowedDates) {
 		if (allowedDates == null)
-			allowedDates = new HashSet<Date>();
+			this.allowedDates = new HashSet<Date>();
 		else
 			this.allowedDates = allowedDates;
 	}
@@ -170,6 +170,5 @@ public class Tour {
 			return other != null && this.getId() != null && ((Tour) other).getId().equals(this.getId());
 		return false;
 	}
-
 
 }

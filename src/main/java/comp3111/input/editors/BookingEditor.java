@@ -21,6 +21,8 @@ import com.vaadin.data.converter.StringToLongConverter;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.*;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -114,6 +116,13 @@ public class BookingEditor extends VerticalLayout {
 				DB.BOOKING_TOTAL_COST, DB.BOOKING_SPECIAL_REQUEST, DB.BOOKING_PAYMENT_STATUS);
 		bookingGrid.getColumn(DB.BOOKING_PEOPLE).setCaption("Number of Adults, Children, Toddlers");
 
+		for (Column<Booking, ?> col : bookingGrid.getColumns()) {
+			col.setMinimumWidth(120);
+			col.setHidable(true);
+			col.setHidingToggleCaption(col.getCaption());
+			col.setExpandRatio(1);
+		}
+		
 		this.addComponent(bookingGrid);
 
 		createBookingButton.addClickListener(event -> {
