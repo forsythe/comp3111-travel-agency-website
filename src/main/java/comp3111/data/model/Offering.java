@@ -18,9 +18,9 @@ public class Offering {
 	@Id
 	@GeneratedValue
 	private Long id;
-	@ManyToOne // many offerings to 1 tour
+	@ManyToOne(fetch = FetchType.EAGER) // many offerings to 1 tour
 	private Tour tour;
-	@ManyToOne // many offerings to 1 tour guide
+	@ManyToOne(fetch = FetchType.EAGER) // many offerings to 1 tour guide
 	private TourGuide tourGuide;
 
 	private Date startDate;

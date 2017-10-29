@@ -14,9 +14,9 @@ public class Booking {
 	@GeneratedValue
 	private long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Customer customer;
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Offering offering;
 
 	private int numAdults;

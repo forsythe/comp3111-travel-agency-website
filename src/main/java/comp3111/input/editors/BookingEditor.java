@@ -298,7 +298,7 @@ public class BookingEditor extends VerticalLayout {
 		return subwindow;
 	}
 
-	private void refreshData() {
+	public void refreshData() {
 		Iterable<Booking> bookings = bookingRepo.findAll();
 		// it's possible the bookingRepo can return null!
 		if (null == bookings) {
@@ -310,4 +310,5 @@ public class BookingEditor extends VerticalLayout {
 		ListDataProvider<Booking> provider = new ListDataProvider<>(customerCollectionCached);
 		bookingGrid.setDataProvider(provider);
 	}
+
 }
