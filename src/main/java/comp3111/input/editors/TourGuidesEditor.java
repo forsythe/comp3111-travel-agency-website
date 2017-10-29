@@ -78,38 +78,31 @@ public class TourGuidesEditor extends VerticalLayout {
 		tourGuideGrid.setWidth("100%");
 		tourGuideGrid.setSelectionMode(SelectionMode.SINGLE);
 
-		tourGuideGrid.addSelectionListener(new SelectionListener<TourGuide>() {
-			@Override
-			public void selectionChange(SelectionEvent event) {
-				Collection<TourGuide> selectedItems = tourGuideGrid.getSelectionModel().getSelectedItems();
+		tourGuideGrid.addSelectionListener(event -> {
+			if (event.getFirstSelectedItem().isPresent()) {
+				selectedTourGuide = event.getFirstSelectedItem().get();
+				editTourGuideButton.setEnabled(true);
+				viewGuidedToursButton.setEnabled(true);
+				createTourGuideButton.setEnabled(false);
+			} else {
 				selectedTourGuide = null;
-				for (TourGuide rt : selectedItems) { // easy way to get first element of set
-					selectedTourGuide = rt;
-					break;
-				}
-				if (selectedTourGuide != null) {
-					editTourGuideButton.setEnabled(true);
-					viewGuidedToursButton.setEnabled(true);
-					createTourGuideButton.setEnabled(false);
-				} else {
-					editTourGuideButton.setEnabled(false);
-					viewGuidedToursButton.setEnabled(false);
-					createTourGuideButton.setEnabled(true);
-				}
+				editTourGuideButton.setEnabled(false);
+				viewGuidedToursButton.setEnabled(false);
+				createTourGuideButton.setEnabled(true);
 			}
 		});
 
 		tourGuideGrid.setColumnOrder(DB.TOURGUIDE_ID, DB.TOURGUIDE_NAME, DB.TOURGUIDE_LINE_USERNAME);
 
-//		HeaderRow filterRow = tourGuideGrid.appendHeaderRow();
-		
+		// HeaderRow filterRow = tourGuideGrid.appendHeaderRow();
+
 		for (Column<TourGuide, ?> col : tourGuideGrid.getColumns()) {
 			col.setMinimumWidth(120);
 			col.setHidable(true);
 			col.setHidingToggleCaption(col.getCaption());
 			col.setExpandRatio(1);
 		}
-		
+
 		this.addComponent(tourGuideGrid);
 
 		createTourGuideButton.addClickListener(new ClickListener() {

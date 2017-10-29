@@ -139,16 +139,10 @@ public class TourEditor extends VerticalLayout {
 		tourGrid.setWidth("100%");
 		tourGrid.setSelectionMode(SelectionMode.SINGLE);
 
-		tourGrid.addSelectionListener(new SelectionListener<Tour>() {
-			@Override
-			public void selectionChange(SelectionEvent event) {
-				Collection<Tour> selectedItems = tourGrid.getSelectionModel().getSelectedItems();
-				selectedTour = null;
-				for (Tour rt : selectedItems) { // easy way to get first element of set
-					selectedTour = rt;
-					break;
-				}
-				if (selectedTour != null) {
+		tourGrid.addSelectionListener(event -> {
+			{
+				if (event.getFirstSelectedItem().isPresent()) {
+					selectedTour = event.getFirstSelectedItem().get();
 					editTourButton.setEnabled(true);
 					manageOfferingButton.setEnabled(true);
 					createTourButton.setEnabled(false);

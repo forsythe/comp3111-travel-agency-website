@@ -84,12 +84,12 @@ public class OfferingEditor extends VerticalLayout {
 		rowOfButtons.addComponent(createNewOfferingButton);
 		rowOfButtons.addComponent(editOfferingButton);
 		rowOfButtons.addComponent(returnButton);
-		
-		
-		
+
 		createNewOfferingButton.setId("btn_create_new_offering");
 		editOfferingButton.setId("btn_edit_offering");
 		returnButton.setId("btn_return_offering");
+
+		editOfferingButton.setEnabled(false);
 
 		this.addComponent(rowOfButtons);
 
@@ -101,8 +101,12 @@ public class OfferingEditor extends VerticalLayout {
 		offeringGrid.addSelectionListener(event -> {
 			if (event.getFirstSelectedItem().isPresent()) {
 				selectedOffering = event.getFirstSelectedItem().get();
+				createNewOfferingButton.setEnabled(false);
+				editOfferingButton.setEnabled(true);
 			} else {
 				selectedOffering = null;
+				createNewOfferingButton.setEnabled(true);
+				editOfferingButton.setEnabled(false);
 			}
 		});
 
@@ -274,7 +278,7 @@ public class OfferingEditor extends VerticalLayout {
 	public void setSelectedTour(Tour selectedTour) {
 		this.selectedTour = selectedTour;
 	}
-	
+
 	public Tour getSelectedTour() {
 		return this.selectedTour;
 	}
