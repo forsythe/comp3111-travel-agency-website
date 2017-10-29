@@ -6,15 +6,20 @@ import com.vaadin.data.BindingValidationStatus;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
 
 import comp3111.Utils;
 import comp3111.data.DB;
+import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.validators.ValidatorFactory;
@@ -99,6 +104,15 @@ public class TourGuidesEditor extends VerticalLayout {
 
 		tourGuideGrid.setColumnOrder(DB.TOURGUIDE_ID, DB.TOURGUIDE_NAME, DB.TOURGUIDE_LINEID);
 
+//		HeaderRow filterRow = tourGuideGrid.appendHeaderRow();
+		
+		for (Column<TourGuide, ?> col : tourGuideGrid.getColumns()) {
+			col.setMinimumWidth(120);
+			col.setHidable(true);
+			col.setHidingToggleCaption(col.getCaption());
+			col.setExpandRatio(1);
+		}
+		
 		this.addComponent(tourGuideGrid);
 
 		createTourGuideButton.addClickListener(new ClickListener() {

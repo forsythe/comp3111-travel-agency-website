@@ -9,11 +9,15 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
 
 import comp3111.Utils;
 import comp3111.data.DB;
 import comp3111.data.model.Customer;
+import comp3111.data.model.TourGuide;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.field.HKIDEntryField;
 import comp3111.field.PhoneNumberEntryField;
@@ -92,6 +96,15 @@ public class CustomerEditor extends VerticalLayout {
 		customersGrid.setColumnOrder(DB.CUSTOMER_ID, DB.CUSTOMER_NAME, DB.CUSTOMER_LINEID, DB.CUSTOMER_HKID,
 				DB.CUSTOMER_PHONE, DB.CUSTOMER_AGE);
 
+//		HeaderRow filterRow = customersGrid.appendHeaderRow();
+		
+		for (Column<Customer, ?> col : customersGrid.getColumns()) {
+			col.setMinimumWidth(120);
+			col.setHidable(true);
+			col.setHidingToggleCaption(col.getCaption());
+			col.setExpandRatio(1);
+		}
+		
 		this.addComponent(customersGrid);
 
 		createNewCustomerButton.addClickListener(event -> {

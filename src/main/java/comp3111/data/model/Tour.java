@@ -105,7 +105,7 @@ public class Tour {
 
 	public void setAllowedDates(Collection<Date> allowedDates) {
 		if (allowedDates == null)
-			allowedDates = new HashSet<Date>();
+			this.allowedDates = new HashSet<Date>();
 		else
 			this.allowedDates = allowedDates;
 	}

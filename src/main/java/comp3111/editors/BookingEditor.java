@@ -10,6 +10,7 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
 
 import comp3111.Utils;
@@ -18,6 +19,7 @@ import comp3111.converters.TourOfferingIDConverter;
 import comp3111.data.DB;
 import comp3111.data.DBManager;
 import comp3111.data.model.Booking;
+import comp3111.data.model.Customer;
 import comp3111.data.repo.BookingRepository;
 import comp3111.exceptions.OfferingOutOfRoomException;
 import comp3111.validators.ValidatorFactory;
@@ -100,6 +102,13 @@ public class BookingEditor extends VerticalLayout {
 				DB.BOOKING_TOTAL_COST, DB.BOOKING_SPECIAL_REQUEST, DB.BOOKING_PAYMENT_STATUS);
 		bookingGrid.getColumn(DB.BOOKING_PEOPLE).setCaption("Number of Adults, Children, Toddlers");
 
+		for (Column<Booking, ?> col : bookingGrid.getColumns()) {
+			col.setMinimumWidth(120);
+			col.setHidable(true);
+			col.setHidingToggleCaption(col.getCaption());
+			col.setExpandRatio(1);
+		}
+		
 		this.addComponent(bookingGrid);
 
 		createBookingButton.addClickListener(event -> {

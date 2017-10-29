@@ -181,15 +181,15 @@ public class TourEditor extends VerticalLayout {
 		 * the list of tilers is reapplied everytime on any textfield change.
 		 */
 		for (Column<Tour, ?> col : tourGrid.getColumns()) {
-			col.setWidth(120);
-			col.setMinimumWidth(120);
+			col.setMinimumWidth(160);
 			col.setHidable(true);
+			col.setExpandRatio(1);
 			col.setHidingToggleCaption(col.getCaption());
 			HeaderCell cell = filterRow.getCell(col.getId());
 
 			// Have an input field to use for filter
 			TextField filterField = new TextField();
-			filterField.setWidth(80, Unit.PIXELS);
+			filterField.setWidth(130, Unit.PIXELS);
 			filterField.setHeight(30, Unit.PIXELS);
 
 			filterField.addValueChangeListener(change -> {
