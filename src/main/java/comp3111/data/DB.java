@@ -42,7 +42,7 @@ public class DB {
 	/* shown in grid */
 	public static final String CUSTOMER_ID = "id";
 	public static final String CUSTOMER_NAME = "name";
-	public static final String CUSTOMER_LINEID = "lineId";
+	public static final String CUSTOMER_LINE_ID = "lineId";
 	public static final String CUSTOMER_HKID = "hkid";
 	public static final String CUSTOMER_PHONE = "phone";
 	public static final String CUSTOMER_AGE = "age";
@@ -70,6 +70,6 @@ public class DB {
 	/* shown in grid */
 	public static final String TOURGUIDE_ID = "id";
 	public static final String TOURGUIDE_NAME = "name";
-	public static final String TOURGUIDE_LINEID = "lineId";
+	public static final String TOURGUIDE_LINE_USERNAME = "lineUsername";
 
 }

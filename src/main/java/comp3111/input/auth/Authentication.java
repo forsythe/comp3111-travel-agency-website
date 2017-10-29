@@ -26,7 +26,7 @@ public class Authentication {
 	}
 
 	public boolean authenticate(String username, String rawPassword) {
-		log.info("Tried to log in user:{} with password:{}", username, rawPassword);
+		log.info("Tried to log in user:{}", username);
 		LoginUser user = loginUserRepository.findByUsername(username);
 		if (null == user) {
 			log.info("couldn't find user {}", username);

@@ -92,8 +92,7 @@ public class CustomerEditor extends VerticalLayout {
 			}
 		});
 
-
-		customersGrid.setColumnOrder(DB.CUSTOMER_ID, DB.CUSTOMER_NAME, DB.CUSTOMER_LINEID, DB.CUSTOMER_HKID,
+		customersGrid.setColumnOrder(DB.CUSTOMER_ID, DB.CUSTOMER_NAME, DB.CUSTOMER_LINE_ID, DB.CUSTOMER_HKID,
 				DB.CUSTOMER_PHONE, DB.CUSTOMER_AGE);
 
 //		HeaderRow filterRow = customersGrid.appendHeaderRow();
@@ -121,19 +120,19 @@ public class CustomerEditor extends VerticalLayout {
 		Button subwindowConfirm = new Button("Confirm");
 		subwindowConfirm.setId("confirm_customer");
 
-		TextField customerName = new TextField("Customer Name");
+		TextField customerName = new TextField("Name");
 		customerName.setId("tf_customer_name");
 
-		TextField customerLineId = new TextField("Customer Line Id");
+		TextField customerLineId = new TextField("Line Id");
 		customerLineId.setId("tf_customer_line_id");
 
-		HKIDEntryField customerHKID = new HKIDEntryField("Customer HKID");
+		HKIDEntryField customerHKID = new HKIDEntryField("HKID");
 		customerHKID.setId("tf_customer_hkid");
 
-		PhoneNumberEntryField customerPhone = new PhoneNumberEntryField("Phone Number", "852");
+		PhoneNumberEntryField customerPhone = new PhoneNumberEntryField("Phone", "852");
 		customerPhone.setId("tf_customer_phone");
 
-		TextField customerAge = new TextField("Customer Age");
+		TextField customerAge = new TextField("Age");
 		customerAge.setId("tf_customer_age");
 
 		if (customerToSave.getId() == null) { // passed in an unsaved object

@@ -1,15 +1,23 @@
 package comp3111.data.model;
 
-import org.springframework.data.domain.Persistable;
-
 import javax.persistence.*;
-import javax.transaction.Transactional;
-import java.io.Serializable;
 import java.util.Calendar;
 
+/**
+ * Represents a booking record between a customer and an offering in the
+ * database
+ * 
+ */
+/**
+ * @author Forsythe
+ *
+ */
 @Entity
 public class Booking {
-
+	
+	public static final String PAYMENT_PENDING = "Pending";
+	public static final String PAYMENT_CONFIRMED = "Confirmed";
+	
 	@Id
 	@GeneratedValue
 	private long id;
@@ -22,7 +30,6 @@ public class Booking {
 	private int numAdults;
 	private int numChildren;
 	private int numToddlers;
-	// private double totalCost;
 	private double amountPaid;
 	private String specialRequests;
 	private String paymentStatus;
@@ -97,6 +104,10 @@ public class Booking {
 		this.offering = offering;
 	}
 
+	/**
+	 * @return A string formatted to show the number of adults, children, and
+	 *         toddlers. Used for the vaadin grid column
+	 */
 	public String getPeople() {
 		return (this.getNumAdults() + ", " + this.getNumChildren() + ", " + this.getNumToddlers());
 	}
@@ -125,6 +136,15 @@ public class Booking {
 		this.numToddlers = numToddlers;
 	}
 
+	/**
+	 * @return The dollar cost of this booking record. Depends on if it's
+	 *         weekday/weekend, the number of adults, children, toddlers, child
+	 *         discount, and toddler discount.
+	 * @see #getWeekdayPrice()
+	 * @see #getWeekendPrice()
+	 * @see #getChildDiscount()
+	 * @see #getToddlerDiscount()
+	 */
 	public double getTotalCost() {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(offering.getStartDate());
@@ -139,6 +159,9 @@ public class Booking {
 				+ numToddlers * price * this.offering.getTour().getToddlerDiscount();
 	}
 
+	/**
+	 * @return the dollar amount that's already been paid by the customer
+	 */
 	public double getAmountPaid() {
 		return amountPaid;
 	}
@@ -147,6 +170,10 @@ public class Booking {
 		this.amountPaid = amountPaid;
 	}
 
+	/**
+	 * @return a string, describing any (human readable) requests, e.g. "non-smoking
+	 *         room"
+	 */
 	public String getSpecialRequests() {
 		return specialRequests;
 	}

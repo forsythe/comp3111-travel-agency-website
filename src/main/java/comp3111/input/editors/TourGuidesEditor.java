@@ -41,7 +41,7 @@ public class TourGuidesEditor extends VerticalLayout {
 
 	// Editable fields
 	private TextField tourGuideName;
-	private TextField tourGuideLineId;
+	private TextField tourGuideLineUsername;
 
 	HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createTourGuideButton = new Button("Create new tour guide");
@@ -58,7 +58,6 @@ public class TourGuidesEditor extends VerticalLayout {
 	private TourGuideRepository tourGuideRepo;
 	private final HashSet<TourGuide> tourGuideCollectionCached = new HashSet<TourGuide>();
 
-	@SuppressWarnings("unchecked")
 	@Autowired
 	public TourGuidesEditor(TourGuideRepository tgr) {
 		this.tourGuideRepo = tgr;
@@ -100,7 +99,7 @@ public class TourGuidesEditor extends VerticalLayout {
 			}
 		});
 
-		tourGuideGrid.setColumnOrder(DB.TOURGUIDE_ID, DB.TOURGUIDE_NAME, DB.TOURGUIDE_LINEID);
+		tourGuideGrid.setColumnOrder(DB.TOURGUIDE_ID, DB.TOURGUIDE_NAME, DB.TOURGUIDE_LINE_USERNAME);
 
 //		HeaderRow filterRow = tourGuideGrid.appendHeaderRow();
 		
@@ -138,8 +137,8 @@ public class TourGuidesEditor extends VerticalLayout {
 
 		tourGuideName = new TextField("Name");
 		tourGuideName.setId("tf_tour_guide_name");
-		tourGuideLineId = new TextField("Line Id");
-		tourGuideLineId.setId("tf_tour_guide_line_id");
+		tourGuideLineUsername = new TextField("LINE Username");
+		tourGuideLineUsername.setId("tf_tour_guide_line_id");
 
 		if (tourGuideToSave.getId() == null) { // passed in an unsaved object
 			subwindow = new Window("Create new tour guide");
@@ -157,7 +156,7 @@ public class TourGuidesEditor extends VerticalLayout {
 		subwindow.setDraggable(false);
 
 		subContent.addComponent(tourGuideName);
-		subContent.addComponent(tourGuideLineId);
+		subContent.addComponent(tourGuideLineUsername);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
 		buttonActions.addComponent(subwindowConfirm);
@@ -168,8 +167,8 @@ public class TourGuidesEditor extends VerticalLayout {
 		binder.forField(tourGuideName).withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.asRequired(Utils.generateRequiredError()).bind(TourGuide::getName, TourGuide::setName);
 
-		binder.forField(tourGuideLineId).withValidator(ValidatorFactory.getStringLengthValidator(255))
-				.asRequired(Utils.generateRequiredError()).bind(TourGuide::getLineId, TourGuide::setLineId);
+		binder.forField(tourGuideLineUsername).withValidator(ValidatorFactory.getStringLengthValidator(255))
+				.asRequired(Utils.generateRequiredError()).bind(TourGuide::getLineUsername, TourGuide::setLineUsername);
 
 		binder.setBean(tourGuideToSave);
 
@@ -215,7 +214,7 @@ public class TourGuidesEditor extends VerticalLayout {
 	}
 
 	public TextField getTourGuideLineId() {
-		return tourGuideLineId;
+		return tourGuideLineUsername;
 	}
 
 	public Button getCreateTourGuideButton() {
