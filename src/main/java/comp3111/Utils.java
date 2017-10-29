@@ -44,7 +44,7 @@ public class Utils {
 
 	public static Set<Date> stringToDateSet(String listOfDates) {
 		Set<Date> dates = new HashSet<Date>();
-		if (listOfDates.equals(""))
+		if (listOfDates == null || listOfDates.isEmpty())
 			return dates;
 		String[] temp = listOfDates.replace(" ", "").split(",");
 

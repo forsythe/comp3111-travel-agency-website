@@ -108,5 +108,22 @@ public class Offering {
 			return other != null && this.getId() != null && ((Offering) other).getId().equals(this.getId());
 		return false;
 	}
+	
+	//Helper functions for vaadin columns
+	public String getTourGuideName() {
+		return this.tourGuide.getName();
+	}
+	
+	public String getTourGuideLineId() {
+		return this.tourGuide.getLineUsername();
+	}
+	
+	public String getTourName() {
+		return this.tour.getTourName();
+	}
 
+	public String getStartDateString () {
+		return this.getStartDate().toString();
+	}
+	
 }

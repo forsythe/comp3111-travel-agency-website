@@ -25,6 +25,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBoxGroup;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
@@ -46,6 +47,9 @@ import comp3111.data.DBManager;
 import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.data.repo.TourRepository;
+import comp3111.view.HomeView;
+import comp3111.view.OfferingManagementView;
+import comp3111.view.TourManagementView;
 import comp3111.input.converters.StringCollectionToIntegerCollectionConverter;
 import comp3111.input.converters.StringToDateCollectionConverter;
 import comp3111.input.validators.ValidatorFactory;
@@ -179,15 +183,15 @@ public class TourEditor extends VerticalLayout {
 		 * the list of tilers is reapplied everytime on any textfield change.
 		 */
 		for (Column<Tour, ?> col : tourGrid.getColumns()) {
-			col.setWidth(120);
-			col.setMinimumWidth(120);
+			col.setMinimumWidth(160);
 			col.setHidable(true);
+			col.setExpandRatio(1);
 			col.setHidingToggleCaption(col.getCaption());
 			HeaderCell cell = filterRow.getCell(col.getId());
 
 			// Have an input field to use for filter
 			TextField filterField = new TextField();
-			filterField.setWidth(80, Unit.PIXELS);
+			filterField.setWidth(130, Unit.PIXELS);
 			filterField.setHeight(30, Unit.PIXELS);
 
 			filterField.addValueChangeListener(change -> {
@@ -247,8 +251,9 @@ public class TourEditor extends VerticalLayout {
 		});
 
 		manageOfferingButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(offeringEditor.getSubWindow(selectedTour, new Offering(), this));
-			// update our generated column just in case (aka # offerings per tour)
+			getUI().getNavigator().navigateTo(OfferingManagementView.VIEW_NAME);
+			offeringEditor.setSelectedTour(selectedTour);
+			offeringEditor.setTourEditor(this);
 			refreshData();
 		});
 	}
