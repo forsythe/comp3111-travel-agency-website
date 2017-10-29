@@ -78,15 +78,18 @@ public class OfferingEditor extends VerticalLayout {
 
 	@Autowired
 	public OfferingEditor(OfferingRepository or) {
+
 		this.offeringRepo = or;
-		
+
 		rowOfButtons.addComponent(createNewOfferingButton);
 		rowOfButtons.addComponent(editOfferingButton);
 		rowOfButtons.addComponent(returnButton);
+		
+		
+		
 		createNewOfferingButton.setId("btn_create_new_offering");
 		editOfferingButton.setId("btn_edit_offering");
 		returnButton.setId("btn_return_offering");
-		
 
 		this.addComponent(rowOfButtons);
 
@@ -103,11 +106,9 @@ public class OfferingEditor extends VerticalLayout {
 			}
 		});
 
-		
 		offeringGrid.removeColumn(DB.OFFERING_TOUR); // we'll combine days of week and dates
 		offeringGrid.removeColumn(DB.OFFERING_TOUR_GUIDE);
 		offeringGrid.removeColumn(DB.OFFERING_DATE);
-		
 
 		offeringGrid.setColumnOrder(DB.OFFERING_ID, DB.OFFERING_START_DATE, DB.OFFERING_TOUR_GUIDE_NAME,
 				DB.OFFERING_TOUR_GUIDE_LINE_ID, DB.OFFERING_TOUR_NAME, DB.OFFERING_MIN_CAPACITY,
@@ -272,6 +273,10 @@ public class OfferingEditor extends VerticalLayout {
 	// Helpers for accessing stuff from tourEditor
 	public void setSelectedTour(Tour selectedTour) {
 		this.selectedTour = selectedTour;
+	}
+	
+	public Tour getSelectedTour() {
+		return this.selectedTour;
 	}
 
 	public void setTourEditor(TourEditor te) {
