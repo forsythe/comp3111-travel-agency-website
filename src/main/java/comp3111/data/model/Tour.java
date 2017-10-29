@@ -164,5 +164,11 @@ public class Tour {
 	public String toString() {
 		return String.format("Tour[id=%d, tourName='%s']", id, tourName);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return this.id == ((Tour)obj).getId();
+	}
+
 
 }

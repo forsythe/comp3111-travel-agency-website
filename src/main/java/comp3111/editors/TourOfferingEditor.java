@@ -9,11 +9,13 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
+import com.vaadin.ui.Grid.SelectionMode;
 
 import comp3111.Utils;
 import comp3111.converters.LocalDateToUtilDateConverter;
 import comp3111.converters.TourGuideIDConverter;
 import comp3111.data.DBManager;
+import comp3111.data.model.Booking;
 import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.data.repo.OfferingRepository;
@@ -33,7 +35,7 @@ import java.util.HashSet;
 @SuppressWarnings("serial")
 @SpringComponent
 @UIScope
-public class TourOfferingEditor {
+public class TourOfferingEditor extends VerticalLayout{
 	private static final Logger log = LoggerFactory.getLogger(TourOfferingEditor.class);
 
 	private OfferingRepository offeringRepo;
@@ -44,11 +46,42 @@ public class TourOfferingEditor {
 
 	@Autowired
 	private DBManager actionManager;
+	
+	private Tour selectedTour;
+	private final Grid<Offering> offeringGrid = new Grid<Offering>(Offering.class);
+	
+	private Offering selectedOffering;
+	
+	/* Action buttons */
+	HorizontalLayout rowOfButtons = new HorizontalLayout();
+	private Button returnButton = new Button("Return");
 
 	@SuppressWarnings("unchecked")
 	@Autowired
 	public TourOfferingEditor(OfferingRepository tr) {
 		this.offeringRepo = tr;
+		
+		rowOfButtons.addComponent(returnButton);
+		returnButton.setId("button_return_offering");
+		
+		this.addComponent(rowOfButtons);
+		
+		this.refreshData();
+		
+		offeringGrid.setWidth("100%");
+		offeringGrid.setSelectionMode(SelectionMode.SINGLE);
+		
+		offeringGrid.addSelectionListener(event -> {
+			if (event.getFirstSelectedItem().isPresent()) {
+				selectedOffering = event.getFirstSelectedItem().get();
+			} else {
+				selectedOffering = null;
+			}
+		});
+	}
+	
+	public void setSelectedTour (Tour selectedTour) {
+		this.selectedTour = selectedTour;
 	}
 
 	Window getSubWindow(Tour hostTour, Offering offeringToSave, TourEditor tourEditor) {
@@ -166,10 +199,14 @@ public class TourOfferingEditor {
 		void onChange();
 	}
 
-	private void refreshData() {
-		Iterable<Offering> offerings = offeringRepo.findAll();
+	public void refreshData() {
 		offeringsCollectionCached.clear();
-		offerings.forEach(offeringsCollectionCached::add);
+		for (Offering o : offeringRepo.findAll()) {
+			if (o.getTour().equals(this.selectedTour))
+				offeringsCollectionCached.add(o);
+			
+		}
+//		offerings.forEach(offeringsCollectionCached::add);
 		ListDataProvider<Offering> provider = new ListDataProvider<>(offeringsCollectionCached);
 		//tourGrid.setDataProvider(provider);
 		// tourGrid.setItems(tourCollectionCached);

@@ -25,6 +25,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBoxGroup;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
@@ -49,6 +50,9 @@ import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.data.repo.TourRepository;
 import comp3111.validators.ValidatorFactory;
+import comp3111.view.HomeView;
+import comp3111.view.OfferingManagementView;
+import comp3111.view.TourManagementView;
 
 /**
  * A simple example to introduce building forms. As your real application is
@@ -249,7 +253,9 @@ public class TourEditor extends VerticalLayout {
 		});
 
 		manageOfferingButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(tourOfferingEditor.getSubWindow(selectedTour, new Offering(), this));
+			getUI().getNavigator().navigateTo(OfferingManagementView.VIEW_NAME);
+			tourOfferingEditor.setSelectedTour(selectedTour);
+//			getUI().getCurrent().addWindow(tourOfferingEditor.getSubWindow(selectedTour, new Offering(), this));
 		});
 	}
 

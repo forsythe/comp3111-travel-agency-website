@@ -108,5 +108,22 @@ public class Offering {
 	public String toString() {
 		return String.format("Offering[id=%d, '%s']", id, Utils.simpleDateFormat(startDate));
 	}
+	
+	//Helper functions for vaadin columns
+	public String getTourGuideName() {
+		return this.tourGuide.getName();
+	}
+	
+	public String getTourGuideLineId() {
+		return this.tourGuide.getLineId();
+	}
+	
+	public String getTourName() {
+		return this.tour.getTourName();
+	}
 
+	public String getStartDateString () {
+		return this.getStartDate().toString();
+	}
+	
 }

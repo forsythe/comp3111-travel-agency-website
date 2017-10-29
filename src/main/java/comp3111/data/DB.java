@@ -22,6 +22,17 @@ public class DB {
 	/* hidden from grid */
 	public static final String TOUR_ALLOWED_DAYS_OF_WEEK = "allowedDaysOfWeek";
 	public static final String TOUR_ALLOWED_DATES = "allowedDates";
+	
+	//Offering
+	/* shown in grid */
+	public static final String OFFERING_ID = "id";
+	public static final String OFFERING_HOTEL_NAME = "hotelName";
+	public static final String OFFERING_START_DATE = "startDateString";
+	public static final String OFFERING_TOUR_GUIDE_NAME = "tourGuideName";
+	public static final String OFFERING_TOUR_LINE_ID = "tourGuideLineId";
+	public static final String OFFERING_TOUR_NAME = "tourName";
+	public static final String OFFERING_MIN_CAPACITY = "minCustomers";
+	public static final String OFFERING_MAX_CAPACITY = "maxCustomers";
 
 	// Customer
 	/* shown in grid */
