@@ -118,9 +118,10 @@ public class ApplicationTests {
 		then(this.bookingRepo.findByPaymentStatus(booking.getPaymentStatus()).size()).isEqualTo(1);
 	}
 
-	@Test
-	public void testSuccessCreateTwoOfferingsWithSameTourGuideForATour() throws OfferingDateUnsupportedException,
-			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
+	@Test(expected = TourGuideUnavailableException.class)
+	public void testFailureCreateTwoOfferingsWithSameTourGuideForATourAtSameDate()
+			throws OfferingDateUnsupportedException, OfferingDayOfWeekUnsupportedException,
+			TourGuideUnavailableException, OfferingOutOfRoomException {
 		Customer cust1 = new Customer("Emily Elephant", 36);
 		Customer cust2 = new Customer("Johnny", 40);
 

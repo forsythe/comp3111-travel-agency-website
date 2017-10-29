@@ -12,5 +12,4 @@ public interface PersonBaseRepository<T extends Person> extends CrudRepository<T
 
 	Collection<T> findByName(String name);
 
-	Collection<T> findByLineId(String lineId);
 }
