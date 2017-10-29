@@ -3,6 +3,12 @@ package comp3111.data.model;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 
+/**
+ * Represents a customer entity in the databse
+ * 
+ * @author Forsythe
+ *
+ */
 @Entity
 @Inheritance
 public class Customer extends Person {
@@ -56,6 +62,13 @@ public class Customer extends Person {
 		return String.format("Customer[%s, id=%d]", getName(), getId());
 	}
 
+	/**
+	 * @param status
+	 *            the status of the tour (e.g. confirmed, cancelled, etc.) Will be a
+	 *            string which is sent directly to the customer via their line id to
+	 *            their phone
+	 * @see #getLineId()
+	 */
 	public void updateAboutOfferingStatus(String status) {
 		// do something with status
 		// e.g. get the line ID and send out the status
@@ -69,5 +82,4 @@ public class Customer extends Person {
 	public void setLineId(String lineId) {
 		this.lineId = lineId;
 	}
-
 }

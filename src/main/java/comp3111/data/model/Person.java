@@ -5,6 +5,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 
+/**
+ * An abstract entity either representing a customer or a tour guide in the
+ * database
+ * 
+ * @author Forsythe
+ *
+ */
 @Entity
 @Inheritance
 public abstract class Person {
@@ -15,10 +22,12 @@ public abstract class Person {
 
 	private String name;
 
+
 	public Person() {
 	}
 
 	public Person(String name) {
+
 		this.name = name;
 	}
 
@@ -37,6 +46,7 @@ public abstract class Person {
 	public void setName(String name) {
 		this.name = name;
 	}
+
 
 	@Override
 	public String toString() {
