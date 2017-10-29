@@ -38,6 +38,7 @@ import comp3111.data.model.Booking;
 import comp3111.data.model.Customer;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
+import comp3111.data.repo.OfferingRepository;
 import comp3111.input.converters.CustomerIDConverter;
 import comp3111.input.converters.TourOfferingIDConverter;
 import comp3111.input.exceptions.OfferingOutOfRoomException;
@@ -57,6 +58,8 @@ public class BookingEditor extends VerticalLayout {
 	private BookingRepository bookingRepo;
 	@Autowired
 	private CustomerRepository customerRepo;
+	@Autowired
+	private OfferingRepository offeringRepo;
 	@Autowired
 	private DBManager actionManager;
 	@Autowired
@@ -262,11 +265,18 @@ public class BookingEditor extends VerticalLayout {
 				log.info("About to save booking [{}]", bookingToSave);
 
 				try {
-					actionManager.createBookingForOffering(bookingToSave);
+					if (bookingToSave.getId() == null) {
+						actionManager.createBookingForOffering(bookingToSave);
+						log.info("Saved a new booking [{}] successfully", bookingToSave);
+
+					} else {
+						bookingRepo.save(bookingToSave);
+						log.info("Saved a edited booking [{}] successfully", bookingToSave);
+
+					}
 					binder.removeBean();
 					this.refreshData();
 					subwindow.close();
-					log.info("Saved a new/edited booking [{}] successfully", bookingToSave);
 
 					return; // This return skip the error reporting procedure below
 				} catch (OfferingOutOfRoomException e) {
