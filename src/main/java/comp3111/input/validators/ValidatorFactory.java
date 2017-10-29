@@ -20,10 +20,10 @@ public class ValidatorFactory {
 		return new DoubleLowerBoundValidator(minInclusive);
 	}
 
-	public static ListOfDatesValidator getListOfDatesValidator( ) {
+	public static ListOfDatesValidator getListOfDatesValidator() {
 		return new ListOfDatesValidator();
 	}
-	
+
 	public static StringLengthValidator getStringLengthValidator(int maxLength) {
 		return new StringLengthValidator(maxLength);
 	}
@@ -36,11 +36,11 @@ public class ValidatorFactory {
 		return new HKIDValidator();
 	}
 
-	public static DateNotEarlierThanValidator getDateNotEarlierThanValidator (Date notEarlierThanThis) {
+	public static DateNotEarlierThanValidator getDateNotEarlierThanValidator(Date notEarlierThanThis) {
 		return new DateNotEarlierThanValidator(notEarlierThanThis);
 	}
 
-	public static OfferingStillOpenValidator getOfferingStillOpenValidator (){
+	public static OfferingStillOpenValidator getOfferingStillOpenValidator() {
 		return new OfferingStillOpenValidator();
 	}
 }

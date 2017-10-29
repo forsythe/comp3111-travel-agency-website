@@ -15,16 +15,16 @@ public class IntegerLowerBoundedByAnotherFieldValidator implements Validator<Str
 	@Override
 	public ValidationResult apply(String value, ValueContext context) {
 		try {
-			int boundedBy = Integer.parseInt(field.getValue());
+			int boundedBy = Integer.parseInt(field.getValue().replaceAll(",", ""));
 			try {
 				int target = Integer.parseInt(value);
 				if (target >= boundedBy)
 					return ValidationResult.ok();
-			}catch (NumberFormatException e){
+			} catch (NumberFormatException e) {
 				return ValidationResult.error("Must be an integer");
 			}
 		} catch (NumberFormatException e) {
-			//The lower bound itself is not valid. None of my business here :)
+			// The lower bound itself is not valid. None of my business here :)
 			return ValidationResult.ok();
 		}
 		return ValidationResult.error("The integer must be >= " + field.getCaption());
