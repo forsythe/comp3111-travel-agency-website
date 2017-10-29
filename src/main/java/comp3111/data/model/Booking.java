@@ -1,4 +1,4 @@
-package comp3111.model;
+package comp3111.data.model;
 
 import org.springframework.data.domain.Persistable;
 
@@ -8,18 +8,15 @@ import java.io.Serializable;
 import java.util.Calendar;
 
 @Entity
-@Transactional
-public class CustomerOffering implements Serializable, Persistable<Long> {
+public class Booking {
 
 	@Id
 	@GeneratedValue
 	private long id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	// @JoinColumn(name = "customerId", referencedColumnName = "id")
+	@ManyToOne
 	private Customer customer;
-	@ManyToOne(cascade = CascadeType.ALL)
-	// @JoinColumn(name = "offeringId", referencedColumnName = "id")
+	@ManyToOne
 	private Offering offering;
 
 	private int numAdults;
@@ -30,11 +27,11 @@ public class CustomerOffering implements Serializable, Persistable<Long> {
 	private String specialRequests;
 	private String paymentStatus;
 
-	public CustomerOffering() {
+	public Booking() {
 
 	}
 
-	public CustomerOffering(Customer customer, Offering offering, int numAdults, int numChildren, int numToddlers,
+	public Booking(Customer customer, Offering offering, int numAdults, int numChildren, int numToddlers,
 			double amountPaid, String specialRequests, String paymentStatus) {
 		this.customer = customer;
 		this.offering = offering;
@@ -57,11 +54,11 @@ public class CustomerOffering implements Serializable, Persistable<Long> {
 	public String getCustomerName() {
 		return customer != null ? customer.getName() : null;
 	}
-	
+
 	public String getCustomerHkid() {
 		return customer != null ? customer.getHkid() : null;
 	}
-	
+
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -73,25 +70,25 @@ public class CustomerOffering implements Serializable, Persistable<Long> {
 	public Long getOfferingId() {
 		return getOffering() != null ? getOffering().getId() : null;
 	}
-	
+
 	public Long getTourId() {
-		if(getOffering() != null) {
-			if(getOffering().getTour() != null) {
+		if (getOffering() != null) {
+			if (getOffering().getTour() != null) {
 				return getOffering().getTour().getId();
 			}
 		}
 		return null;
 	}
-	
+
 	public String getTourName() {
-		if(getOffering() != null) {
-			if(getOffering().getTour() != null) {
+		if (getOffering() != null) {
+			if (getOffering().getTour() != null) {
 				return getOffering().getTour().getTourName();
 			}
 		}
 		return null;
 	}
-	
+
 	public Offering getOffering() {
 		return offering;
 	}
@@ -103,7 +100,7 @@ public class CustomerOffering implements Serializable, Persistable<Long> {
 	public String getPeople() {
 		return (this.getNumAdults() + ", " + this.getNumChildren() + ", " + this.getNumToddlers());
 	}
-	
+
 	public int getNumAdults() {
 		return numAdults;
 	}
@@ -169,17 +166,6 @@ public class CustomerOffering implements Serializable, Persistable<Long> {
 	@Override
 	public String toString() {
 		return offering.getStartDate().toString();
-	}
-
-	@Override
-	/*
-	 * This is needed in order to save new CustomerOffering objects with existing
-	 * customers and existing offerings hibernate will complain that you're trying
-	 * to save "already saved" (detached) customers otherwise
-	 * https://stackoverflow.com/questions/16559407/spring-data-jpa-save-new-entity-referencing-existing-one
-	 */
-	public boolean isNew() {
-		return null == getId() && customer.getId() == null && offering.getId() == null;
 	}
 
 }

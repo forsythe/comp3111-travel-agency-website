@@ -1,4 +1,4 @@
-package comp3111.validators;
+package comp3111;
 
 import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
@@ -25,15 +25,16 @@ public class Utils {
 		});
 	}
 
-	public static String generateRequiredError(){
+	public static String generateRequiredError() {
 		return "is required.";
 	}
 
 	public static Set<Date> stringToDateSet(String listOfDates) {
 		Set<Date> dates = new HashSet<Date>();
-		if(listOfDates.equals("")) return dates;
+		if (listOfDates.equals(""))
+			return dates;
 		String[] temp = listOfDates.replace(" ", "").split(",");
-		
+
 		SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy");
 		parser.setLenient(false);
 
@@ -47,7 +48,7 @@ public class Utils {
 		}
 		return dates;
 	}
-	
+
 	public static Set<String> integerSetToStringDayNameSet(Collection<Integer> integers) {
 		Set<String> strings = new HashSet<String>();
 		for (Integer i : integers) {
@@ -121,8 +122,8 @@ public class Utils {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		return sdf.format(d);
 	}
-	
-	public static Date parseSimpleDateFormat(String s ) throws ParseException{
+
+	public static Date parseSimpleDateFormat(String s) throws ParseException {
 		SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy");
 		parser.setLenient(false);
 		return parser.parse(s);
@@ -160,7 +161,7 @@ public class Utils {
 		}
 		return false;
 	}
-	
+
 	public static String dateCollectionToString(Collection<Date> dates) {
 		ArrayList<String> dateList = new ArrayList<>();
 		for (Date day : dates) {
@@ -168,14 +169,21 @@ public class Utils {
 		}
 		return String.join(", ", dateList);
 	}
-	
+
 	public static String integerCollectionToString(Collection<Integer> integerCollection) {
 		ArrayList<String> integerList = new ArrayList<>();
 		for (int integer : integerCollection) {
 			integerList.add(Utils.dayToString(integer));
 		}
-		
+
 		return String.join(", ", integerList);
+	}
+
+	public static Date addDate(Date d, int days) {
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTime(d);
+		cal.add(Calendar.DATE, days);
+		return cal.getTime();
 	}
 
 }

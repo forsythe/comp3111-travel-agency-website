@@ -5,8 +5,9 @@ import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.elements.*;
 import com.vaadin.ui.TextArea;
 import comp3111.Application;
-import comp3111.repo.CustomerRepository;
-import comp3111.repo.TourRepository;
+import comp3111.data.repo.CustomerRepository;
+import comp3111.data.repo.TourRepository;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;

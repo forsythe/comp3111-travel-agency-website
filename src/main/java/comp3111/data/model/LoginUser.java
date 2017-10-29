@@ -1,4 +1,4 @@
-package comp3111.model;
+package comp3111.data.model;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

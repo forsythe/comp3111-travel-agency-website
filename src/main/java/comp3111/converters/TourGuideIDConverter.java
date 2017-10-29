@@ -3,8 +3,10 @@ package comp3111.converters;
 import com.vaadin.data.Converter;
 import com.vaadin.data.Result;
 import com.vaadin.data.ValueContext;
-import comp3111.model.TourGuide;
-import comp3111.repo.TourGuideRepository;
+
+import comp3111.data.model.TourGuide;
+import comp3111.data.repo.TourGuideRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

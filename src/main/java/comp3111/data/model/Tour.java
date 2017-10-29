@@ -1,9 +1,10 @@
-package comp3111.model;
+package comp3111.data.model;
 
-import comp3111.validators.Utils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.domain.Persistable;
+
+import comp3111.Utils;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
@@ -12,8 +13,7 @@ import java.util.Date;
 import java.util.HashSet;
 
 @Entity
-@Transactional
-public class Tour implements Persistable<Long> {
+public class Tour {
 
 	@Id
 	@GeneratedValue
@@ -22,10 +22,6 @@ public class Tour implements Persistable<Long> {
 	private String tourName;
 	private String description;
 	private int days;
-
-	@OneToMany(mappedBy = "tour", cascade = CascadeType.ALL)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private Collection<Offering> offerings = new HashSet<Offering>();
 
 	@ElementCollection(targetClass = Integer.class)
 	@LazyCollection(LazyCollectionOption.FALSE)
@@ -42,6 +38,8 @@ public class Tour implements Persistable<Long> {
 	private double toddlerDiscount;
 	private int weekdayPrice;
 	private int weekendPrice;
+
+	public static final String REPEATING_TOUR_TYPE = "Repeating";
 
 	public Tour() {
 	}
@@ -90,14 +88,6 @@ public class Tour implements Persistable<Long> {
 		this.days = days;
 	}
 
-	public Collection<Offering> getOfferings() {
-		return this.offerings;
-	}
-
-	public void setOfferings(Collection<Offering> offerings) {
-		this.offerings = offerings;
-	}
-
 	public Collection<Integer> getAllowedDaysOfWeek() {
 		return this.allowedDaysOfWeek;
 	}
@@ -106,7 +96,8 @@ public class Tour implements Persistable<Long> {
 		if (allowedDaysOfWeek == null)
 			allowedDaysOfWeek = new HashSet<Integer>();
 		else
-			this	.allowedDaysOfWeek = allowedDaysOfWeek;	}
+			this.allowedDaysOfWeek = allowedDaysOfWeek;
+	}
 
 	public Collection<Date> getAllowedDates() {
 		return allowedDates;
@@ -116,7 +107,7 @@ public class Tour implements Persistable<Long> {
 		if (allowedDates == null)
 			allowedDates = new HashSet<Date>();
 		else
-			this	.allowedDates = allowedDates;
+			this.allowedDates = allowedDates;
 	}
 
 	public double getChildDiscount() {
@@ -161,18 +152,6 @@ public class Tour implements Persistable<Long> {
 			return this.getFormattedAllowedDaysOfWeek();
 	}
 
-	// http://www.java2s.com/Tutorial/Java/0355__JPA/OneToManyListCollection.htm
-	public void addOffering(Offering offering) {
-		// if (!getOfferings().contains(offering)) {
-		// getOfferings().add(offering);
-		// if (offering.getTour() != null) { // should never be true
-		// offering.getTour().getOfferings().remove(offering);
-		// }
-		// offering.setTour(this);
-		// }
-		offerings.add(offering);
-	}
-
 	private String getFormattedAllowedDates() {
 		return Utils.dateCollectionToString(allowedDates);
 	}
@@ -184,17 +163,6 @@ public class Tour implements Persistable<Long> {
 	@Override
 	public String toString() {
 		return String.format("Tour[id=%d, tourName='%s']", id, tourName);
-	}
-
-	@Override
-	public boolean isNew() {
-		if (null != getId())
-			return false;
-		for (Offering o : offerings) {
-			if (o.getId() != null)
-				return false;
-		}
-		return true;
 	}
 
 }

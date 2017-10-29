@@ -1,4 +1,4 @@
-package comp3111.model;
+package comp3111.data.model;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -14,17 +14,11 @@ import java.util.HashSet;
 
 @Entity
 @Inheritance
-@Transactional
-public class Customer extends Person implements Persistable<Long> {
+public class Customer extends Person {
 
 	private String phone;
 	private int age;
 	private String hkid;
-
-	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private Collection<CustomerOffering> customerOffering = new HashSet<CustomerOffering>();
-	//use hashset to allow eager fetching
 
 	public Customer() { // needed to be a bean
 	}
@@ -70,30 +64,10 @@ public class Customer extends Person implements Persistable<Long> {
 		return String.format("Customer[id=%d, name='%s', age='%s']", getId(), getName(), age);
 	}
 
-	public Collection<CustomerOffering> getCustomerOffering() {
-		return customerOffering;
-	}
-
-	public void setCustomerOffering(Collection<CustomerOffering> customerOffering) {
-		this.customerOffering = customerOffering;
-	}
-
 	public void updateAboutOfferingStatus(String status) {
 		// do something with status
 		// e.g. get the line ID and send out the status
 		// TODO
-	}
-
-	@Override
-	public boolean isNew() {
-		if (getId() != null) {
-			return false;
-		}
-		for (CustomerOffering co : customerOffering) {
-			if (co.getId() != null)
-				return false;
-		}
-		return true;
 	}
 
 }
