@@ -76,7 +76,7 @@ public class ApplicationTests {
 		Offering shimenOffering = actionManager.createOfferingForTour(shimenTour, amber,
 				new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hotel chep", 4, 20);
 		Booking booking = actionManager.createBookingForOffering(shimenOffering, peppaPig, 5, 2, 3, 0, "no smoking",
-				"pending");
+				Booking.PAYMENT_CONFIRMED);
 
 		then(this.tourGuideRepo.findByName("Amber").size()).isEqualTo(1);
 		then(this.customerRepo.findByName("Peppa Pig").size()).isEqualTo(1);
@@ -112,7 +112,7 @@ public class ApplicationTests {
 				tourGuideRepo.findOne(bob.getId()), new ArrayList<Date>(yangshanTour.getAllowedDates()).get(0),
 				"hotel bob", 5, 18);
 		Booking booking = actionManager.createBookingForOffering(offeringRepo.findOne(yangShanOffering.getId()),
-				customerRepo.findOne(emilyElephant.getId()), 3, 4, 2, 0, "kids meal", "pending");
+				customerRepo.findOne(emilyElephant.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING);
 
 		then(this.offeringRepo.findByHotelName(yangShanOffering.getHotelName()).size()).isEqualTo(1);
 		then(this.bookingRepo.findByPaymentStatus(booking.getPaymentStatus()).size()).isEqualTo(1);
@@ -143,16 +143,16 @@ public class ApplicationTests {
 		then(this.tourGuideRepo.findByName("Bob").size()).isEqualTo(1);
 
 		Offering offering1 = actionManager.createOfferingForTour(tourRepo.findOne(tour1.getId()),
-				tourGuideRepo.findOne(tg1.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0),
-				"hotel bob", 5, 18);
+				tourGuideRepo.findOne(tg1.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0), "hotel bob", 5,
+				18);
 		Booking booking1 = actionManager.createBookingForOffering(offeringRepo.findOne(offering1.getId()),
-				customerRepo.findOne(cust1.getId()), 3, 4, 2, 0, "kids meal", "pending");
+				customerRepo.findOne(cust1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING);
 
 		Offering offering2 = actionManager.createOfferingForTour(tourRepo.findOne(tour1.getId()),
-				tourGuideRepo.findOne(tg1.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0),
-				"hotel cheap", 5, 18);
+				tourGuideRepo.findOne(tg1.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0), "hotel cheap",
+				5, 18);
 		Booking booking2 = actionManager.createBookingForOffering(offeringRepo.findOne(offering2.getId()),
-				customerRepo.findOne(cust2.getId()), 3, 4, 2, 0, "kids meal", "pendiasdfang");
+				customerRepo.findOne(cust2.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_CONFIRMED);
 
 		then(this.offeringRepo.findByHotelName(offering1.getHotelName()).size()).isEqualTo(1);
 		then(this.offeringRepo.findByHotelName(offering2.getHotelName()).size()).isEqualTo(1);
@@ -190,16 +190,16 @@ public class ApplicationTests {
 		then(this.tourGuideRepo.findByName("tg").size()).isEqualTo(1);
 
 		Offering offering1 = actionManager.createOfferingForTour(tourRepo.findOne(tour1.getId()),
-				tourGuideRepo.findOne(tg1.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0),
-				"hotel bob", 5, 18);
+				tourGuideRepo.findOne(tg1.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0), "hotel bob", 5,
+				18);
 		Booking book1 = actionManager.createBookingForOffering(offeringRepo.findOne(offering1.getId()),
-				customerRepo.findOne(cust1.getId()), 3, 4, 2, 0, "kids meal", "pending");
+				customerRepo.findOne(cust1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING);
 
 		Offering offering2 = actionManager.createOfferingForTour(tourRepo.findOne(tour1.getId()),
-				tourGuideRepo.findOne(tg2.getId()),
-				new ArrayList<Date>(tour1.getAllowedDates()).get(0), "hotel cheap", 5, 18);
+				tourGuideRepo.findOne(tg2.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0), "hotel cheap",
+				5, 18);
 		Booking book2 = actionManager.createBookingForOffering(offeringRepo.findOne(offering2.getId()),
-				customerRepo.findOne(cust2.getId()), 3, 4, 2, 0, "kids meal", "pendiasdfang");
+				customerRepo.findOne(cust2.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_CONFIRMED);
 
 		then(this.offeringRepo.findByHotelName(offering1.getHotelName()).size()).isEqualTo(1);
 		then(this.offeringRepo.findByHotelName(offering2.getHotelName()).size()).isEqualTo(1);
