@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
+import com.vaadin.data.ValidationResult;
+import com.vaadin.data.Validator;
 import com.vaadin.data.converter.StringToDoubleConverter;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.converter.StringToLongConverter;
@@ -205,10 +207,6 @@ public class BookingEditor extends VerticalLayout {
 		for (Customer c : customerRepo.findAll()) {
 			potentialCustomers.add(c);
 		}
-
-		customer.setItemCaptionGenerator(c -> {
-			return c.getName() + " [id=" + c.getId() + "]";
-		});
 		customer.setItems(potentialCustomers);
 
 		Collection<Offering> potentialOfferings = new ArrayList<Offering>();
@@ -221,8 +219,8 @@ public class BookingEditor extends VerticalLayout {
 
 		Binder<Booking> binder = new Binder<Booking>();
 
-		binder.forField(customer).asRequired(Utils.generateRequiredError()) //
-				.bind(Booking::getCustomer, Booking::setCustomer);
+		binder.forField(customer).asRequired(Utils.generateRequiredError()).bind(Booking::getCustomer,
+				Booking::setCustomer);
 
 		binder.forField(offering).asRequired(Utils.generateRequiredError())
 				.withValidator(ValidatorFactory.getOfferingStillOpenValidator())
@@ -295,6 +293,7 @@ public class BookingEditor extends VerticalLayout {
 							.append(result.getMessage().get()).append("\n");
 				}
 			}
+
 			Notification.show("Could not create/edit customer!", errorStringBuilder.toString(),
 					Notification.TYPE_ERROR_MESSAGE);
 		});

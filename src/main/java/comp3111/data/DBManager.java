@@ -82,13 +82,8 @@ public class DBManager {
 			throw new OfferingDateUnsupportedException();
 		}
 
-		for (Offering of : findGuidedOfferingsByTourGuide(tg)) {
-			Date occupiedStartDate = of.getStartDate();
-			Date occupiedEndDate = Utils.addDate(occupiedStartDate, of.getTour().getDays());
-			if (startDate.after(occupiedStartDate) && startDate.before(occupiedEndDate)) {
-				throw new TourGuideUnavailableException();
-			}
-
+		if (!isTourGuideAvailableBetweenDate(tg, startDate, Utils.addDate(startDate, tour.getDays()))) {
+			throw new TourGuideUnavailableException();
 		}
 
 		Offering o = offeringRepo.save(new Offering(tour, tg, startDate, hotelName, minCustomers, maxCustomers));
@@ -100,6 +95,28 @@ public class DBManager {
 
 		log.info("successfully created offering on [{}] for tour [{}]", startDate, tour.getTourName());
 		return o;
+	}
+
+	public boolean isTourGuideAvailableForOffering(TourGuide tg, Offering proposedOffering) {
+		Date proposedStart = proposedOffering.getStartDate();
+		Date proposedEnd = Utils.addDate(proposedOffering.getStartDate(), proposedOffering.getTour().getDays());
+		return isTourGuideAvailableBetweenDate(tg, proposedStart, proposedEnd);
+	}
+
+	public boolean isTourGuideAvailableBetweenDate(TourGuide tg, Date proposedStart, Date proposedEnd) {
+
+		for (Offering existingOffering : findGuidedOfferingsByTourGuide(tg)) {
+			Date takenStart = existingOffering.getStartDate();
+			Date takenEnd = Utils.addDate(takenStart, existingOffering.getTour().getDays());
+
+			if (proposedStart.after(takenStart) && proposedEnd.before(takenEnd)
+					|| proposedStart.before(takenStart) && proposedEnd.after(takenEnd)
+					|| proposedStart.before(takenEnd) && proposedEnd.after(takenEnd)) {
+				return false;
+			}
+
+		}
+		return true;
 	}
 
 	public void createOfferingForTour(Offering offering) throws OfferingDateUnsupportedException,
@@ -186,5 +203,25 @@ public class DBManager {
 				count++;
 		}
 		return count;
+	}
+
+	public Collection<TourGuide> findAvailableTourGuidesForOffering(Offering offering) {
+		Collection<TourGuide> ans = new HashSet<TourGuide>();
+		for (TourGuide tg : tourGuideRepo.findAll()) {
+			if (this.isTourGuideAvailableForOffering(tg, offering)) {
+				ans.add(tg);
+			}
+		}
+		return ans;
+	}
+
+	public Collection<TourGuide> findAvailableTourGuidesBetweenDates(Date start, Date end) {
+		Collection<TourGuide> ans = new HashSet<TourGuide>();
+		for (TourGuide tg : tourGuideRepo.findAll()) {
+			if (this.isTourGuideAvailableBetweenDate(tg, start, end)) {
+				ans.add(tg);
+			}
+		}
+		return ans;
 	}
 }

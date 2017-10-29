@@ -47,7 +47,6 @@ public class CustomerEditor extends VerticalLayout {
 	private CustomerRepository customerRepo;
 	private final HashSet<Customer> customerCollectionCached = new HashSet<Customer>();
 
-	@SuppressWarnings("unchecked")
 	@Autowired
 	public CustomerEditor(CustomerRepository cr) {
 		this.customerRepo = cr;

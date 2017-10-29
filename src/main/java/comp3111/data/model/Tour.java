@@ -39,6 +39,8 @@ public class Tour {
 	private int weekdayPrice;
 	private int weekendPrice;
 
+	public static final String LIMITED_TOUR_TYPE = "Limited";
+
 	public static final String REPEATING_TOUR_TYPE = "Repeating";
 
 	public Tour() {

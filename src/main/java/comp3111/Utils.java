@@ -1,14 +1,22 @@
 package comp3111;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
 import com.vaadin.server.UserError;
 import com.vaadin.ui.AbstractField;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 public class Utils {
 
@@ -103,6 +111,10 @@ public class Utils {
 			return Calendar.SUNDAY;
 		else
 			return -1;
+	}
+
+	public static Collection<String> getDaysOfWeek() {
+		return Arrays.asList("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
 	}
 
 	public static Boolean containsIgnoreCase(String fullString, String search) {

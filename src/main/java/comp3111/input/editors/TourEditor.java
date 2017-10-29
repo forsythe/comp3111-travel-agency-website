@@ -63,8 +63,6 @@ import comp3111.input.validators.ValidatorFactory;
 @SpringComponent
 @UIScope
 public class TourEditor extends VerticalLayout {
-	public static final String LIMITED_TOUR_TYPE = "Limited";
-
 	private static final Logger log = LoggerFactory.getLogger(TourEditor.class);
 
 	/* the popup "Create tour" window */
@@ -280,8 +278,8 @@ public class TourEditor extends VerticalLayout {
 		descrip = new TextArea("Description");
 		descrip.setId("tf_description");
 
-		tourType.setItems(LIMITED_TOUR_TYPE, Tour.REPEATING_TOUR_TYPE);
-		allowedDaysOfWeek.setItems("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
+		tourType.setItems(Tour.LIMITED_TOUR_TYPE, Tour.REPEATING_TOUR_TYPE);
+		allowedDaysOfWeek.setItems(Utils.getDaysOfWeek());
 		tourType.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
 		allowedDaysOfWeek.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
 
@@ -301,7 +299,7 @@ public class TourEditor extends VerticalLayout {
 				allowedDates.setVisible(false);
 			} else { // if it's a limited type
 				allowedDates.setValue(Utils.dateCollectionToString(tourToSave.getAllowedDates()));
-				tourType.setSelectedItem(LIMITED_TOUR_TYPE);
+				tourType.setSelectedItem(Tour.LIMITED_TOUR_TYPE);
 				allowedDaysOfWeek.setVisible(false);
 			}
 		}
@@ -347,7 +345,7 @@ public class TourEditor extends VerticalLayout {
 			@Override
 			public void valueChange(ValueChangeEvent event) {
 				// We need to modify the input method of offering availability
-				if (event.getValue().equals(LIMITED_TOUR_TYPE)) {
+				if (event.getValue().equals(Tour.LIMITED_TOUR_TYPE)) {
 					allowedDaysOfWeek.clear();
 					allowedDaysOfWeek.setVisible(false);
 					allowedDates.setVisible(true);
