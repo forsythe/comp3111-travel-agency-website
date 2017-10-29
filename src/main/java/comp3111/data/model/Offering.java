@@ -106,7 +106,7 @@ public class Offering {
 
 	@Override
 	public String toString() {
-		return String.format("Offering[id=%d, '%s']", id, Utils.simpleDateFormat(startDate));
+		return String.format("Offering[id=%d, %s, %s]", id, Utils.simpleDateFormat(startDate), this.tour.getTourName());
 	}
 
 }

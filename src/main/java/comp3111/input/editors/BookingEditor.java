@@ -36,6 +36,7 @@ import comp3111.data.DB;
 import comp3111.data.DBManager;
 import comp3111.data.model.Booking;
 import comp3111.data.model.Customer;
+import comp3111.data.model.Offering;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
@@ -62,12 +63,7 @@ public class BookingEditor extends VerticalLayout {
 	private OfferingRepository offeringRepo;
 	@Autowired
 	private DBManager actionManager;
-	@Autowired
-	private OfferingIDConverter offeringIdConverter;
-	@Autowired
-	private CustomerIDConverter customerIDConverter;
 
-	@SuppressWarnings("unchecked")
 	@Autowired
 	public BookingEditor(BookingRepository bookingRepo) {
 		Button createBookingButton = new Button("Create new booking");
@@ -153,9 +149,8 @@ public class BookingEditor extends VerticalLayout {
 		Button confirmButton = new Button("Confirm");
 		confirmButton.setId("confirm_booking");
 
-		ComboBox<Customer> customerID = new ComboBox<Customer>("Customer ID");
-
-		TextField offeringID = new TextField("Offering ID");
+		ComboBox<Customer> customer = new ComboBox<Customer>("Customer");
+		ComboBox<Offering> offering = new ComboBox<Offering>("Offering");
 		TextField numberAdults = new TextField("Number of adults");
 		TextField numberChildren = new TextField("Number of children");
 		TextField numberToddlers = new TextField("Number of toddlers");
@@ -163,14 +158,17 @@ public class BookingEditor extends VerticalLayout {
 		TextField specialRequest = new TextField("Special Request");
 		TextField paymentStatus = new TextField("Payment Status");
 
-		customerID.setId("cb_customer_id");
-		offeringID.setId("tf_offering_id");
+		customer.setId("cb_customer");
+		offering.setId("cb_offering");
 		numberAdults.setId("tf_number_of_adults");
 		numberChildren.setId("tf_number_of_children");
 		numberToddlers.setId("tf_number_of_toddlers");
 		amountPaid.setId("tf_amount_paid");
 		specialRequest.setId("tf_special_request");
 		paymentStatus.setId("tf_payment_status");
+
+		customer.setPopupWidth(null); // so that the entire text row can be seen
+		offering.setPopupWidth(null);
 
 		if (bookingToSave.getId() == null) { // passed in an unsaved object
 			subwindow = new Window("Create new customer");
@@ -188,8 +186,8 @@ public class BookingEditor extends VerticalLayout {
 		subwindow.setResizable(false);
 		subwindow.setDraggable(false);
 
-		subContent.addComponent(customerID);
-		subContent.addComponent(offeringID);
+		subContent.addComponent(customer);
+		subContent.addComponent(offering);
 		subContent.addComponent(numberAdults);
 		subContent.addComponent(numberChildren);
 		subContent.addComponent(numberToddlers);
@@ -208,19 +206,25 @@ public class BookingEditor extends VerticalLayout {
 			potentialCustomers.add(c);
 		}
 
-		customerID.setItemCaptionGenerator(c -> {
+		customer.setItemCaptionGenerator(c -> {
 			return c.getName() + " [id=" + c.getId() + "]";
 		});
-		customerID.setItems(potentialCustomers);
+		customer.setItems(potentialCustomers);
+
+		Collection<Offering> potentialOfferings = new ArrayList<Offering>();
+
+		for (Offering o : offeringRepo.findAll()) {
+			potentialOfferings.add(o);
+		}
+
+		offering.setItems(potentialOfferings);
 
 		Binder<Booking> binder = new Binder<Booking>();
 
-		binder.forField(customerID).asRequired(Utils.generateRequiredError()) //
+		binder.forField(customer).asRequired(Utils.generateRequiredError()) //
 				.bind(Booking::getCustomer, Booking::setCustomer);
 
-		binder.forField(offeringID).asRequired(Utils.generateRequiredError())
-				.withConverter(new StringToLongConverter("Must be an integer")) //
-				.withConverter(offeringIdConverter) //
+		binder.forField(offering).asRequired(Utils.generateRequiredError())
 				.withValidator(ValidatorFactory.getOfferingStillOpenValidator())
 				.bind(Booking::getOffering, Booking::setOffering);
 
@@ -244,8 +248,7 @@ public class BookingEditor extends VerticalLayout {
 				.withConverter(new StringToDoubleConverter("Must be an Number"))
 				.bind(Booking::getAmountPaid, Booking::setAmountPaid);
 
-		binder.forField(specialRequest)
-				.withValidator(ValidatorFactory.getStringLengthValidator(255))
+		binder.forField(specialRequest).withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.bind(Booking::getSpecialRequests, Booking::setSpecialRequests);
 
 		binder.forField(paymentStatus).asRequired(Utils.generateRequiredError())
@@ -270,7 +273,8 @@ public class BookingEditor extends VerticalLayout {
 						log.info("Saved a new booking [{}] successfully", bookingToSave);
 
 					} else {
-						bookingRepo.save(bookingToSave);
+						bookingRepo.delete(bookingToSave);
+						actionManager.createBookingForOffering(bookingToSave);
 						log.info("Saved an edited booking [{}] successfully", bookingToSave);
 
 					}
@@ -287,7 +291,7 @@ public class BookingEditor extends VerticalLayout {
 
 			for (BindingValidationStatus<?> result : validationStatus.getFieldValidationErrors()) {
 				if (result.getField() instanceof AbstractField && result.getMessage().isPresent()) {
-					errorStringBuilder.append(((AbstractField) result.getField()).getCaption()).append(" ")
+					errorStringBuilder.append(((AbstractField) result.getField()).getCaption()).append(": ")
 							.append(result.getMessage().get()).append("\n");
 				}
 			}

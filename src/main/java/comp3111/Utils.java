@@ -26,7 +26,7 @@ public class Utils {
 	}
 
 	public static String generateRequiredError() {
-		return "is required.";
+		return "cannot be empty";
 	}
 
 	public static Set<Date> stringToDateSet(String listOfDates) {
