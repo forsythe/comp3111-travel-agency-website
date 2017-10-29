@@ -24,11 +24,11 @@ import comp3111.data.repo.LoginUserRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.data.repo.TourRepository;
-import comp3111.exceptions.OfferingDateUnsupportedException;
-import comp3111.exceptions.OfferingDayOfWeekUnsupportedException;
-import comp3111.exceptions.OfferingOutOfRoomException;
-import comp3111.exceptions.TourGuideUnavailableException;
-import comp3111.exceptions.UsernameTakenException;
+import comp3111.input.exceptions.OfferingDateUnsupportedException;
+import comp3111.input.exceptions.OfferingDayOfWeekUnsupportedException;
+import comp3111.input.exceptions.OfferingOutOfRoomException;
+import comp3111.input.exceptions.TourGuideUnavailableException;
+import comp3111.input.exceptions.UsernameTakenException;
 
 @Component
 public class DBManager {

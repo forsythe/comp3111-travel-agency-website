@@ -10,7 +10,9 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.themes.ValoTheme;
-import comp3111.auth.Authentication;
+
+import comp3111.input.auth.Authentication;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Theme("valo")
