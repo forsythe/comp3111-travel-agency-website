@@ -61,9 +61,9 @@ public class CustomerEditor extends VerticalLayout {
 		rowOfButtons.addComponent(createNewCustomerButton);
 		rowOfButtons.addComponent(editCustomerButton);
 		rowOfButtons.addComponent(viewCustomerBookingsButton);
-		createNewCustomerButton.setId("button_create_customer");
-		editCustomerButton.setId("button_edit_customer");
-		viewCustomerBookingsButton.setId("button_view_customer_bookings");
+		createNewCustomerButton.setId("btn_create_customer");
+		editCustomerButton.setId("btn_edit_customer");
+		viewCustomerBookingsButton.setId("btn_view_customer_bookings");
 
 		// Shouldn't be enabled unless selected
 		editCustomerButton.setEnabled(false);
@@ -118,7 +118,7 @@ public class CustomerEditor extends VerticalLayout {
 			Customer customerToSave) {
 		// Creating the confirm button
 		Button subwindowConfirm = new Button("Confirm");
-		subwindowConfirm.setId("confirm_customer");
+		subwindowConfirm.setId("btn_confirm_customer");
 
 		TextField customerName = new TextField("Name");
 		customerName.setId("tf_customer_name");

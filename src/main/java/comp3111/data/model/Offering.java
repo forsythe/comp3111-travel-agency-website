@@ -136,7 +136,7 @@ public class Offering {
 	}
 
 	public String getStartDateString () {
-		return this.getStartDate().toString();
+		return Utils.simpleDateFormat(this.getStartDate());
 	}
 	
 }
