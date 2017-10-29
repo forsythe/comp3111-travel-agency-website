@@ -24,11 +24,11 @@ import comp3111.data.repo.LoginUserRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.data.repo.TourRepository;
-import comp3111.exceptions.OfferingDateUnsupportedException;
-import comp3111.exceptions.OfferingDayOfWeekUnsupportedException;
-import comp3111.exceptions.OfferingOutOfRoomException;
-import comp3111.exceptions.TourGuideUnavailableException;
-import comp3111.exceptions.UsernameTakenException;
+import comp3111.input.exceptions.OfferingDateUnsupportedException;
+import comp3111.input.exceptions.OfferingDayOfWeekUnsupportedException;
+import comp3111.input.exceptions.OfferingOutOfRoomException;
+import comp3111.input.exceptions.TourGuideUnavailableException;
+import comp3111.input.exceptions.UsernameTakenException;
 
 @Component
 public class DBManager {
@@ -82,13 +82,8 @@ public class DBManager {
 			throw new OfferingDateUnsupportedException();
 		}
 
-		for (Offering of : findGuidedOfferingsByTourGuide(tg)) {
-			Date occupiedStartDate = of.getStartDate();
-			Date occupiedEndDate = Utils.addDate(occupiedStartDate, of.getTour().getDays());
-			if (startDate.after(occupiedStartDate) && startDate.before(occupiedEndDate)) {
-				throw new TourGuideUnavailableException();
-			}
-
+		if (!isTourGuideAvailableBetweenDate(tg, startDate, Utils.addDate(startDate, tour.getDays()))) {
+			throw new TourGuideUnavailableException();
 		}
 
 		Offering o = offeringRepo.save(new Offering(tour, tg, startDate, hotelName, minCustomers, maxCustomers));
@@ -100,6 +95,31 @@ public class DBManager {
 
 		log.info("successfully created offering on [{}] for tour [{}]", startDate, tour.getTourName());
 		return o;
+	}
+
+	public boolean isTourGuideAvailableForOffering(TourGuide tg, Offering proposedOffering) {
+		Date proposedStart = proposedOffering.getStartDate();
+		Date proposedEnd = Utils.addDate(proposedOffering.getStartDate(), proposedOffering.getTour().getDays());
+		return isTourGuideAvailableBetweenDate(tg, proposedStart, proposedEnd);
+	}
+
+	public boolean isTourGuideAvailableBetweenDate(TourGuide tg, Date proposedStart, Date proposedEnd) {
+		for (Offering existingOffering : findGuidedOfferingsByTourGuide(tg)) {
+			Date takenStart = existingOffering.getStartDate();
+			Date takenEnd = Utils.addDate(takenStart, existingOffering.getTour().getDays());
+
+			if (proposedStart.after(takenStart) && proposedEnd.before(takenEnd)
+					|| proposedStart.before(takenStart) && proposedEnd.after(takenEnd)
+					|| proposedStart.before(takenEnd) && proposedEnd.after(takenEnd) || proposedStart.equals(takenStart)
+					|| proposedEnd.equals(takenEnd)) {
+				log.info("Offering timerange [{}]-[[}] is occupied for tourguide [{}]", proposedStart, proposedEnd,
+						tg.getName());
+
+				return false;
+			}
+
+		}
+		return true;
 	}
 
 	public void createOfferingForTour(Offering offering) throws OfferingDateUnsupportedException,
@@ -142,9 +162,11 @@ public class DBManager {
 
 	public Collection<Offering> findGuidedOfferingsByTourGuide(TourGuide tg) {
 		Collection<Offering> guidedOfferingsByTourGuide = new HashSet<Offering>();
+		log.info("Finding offerings for tour guide [{}]", tg.getName());
 		for (Offering o : offeringRepo.findAll()) {
 			if (o.getTourGuide().equals(tg)) {
 				guidedOfferingsByTourGuide.add(o);
+				log.info("\t[{}]", o.toString());
 			}
 		}
 		return guidedOfferingsByTourGuide;
@@ -186,5 +208,25 @@ public class DBManager {
 				count++;
 		}
 		return count;
+	}
+
+	public Collection<TourGuide> findAvailableTourGuidesForOffering(Offering offering) {
+		Collection<TourGuide> ans = new HashSet<TourGuide>();
+		for (TourGuide tg : tourGuideRepo.findAll()) {
+			if (this.isTourGuideAvailableForOffering(tg, offering)) {
+				ans.add(tg);
+			}
+		}
+		return ans;
+	}
+
+	public Collection<TourGuide> findAvailableTourGuidesBetweenDates(Date start, Date end) {
+		Collection<TourGuide> ans = new HashSet<TourGuide>();
+		for (TourGuide tg : tourGuideRepo.findAll()) {
+			if (this.isTourGuideAvailableBetweenDate(tg, start, end)) {
+				ans.add(tg);
+			}
+		}
+		return ans;
 	}
 }

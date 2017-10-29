@@ -4,10 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vaadin.data.ValidationResult;
 import com.vaadin.data.ValueContext;
-import comp3111.field.HKIDEntryField;
-import comp3111.validators.HKIDValidator;
-import comp3111.validators.PhoneNumberValidator;
-import comp3111.validators.ValidatorFactory;
+
+import comp3111.input.field.HKIDEntryField;
+import comp3111.input.validators.HKIDValidator;
+import comp3111.input.validators.PhoneNumberValidator;
+import comp3111.input.validators.ValidatorFactory;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;

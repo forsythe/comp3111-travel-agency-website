@@ -39,6 +39,8 @@ public class Tour {
 	private int weekdayPrice;
 	private int weekendPrice;
 
+	public static final String LIMITED_TOUR_TYPE = "Limited";
+
 	public static final String REPEATING_TOUR_TYPE = "Repeating";
 
 	public Tour() {
@@ -162,7 +164,15 @@ public class Tour {
 
 	@Override
 	public String toString() {
-		return String.format("Tour[id=%d, tourName='%s']", id, tourName);
+		return String.format("Tour[id=%d, tourName=%s]", id, tourName);
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof Tour)
+			return other != null && this.getId() != null && ((Tour) other).getId().equals(this.getId());
+		return false;
+	}
+
 
 }
