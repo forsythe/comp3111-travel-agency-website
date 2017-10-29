@@ -119,9 +119,9 @@ public class TourEditor extends VerticalLayout {
 		rowOfButtons.addComponent(createTourButton);
 		rowOfButtons.addComponent(editTourButton);
 		rowOfButtons.addComponent(manageOfferingButton);
-		createTourButton.setId("button_create_tour");
-		editTourButton.setId("button_edit_tour");
-		manageOfferingButton.setId("button_manage_tour_offerings");
+		createTourButton.setId("btn_create_tour");
+		editTourButton.setId("btn_edit_tour");
+		manageOfferingButton.setId("btn_manage_tour_offerings");
 
 		// edit and manage shouldn't be enabled with no tour selected
 		editTourButton.setEnabled(false);
@@ -248,6 +248,8 @@ public class TourEditor extends VerticalLayout {
 
 		manageOfferingButton.addClickListener(event -> {
 			getUI().getCurrent().addWindow(offeringEditor.getSubWindow(selectedTour, new Offering(), this));
+			// update our generated column just in case (aka # offerings per tour)
+			refreshData();
 		});
 	}
 
@@ -445,6 +447,7 @@ public class TourEditor extends VerticalLayout {
 		tours.forEach(tourCollectionCached::add);
 		ListDataProvider<Tour> provider = new ListDataProvider<Tour>(tourCollectionCached);
 		tourGrid.setDataProvider(provider);
+
 		// tourGrid.setItems(tourCollectionCached);
 	}
 

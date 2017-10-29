@@ -203,8 +203,8 @@ public class DBManager {
 
 	public int countNumOfferingsForTour(Tour t) {
 		int count = 0;
-		for (Booking o : bookingRepo.findAll()) {
-			if (o.getTourId().equals(t.getId()))
+		for (Offering o : offeringRepo.findAll()) {
+			if (o.getTour().equals(t))
 				count++;
 		}
 		return count;
