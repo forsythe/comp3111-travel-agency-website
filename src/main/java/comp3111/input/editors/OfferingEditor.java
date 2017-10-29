@@ -1,7 +1,6 @@
 package comp3111.input.editors;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -14,7 +13,6 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
 import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.data.converter.StringToLongConverter;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
@@ -31,21 +29,18 @@ import com.vaadin.ui.Window;
 
 import comp3111.Utils;
 import comp3111.data.DBManager;
-import comp3111.data.model.Customer;
 import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.input.converters.LocalDateToUtilDateConverter;
-import comp3111.input.converters.TourGuideIDConverter;
 import comp3111.input.exceptions.OfferingDateUnsupportedException;
 import comp3111.input.exceptions.OfferingDayOfWeekUnsupportedException;
 import comp3111.input.exceptions.TourGuideUnavailableException;
 import comp3111.input.validators.IntegerLowerBoundedByAnotherFieldValidator;
 import comp3111.input.validators.ValidatorFactory;
 
-@SuppressWarnings("serial")
 @SpringComponent
 @UIScope
 public class OfferingEditor {
@@ -60,7 +55,6 @@ public class OfferingEditor {
 	@Autowired
 	private DBManager actionManager;
 
-	@SuppressWarnings("unchecked")
 	@Autowired
 	public OfferingEditor(OfferingRepository tr) {
 		this.offeringRepo = tr;

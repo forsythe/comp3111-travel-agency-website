@@ -8,6 +8,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.transaction.Transactional;
 
+/**
+ * Represents a user which can log in to the system
+ * 
+ * @author Forsythe
+ *
+ */
 @Entity
 @Transactional
 public class LoginUser {
@@ -47,8 +53,13 @@ public class LoginUser {
 		return hashedSaltedPassword;
 	}
 
+	/**
+	 * @param rawPassword
+	 *            a raw password string. Will be hashed and salted using bcrypt,
+	 *            before storing into db. By default, uses 10 rounds of hashing.
+	 */
 	public void setHashedSaltedPassword(String rawPassword) {
-		BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
+		BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder(30);
 		this.hashedSaltedPassword = bcpe.encode(rawPassword);
 	}
 

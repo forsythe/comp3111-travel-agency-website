@@ -6,6 +6,15 @@ import javax.persistence.*;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * Represents an offering entity in the database. One tour may have multiple
+ * offerings. Offerings can be limited or repeating, depending on their
+ * constraints {@link Tour#getAllowedDaysOfWeek()} and
+ * {@link Tour#getAllowedDates()})
+ * 
+ * @author Forsythe
+ *
+ */
 @Entity
 public class Offering {
 	@Id
@@ -90,6 +99,10 @@ public class Offering {
 		this.maxCustomers = maxCustomers;
 	}
 
+	/**
+	 * @return the last date on which the offering may be edited. When the offering
+	 *         is about to happen within 3 days, the offering is no longer editable.
+	 */
 	public Date getLastEditableDate() {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(getStartDate());
