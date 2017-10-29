@@ -1,17 +1,10 @@
 package comp3111.data.model;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.data.domain.Persistable;
-
 import comp3111.Utils;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 
 @Entity
 public class Offering {

@@ -1,16 +1,7 @@
 package comp3111.data.model;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.data.domain.Persistable;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
-import javax.persistence.OneToMany;
-import javax.transaction.Transactional;
-import java.util.Collection;
-import java.util.HashSet;
 
 @Entity
 @Inheritance
@@ -19,17 +10,18 @@ public class Customer extends Person {
 	private String phone;
 	private int age;
 	private String hkid;
+	private String lineId;
 
 	public Customer() { // needed to be a bean
 	}
 
 	public Customer(String name, int age) {
-		super(name, null);
+		super(name);
 		this.age = age;
 	}
 
 	public Customer(String name, String lineId, String phone, int age, String hkid) {
-		super(name, lineId);
+		super(name);
 		this.phone = phone;
 		this.age = age;
 		this.hkid = hkid;
@@ -69,8 +61,13 @@ public class Customer extends Person {
 		// e.g. get the line ID and send out the status
 		// TODO
 	}
-	
-	
 
+	public String getLineId() {
+		return lineId;
+	}
+
+	public void setLineId(String lineId) {
+		this.lineId = lineId;
+	}
 
 }
