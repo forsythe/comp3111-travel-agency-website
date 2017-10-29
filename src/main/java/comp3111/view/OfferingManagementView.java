@@ -22,7 +22,7 @@ public class OfferingManagementView extends VerticalLayout implements View {
 
 	@Autowired
 	OfferingEditor offeringEditor;
-	
+
 	@PostConstruct
 	void init() {
 		Label titleLabel = new Label("<h1>Tour Offering Management</h1>", ContentMode.HTML);
@@ -36,12 +36,23 @@ public class OfferingManagementView extends VerticalLayout implements View {
 
 		this.addComponent(layout);
 	}
-	
+
 	@Override
 	// called AFTER init()
 	public void enter(ViewChangeEvent event) {
 		// This view is constructed in the init() method()
-		//everytime we enter this page, we want to update the data in the grid
+		// everytime we enter this page, we want to update the data in the grid
 		this.offeringEditor.refreshData();
+	}
+
+	/**
+	 * @return determines whether the offering editor has an associated tour or not.
+	 *         If the user tries to manually navigate to the offering management
+	 *         page without first selecting a tour through the tour management page,
+	 *         then this function tells us so, and we prevent them from navigating
+	 *         to it. Used in {@link VaadinLoginUI}
+	 */
+	public boolean userHasSelectedTour() {
+		return this.offeringEditor.getSelectedTour() != null;
 	}
 }
