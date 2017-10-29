@@ -253,8 +253,7 @@ public class TourEditor extends VerticalLayout {
 		manageOfferingButton.addClickListener(event -> {
 			getUI().getNavigator().navigateTo(OfferingManagementView.VIEW_NAME);
 			offeringEditor.setSelectedTour(selectedTour);
-//			getUI().getCurrent().addWindow(tourOfferingEditor.getSubWindow(selectedTour, new Offering(), this));
-			getUI().getCurrent().addWindow(offeringEditor.getSubWindow(selectedTour, new Offering(), this));
+			offeringEditor.setTourEditor(this);
 		});
 	}
 

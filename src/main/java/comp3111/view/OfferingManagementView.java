@@ -13,8 +13,7 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-import comp3111.editors.TourEditor;
-import comp3111.editors.TourOfferingEditor;
+import comp3111.input.editors.OfferingEditor;
 
 @SpringView(name = OfferingManagementView.VIEW_NAME)
 public class OfferingManagementView extends VerticalLayout implements View {
@@ -22,7 +21,7 @@ public class OfferingManagementView extends VerticalLayout implements View {
 	private static final Logger log = LoggerFactory.getLogger(TourManagementView.class);
 
 	@Autowired
-	TourOfferingEditor tourOfferingEditor;
+	OfferingEditor offeringEditor;
 	
 	@PostConstruct
 	void init() {
@@ -33,7 +32,7 @@ public class OfferingManagementView extends VerticalLayout implements View {
 
 		// label will only take the space it needs
 		layout.addComponent(titleLabel);
-		layout.addComponent(tourOfferingEditor);
+		layout.addComponent(offeringEditor);
 
 		this.addComponent(layout);
 	}
@@ -43,6 +42,6 @@ public class OfferingManagementView extends VerticalLayout implements View {
 	public void enter(ViewChangeEvent event) {
 		// This view is constructed in the init() method()
 		//everytime we enter this page, we want to update the data in the grid
-		this.tourOfferingEditor.refreshData();
+		this.offeringEditor.refreshData();
 	}
 }
