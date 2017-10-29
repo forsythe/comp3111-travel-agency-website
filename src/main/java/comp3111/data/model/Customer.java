@@ -69,5 +69,8 @@ public class Customer extends Person {
 		// e.g. get the line ID and send out the status
 		// TODO
 	}
+	
+	
+
 
 }

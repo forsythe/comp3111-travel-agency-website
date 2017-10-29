@@ -59,5 +59,12 @@ public abstract class Person {
 	public String toString() {
 		return String.format("Person[id=%d, name='%s']", id, name);
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof Person)
+			return other != null && this.getId() != null && ((Person) other).getId().equals(this.getId());
+		return false;
+	}
 
 }

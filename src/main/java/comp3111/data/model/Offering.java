@@ -109,4 +109,11 @@ public class Offering {
 		return String.format("Offering[id=%d, %s, %s]", id, Utils.simpleDateFormat(startDate), this.tour.getTourName());
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof Offering)
+			return other != null && this.getId() != null && ((Offering) other).getId().equals(this.getId());
+		return false;
+	}
+
 }

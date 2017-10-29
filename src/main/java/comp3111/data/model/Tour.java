@@ -164,7 +164,15 @@ public class Tour {
 
 	@Override
 	public String toString() {
-		return String.format("Tour[id=%d, tourName='%s']", id, tourName);
+		return String.format("Tour[id=%d, tourName=%s]", id, tourName);
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof Tour)
+			return other != null && this.getId() != null && ((Tour) other).getId().equals(this.getId());
+		return false;
+	}
+
 
 }

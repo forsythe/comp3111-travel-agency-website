@@ -26,5 +26,7 @@ public class TourGuide extends Person {
 	public String toString() {
 		return String.format("TourGuide[id=%d, name='%s']", getId(), getName());
 	}
+	
+	
 
 }

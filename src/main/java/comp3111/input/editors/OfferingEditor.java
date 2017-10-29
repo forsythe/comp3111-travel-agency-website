@@ -36,6 +36,7 @@ import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
 import comp3111.data.repo.OfferingRepository;
+import comp3111.data.repo.TourGuideRepository;
 import comp3111.input.converters.LocalDateToUtilDateConverter;
 import comp3111.input.converters.TourGuideIDConverter;
 import comp3111.input.exceptions.OfferingDateUnsupportedException;
@@ -54,7 +55,7 @@ public class OfferingEditor {
 	private final HashSet<Offering> offeringsCollectionCached = new HashSet<>();
 
 	@Autowired
-	private TourGuideIDConverter tourGuideIDConverter;
+	private TourGuideRepository tourGuideRepo;
 
 	@Autowired
 	private DBManager actionManager;
@@ -71,7 +72,10 @@ public class OfferingEditor {
 		confirm.setId("confirm_offering");
 
 		// Creating the fields
-		Label tourName = new Label(hostTour.getTourName());
+		TextField tourName = new TextField("Tour");
+		tourName.setValue(hostTour.getTourName());
+		tourName.setEnabled(false);
+
 		ComboBox<TourGuide> tourGuide = new ComboBox<TourGuide>("Tour Guide");
 		DateField startDate = new DateField("Start Date");
 		TextField hotelName = new TextField("Hotel Name");
@@ -80,7 +84,14 @@ public class OfferingEditor {
 
 		Window subWindow = new Window("Create new offering");
 
+		tourGuide.setPopupWidth(null);
+		Iterable<TourGuide> tourGuideList = tourGuideRepo.findAll();
+		Collection<TourGuide> tourGuideCollection = new HashSet<TourGuide>();
+		tourGuideList.forEach(tourGuideCollection::add);
+		tourGuide.setItems(tourGuideCollection);
+
 		FormLayout subContent = new FormLayout();
+
 		subWindow.setWidth("800px");
 
 		subWindow.setContent(subContent);
@@ -91,8 +102,8 @@ public class OfferingEditor {
 		subWindow.setDraggable(false);
 
 		subContent.addComponent(tourName);
-		subContent.addComponent(tourGuide);
 		subContent.addComponent(startDate);
+		subContent.addComponent(tourGuide);
 		subContent.addComponent(hotelName);
 		subContent.addComponent(minCustomer);
 		subContent.addComponent(maxCustomer);
@@ -101,13 +112,6 @@ public class OfferingEditor {
 		buttonActions.addComponent(confirm);
 		buttonActions.addComponent(new Button("Cancel", event -> subWindow.close()));
 		subContent.addComponent(buttonActions);
-
-		Collection<TourGuide> potentialTourGuides = new ArrayList<TourGuide>();
-
-		for (TourGuide tg : actionManager.findAvailableTourGuidesForOffering(offeringToSave)) {
-			potentialTourGuides.add(tg);
-		}
-		tourGuide.setItems(potentialTourGuides);
 
 		// Binding method according to docs
 		Binder<Offering> binder = new Binder<>(Offering.class);
@@ -154,15 +158,14 @@ public class OfferingEditor {
 					tourEditor.refreshData();
 					this.refreshData();
 					subWindow.close();
-					log.info("created/edited tour [{}] successfully", tourName.getValue());
+					log.info("created/edited offering [{}] successfully", tourName.getValue());
 					binder.removeBean();
 					return; // This return skip the error reporting procedure below
-				} catch (OfferingDayOfWeekUnsupportedException e) {
-					errorStringBuilder.append("The Day of Week is unsupported");
+				} catch (OfferingDayOfWeekUnsupportedException | OfferingDateUnsupportedException e) {
+					errorStringBuilder.append("This tour may only be offered on " + hostTour.getOfferingAvailability());
+
 				} catch (TourGuideUnavailableException e) {
-					errorStringBuilder.append("THe tour guide is unavailable");
-				} catch (OfferingDateUnsupportedException e) {
-					errorStringBuilder.append("The date is unsupported");
+					errorStringBuilder.append("The tour guide is occupied.");
 				}
 			}
 
@@ -173,7 +176,7 @@ public class OfferingEditor {
 				}
 			}
 
-			Notification.show("Could not create/edit tour!", errorStringBuilder.toString(),
+			Notification.show("Could not create/edit offering!", errorStringBuilder.toString(),
 					Notification.TYPE_ERROR_MESSAGE);
 		});
 

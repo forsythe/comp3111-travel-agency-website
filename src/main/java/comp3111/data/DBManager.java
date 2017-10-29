@@ -104,14 +104,17 @@ public class DBManager {
 	}
 
 	public boolean isTourGuideAvailableBetweenDate(TourGuide tg, Date proposedStart, Date proposedEnd) {
-
 		for (Offering existingOffering : findGuidedOfferingsByTourGuide(tg)) {
 			Date takenStart = existingOffering.getStartDate();
 			Date takenEnd = Utils.addDate(takenStart, existingOffering.getTour().getDays());
 
 			if (proposedStart.after(takenStart) && proposedEnd.before(takenEnd)
 					|| proposedStart.before(takenStart) && proposedEnd.after(takenEnd)
-					|| proposedStart.before(takenEnd) && proposedEnd.after(takenEnd)) {
+					|| proposedStart.before(takenEnd) && proposedEnd.after(takenEnd) || proposedStart.equals(takenStart)
+					|| proposedEnd.equals(takenEnd)) {
+				log.info("Offering timerange [{}]-[[}] is occupied for tourguide [{}]", proposedStart, proposedEnd,
+						tg.getName());
+
 				return false;
 			}
 
@@ -159,9 +162,11 @@ public class DBManager {
 
 	public Collection<Offering> findGuidedOfferingsByTourGuide(TourGuide tg) {
 		Collection<Offering> guidedOfferingsByTourGuide = new HashSet<Offering>();
+		log.info("Finding offerings for tour guide [{}]", tg.getName());
 		for (Offering o : offeringRepo.findAll()) {
 			if (o.getTourGuide().equals(tg)) {
 				guidedOfferingsByTourGuide.add(o);
+				log.info("\t[{}]", o.toString());
 			}
 		}
 		return guidedOfferingsByTourGuide;

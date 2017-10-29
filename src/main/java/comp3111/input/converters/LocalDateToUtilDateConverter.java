@@ -4,6 +4,8 @@ import com.vaadin.data.Converter;
 import com.vaadin.data.Result;
 import com.vaadin.data.ValueContext;
 
+import comp3111.Utils;
+
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -12,8 +14,9 @@ public class LocalDateToUtilDateConverter implements Converter<LocalDate, Date> 
 
     @Override
     public Result<Date> convertToModel(LocalDate local, ValueContext context) {
-        return Result.ok(java.sql.Date.valueOf(local));
+        return Result.ok(Utils.localDateToDate(local));
     }
+
 
     @Override
     public LocalDate convertToPresentation(Date date, ValueContext context) {

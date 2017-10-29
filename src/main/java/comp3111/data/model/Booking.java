@@ -168,4 +168,11 @@ public class Booking {
 		return offering.getStartDate().toString();
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof Booking)
+			return other != null && this.getId() != null && ((Booking) other).getId().equals(this.getId());
+		return false;
+	}
+
 }
