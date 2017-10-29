@@ -83,15 +83,15 @@ public class OfferingEditor extends VerticalLayout{
 
 	@SuppressWarnings("unchecked")
 	@Autowired
-	public OfferingEditor(OfferingRepository tr) {
-		this.offeringRepo = tr;
+	public OfferingEditor(OfferingRepository or) {
+		this.offeringRepo = or;
 		
 		rowOfButtons.addComponent(createNewOfferingButton);
 		rowOfButtons.addComponent(editOfferingButton);
 		rowOfButtons.addComponent(returnButton);
-		createNewOfferingButton.setId("button_create_new_offering");
-		editOfferingButton.setId("button_edit_offering");
-		returnButton.setId("button_return_offering");
+		createNewOfferingButton.setId("btn_create_new_offering");
+		editOfferingButton.setId("btn_edit_offering");
+		returnButton.setId("btn_return_offering");
 		
 		this.addComponent(rowOfButtons);
 		
@@ -107,6 +107,10 @@ public class OfferingEditor extends VerticalLayout{
 				selectedOffering = null;
 			}
 		});
+		
+		offeringGrid.removeColumn(DB.OFFERING_TOUR); // we'll combine days of week and dates
+		offeringGrid.removeColumn(DB.OFFERING_TOUR_GUIDE);
+		offeringGrid.removeColumn(DB.OFFERING_DATE);
 		
 		offeringGrid.setColumnOrder(DB.OFFERING_ID, DB.OFFERING_START_DATE, DB.OFFERING_TOUR_GUIDE_NAME,
 				DB.OFFERING_TOUR_GUIDE_LINE_ID, DB.OFFERING_TOUR_NAME, DB.OFFERING_MIN_CAPACITY, 
@@ -135,7 +139,7 @@ public class OfferingEditor extends VerticalLayout{
 	Window getSubWindow(Tour hostTour, Offering offeringToSave, TourEditor tourEditor) {
 		// Creating the confirm button
 		Button confirm = new Button("Confirm");
-		confirm.setId("confirm_offering");
+		confirm.setId("btn_confirm_offering");
 
 		// Creating the fields
 		TextField tourName = new TextField("Tour");
