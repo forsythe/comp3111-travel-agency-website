@@ -4,8 +4,9 @@ import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.elements.*;
 import comp3111.Application;
-import comp3111.model.Customer;
-import comp3111.repo.CustomerRepository;
+import comp3111.data.model.Customer;
+import comp3111.data.repo.CustomerRepository;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;

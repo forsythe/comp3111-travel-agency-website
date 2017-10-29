@@ -11,14 +11,15 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Grid.SelectionMode;
+
+import comp3111.Utils;
 import comp3111.converters.CustomerIDConverter;
 import comp3111.converters.TourOfferingIDConverter;
+import comp3111.data.DB;
+import comp3111.data.DBManager;
+import comp3111.data.model.Booking;
+import comp3111.data.repo.BookingRepository;
 import comp3111.exceptions.OfferingOutOfRoomException;
-import comp3111.model.ActionManager;
-import comp3111.model.CustomerOffering;
-import comp3111.model.DB;
-import comp3111.repo.CustomerOfferingRepository;
-import comp3111.validators.Utils;
 import comp3111.validators.ValidatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,22 +32,20 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 
-import static comp3111.validators.Utils.simpleDateFormat;
-
 @SuppressWarnings("serial")
 @SpringComponent
 @UIScope
-public class CustomerOfferingEditor extends VerticalLayout {
-	private static final Logger log = LoggerFactory.getLogger(CustomerOfferingEditor.class);
+public class BookingEditor extends VerticalLayout {
+	private static final Logger log = LoggerFactory.getLogger(BookingEditor.class);
 
-	private Grid<CustomerOffering> customerOfferingGrid = new Grid<>(CustomerOffering.class);
+	private Grid<Booking> bookingGrid = new Grid<>(Booking.class);
 
-	private CustomerOffering selectedCustomerOffering;
+	private Booking selectedBookingRecord;
 
 	@Autowired
-	private CustomerOfferingRepository customerOfferingRepo;
+	private BookingRepository bookingRepo;
 	@Autowired
-	private ActionManager actionManager;
+	private DBManager actionManager;
 	@Autowired
 	private TourOfferingIDConverter tourOfferingIDConverter;
 	@Autowired
@@ -54,7 +53,7 @@ public class CustomerOfferingEditor extends VerticalLayout {
 
 	@SuppressWarnings("unchecked")
 	@Autowired
-	public CustomerOfferingEditor(CustomerOfferingRepository customerOfferingRepo) {
+	public BookingEditor(BookingRepository bookingRepo) {
 		Button createBookingButton = new Button("Create new booking");
 		Button editBookingButton = new Button("Edit booking");
 
@@ -65,78 +64,78 @@ public class CustomerOfferingEditor extends VerticalLayout {
 		// disable edit
 		editBookingButton.setEnabled(false);
 
-		//add component to view
+		// add component to view
 		this.addComponent(rowOfButtons);
 
-		//get from DB
-		Iterable<CustomerOffering> customerOfferings = customerOfferingRepo.findAll();
-		Collection<CustomerOffering> customerOfferingsCached = new HashSet<>();
-		customerOfferings.forEach(customerOfferingsCached::add);
-		customerOfferingGrid.setItems(customerOfferingsCached);
+		// get from DB
+		Iterable<Booking> bookingRecords = bookingRepo.findAll();
+		Collection<Booking> bookingRecordsCached = new HashSet<>();
+		bookingRecords.forEach(bookingRecordsCached::add);
+		bookingGrid.setItems(bookingRecordsCached);
 
-		customerOfferingGrid.setWidth("100%");
-		customerOfferingGrid.setSelectionMode(SelectionMode.SINGLE);
+		bookingGrid.setWidth("100%");
+		bookingGrid.setSelectionMode(SelectionMode.SINGLE);
 
-		customerOfferingGrid.addSelectionListener(event -> {
+		bookingGrid.addSelectionListener(event -> {
 			if (event.getFirstSelectedItem().isPresent()) {
-				selectedCustomerOffering = event.getFirstSelectedItem().get();
+				selectedBookingRecord = event.getFirstSelectedItem().get();
 				editBookingButton.setEnabled(true);
 				createBookingButton.setEnabled(false);
-			}else{
-				selectedCustomerOffering = null;
+			} else {
+				selectedBookingRecord = null;
 				editBookingButton.setEnabled(false);
 				createBookingButton.setEnabled(true);
 			}
 		});
 
-		customerOfferingGrid.removeColumn(DB.HIBERNATE_NEW_COL); // hibernate attributes, we don't care about it
-		customerOfferingGrid.removeColumn(DB.CUSTOMER_OFFERING_NUM_CHILDREN);
-		customerOfferingGrid.removeColumn(DB.CUSTOMER_OFFERING_NUM_ADULTS);
-		customerOfferingGrid.removeColumn(DB.CUSTOMER_OFFERING_NUM_TODDLERS);
-		customerOfferingGrid.removeColumn(DB.CUSTOMER_OFFERING_CUSTOMER);
-		customerOfferingGrid.removeColumn(DB.CUSTOMER_OFFERING_OFFERING);
-		customerOfferingGrid.removeColumn(DB.CUSTOMER_OFFERING_ID);
+		bookingGrid.removeColumn(DB.BOOKING_NUM_CHILDREN);
+		bookingGrid.removeColumn(DB.BOOKING_NUM_ADULTS);
+		bookingGrid.removeColumn(DB.BOOKING_NUM_TODDLERS);
+		bookingGrid.removeColumn(DB.BOOKING_CUSTOMER);
+		bookingGrid.removeColumn(DB.BOOKING_OFFERING);
+		bookingGrid.removeColumn(DB.BOOKING_ID);
 
-		customerOfferingGrid.setColumnOrder(DB.CUSTOMER_OFFERING_CUSTOMER_HKID, DB.CUSTOMER_OFFERING_CUSTOMER_NAME,
-				DB.CUSTOMER_OFFERING_OFFERING_ID, DB.CUSTOMER_OFFERING_TOUR_ID, DB.CUSTOMER_OFFERING_TOUR_NAME,
-				DB.CUSTOMER_OFFERING_PEOPLE, DB.CUSTOMER_OFFERING_AMOUNT_PAID, DB.CUSTOMER_OFFERING_TOTAL_COST,
-				DB.CUSTOMER_OFFERING_SPECIAL_REQUEST, DB.CUSTOMER_OFFERING_PAYMENT_STATUS);
-		customerOfferingGrid.getColumn(DB.CUSTOMER_OFFERING_PEOPLE).setCaption("Number of Adults, Children, Toddlers");
+		bookingGrid.setColumnOrder(DB.BOOKING_CUSTOMER_HKID, DB.BOOKING_CUSTOMER_NAME, DB.BOOKING_OFFERING_ID,
+				DB.BOOKING_TOUR_ID, DB.BOOKING_TOUR_NAME, DB.BOOKING_PEOPLE, DB.BOOKING_AMOUNT_PAID,
+				DB.BOOKING_TOTAL_COST, DB.BOOKING_SPECIAL_REQUEST, DB.BOOKING_PAYMENT_STATUS);
+		bookingGrid.getColumn(DB.BOOKING_PEOPLE).setCaption("Number of Adults, Children, Toddlers");
 
-		this.addComponent(customerOfferingGrid);
+		this.addComponent(bookingGrid);
 
 		createBookingButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(getSubwindow(new CustomerOffering()));
+			getUI().getCurrent().addWindow(getSubwindow(new Booking()));
 		});
 
 		editBookingButton.addClickListener(event -> {
-			if (checkCustomerOfferingEditable(selectedCustomerOffering)) {
-				getUI().getCurrent().addWindow(getSubwindow(selectedCustomerOffering));
+			if (canEditBooking(selectedBookingRecord)) {
+				getUI().getCurrent().addWindow(getSubwindow(selectedBookingRecord));
 			}
 		});
 	}
 
-	//Check whether a customer offering is editable or not based on start date and current date
-	private boolean checkCustomerOfferingEditable(CustomerOffering customerOffering){
-		if (customerOffering == null) return true;
+	// Check whether a customer offering is editable or not based on start date and
+	// current date
+	private boolean canEditBooking(Booking booking) {
+		if (booking == null)
+			return true;
 
 		Date today = Date.from(Instant.now());
-		Date threeDayBeforeStart = customerOffering.getOffering().getLastEditableDate();
+		Date threeDayBeforeStart = booking.getOffering().getLastEditableDate();
 
 		if (today.after(threeDayBeforeStart)) {
 			Notification.show("It's too late to edit this offering. It cannot be edited after "
-					+ simpleDateFormat(threeDayBeforeStart));
+					+ Utils.simpleDateFormat(threeDayBeforeStart));
 			return false;
 		}
 		return true;
 	}
 
-	private Window getSubwindow(CustomerOffering customerOfferingToSave) {
+	private Window getSubwindow(Booking bookingToSave) {
 		Window subwindow;
 
-		//Creating the confirm button
+		// Creating the confirm button
 		Button confirmButton = new Button("Confirm");
-		confirmButton.setId("confirm_customer_offering");
+		confirmButton.setId("confirm_BOOKING");
 
 		TextField customerID = new TextField("Customer ID");
 
@@ -157,10 +156,9 @@ public class CustomerOfferingEditor extends VerticalLayout {
 		specialRequest.setId("tf_special_request");
 		paymentStatus.setId("tf_payment_status");
 
-		if (customerOfferingToSave.getId() == null) { // passed in an unsaved object
+		if (bookingToSave.getId() == null) { // passed in an unsaved object
 			subwindow = new Window("Create new customer");
-		}
-		else {
+		} else {
 			subwindow = new Window("Edit a customer");
 		}
 
@@ -188,73 +186,70 @@ public class CustomerOfferingEditor extends VerticalLayout {
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
 		subContent.addComponent(buttonActions);
 
-		Binder<CustomerOffering> binder = new Binder<>();
+		Binder<Booking> binder = new Binder<>();
 
 		binder.forField(customerID).asRequired(Utils.generateRequiredError())
-				.withConverter(new StringToLongConverter("Must be an integer"))
-				.withConverter(customerIDConverter)
-				.bind(CustomerOffering::getCustomer, CustomerOffering::setCustomer);
+				.withConverter(new StringToLongConverter("Must be an integer")).withConverter(customerIDConverter)
+				.bind(Booking::getCustomer, Booking::setCustomer);
 
 		binder.forField(offeringID).asRequired(Utils.generateRequiredError())
-				.withConverter(new StringToLongConverter("Must be an integer"))
-				.withConverter(tourOfferingIDConverter)
+				.withConverter(new StringToLongConverter("Must be an integer")).withConverter(tourOfferingIDConverter)
 				.withValidator(ValidatorFactory.getOfferingStillOpenValidator())
-				.bind(CustomerOffering::getOffering, CustomerOffering::setOffering);
+				.bind(Booking::getOffering, Booking::setOffering);
 
 		binder.forField(numberAdults).asRequired(Utils.generateRequiredError())
 				.withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
-				.bind(CustomerOffering::getNumAdults, CustomerOffering::setNumAdults);
+				.bind(Booking::getNumAdults, Booking::setNumAdults);
 
 		binder.forField(numberChildren).asRequired(Utils.generateRequiredError())
 				.withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
-				.bind(CustomerOffering::getNumChildren, CustomerOffering::setNumChildren);
+				.bind(Booking::getNumChildren, Booking::setNumChildren);
 
 		binder.forField(numberToddlers).asRequired(Utils.generateRequiredError())
 				.withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
-				.bind(CustomerOffering::getNumToddlers, CustomerOffering::setNumToddlers);
+				.bind(Booking::getNumToddlers, Booking::setNumToddlers);
 
 		binder.forField(amountPaid).asRequired(Utils.generateRequiredError())
 				.withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
 				.withConverter(new StringToDoubleConverter("Must be an Number"))
-				.bind(CustomerOffering::getAmountPaid, CustomerOffering::setAmountPaid);
+				.bind(Booking::getAmountPaid, Booking::setAmountPaid);
 
 		binder.forField(specialRequest).asRequired(Utils.generateRequiredError())
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
-				.bind(CustomerOffering::getSpecialRequests, CustomerOffering::setSpecialRequests);
+				.bind(Booking::getSpecialRequests, Booking::setSpecialRequests);
 
 		binder.forField(paymentStatus).asRequired(Utils.generateRequiredError())
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
-				.bind(CustomerOffering::getPaymentStatus, CustomerOffering::setPaymentStatus);
+				.bind(Booking::getPaymentStatus, Booking::setPaymentStatus);
 
-		binder.setBean(customerOfferingToSave);
+		binder.setBean(bookingToSave);
 
 		confirmButton.addClickListener(event -> {
-			BinderValidationStatus<CustomerOffering> validationStatus = binder.validate();
+			BinderValidationStatus<Booking> validationStatus = binder.validate();
 
 			StringBuilder errorStringBuilder = new StringBuilder();
 
 			if (validationStatus.isOk()) {
-				binder.writeBeanIfValid(customerOfferingToSave);
+				binder.writeBeanIfValid(bookingToSave);
 
-				log.info("About to save customer offering [{}]", customerOfferingToSave);
+				log.info("About to save booking [{}]", bookingToSave);
 
 				try {
-					actionManager.createBookingForOffering(customerOfferingToSave);
+					actionManager.createBookingForOffering(bookingToSave);
 					binder.removeBean();
 					this.refreshData();
 					subwindow.close();
-					log.info("Saved a new/edited customer offering [{}] successfully", customerOfferingToSave);
+					log.info("Saved a new/edited booking [{}] successfully", bookingToSave);
 
-					return; //This return skip the error reporting procedure below
-				}catch (OfferingOutOfRoomException e){
+					return; // This return skip the error reporting procedure below
+				} catch (OfferingOutOfRoomException e) {
 					errorStringBuilder.append("Not enough room in offering");
 				}
 
 			}
-
 
 			for (BindingValidationStatus<?> result : validationStatus.getFieldValidationErrors()) {
 				if (result.getField() instanceof AbstractField && result.getMessage().isPresent()) {
@@ -270,15 +265,15 @@ public class CustomerOfferingEditor extends VerticalLayout {
 	}
 
 	private void refreshData() {
-		Iterable<CustomerOffering> customerOfferings = customerOfferingRepo.findAll();
-		//it's possible the customerOfferingRepo can return null!
-		if (null == customerOfferings) {
-			customerOfferings = new HashSet<>();
+		Iterable<Booking> bookings = bookingRepo.findAll();
+		// it's possible the bookingRepo can return null!
+		if (null == bookings) {
+			bookings = new HashSet<>();
 		}
-		Collection<CustomerOffering> customerCollectionCached = new HashSet<>();
+		Collection<Booking> customerCollectionCached = new HashSet<>();
 		customerCollectionCached.clear();
-		customerOfferings.forEach(customerCollectionCached::add);
-		ListDataProvider<CustomerOffering> provider = new ListDataProvider<>(customerCollectionCached);
-		customerOfferingGrid.setDataProvider(provider);
+		bookings.forEach(customerCollectionCached::add);
+		ListDataProvider<Booking> provider = new ListDataProvider<>(customerCollectionCached);
+		bookingGrid.setDataProvider(provider);
 	}
 }

@@ -3,7 +3,8 @@ package comp3111.converters;
 import com.vaadin.data.Converter;
 import com.vaadin.data.Result;
 import com.vaadin.data.ValueContext;
-import comp3111.validators.Utils;
+
+import comp3111.Utils;
 
 import java.util.Collection;
 import java.util.Date;

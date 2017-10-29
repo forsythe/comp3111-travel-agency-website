@@ -12,10 +12,11 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid.SelectionMode;
-import comp3111.model.DB;
-import comp3111.model.TourGuide;
-import comp3111.repo.TourGuideRepository;
-import comp3111.validators.Utils;
+
+import comp3111.Utils;
+import comp3111.data.DB;
+import comp3111.data.model.TourGuide;
+import comp3111.data.repo.TourGuideRepository;
 import comp3111.validators.ValidatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,28 +30,28 @@ import java.util.HashSet;
 @UIScope
 public class TourGuidesEditor extends VerticalLayout {
 	private static final Logger log = LoggerFactory.getLogger(TourGuidesEditor.class);
-	
+
 	private Window subwindow;
-	
-	//Editable fields
+
+	// Editable fields
 	private TextField tourGuideName;
 	private TextField tourGuideLineId;
-	
+
 	HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createTourGuideButton = new Button("Create new tour guide");
 	private Button editTourGuideButton = new Button("Edit tour guide");
 	private Button viewGuidedToursButton = new Button("View guided tours");
-	
+
 	/* subwindow action buttons */
 	private Button subwindowConfirm;
-	
+
 	Grid<TourGuide> tourGuideGrid = new Grid<TourGuide>(TourGuide.class);
-	
+
 	TourGuide selectedTourGuide;
-	
+
 	private TourGuideRepository tourGuideRepo;
 	private final HashSet<TourGuide> tourGuideCollectionCached = new HashSet<TourGuide>();
-	
+
 	@SuppressWarnings("unchecked")
 	@Autowired
 	public TourGuidesEditor(TourGuideRepository tgr) {
@@ -58,28 +59,27 @@ public class TourGuidesEditor extends VerticalLayout {
 		// adding components
 		rowOfButtons.addComponent(createTourGuideButton);
 		rowOfButtons.addComponent(editTourGuideButton);
-		rowOfButtons.addComponent(viewGuidedToursButton);	
+		rowOfButtons.addComponent(viewGuidedToursButton);
 		createTourGuideButton.setId("button_create_tour_guide");
 		editTourGuideButton.setId("button_edit_tour_guide");
 		viewGuidedToursButton.setId("button_view_guided_tours");
-		
+
 		// edit and manage shouldn't be enabled with no tour guide selected
 		editTourGuideButton.setEnabled(false);
 		viewGuidedToursButton.setEnabled(false);
 
 		this.addComponent(rowOfButtons);
-		
-		//Get from db
+
+		// Get from db
 		refreshData();
-		
+
 		tourGuideGrid.setWidth("100%");
 		tourGuideGrid.setSelectionMode(SelectionMode.SINGLE);
 
 		tourGuideGrid.addSelectionListener(new SelectionListener<TourGuide>() {
 			@Override
 			public void selectionChange(SelectionEvent event) {
-				Collection<TourGuide> selectedItems = 
-						tourGuideGrid.getSelectionModel().getSelectedItems();
+				Collection<TourGuide> selectedItems = tourGuideGrid.getSelectionModel().getSelectedItems();
 				selectedTourGuide = null;
 				for (TourGuide rt : selectedItems) { // easy way to get first element of set
 					selectedTourGuide = rt;
@@ -96,14 +96,11 @@ public class TourGuidesEditor extends VerticalLayout {
 				}
 			}
 		});
-		
-		tourGuideGrid.removeColumn(DB.HIBERNATE_NEW_COL); // hibernate attributes, we don't care about it
-		tourGuideGrid.removeColumn(DB.TOURGUIDE_GUIDED_OFFERINGS);
-		
+
 		tourGuideGrid.setColumnOrder(DB.TOURGUIDE_ID, DB.TOURGUIDE_NAME, DB.TOURGUIDE_LINEID);
-		
+
 		this.addComponent(tourGuideGrid);
-		
+
 		createTourGuideButton.addClickListener(new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
@@ -111,32 +108,33 @@ public class TourGuidesEditor extends VerticalLayout {
 			}
 
 		});
-		
+
 		editTourGuideButton.addClickListener(new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
-				getUI().getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, selectedTourGuide ));
+				getUI().getCurrent()
+						.addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, selectedTourGuide));
 			}
 		});
 	}
-	
-	private Window getSubwindow(TourGuideRepository tourGuideRepo, Collection<TourGuide> tourGuideCollectionCached, TourGuide tourGuideToSave) {
-		//Creating the confirm button
+
+	private Window getSubwindow(TourGuideRepository tourGuideRepo, Collection<TourGuide> tourGuideCollectionCached,
+			TourGuide tourGuideToSave) {
+		// Creating the confirm button
 		subwindowConfirm = new Button("Confirm");
 		subwindowConfirm.setId("button_confirm_tour_guide");
-		
+
 		tourGuideName = new TextField("Name");
 		tourGuideName.setId("tf_tour_guide_name");
 		tourGuideLineId = new TextField("Line Id");
 		tourGuideLineId.setId("tf_tour_guide_line_id");
-		
+
 		if (tourGuideToSave.getId() == null) { // passed in an unsaved object
 			subwindow = new Window("Create new tour guide");
-		}
-		else {
+		} else {
 			subwindow = new Window("Edit a tour guide");
 		}
-		
+
 		FormLayout subContent = new FormLayout();
 		subwindow.setWidth("400px");
 		subwindow.setContent(subContent);
@@ -145,27 +143,27 @@ public class TourGuidesEditor extends VerticalLayout {
 		subwindow.setModal(true);
 		subwindow.setResizable(false);
 		subwindow.setDraggable(false);
-		
+
 		subContent.addComponent(tourGuideName);
 		subContent.addComponent(tourGuideLineId);
-		
+
 		HorizontalLayout buttonActions = new HorizontalLayout();
 		buttonActions.addComponent(subwindowConfirm);
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
 		subContent.addComponent(buttonActions);
-	
+
 		Binder<TourGuide> binder = new Binder<>();
 		binder.forField(tourGuideName).withValidator(ValidatorFactory.getStringLengthValidator(255))
-			.asRequired(Utils.generateRequiredError()).bind(TourGuide::getName, TourGuide::setName);
+				.asRequired(Utils.generateRequiredError()).bind(TourGuide::getName, TourGuide::setName);
 
 		binder.forField(tourGuideLineId).withValidator(ValidatorFactory.getStringLengthValidator(255))
-			.asRequired(Utils.generateRequiredError()).bind(TourGuide::getLineId, TourGuide::setLineId);
-		
+				.asRequired(Utils.generateRequiredError()).bind(TourGuide::getLineId, TourGuide::setLineId);
+
 		binder.setBean(tourGuideToSave);
-		
+
 		subwindowConfirm.addClickListener(event -> {
 			BinderValidationStatus<TourGuide> validationStatus = binder.validate();
-			
+
 			if (validationStatus.isOk()) {
 				// Customer must be created by Spring, otherwise it cannot be saved.
 				// I do not have access to an empty constructor here
@@ -192,14 +190,14 @@ public class TourGuidesEditor extends VerticalLayout {
 						Notification.TYPE_ERROR_MESSAGE);
 			}
 		});
-		
+
 		return subwindow;
 	}
-		
+
 	public interface ChangeHandler {
 		void onChange();
 	}
-	
+
 	public TextField getTourGuideName() {
 		return tourGuideName;
 	}
@@ -229,5 +227,5 @@ public class TourGuidesEditor extends VerticalLayout {
 		// tourGrid.setItems(tourCollectionCached);
 
 	}
-	
+
 }

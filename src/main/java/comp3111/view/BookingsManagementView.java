@@ -6,7 +6,7 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
-import comp3111.editors.CustomerOfferingEditor;
+import comp3111.editors.BookingEditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,20 +15,20 @@ import javax.annotation.PostConstruct;
 
 @SpringView(name = BookingsManagementView.VIEW_NAME)
 public class BookingsManagementView extends VerticalLayout implements View {
-	public static final String VIEW_NAME = "bookingsManagement";
+	public static final String VIEW_NAME = "bookingManagement";
 	private static final Logger log = LoggerFactory.getLogger(BookingsManagementView.class);
 	
 	@Autowired
-	CustomerOfferingEditor customerOfferingEditor;
+	BookingEditor bookingEditor;
 	
 	@PostConstruct
 	void init() {
-		Label titleLabel = new Label("<h1>Bookings Management</h1>", ContentMode.HTML);
+		Label titleLabel = new Label("<h1>Booking Management</h1>", ContentMode.HTML);
 		
 		VerticalLayout layout = new VerticalLayout();
 		
 		layout.addComponent(titleLabel);
-		layout.addComponent(customerOfferingEditor);
+		layout.addComponent(bookingEditor);
 		
 		this.addComponent(layout);
 	}

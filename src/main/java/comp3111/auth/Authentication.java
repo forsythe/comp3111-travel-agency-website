@@ -1,8 +1,10 @@
 package comp3111.auth;
 
 import com.vaadin.spring.annotation.SpringComponent;
-import comp3111.model.LoginUser;
-import comp3111.repo.LoginUserRepository;
+
+import comp3111.data.model.LoginUser;
+import comp3111.data.repo.LoginUserRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

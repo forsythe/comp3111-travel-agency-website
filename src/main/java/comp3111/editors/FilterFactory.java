@@ -1,10 +1,10 @@
 package comp3111.editors;
 
+import comp3111.Utils;
+import comp3111.data.DB;
+import comp3111.data.model.Offering;
+import comp3111.data.model.Tour;
 import comp3111.exceptions.ColumnNameNotFoundException;
-import comp3111.model.DB;
-import comp3111.model.Offering;
-import comp3111.model.Tour;
-import comp3111.validators.Utils;
 
 import java.util.Collection;
 
@@ -33,9 +33,6 @@ public class FilterFactory {
 		if (colId.equals(DB.TOUR_OFFERING_AVAILABILITY))
 			return new ProviderAndPredicate<Tour, String>(Tour::getOfferingAvailability,
 					t -> Utils.containsIgnoreCase(t, searchVal));
-		if (colId.equals(DB.TOUR_OFFERINGS))
-			return new ProviderAndPredicate<Tour, Collection<Offering>>(Tour::getOfferings,
-					t -> Utils.collectionContainsIgnoreCase(t, searchVal));
 		if (colId.equals(DB.TOUR_DESCRIPTION))
 			return new ProviderAndPredicate<Tour, String>(Tour::getDescription,
 					t -> Utils.containsIgnoreCase(t, searchVal));

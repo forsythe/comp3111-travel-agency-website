@@ -1,7 +1,8 @@
-package comp3111.repo;
+package comp3111.data.repo;
 
-import comp3111.model.Offering;
 import org.springframework.data.repository.CrudRepository;
+
+import comp3111.data.model.Offering;
 
 import java.util.Collection;
 
