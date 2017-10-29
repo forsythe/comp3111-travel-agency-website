@@ -59,7 +59,7 @@ public class LoginUser {
 	 *            before storing into db. By default, uses 10 rounds of hashing.
 	 */
 	public void setHashedSaltedPassword(String rawPassword) {
-		BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder(30);
+		BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
 		this.hashedSaltedPassword = bcpe.encode(rawPassword);
 	}
 

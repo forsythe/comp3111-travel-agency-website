@@ -11,4 +11,6 @@ import java.util.Collection;
 public interface TourRepository extends CrudRepository<Tour, Long> {
 
 	Collection<Tour> findByTourName(String tourName);
+	
+	Collection<Tour> findById(Long id);
 }
