@@ -208,7 +208,7 @@ public class ApplicationTests {
 	}
 
 	@Ignore
-	@Test
+	@Test(expected = TourGuideUnavailableException.class)
 	public void testFailureTryToAssignBusyTourGuide() {
 		// want exception
 	}

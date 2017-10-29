@@ -71,9 +71,6 @@ public class TourGuidesEditor extends VerticalLayout {
 
 		this.addComponent(rowOfButtons);
 
-		// Get from db
-		refreshData();
-
 		tourGuideGrid.setWidth("100%");
 		tourGuideGrid.setSelectionMode(SelectionMode.SINGLE);
 

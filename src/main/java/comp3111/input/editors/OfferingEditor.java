@@ -78,6 +78,8 @@ public class OfferingEditor {
 
 		ComboBox<TourGuide> tourGuide = new ComboBox<TourGuide>("Tour Guide");
 		DateField startDate = new DateField("Start Date");
+		Label availablityHint = new Label("Can be offered on " + hostTour.getOfferingAvailability());
+
 		TextField hotelName = new TextField("Hotel Name");
 		TextField minCustomer = new TextField("Min number of customer");
 		TextField maxCustomer = new TextField("Max number of customer");
@@ -102,6 +104,8 @@ public class OfferingEditor {
 		subWindow.setDraggable(false);
 
 		subContent.addComponent(tourName);
+		subContent.addComponent(availablityHint);
+
 		subContent.addComponent(startDate);
 		subContent.addComponent(tourGuide);
 		subContent.addComponent(hotelName);
