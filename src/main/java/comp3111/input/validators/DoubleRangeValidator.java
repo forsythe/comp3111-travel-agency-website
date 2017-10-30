@@ -16,7 +16,7 @@ public class DoubleRangeValidator implements Validator<String> {
 	@Override
 	public ValidationResult apply(String value, ValueContext context) {
 		try {
-			double val = Double.parseDouble(value);
+			double val = Double.parseDouble(value.replace(",", ""));
 			if (val >= min && val <= max)
 				return ValidationResult.ok();
 		} catch (NumberFormatException e) {

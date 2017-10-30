@@ -22,13 +22,15 @@ public class OfferingManagementView extends VerticalLayout implements View {
 
 	@Autowired
 	OfferingEditor offeringEditor;
+	Label titleLabel;
+	VerticalLayout layout;
 
 	@PostConstruct
 	void init() {
-		Label titleLabel = new Label("<h1>Tour Offering Management</h1>", ContentMode.HTML);
+		titleLabel = new Label();
 
 		// A container that is 100% wide by default
-		VerticalLayout layout = new VerticalLayout();
+		layout = new VerticalLayout();
 
 		// label will only take the space it needs
 		layout.addComponent(titleLabel);
@@ -43,6 +45,9 @@ public class OfferingManagementView extends VerticalLayout implements View {
 		// This view is constructed in the init() method()
 		// everytime we enter this page, we want to update the data in the grid
 		this.offeringEditor.refreshData();
+		this.titleLabel.setCaption(
+				"<h1>Manage Offerings for Tour: <b>" + offeringEditor.getSelectedTour().getTourName() + "</b></h1>");
+		this.titleLabel.setCaptionAsHtml(true);
 	}
 
 	/**

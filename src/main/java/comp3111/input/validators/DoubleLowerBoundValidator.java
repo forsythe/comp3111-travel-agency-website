@@ -14,7 +14,7 @@ public class DoubleLowerBoundValidator implements Validator<String> {
 	@Override
 	public ValidationResult apply(String value, ValueContext context) {
 		try {
-			double val = Double.parseDouble(value);
+			double val = Double.parseDouble(value.replace(",", ""));
 			if (val >= min)
 				return ValidationResult.ok();
 		} catch (NumberFormatException e) {

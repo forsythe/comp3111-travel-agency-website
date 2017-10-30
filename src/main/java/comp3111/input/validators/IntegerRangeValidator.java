@@ -16,7 +16,7 @@ public class IntegerRangeValidator implements Validator<String> {
 	@Override
 	public ValidationResult apply(String value, ValueContext context) {
 		try {
-			int val = Integer.parseInt(value);
+			int val = Integer.parseInt(value.replace(",", ""));
 			if (val >= min && val < max)
 				return ValidationResult.ok();
 		} catch (NumberFormatException e) {
