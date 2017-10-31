@@ -81,6 +81,9 @@ public class HomeView extends VerticalLayout implements View {
 		}
 		addComponent(new Label("The most popular tour is " + mostPopTour));
 
+		addComponent(new Label("There are currently "
+				+ Utils.iterableToCollection(qRepo.findAll()).stream().filter(q -> q.getAnswer().isEmpty()).count()
+				+ " pending querie(s) waiting to be resolved"));
 	}
 
 	@Override

@@ -188,7 +188,9 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 
 		grid.setDataProvider(new ListDataProvider<NonFAQQuery>(Utils.iterableToCollection(qRepo.findAll())));
 		grid.setColumnOrder(DB.NONFAQQUERY_ID, DB.NONFAQQUERY_CUSTOMER, DB.NONFAQQUERY_QUERY, DB.NONFAQQUERY_ANSWER);
-		log.info("there are [{}] unresolved queries", Utils.iterableToCollection(qRepo.findAll()).size());
+		grid.setHeight("90%");
+		log.info("there are [{}] unresolved queries",
+				Utils.iterableToCollection(qRepo.findAll()).stream().filter(q -> q.getAnswer().isEmpty()).count());
 
 		grid.addSelectionListener(event -> {
 			if (event.getFirstSelectedItem().isPresent()) {
@@ -200,6 +202,7 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 			}
 		});
 
+		grid.setWidth("100%");
 		// TODO: check that the lengths of query and answer are <=255
 
 		submit.addClickListener(event -> {
