@@ -13,10 +13,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.vaadin.ui.Notification;
-
-import comp3111.data.model.Customer;
+import comp3111.data.model.Booking;
+import comp3111.data.model.Offering;
+import comp3111.data.model.Tour;
+import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
+import comp3111.data.repo.OfferingRepository;
+import comp3111.data.repo.TourRepository;
 import comp3111.view.CustomerEngagementView;
 
 @Component
@@ -28,9 +31,23 @@ public class LineMessenger {
 	@Autowired
 	private CustomerRepository cRepo;
 
-	public boolean sendText(String custLineId, String text) {
+	@Autowired
+	private OfferingRepository oRepo;
 
-		log.info("sending [{}]'s lind id: [{}], [{}]", text, custLineId, cRepo.findOneByLineId(custLineId));
+	@Autowired
+	private BookingRepository bRepo;
+
+	/**
+	 * @param custLineId
+	 *            The customer's line ID (not the human readable one, but the one
+	 *            used internally by LINE's push API)
+	 * @param text
+	 *            the content to send them
+	 * @return true or false, depending on whether the message was sent successfully
+	 *         (200 OK)
+	 */
+	public boolean sendToUser(String custLineId, String text) {
+		log.info("\tsending [{}]'s lind id: [{}], [{}]", text, custLineId, cRepo.findOneByLineId(custLineId));
 		JSONObject body = null;
 		try {
 			body = new JSONObject();
@@ -78,5 +95,52 @@ public class LineMessenger {
 			return false;
 		}
 
+	}
+
+	/**
+	 * @param o
+	 *            The offering whose customers you would like to notify
+	 * @param text
+	 *            The text to send them
+	 * @return True or false, depending on whether all customers in this offering
+	 *         were notified successfully. Note that for customers who don't have a
+	 *         line ID (i.e. walk in customers), we ignore them
+	 */
+	public boolean sendToOffering(Offering o, String text) {
+		log.info("\tBroadcasting to all users who booked for offering [{}]", o);
+		log.info("there are [{}] booked customers", bRepo.findByOffering(o).size());
+		for (Booking record : bRepo.findByOffering(o)) {
+			if (record.getCustomer().getLineId() != null && !record.getCustomer().getLineId().isEmpty()) {
+				if (!sendToUser(record.getCustomer().getLineId(), text))
+					return false;
+			} else {
+				log.info("customer [{}] doesn't have a line id, so nothing was sent to them",
+						record.getCustomer().getName());
+			}
+		}
+		log.info("Succesfully sent to participants in this offering [{}]", o);
+		return true;
+	}
+
+	/**
+	 * @param t
+	 *            The tour whos participants (which span many offerings potentially)
+	 *            you want to reach
+	 * @param text
+	 *            The text to send them
+	 * @return True or false, depending on whether all associated users successfully
+	 *         recieved the message
+	 */
+	public boolean sendToTour(Tour t, String text) {
+		log.info("Broadcasting to all users who booked for offerings in the tour [{}]", t);
+
+		oRepo.findByTour(t);
+
+		for (Offering o : oRepo.findByTour(t)) {
+			if (!sendToOffering(o, text))
+				return false;
+		}
+		log.info("Succesfully sent to participants in this tour [{}]", t.getTourName());
+		return true;
 	}
 }
