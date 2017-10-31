@@ -76,16 +76,11 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 		Button button = new Button("Logout");
 		button.addStyleName(ValoTheme.BUTTON_LINK);
 
-		button.addClickListener(new ClickListener() {
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				navigationBar.setVisible(false);
-				springViewDisplay.setVisible(false);
-				getUI().getNavigator().navigateTo(HomeView.VIEW_NAME);
-				drawLoginForm();
-			}
-
+		button.addClickListener(event -> {
+			navigationBar.setVisible(false);
+			springViewDisplay.setVisible(false);
+			getUI().getNavigator().navigateTo(HomeView.VIEW_NAME);
+			drawLoginForm();
 		});
 		return button;
 	}
@@ -145,8 +140,7 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 		navigationBar.addComponent(createNavigationButton("Bookings", BookingsManagementView.VIEW_NAME));
 		navigationBar.addComponent(createNavigationButton("Customers", CustomersManagementView.VIEW_NAME));
 		navigationBar.addComponent(createNavigationButton("Tour Guides", TourGuidesManagementView.VIEW_NAME));
-		navigationBar.addComponent(
-				createNavigationButton("Customer Engagement", CustomerEngagementView.VIEW_NAME));
+		navigationBar.addComponent(createNavigationButton("Customer Engagement", CustomerEngagementView.VIEW_NAME));
 		navigationBar.addComponent(createLogoutButton());
 
 		navigationBar.setSizeUndefined();

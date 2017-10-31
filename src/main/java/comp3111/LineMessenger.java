@@ -26,19 +26,15 @@ public class LineMessenger {
 	private static final Logger log = LoggerFactory.getLogger(CustomerEngagementView.class);
 
 	@Autowired
-	private CustomerRepository customerRepo;
+	private CustomerRepository cRepo;
 
-	public boolean sendText(Customer c, String text) {
+	public boolean sendText(String custLineId, String text) {
 
-		if (c.getLineId() == null || c.getLineId().isEmpty()) {
-			log.info("Tried to send a message to customer [{}], but they don't have a line ID!", c.getName());
-			return false;
-		}
-		log.info("found customer [{}]'s lind id: [{}]", c.getName(), c.getLineId());
+		log.info("sending [{}]'s lind id: [{}], [{}]", text, custLineId, cRepo.findOneByLineId(custLineId));
 		JSONObject body = null;
 		try {
 			body = new JSONObject();
-			body.put("to", c.getLineId());
+			body.put("to", custLineId);
 
 			JSONObject msg1 = new JSONObject();
 			msg1.put("type", "text");
@@ -49,7 +45,7 @@ public class LineMessenger {
 			// msg2.put("text", "goodbye!");
 
 			JSONArray msgArr = new JSONArray();
-			// msgArr.put(msg1);
+			msgArr.put(msg1);
 			// msgArr.put(msg2);
 
 			body.put("messages", msgArr);
@@ -63,7 +59,7 @@ public class LineMessenger {
 		try {
 			HttpClient client = HttpClientBuilder.create().build();
 			HttpPost postRequest = new HttpPost("https://api.line.me/v2/bot/message/push");
-
+			log.info("json data: [{}]", body.toString());
 			StringEntity params = new StringEntity(body.toString());
 
 			postRequest.addHeader("Content-Type", "application/json");
@@ -72,7 +68,7 @@ public class LineMessenger {
 
 			HttpResponse response = client.execute(postRequest);
 			log.info("send message status: " + response.getStatusLine().getStatusCode() + " "
-					+ response.getStatusLine().getReasonPhrase());
+					+ response.getStatusLine().getReasonPhrase() + "\n" + response.getEntity().toString());
 
 			return response.getStatusLine().getStatusCode() == 200;
 			// handle response here...

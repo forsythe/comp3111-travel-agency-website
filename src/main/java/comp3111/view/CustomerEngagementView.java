@@ -54,8 +54,8 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		advertisingTab.addComponent(send);
 		send.addClickListener(event -> {
 			Customer heng = customerRepo.findOneByName("Heng");
-			boolean status = lineMessenger.sendText(heng, "hi this is vaadin speaking");
-			Notification.show("message status: " + (status ? "success" : "failure"));
+			boolean status = lineMessenger.sendText(heng.getLineId(), "hi this is vaadin speaking");
+			Notification.show("Send status: " + (status ? "Success" : "Failure"));
 		});
 
 		VerticalLayout queryTab = new VerticalLayout();
