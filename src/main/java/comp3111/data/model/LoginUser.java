@@ -15,7 +15,6 @@ import javax.transaction.Transactional;
  *
  */
 @Entity
-@Transactional
 public class LoginUser {
 	@Id
 	@GeneratedValue

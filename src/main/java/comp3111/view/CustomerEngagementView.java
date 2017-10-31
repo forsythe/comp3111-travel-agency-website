@@ -12,6 +12,7 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.RadioButtonGroup;
@@ -22,9 +23,11 @@ import com.vaadin.ui.VerticalLayout;
 import comp3111.LineMessenger;
 import comp3111.Utils;
 import comp3111.data.model.Customer;
+import comp3111.data.model.NonFAQQuery;
 import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.data.repo.CustomerRepository;
+import comp3111.data.repo.NonFAQQueryRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.TourRepository;
 
@@ -47,6 +50,10 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 	private OfferingRepository oRepo;
 	@Autowired
 	private TourRepository tRepo;
+	@Autowired
+	private NonFAQQueryRepository qRepo;
+
+	private NonFAQQuery selectedQuery;
 
 	@PostConstruct
 	void init() {
@@ -54,7 +61,7 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 
 		// A container that is 100% wide by default
 		VerticalLayout layout = new VerticalLayout();
-		layout.setHeightUndefined();
+		layout.setSizeFull();
 
 		// label will only take the space it needs
 		layout.addComponent(titleLabel);
@@ -66,17 +73,12 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		tabsheet.addTab(tab1, "Broadcast a message");
 		tabsheet.addTab(tab2, "Reply to queries");
 
-		tab1.setHeight("100%");
-		tab2.setHeight("100%");
-
 		layout.addComponent(tabsheet);
 		this.addComponent(layout);
 	}
 
 	private VerticalLayout getAdvertisingTab() {
 		VerticalLayout layout = new VerticalLayout();
-		layout.setHeight("100%");
-
 		final RadioButtonGroup<String> broadcastTarget = new RadioButtonGroup<String>("Recipient");
 		ComboBox<Customer> customerBox = new ComboBox<Customer>(BY_SINGLE_LINE_CUSTOMER);
 		ComboBox<Offering> offeringBox = new ComboBox<Offering>(BY_OFFERING);
@@ -92,9 +94,9 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		layout.addComponent(send);
 
 		broadcastTarget.setItems(BY_SINGLE_LINE_CUSTOMER, BY_OFFERING, BY_TOUR, BY_ALL_LINE_CUSTOMERS);
+		broadcastTarget.setSelectedItem(BY_SINGLE_LINE_CUSTOMER);
 
-		layout.addComponent(send);
-		customerBox.setVisible(false);
+		customerBox.setVisible(true);
 		offeringBox.setVisible(false);
 		tourBox.setVisible(false);
 
@@ -168,7 +170,43 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 
 	private VerticalLayout getQueryTab() {
 		VerticalLayout layout = new VerticalLayout();
-		layout.addComponent(new Label("put a grid here which shows unanswered queries"));
+
+		Grid<NonFAQQuery> grid = new Grid<NonFAQQuery>();
+		TextArea replyBox = new TextArea("Response");
+		Button submit = new Button("Send");
+
+		layout.addComponent(grid);
+		layout.addComponent(replyBox);
+		layout.addComponent(submit);
+
+		submit.setEnabled(false);
+
+		grid.setItems(Utils.iterableToCollection(qRepo.findAll()));
+
+		grid.addSelectionListener(event -> {
+			if (event.getFirstSelectedItem().isPresent()) {
+				selectedQuery = event.getFirstSelectedItem().get();
+				submit.setEnabled(true);
+			} else {
+				selectedQuery = null;
+				submit.setEnabled(false);
+			}
+		});
+
+		// TODO: check that the lengths of query and answer are <=255
+
+		submit.addClickListener(event -> {
+			if (!replyBox.isEmpty()) {
+				boolean status = lineMessenger.sendToUser(selectedQuery.getCustomer().getLineId(), replyBox.getValue());
+				Notification.show("Message delivery " + (status ? "succeeded!" : "failed!"));
+
+				if (status) {
+					selectedQuery.setAnswer(replyBox.getValue());
+					qRepo.save(selectedQuery);
+					grid.setItems(Utils.iterableToCollection(qRepo.findAll()));
+				}
+			}
+		});
 
 		return layout;
 	}
