@@ -1,5 +1,7 @@
 package comp3111;
 
+import java.util.Collection;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -60,7 +62,17 @@ public class LineMessenger {
 	 *         (200 OK)
 	 */
 	public boolean sendToUser(String custLineId, String text) {
-		log.info("\tsending [{}]'s lind id: [{}], [{}]", text, custLineId, cRepo.findOneByLineId(custLineId));
+		// for testing only. in reality, can assume lineId is unique, so use
+		// findOneByLineId instead
+		Collection<Customer> col = cRepo.findByLineId(custLineId);
+		log.info("for line id [{}], there were [{}] results", custLineId, col.size());
+		Customer first = null;
+		for (Customer c : col) {
+			first = c;
+			break;
+		}
+
+		log.info("\tsending [{}] to line id: [{}], [{}]", text, custLineId, first);
 		JSONObject body = null;
 		try {
 			body = new JSONObject();
