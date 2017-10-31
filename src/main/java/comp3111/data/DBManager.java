@@ -35,8 +35,7 @@ public class DBManager {
 	private TourGuideRepository tourGuideRepo;
 
 	public Offering createOfferingForTour(Tour tour, TourGuide tg, Date startDate, String hotelName, int minCustomers,
-			int maxCustomers) throws OfferingDateUnsupportedException, OfferingDayOfWeekUnsupportedException,
-			TourGuideUnavailableException {
+			int maxCustomers) throws OfferingDateUnsupportedException, TourGuideUnavailableException {
 
 		//Make sure both the tour and the tour guide are concrete entity in the database
 		tourRepo.save(tour);
@@ -45,9 +44,7 @@ public class DBManager {
 		DateAvailableInTourValidator dateValidator = ValidatorFactory.getDateAvailableInTourValidator(tour);
 		ValidationResult result = dateValidator.apply(startDate, new ValueContext());
 		if (result.isError()){
-			//TODO: Is it necessary to separate date and day of week exception?
 			throw new OfferingDateUnsupportedException();
-			//throw new OfferingDayOfWeekUnsupportedException();
 		}
 
 		if (!isTourGuideAvailableBetweenDate(tg, startDate, Utils.addDate(startDate, tour.getDays()))) {
@@ -91,7 +88,7 @@ public class DBManager {
 	}
 
 	public void createOfferingForTour(Offering offering) throws OfferingDateUnsupportedException,
-			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
+			TourGuideUnavailableException {
 		createOfferingForTour(offering.getTour(), offering.getTourGuide(), offering.getStartDate(),
 				offering.getHotelName(), offering.getMinCustomers(), offering.getMaxCustomers());
 	}
@@ -198,10 +195,11 @@ public class DBManager {
 		return ans;
 	}
 
-	public int countNumberOfPeopleInOffering(Offering offering) {
+	public int countNumberOfPaidPeopleInOffering(Offering offering) {
 		int num = 0;
 		for (Booking record : bookingRepo.findByOffering(offering)) {
-			if (record.getOffering().equals(offering)) {
+			if (record.getOffering().equals(offering)
+					&& record.getPaymentStatus().equals(Booking.PAYMENT_CONFIRMED)) {
 				num += record.getNumAdults() + record.getNumChildren() + record.getNumToddlers();
 			}
 		}

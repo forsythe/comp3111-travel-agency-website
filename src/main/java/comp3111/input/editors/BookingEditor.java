@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.awt.print.Book;
 import java.time.Instant;
 import java.util.*;
 
@@ -207,9 +208,10 @@ public class BookingEditor extends VerticalLayout {
 
 		offering.setItems(potentialOfferings);
 
-		Collection<String> potentialPaymentStatus = new ArrayList<>(Arrays.asList("pending", "paid", "cancelled"));
+		Collection<String> potentialPaymentStatus = new ArrayList<>(
+				Arrays.asList(Booking.PAYMENT_PENDING, Booking.PAYMENT_CONFIRMED));
 		paymentStatus.setItems(potentialPaymentStatus);
-		paymentStatus.setSelectedItem("pending");
+		paymentStatus.setSelectedItem(Booking.PAYMENT_PENDING);
 
 		Binder<Booking> binder = new Binder<Booking>();
 

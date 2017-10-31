@@ -224,7 +224,7 @@ public class OfferingEditor extends VerticalLayout {
 					log.info("created/edited offering [{}] successfully", tourName.getValue());
 					binder.removeBean();
 					return; // This return skip the error reporting procedure below
-				} catch (OfferingDayOfWeekUnsupportedException | OfferingDateUnsupportedException e) {
+				} catch (OfferingDateUnsupportedException e) {
 					errorStringBuilder.append("This tour may only be offered on ");
 					errorStringBuilder.append(hostTour.getOfferingAvailability());
 

@@ -76,7 +76,8 @@ public class GuidedByViewer extends VerticalLayout {
 		offeringGrid.removeColumn(DB.OFFERING_MIN_CAPACITY);
 		offeringGrid.removeColumn(DB.OFFERING_LAST_EDITABLE_DATE);
 
-		offeringGrid.addColumn(offering -> dbManager.countNumberOfPeopleInOffering(offering));
+		offeringGrid.addColumn(offering -> dbManager.countNumberOfPaidPeopleInOffering(offering))
+				.setCaption("Total number of paying people");
 
 		offeringGrid.setColumnOrder(DB.OFFERING_ID, DB.OFFERING_START_DATE,
 				DB.OFFERING_TOUR_NAME, DB.OFFERING_HOTEL_NAME);

@@ -102,7 +102,7 @@ public class ApplicationTests {
 
 	@Test
 	public void testSuccessCreateOfferingAndBookingForUnsavedEntities() throws OfferingOutOfRoomException,
-			OfferingDateUnsupportedException, OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
+			OfferingDateUnsupportedException, TourGuideUnavailableException {
 		TourGuide anonTg = new TourGuide("lucy", "LINEID123");
 		Customer anonCust = new Customer("morgan freeman", 35);
 		Tour anonTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
@@ -124,7 +124,7 @@ public class ApplicationTests {
 
 	@Test
 	public void testSuccessCreateOfferingAndBookingForSavedEntities() throws OfferingOutOfRoomException,
-			OfferingDateUnsupportedException, OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
+			OfferingDateUnsupportedException, TourGuideUnavailableException {
 
 		Tour tour1 = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
 		tour1.setAllowedDates(
@@ -145,7 +145,7 @@ public class ApplicationTests {
 
 	@Test
 	public void testSuccessTwoCustomersMakeBookingForATour() throws OfferingDateUnsupportedException,
-			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
+			TourGuideUnavailableException, OfferingOutOfRoomException {
 		Tour tour1 = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
 		tour1.setAllowedDates(
 				new HashSet<Date>(Arrays.asList(new GregorianCalendar(2017, Calendar.DECEMBER, 9).getTime(),
@@ -169,7 +169,7 @@ public class ApplicationTests {
 
 	@Test
 	public void testSuccessCreateTwoOfferingsWithDifferentTourGuidesForATour() throws OfferingDateUnsupportedException,
-			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
+			TourGuideUnavailableException, OfferingOutOfRoomException {
 
 		Tour tour1 = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
 		tour1.setAllowedDates(
@@ -198,7 +198,7 @@ public class ApplicationTests {
 
 	@Test(expected = TourGuideUnavailableException.class)
 	public void testFailureCreateTwoOfferingsWithSameTourGuide() throws OfferingDateUnsupportedException,
-			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
+			TourGuideUnavailableException, OfferingOutOfRoomException {
 
 		Tour tour1 = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
 		tour1.setAllowedDates(
@@ -217,7 +217,7 @@ public class ApplicationTests {
 
 	@Test(expected = OfferingDateUnsupportedException.class)
 	public void testFailureTryToMakeOfferingForUnsupportedDate() throws OfferingDateUnsupportedException,
-			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
+			TourGuideUnavailableException {
 
 		Tour yangshanTour = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
 		yangshanTour.setAllowedDates(
@@ -230,9 +230,9 @@ public class ApplicationTests {
 				new GregorianCalendar(2020, Calendar.DECEMBER, 12).getTime(), "hotel bob", 5, 18);
 	}
 
-	@Test(expected = OfferingDayOfWeekUnsupportedException.class)
+	@Test(expected = OfferingDateUnsupportedException.class)
 	public void testFailureTryToMakeOfferingForUnsupportedDayOfWeek() throws OfferingOutOfRoomException,
-			OfferingDateUnsupportedException, OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
+			OfferingDateUnsupportedException, TourGuideUnavailableException {
 
 		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
 		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.TUESDAY, Calendar.SUNDAY)));
@@ -244,7 +244,7 @@ public class ApplicationTests {
 
 	@Test(expected = OfferingOutOfRoomException.class)
 	public void testFailureOfferingOutOfRoomWhenBooking() throws OfferingDateUnsupportedException,
-			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
+			TourGuideUnavailableException, OfferingOutOfRoomException {
 
 		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
 		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.MONDAY, Calendar.SUNDAY)));
