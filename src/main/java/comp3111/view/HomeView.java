@@ -45,10 +45,6 @@ public class HomeView extends VerticalLayout implements View {
 		addComponent(new Label("There are currently " + Utils.iterableToCollection(cRepo.findAll()).size()
 				+ " customers in our system. "));
 
-		addComponent(new Label("Of these, "
-				+ Utils.iterableToCollection(cRepo.findAll()).stream().filter(c -> c.getLineId().isEmpty()).count()
-				+ " customer(s) don't use LINE (walk in customers.)"));
-
 		int numChildren = 0;
 		int numToddlers = 0;
 		int numAdults = 0;
