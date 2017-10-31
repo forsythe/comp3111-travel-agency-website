@@ -6,12 +6,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
@@ -22,6 +24,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import comp3111.LineMessenger;
 import comp3111.Utils;
+import comp3111.data.DB;
 import comp3111.data.model.Customer;
 import comp3111.data.model.NonFAQQuery;
 import comp3111.data.model.Offering;
@@ -78,11 +81,11 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 	}
 
 	private VerticalLayout getAdvertisingTab() {
-		VerticalLayout layout = new VerticalLayout();
+		FormLayout layout = new FormLayout();
 		final RadioButtonGroup<String> broadcastTarget = new RadioButtonGroup<String>("Recipient");
-		ComboBox<Customer> customerBox = new ComboBox<Customer>(BY_SINGLE_LINE_CUSTOMER);
-		ComboBox<Offering> offeringBox = new ComboBox<Offering>(BY_OFFERING);
-		ComboBox<Tour> tourBox = new ComboBox<Tour>(BY_TOUR);
+		ComboBox<Customer> customerBox = new ComboBox<Customer>();
+		ComboBox<Offering> offeringBox = new ComboBox<Offering>();
+		ComboBox<Tour> tourBox = new ComboBox<Tour>();
 		TextArea message = new TextArea("Message");
 		Button send = new Button("Send");
 
@@ -165,13 +168,15 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 					lineMessenger.getClass() + " recipient(s).", Notification.TYPE_HUMANIZED_MESSAGE);
 
 		});
-		return layout;
+		VerticalLayout container = new VerticalLayout();
+		container.addComponent(layout);
+		return container;
 	}
 
 	private VerticalLayout getQueryTab() {
 		VerticalLayout layout = new VerticalLayout();
 
-		Grid<NonFAQQuery> grid = new Grid<NonFAQQuery>();
+		Grid<NonFAQQuery> grid = new Grid<NonFAQQuery>(NonFAQQuery.class);
 		TextArea replyBox = new TextArea("Response");
 		Button submit = new Button("Send");
 
@@ -181,7 +186,9 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 
 		submit.setEnabled(false);
 
-		grid.setItems(Utils.iterableToCollection(qRepo.findAll()));
+		grid.setDataProvider(new ListDataProvider<NonFAQQuery>(Utils.iterableToCollection(qRepo.findAll())));
+		grid.setColumnOrder(DB.NONFAQQUERY_ID, DB.NONFAQQUERY_CUSTOMER, DB.NONFAQQUERY_QUERY, DB.NONFAQQUERY_ANSWER);
+		log.info("there are [{}] unresolved queries", Utils.iterableToCollection(qRepo.findAll()).size());
 
 		grid.addSelectionListener(event -> {
 			if (event.getFirstSelectedItem().isPresent()) {
@@ -203,7 +210,8 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 				if (status) {
 					selectedQuery.setAnswer(replyBox.getValue());
 					qRepo.save(selectedQuery);
-					grid.setItems(Utils.iterableToCollection(qRepo.findAll()));
+					grid.setDataProvider(
+							new ListDataProvider<NonFAQQuery>(Utils.iterableToCollection(qRepo.findAll())));
 				}
 			}
 		});
@@ -216,4 +224,5 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 	public void enter(ViewChangeEvent event) {
 		// This view is constructed in the init() method()
 	}
+
 }

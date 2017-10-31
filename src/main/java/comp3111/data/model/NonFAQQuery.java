@@ -1,12 +1,14 @@
 package comp3111.data.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.ManyToOne;
 
 /**
- * An entity represnting a non-FAQ query sent by a LINE customer
+ * An entity representing a non-FAQ query sent by a LINE customer
  * 
  * @author Forsythe
  *
@@ -21,6 +23,8 @@ public class NonFAQQuery {
 
 	private String query;
 	private String answer;
+
+	@ManyToOne(fetch = FetchType.EAGER) // many queries to 1 customer
 	private Customer customer;
 
 	public NonFAQQuery() {

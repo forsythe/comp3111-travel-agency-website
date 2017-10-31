@@ -158,10 +158,8 @@ public class OfferingEditor extends VerticalLayout {
 		Window subWindow = new Window("Create new offering");
 
 		tourGuide.setPopupWidth(null);
-		Iterable<TourGuide> tourGuideList = tourGuideRepo.findAll();
-		Collection<TourGuide> tourGuideCollection = new HashSet<TourGuide>();
-		tourGuideList.forEach(tourGuideCollection::add);
-		tourGuide.setItems(tourGuideCollection);
+
+		tourGuide.setItems(Utils.iterableToCollection(tourGuideRepo.findAll()));
 
 		FormLayout subContent = new FormLayout();
 

@@ -95,15 +95,15 @@ public class CustomerEditor extends VerticalLayout {
 		customersGrid.setColumnOrder(DB.CUSTOMER_ID, DB.CUSTOMER_NAME, DB.CUSTOMER_LINE_ID, DB.CUSTOMER_HKID,
 				DB.CUSTOMER_PHONE, DB.CUSTOMER_AGE);
 
-//		HeaderRow filterRow = customersGrid.appendHeaderRow();
-		
+		// HeaderRow filterRow = customersGrid.appendHeaderRow();
+
 		for (Column<Customer, ?> col : customersGrid.getColumns()) {
 			col.setMinimumWidth(120);
 			col.setHidable(true);
 			col.setHidingToggleCaption(col.getCaption());
 			col.setExpandRatio(1);
 		}
-		
+
 		this.addComponent(customersGrid);
 
 		createNewCustomerButton.addClickListener(event -> {
@@ -224,15 +224,10 @@ public class CustomerEditor extends VerticalLayout {
 	}
 
 	public void refreshData() {
-		Iterable<Customer> customers = customerRepo.findAll();
-		// it's possible the customerRepo can return null!
-		if (null == customers) {
-			customers = new HashSet<>();
-		}
-		Collection<Customer> customerCollectionCached = new HashSet<Customer>();
-		customerCollectionCached.clear();
-		customers.forEach(customerCollectionCached::add);
-		ListDataProvider<Customer> provider = new ListDataProvider<Customer>(customerCollectionCached);
+
+		ListDataProvider<Customer> provider = new ListDataProvider<Customer>(
+				Utils.iterableToCollection(customerRepo.findAll()));
 		customersGrid.setDataProvider(provider);
+
 	}
 }
