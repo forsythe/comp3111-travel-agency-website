@@ -1,15 +1,18 @@
 package comp3111.data;
 
+import com.vaadin.data.ValidationResult;
+import com.vaadin.data.ValueContext;
 import comp3111.Utils;
 import comp3111.data.model.*;
 import comp3111.data.repo.*;
 import comp3111.input.exceptions.*;
+import comp3111.input.validators.DateAvailableInTourValidator;
+import comp3111.input.validators.ValidatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -39,32 +42,12 @@ public class DBManager {
 		tourRepo.save(tour);
 		tourGuideRepo.save(tg);
 
-		// check that the day of week is correct
-		Collection<Integer> supportedDaysOfWeek = tour.getAllowedDaysOfWeek();
-		if (!supportedDaysOfWeek.isEmpty()) {
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(startDate);
-			int startDateDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-			// Sunday: 1, Monday: 2, Tuesday: 3...
-			log.info("For offering for tour[{}], proposed startDate = [{}]", tour.getTourName(),
-					Utils.dayToString(startDateDayOfWeek));
-			if (!supportedDaysOfWeek.contains(startDateDayOfWeek)) {
-				log.error("Error! only the following days are supported");
-				for (Integer i : supportedDaysOfWeek) {
-					log.error("\t[{}]", Utils.dayToString(i));
-				}
-
-				throw new OfferingDayOfWeekUnsupportedException();
-			}
-		}
-		Collection<Date> supportedDates = tour.getAllowedDates();
-		log.info("For offering for tour[{}], proposed startDate is [{}]", tour.getTourName(), startDate);
-		if (!supportedDates.isEmpty() && !supportedDates.contains(startDate)) {
-			log.error("Error! only the following dates are supported");
-			for (Date d : supportedDates) {
-				log.error("\t[{}]", d);
-			}
+		DateAvailableInTourValidator dateValidator = ValidatorFactory.getDateAvailableInTourValidator(tour);
+		ValidationResult result = dateValidator.apply(startDate, new ValueContext());
+		if (result.isError()){
+			//TODO: Is it necessary to separate date and day of week exception?
 			throw new OfferingDateUnsupportedException();
+			//throw new OfferingDayOfWeekUnsupportedException();
 		}
 
 		if (!isTourGuideAvailableBetweenDate(tg, startDate, Utils.addDate(startDate, tour.getDays()))) {

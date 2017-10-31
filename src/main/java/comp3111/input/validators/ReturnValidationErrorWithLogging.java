@@ -8,7 +8,7 @@ public class ReturnValidationErrorWithLogging {
     private static final Logger log = LoggerFactory.getLogger(ReturnValidationErrorWithLogging.class);
 
     static ValidationResult getValidationErrorLogged(String msg){
-        log.debug("Validation error: " + msg);
+        log.info("Validation error: " + msg);
         return ValidationResult.error(msg);
     }
 }

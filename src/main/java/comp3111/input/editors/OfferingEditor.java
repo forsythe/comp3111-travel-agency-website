@@ -22,7 +22,6 @@ import comp3111.input.converters.LocalDateToUtilDateConverter;
 import comp3111.input.exceptions.OfferingDateUnsupportedException;
 import comp3111.input.exceptions.OfferingDayOfWeekUnsupportedException;
 import comp3111.input.exceptions.TourGuideUnavailableException;
-import comp3111.input.validators.IntegerLowerBoundedByAnotherFieldValidator;
 import comp3111.input.validators.ValidatorFactory;
 import comp3111.view.TourManagementView;
 import org.slf4j.Logger;
@@ -45,10 +44,10 @@ public class OfferingEditor extends VerticalLayout {
 	@Autowired
 	private TourGuideRepository tourGuideRepo;
 
-	TourEditor tourEditor;
+	private TourEditor tourEditor;
 
 	@Autowired
-	private DBManager actionManager;
+	private DBManager dbManager;
 
 	private Tour selectedTour;
 	private final Grid<Offering> offeringGrid = new Grid<Offering>(Offering.class);
@@ -56,7 +55,7 @@ public class OfferingEditor extends VerticalLayout {
 	private Offering selectedOffering;
 
 	/* Action buttons */
-	HorizontalLayout rowOfButtons = new HorizontalLayout();
+	private HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createNewOfferingButton = new Button("Create New Offering");
 	private Button editOfferingButton = new Button("Edit Offering");
 	private Button returnButton = new Button("Return");
@@ -176,12 +175,15 @@ public class OfferingEditor extends VerticalLayout {
 		// Binding method according to docs
 		Binder<Offering> binder = new Binder<>(Offering.class);
 
-		binder.forField(tourGuide).asRequired(Utils.generateRequiredError()).bind(Offering::getTourGuide,
-				Offering::setTourGuide);
+		binder.forField(tourGuide).asRequired(Utils.generateRequiredError())
+				.withValidator(ValidatorFactory.getTourGuideAvailableForDatesValidation(
+						startDate, hostTour.getDays(), dbManager))
+				.bind(Offering::getTourGuide, Offering::setTourGuide);
 
 		binder.forField(startDate).asRequired(Utils.generateRequiredError())
 				.withConverter(new LocalDateToUtilDateConverter())
 				.withValidator(ValidatorFactory.getDateNotEarlierThanValidator(Date.from(Instant.now())))
+				.withValidator(ValidatorFactory.getDateAvailableInTourValidator(hostTour))
 				.bind(Offering::getStartDate, Offering::setStartDate);
 
 		binder.forField(hotelName).asRequired(Utils.generateRequiredError())
@@ -213,7 +215,7 @@ public class OfferingEditor extends VerticalLayout {
 				log.info("About to save tour [{}]", tourName.getValue());
 
 				try {
-					actionManager.createOfferingForTour(offeringToSave);
+					dbManager.createOfferingForTour(offeringToSave);
 
 					tourEditor.refreshData();
 					this.refreshData();
@@ -222,7 +224,8 @@ public class OfferingEditor extends VerticalLayout {
 					binder.removeBean();
 					return; // This return skip the error reporting procedure below
 				} catch (OfferingDayOfWeekUnsupportedException | OfferingDateUnsupportedException e) {
-					errorStringBuilder.append("This tour may only be offered on " + hostTour.getOfferingAvailability());
+					errorStringBuilder.append("This tour may only be offered on ");
+					errorStringBuilder.append(hostTour.getOfferingAvailability());
 
 				} catch (TourGuideUnavailableException e) {
 					errorStringBuilder.append("The tour guide is occupied.");

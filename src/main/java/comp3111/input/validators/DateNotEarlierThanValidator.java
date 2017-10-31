@@ -4,8 +4,6 @@ import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
 import comp3111.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
@@ -13,7 +11,6 @@ import static comp3111.input.validators.ReturnValidationErrorWithLogging.getVali
 
 public class DateNotEarlierThanValidator implements Validator<Date> {
 
-	private static final Logger log = LoggerFactory.getLogger(DateNotEarlierThanValidator.class);
 	private Date notEarlierThanThis;
 
 	DateNotEarlierThanValidator(Date notEarlierThanThis) {
