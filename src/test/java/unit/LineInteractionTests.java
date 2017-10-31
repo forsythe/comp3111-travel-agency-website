@@ -36,7 +36,7 @@ public class LineInteractionTests {
 
 	@Test
 	public void testSuccessSendMessageToHengsPhone() {
-		Customer heng = new Customer("heng", "U6934790c40beeed33b8b89fa359aa9c", "12312341234", 20, "A1234563");
+		Customer heng = new Customer("heng", "U6934790c40beeed33b8b89fa359aa9cf", "12312341234", 20, "A1234563");
 		heng = customerRepo.save(heng);
 		boolean recieved200ok = lineMessenger.sendToUser(heng.getLineId(), "hi heng's phone");
 		assertTrue(recieved200ok);
