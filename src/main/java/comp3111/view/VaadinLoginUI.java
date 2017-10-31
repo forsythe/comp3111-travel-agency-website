@@ -2,6 +2,7 @@ package comp3111.view;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.navigator.ViewDisplay;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
@@ -10,14 +11,14 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.themes.ValoTheme;
-import comp3111.auth.Authentication;
+
+import comp3111.input.auth.Authentication;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Theme("valo")
 @SpringUI
 @SpringViewDisplay
-
-// need this to find the repos, since in different package!
 public class VaadinLoginUI extends UI implements ViewDisplay {
 
 	private Panel springViewDisplay;
@@ -30,7 +31,6 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 
 	@Override
 	public void init(VaadinRequest request) {
-		// getUI().getNavigator().setErrorView("");
 
 		root = new HorizontalLayout();
 		root.setSizeFull();
@@ -41,6 +41,27 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 		springViewDisplay.setVisible(false);
 
 		drawLoginForm();
+
+		getUI().getNavigator().setErrorView(HomeView.class);
+
+		getUI().getNavigator().addViewChangeListener(new ViewChangeListener() {
+			@Override
+			public boolean beforeViewChange(ViewChangeEvent event) {
+				View newView = event.getNewView();
+				String newViewName = event.getViewName();
+				if (newViewName.equals(OfferingManagementView.VIEW_NAME)) {
+					// prevent a user from directly accessing offering management view without
+					// selecting a tour for the offerings
+					return ((OfferingManagementView) newView).userHasSelectedTour();
+				}
+				return true;
+			}
+
+			@Override
+			public void afterViewChange(ViewChangeEvent event) {
+				// NO-OP
+			}
+		});
 	}
 
 	private Button createNavigationButton(String caption, final String viewName) {
@@ -140,6 +161,7 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 
 		root.setExpandRatio(navigationBar, 0);
 		root.setExpandRatio(springViewDisplay, 1);
+
 	}
 
 	@Override
