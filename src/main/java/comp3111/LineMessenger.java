@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import comp3111.data.model.Booking;
+import comp3111.data.model.Customer;
 import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.data.repo.BookingRepository;
@@ -110,7 +111,7 @@ public class LineMessenger {
 		log.info("\tBroadcasting to all users who booked for offering [{}]", o);
 		log.info("there are [{}] booked customers", bRepo.findByOffering(o).size());
 		for (Booking record : bRepo.findByOffering(o)) {
-			if (record.getCustomer().getLineId() != null && !record.getCustomer().getLineId().isEmpty()) {
+			if (!record.getCustomer().getLineId().isEmpty()) {
 				if (!sendToUser(record.getCustomer().getLineId(), text))
 					return false;
 			} else {
@@ -141,6 +142,24 @@ public class LineMessenger {
 				return false;
 		}
 		log.info("Succesfully sent to participants in this tour [{}]", t.getTourName());
+		return true;
+	}
+
+	/**
+	 * @param text
+	 *            Content to send to every known customers with a line ID
+	 * @return true or false, depending on whether every message was sent
+	 *         successfully (ignoring customers who don't have line iD)
+	 */
+	public boolean sendToAll(String text) {
+		log.info("Broadcasting to all known customers");
+
+		for (Customer c : cRepo.findAll()) {
+			if (!c.getLineId().isEmpty())
+				if (!this.sendToUser(c.getLineId(), text))
+					return false;
+		}
+		log.info("Successfully sent message to all known customers");
 		return true;
 	}
 }

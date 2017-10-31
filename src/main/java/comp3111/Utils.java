@@ -211,4 +211,12 @@ public class Utils {
 		return addDate(localDateToDate(value), days);
 	}
 
+	public static <T> Collection<T> iterableToCollection(Iterable<T> iterable) {
+		Collection<T> c = new ArrayList<T>();
+		for (T o : iterable) {
+			c.add(o);
+		}
+		return c;
+	}
+
 }

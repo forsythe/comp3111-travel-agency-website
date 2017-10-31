@@ -11,17 +11,29 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.VerticalLayout;
 
 import comp3111.LineMessenger;
+import comp3111.Utils;
 import comp3111.data.model.Customer;
+import comp3111.data.model.Offering;
+import comp3111.data.model.Tour;
 import comp3111.data.repo.CustomerRepository;
+import comp3111.data.repo.OfferingRepository;
+import comp3111.data.repo.TourRepository;
 
 @SpringView(name = CustomerEngagementView.VIEW_NAME)
 public class CustomerEngagementView extends VerticalLayout implements View {
+	private static final String BY_ALL_LINE_CUSTOMERS = "All LINE Customers";
+	private static final String BY_TOUR = "Tour";
+	private static final String BY_OFFERING = "Offering";
+	private static final String BY_SINGLE_LINE_CUSTOMER = "Single LINE customer";
 	public static final String VIEW_NAME = "customerEngagement";
 	private static final Logger log = LoggerFactory.getLogger(CustomerEngagementView.class);
 
@@ -29,7 +41,11 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 	private LineMessenger lineMessenger;
 
 	@Autowired
-	private CustomerRepository customerRepo;
+	private CustomerRepository cRepo;
+	@Autowired
+	private OfferingRepository oRepo;
+	@Autowired
+	private TourRepository tRepo;
 
 	@PostConstruct
 	void init() {
@@ -40,27 +56,105 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 
 		// label will only take the space it needs
 		layout.addComponent(titleLabel);
-		this.addComponent(layout);
 
 		TabSheet tabsheet = new TabSheet();
+		tabsheet.addTab(getAdvertisingTab(), "Broadcast a message");
+		tabsheet.addTab(getQueryTab(), "Reply to queries");
 		layout.addComponent(tabsheet);
+		this.addComponent(layout);
+	}
 
-		// Create the first tab
-		VerticalLayout advertisingTab = new VerticalLayout();
-		advertisingTab.addComponent(new Label("put a form here which sends messages out"));
-		tabsheet.addTab(advertisingTab, "Broadcast a message");
+	private VerticalLayout getAdvertisingTab() {
+		VerticalLayout layout = new VerticalLayout();
+		layout.setHeight("100%");
 
+		final RadioButtonGroup<String> broadcastTarget = new RadioButtonGroup<String>("Recipient");
+		ComboBox<Customer> customerBox = new ComboBox<Customer>(BY_SINGLE_LINE_CUSTOMER);
+		ComboBox<Offering> offeringBox = new ComboBox<Offering>(BY_OFFERING);
+		ComboBox<Tour> tourBox = new ComboBox<Tour>(BY_TOUR);
+		TextArea message = new TextArea("Message");
 		Button send = new Button("Send");
-		advertisingTab.addComponent(send);
-		send.addClickListener(event -> {
-			Customer heng = customerRepo.findOneByName("Heng");
-			boolean status = lineMessenger.sendToUser(heng.getLineId(), "hi this is vaadin speaking");
-			Notification.show("Send status: " + (status ? "Success" : "Failure"));
+
+		layout.addComponent(broadcastTarget);
+		layout.addComponent(customerBox);
+		layout.addComponent(offeringBox);
+		layout.addComponent(tourBox);
+		layout.addComponent(message);
+		layout.addComponent(send);
+
+		broadcastTarget.setItems(BY_SINGLE_LINE_CUSTOMER, BY_OFFERING, BY_TOUR, BY_ALL_LINE_CUSTOMERS);
+
+		layout.addComponent(send);
+		customerBox.setVisible(false);
+		offeringBox.setVisible(false);
+		tourBox.setVisible(false);
+
+		customerBox.setItems(Utils.iterableToCollection(//
+				cRepo.findAll()).stream().//
+				filter(c -> !c.getLineId().isEmpty()));//
+		// only want LINE id enabled customers
+
+		offeringBox.setItems(Utils.iterableToCollection(oRepo.findAll()));
+		tourBox.setItems(Utils.iterableToCollection(tRepo.findAll()));
+		
+		customerBox.setPopupWidth(null);
+		offeringBox.setPopupWidth(null);
+		tourBox.setPopupWidth(null);
+
+		broadcastTarget.addValueChangeListener(event -> {
+			switch (event.getValue()) {
+			case BY_SINGLE_LINE_CUSTOMER:
+				customerBox.setVisible(true);
+				offeringBox.setVisible(false);
+				tourBox.setVisible(false);
+				break;
+			case BY_OFFERING:
+				customerBox.setVisible(false);
+				offeringBox.setVisible(true);
+				tourBox.setVisible(false);
+				break;
+			case BY_TOUR:
+				customerBox.setVisible(false);
+				offeringBox.setVisible(false);
+				tourBox.setVisible(true);
+				break;
+			case BY_ALL_LINE_CUSTOMERS:
+				customerBox.setVisible(false);
+				offeringBox.setVisible(false);
+				tourBox.setVisible(false);
+				break;
+			}
 		});
 
-		VerticalLayout queryTab = new VerticalLayout();
-		queryTab.addComponent(new Label("put a grid here which shows unanswered queries"));
-		tabsheet.addTab(queryTab, "Reply to queries");
+		send.addClickListener(event -> {
+			if (message.getValue().isEmpty())
+				return;
+			boolean status = false;
+			switch (broadcastTarget.getValue()) {
+			case BY_SINGLE_LINE_CUSTOMER:
+				status = lineMessenger.sendToUser(customerBox.getValue().getLineId(), message.getValue());
+				break;
+			case BY_OFFERING:
+				status = lineMessenger.sendToOffering(offeringBox.getValue(), message.getValue());
+				break;
+			case BY_TOUR:
+				status = lineMessenger.sendToTour(tourBox.getValue(), message.getValue());
+				break;
+			case BY_ALL_LINE_CUSTOMERS:
+				status = lineMessenger.sendToAll(message.getValue());
+				break;
+			}
+			Notification.show("Message delivery " + (status ? "succeeded!" : "failed!"));
+
+		});
+		return layout;
+	}
+
+	private VerticalLayout getQueryTab() {
+		VerticalLayout layout = new VerticalLayout();
+		layout.addComponent(new Label("put a grid here which shows unanswered queries"));
+
+		return layout;
 	}
 
 	@Override
