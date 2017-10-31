@@ -41,17 +41,13 @@ public class LineMessenger {
 	private static int count;
 
 	/**
-	 * @return how many individuals have received your message since the last reset
+	 * @return how many individuals have received your message since the last reset.
+	 *         Will also reset per call
 	 */
-	public static int getCount() {
-		return count;
-	}
-
-	/**
-	 * Reset the number of customers who received a message
-	 */
-	public static void resetCount() {
-		LineMessenger.count = 0;
+	public static int getAndResetCount() {
+		int temp = count;
+		count = 0;
+		return temp;
 	}
 
 	/**
@@ -104,8 +100,12 @@ public class LineMessenger {
 			log.info("send message status: " + response.getStatusLine().getStatusCode() + " "
 					+ response.getStatusLine().getReasonPhrase() + "\n" + response.getEntity().toString());
 
-			return response.getStatusLine().getStatusCode() == 200;
-			// handle response here...
+			if (response.getStatusLine().getStatusCode() == 200) {
+				count++;
+				return true;
+			} else {
+				return false;
+			}
 		} catch (Exception ex) {
 			// handle exception here
 			log.info(ex.getMessage());

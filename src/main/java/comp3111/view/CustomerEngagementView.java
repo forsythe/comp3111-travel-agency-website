@@ -164,8 +164,8 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 				status = lineMessenger.sendToAll(message.getValue());
 				break;
 			}
-			Notification.show("Message delivery " + (status ? "succeeded!" : "failed!"),
-					lineMessenger.getClass() + " recipient(s).", Notification.TYPE_HUMANIZED_MESSAGE);
+			Notification.show("Message delivery to " + LineMessenger.getAndResetCount() + " recepient(s) "
+					+ (status ? " succeeded!" : " failed!"));
 
 		});
 		VerticalLayout container = new VerticalLayout();
@@ -205,7 +205,8 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		submit.addClickListener(event -> {
 			if (!replyBox.isEmpty()) {
 				boolean status = lineMessenger.sendToUser(selectedQuery.getCustomer().getLineId(), replyBox.getValue());
-				Notification.show("Message delivery " + (status ? "succeeded!" : "failed!"));
+				Notification.show("Message delivery to " + LineMessenger.getAndResetCount() + " recepient(s) "
+						+ (status ? " succeeded!" : " failed!"));
 
 				if (status) {
 					selectedQuery.setAnswer(replyBox.getValue());
