@@ -10,4 +10,7 @@ public class TestConstants {
 	public static final String CHROME_PATH = ((OS.indexOf("win") >= 0) ? CHROME_PATH_WINDOWS: CHROME_PATH_MAC);
 
 	public static final String HOME_URL = "http://localhost:8080";
+
+	static final String TEST_CUSTOMER_NAME = "Peter The Great Tester";
+	static final String TEST_TOUR_NAME = "One Day Trip to Mars";
 }

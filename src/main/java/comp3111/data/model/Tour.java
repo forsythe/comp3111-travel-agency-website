@@ -95,9 +95,7 @@ public class Tour {
 	}
 
 	public void setAllowedDaysOfWeek(Collection<Integer> allowedDaysOfWeek) {
-		if (allowedDaysOfWeek == null)
-			allowedDaysOfWeek = new HashSet<Integer>();
-		else
+		if (allowedDaysOfWeek != null)
 			this.allowedDaysOfWeek = allowedDaysOfWeek;
 	}
 
