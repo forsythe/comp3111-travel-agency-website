@@ -3,7 +3,6 @@ package comp3111.data;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 
 import org.slf4j.Logger;
@@ -21,6 +20,7 @@ import comp3111.data.model.TourGuide;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.LoginUserRepository;
+import comp3111.data.repo.NonFAQQueryRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.data.repo.TourRepository;
@@ -46,6 +46,8 @@ public class DBManager {
 	private OfferingRepository offeringRepo;
 	@Autowired
 	private TourGuideRepository tourGuideRepo;
+	@Autowired
+	private NonFAQQueryRepository nonFAQQueryRepo;
 
 	public Offering createOfferingForTour(Tour tour, TourGuide tg, Date startDate, String hotelName, int minCustomers,
 			int maxCustomers) throws OfferingDateUnsupportedException, OfferingDayOfWeekUnsupportedException,
@@ -187,6 +189,7 @@ public class DBManager {
 		this.offeringRepo.deleteAll();
 		this.tourRepo.deleteAll();
 		this.tourGuideRepo.deleteAll();
+		this.nonFAQQueryRepo.deleteAll();
 		this.customerRepo.deleteAll();
 
 		log.info("successfully cleared all repos");

@@ -1,6 +1,7 @@
 package unit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,7 @@ import comp3111.Application;
 import comp3111.LineMessenger;
 import comp3111.data.DBManager;
 import comp3111.data.model.Customer;
+import comp3111.data.model.NonFAQQuery;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.LoginUserRepository;
 import comp3111.data.repo.NonFAQQueryRepository;
@@ -29,8 +31,8 @@ public class LineInteractionTests {
 	private LoginUserRepository loginUserRepo;
 	@Autowired
 	private OfferingRepository offeringRepo;
-
-	private NonFAQQueryRepository nonFAQQuery;
+	@Autowired
+	private NonFAQQueryRepository nonFAQQueryRepo;
 	@Autowired
 	private DBManager actionManager;
 
