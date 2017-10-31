@@ -1,19 +1,16 @@
 package comp3111.view;
 
-import javax.annotation.PostConstruct;
-
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
+import comp3111.input.editors.OfferingEditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
-
-import comp3111.input.editors.OfferingEditor;
+import javax.annotation.PostConstruct;
 
 @SpringView(name = OfferingManagementView.VIEW_NAME)
 public class OfferingManagementView extends VerticalLayout implements View {

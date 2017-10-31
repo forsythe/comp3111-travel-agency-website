@@ -1,10 +1,13 @@
 package comp3111.data.model;
 
+import comp3111.Utils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import comp3111.Utils;
 
-import javax.persistence.*;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;

@@ -58,8 +58,8 @@ public class CustomerEditorTests extends TestBenchTestCase {
 		$(VerticalLayoutElement.class).$(ButtonElement.class).id("Customers").click();
 
 		WebDriverWait wait4 = new WebDriverWait(getDriver(), 10);
-		wait4.until(ExpectedConditions.presenceOfElementLocated(By.id("button_create_customer")));
-		$(ButtonElement.class).id("button_create_customer").click();
+		wait4.until(ExpectedConditions.presenceOfElementLocated(By.id("btn_create_customer")));
+		$(ButtonElement.class).id("btn_create_customer").click();
 
 		WebDriverWait wait5 = new WebDriverWait(getDriver(), 10);
 		wait5.until(ExpectedConditions.presenceOfElementLocated(By.id("tf_customer_name")));
@@ -81,7 +81,7 @@ public class CustomerEditorTests extends TestBenchTestCase {
 
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_age").setValue("23");
 
-		$(FormLayoutElement.class).$(ButtonElement.class).id("confirm_customer").click();
+		$(FormLayoutElement.class).$(ButtonElement.class).id("btn_confirm_customer").click();
 
 		assertThat (customerRepo.findByName("Peter The Great Tester").size() != 0);
 	}

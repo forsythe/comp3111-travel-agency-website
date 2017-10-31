@@ -1,14 +1,13 @@
 package comp3111.view;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.context.annotation.Scope;
-
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.context.annotation.Scope;
+
+import javax.annotation.PostConstruct;
 
 @SpringView(name = HomeView.VIEW_NAME)
 // @UIScope

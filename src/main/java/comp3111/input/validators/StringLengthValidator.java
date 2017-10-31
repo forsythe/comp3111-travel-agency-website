@@ -4,6 +4,8 @@ import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
 
+import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
+
 /* Validates if a string is within a certain length, number inclusive*/
 public class StringLengthValidator implements Validator<String> {
 	private int maxLength;
@@ -18,9 +20,9 @@ public class StringLengthValidator implements Validator<String> {
 			if(value.length() <= maxLength)
 				return ValidationResult.ok();
 		} catch (Exception e) {
-			return ValidationResult.error("Something went wrong");
+			return getValidationErrorLogged("Something went wrong");
 		}
-		return ValidationResult.error("The string must be <= " + maxLength + " characters");
+		return getValidationErrorLogged("The string must be <= " + maxLength + " characters");
 
 	}
 }

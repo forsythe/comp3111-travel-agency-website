@@ -4,6 +4,8 @@ import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
 
+import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
+
 public class HKIDValidator implements Validator<String> {
 
 	public HKIDValidator() {
@@ -30,10 +32,10 @@ public class HKIDValidator implements Validator<String> {
 			if (sum % 11 == 0) {
 				return ValidationResult.ok();
 			}else{
-				return ValidationResult.error("Wrong check digit");
+				return getValidationErrorLogged("Wrong check digit");
 			}
 		}
 
-		return ValidationResult.error("Wrong format");
+		return getValidationErrorLogged("Wrong format");
 	}
 }

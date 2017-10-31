@@ -1,5 +1,7 @@
 package comp3111.input.validators;
 
+import com.vaadin.ui.AbstractTextField;
+
 import java.util.Date;
 
 public class ValidatorFactory {
@@ -8,8 +10,13 @@ public class ValidatorFactory {
 		return new IntegerRangeValidator(minInclusive, maxExclusive);
 	}
 
-	public static IntegerLowerBoundValidator getIntegerLowerBoundValidator(int minInclusive) {
+	public static IntegerLowerBoundValidator getIntegerRangeValidator(int minInclusive) {
 		return new IntegerLowerBoundValidator(minInclusive);
+	}
+
+	public static IntegerLowerBoundedByAnotherFieldValidator getIntegerLowerBoundedByAnotherFieldValidator
+			(AbstractTextField field) {
+		return new IntegerLowerBoundedByAnotherFieldValidator(field);
 	}
 
 	public static DoubleRangeValidator getDoubleRangeValidator(double minInclusive, double maxInclusive) {

@@ -1,14 +1,5 @@
 package comp3111.input.editors;
 
-import java.time.Instant;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
@@ -16,25 +7,12 @@ import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.DateField;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Grid;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-
 import comp3111.Utils;
 import comp3111.data.DB;
 import comp3111.data.DBManager;
-
 import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
@@ -46,8 +24,15 @@ import comp3111.input.exceptions.OfferingDayOfWeekUnsupportedException;
 import comp3111.input.exceptions.TourGuideUnavailableException;
 import comp3111.input.validators.IntegerLowerBoundedByAnotherFieldValidator;
 import comp3111.input.validators.ValidatorFactory;
-import comp3111.view.OfferingManagementView;
 import comp3111.view.TourManagementView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.Instant;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
 
 @SpringComponent
 @UIScope
@@ -204,14 +189,14 @@ public class OfferingEditor extends VerticalLayout {
 				.bind(Offering::getHotelName, Offering::setHotelName);
 
 		binder.forField(minCustomer).asRequired(Utils.generateRequiredError())
-				.withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
 				.bind(Offering::getMinCustomers, Offering::setMinCustomers);
 
 		binder.forField(maxCustomer).asRequired(Utils.generateRequiredError())
-				.withValidator(new IntegerLowerBoundedByAnotherFieldValidator(minCustomer))
-				.withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
+				.withValidator(ValidatorFactory.getIntegerLowerBoundedByAnotherFieldValidator(minCustomer))
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
 				.bind(Offering::getMaxCustomers, Offering::setMaxCustomers);
 
 		// Do set bean to assign value to fields

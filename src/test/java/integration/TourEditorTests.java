@@ -59,8 +59,8 @@ public class TourEditorTests extends TestBenchTestCase {
 		$(VerticalLayoutElement.class).$(ButtonElement.class).id("Tour Management").click();
 
 		WebDriverWait wait4 = new WebDriverWait(getDriver(), 10);
-		wait4.until(ExpectedConditions.presenceOfElementLocated(By.id("button_create_tour")));
-		$(ButtonElement.class).id("button_create_tour").click();
+		wait4.until(ExpectedConditions.presenceOfElementLocated(By.id("btn_create_tour")));
+		$(ButtonElement.class).id("btn_create_tour").click();
 
 		WebDriverWait wait5 = new WebDriverWait(getDriver(), 10);
 		wait5.until(ExpectedConditions.presenceOfElementLocated(By.id("tf_tour_name")));
@@ -75,7 +75,7 @@ public class TourEditorTests extends TestBenchTestCase {
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_weekend_price").setValue("666");
 		$(FormLayoutElement.class).$(TextAreaElement.class).id("tf_description").setValue("Martians not welcomed!");
 
-		$(FormLayoutElement.class).$(ButtonElement.class).id("confirm_tour").click();
+		$(FormLayoutElement.class).$(ButtonElement.class).id("btn_confirm_tour").click();
 
 		assertThat (tourRepo.findByTourName("One Day Trip to Mars").size() != 0);
 	}

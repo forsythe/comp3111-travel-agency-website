@@ -4,9 +4,6 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.event.selection.SelectionEvent;
-import com.vaadin.event.selection.SelectionListener;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
@@ -14,16 +11,11 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.components.grid.HeaderCell;
-import com.vaadin.ui.components.grid.HeaderRow;
-
 import comp3111.Utils;
 import comp3111.data.DB;
-import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.input.validators.ValidatorFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -200,26 +192,6 @@ public class TourGuidesEditor extends VerticalLayout {
 
 	public interface ChangeHandler {
 		void onChange();
-	}
-
-	public TextField getTourGuideName() {
-		return tourGuideName;
-	}
-
-	public TextField getTourGuideLineId() {
-		return tourGuideLineUsername;
-	}
-
-	public Button getCreateTourGuideButton() {
-		return createTourGuideButton;
-	}
-
-	public Button getEditTourGuideButton() {
-		return editTourGuideButton;
-	}
-
-	public Button getViewGuidedToursButton() {
-		return viewGuidedToursButton;
 	}
 
 	public void refreshData() {
