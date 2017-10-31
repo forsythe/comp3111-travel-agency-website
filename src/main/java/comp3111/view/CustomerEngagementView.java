@@ -33,7 +33,8 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 	private static final String BY_ALL_LINE_CUSTOMERS = "All LINE Customers";
 	private static final String BY_TOUR = "Tour";
 	private static final String BY_OFFERING = "Offering";
-	private static final String BY_SINGLE_LINE_CUSTOMER = "Single LINE customer";
+	private static final String BY_SINGLE_LINE_CUSTOMER = "Single LINE Customer";
+
 	public static final String VIEW_NAME = "customerEngagement";
 	private static final Logger log = LoggerFactory.getLogger(CustomerEngagementView.class);
 
@@ -53,13 +54,21 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 
 		// A container that is 100% wide by default
 		VerticalLayout layout = new VerticalLayout();
+		layout.setHeightUndefined();
 
 		// label will only take the space it needs
 		layout.addComponent(titleLabel);
 
 		TabSheet tabsheet = new TabSheet();
-		tabsheet.addTab(getAdvertisingTab(), "Broadcast a message");
-		tabsheet.addTab(getQueryTab(), "Reply to queries");
+		VerticalLayout tab1 = getAdvertisingTab();
+		VerticalLayout tab2 = getQueryTab();
+
+		tabsheet.addTab(tab1, "Broadcast a message");
+		tabsheet.addTab(tab2, "Reply to queries");
+
+		tab1.setHeight("100%");
+		tab2.setHeight("100%");
+
 		layout.addComponent(tabsheet);
 		this.addComponent(layout);
 	}
@@ -96,7 +105,7 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 
 		offeringBox.setItems(Utils.iterableToCollection(oRepo.findAll()));
 		tourBox.setItems(Utils.iterableToCollection(tRepo.findAll()));
-		
+
 		customerBox.setPopupWidth(null);
 		offeringBox.setPopupWidth(null);
 		tourBox.setPopupWidth(null);
@@ -127,24 +136,31 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		});
 
 		send.addClickListener(event -> {
-			if (message.getValue().isEmpty())
+			if (message.isEmpty())
 				return;
 			boolean status = false;
 			switch (broadcastTarget.getValue()) {
 			case BY_SINGLE_LINE_CUSTOMER:
+				if (customerBox.isEmpty())
+					return;
 				status = lineMessenger.sendToUser(customerBox.getValue().getLineId(), message.getValue());
 				break;
 			case BY_OFFERING:
+				if (offeringBox.isEmpty())
+					return;
 				status = lineMessenger.sendToOffering(offeringBox.getValue(), message.getValue());
 				break;
 			case BY_TOUR:
+				if (tourBox.isEmpty())
+					return;
 				status = lineMessenger.sendToTour(tourBox.getValue(), message.getValue());
 				break;
 			case BY_ALL_LINE_CUSTOMERS:
 				status = lineMessenger.sendToAll(message.getValue());
 				break;
 			}
-			Notification.show("Message delivery " + (status ? "succeeded!" : "failed!"));
+			Notification.show("Message delivery " + (status ? "succeeded!" : "failed!"),
+					lineMessenger.getClass() + " recipient(s).", Notification.TYPE_HUMANIZED_MESSAGE);
 
 		});
 		return layout;
