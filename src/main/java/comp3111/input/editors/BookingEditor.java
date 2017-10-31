@@ -27,10 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
+import java.util.*;
 
 @SuppressWarnings("serial")
 @SpringComponent
@@ -150,7 +147,7 @@ public class BookingEditor extends VerticalLayout {
 		TextField numberToddlers = new TextField("Number of toddlers");
 		TextField amountPaid = new TextField("Amount Paid");
 		TextField specialRequest = new TextField("Special Request");
-		TextField paymentStatus = new TextField("Payment Status");
+		ComboBox<String> paymentStatus = new ComboBox<>("Payment Status");
 
 		customer.setId("cb_customer");
 		offering.setId("cb_offering");
@@ -159,10 +156,11 @@ public class BookingEditor extends VerticalLayout {
 		numberToddlers.setId("tf_number_of_toddlers");
 		amountPaid.setId("tf_amount_paid");
 		specialRequest.setId("tf_special_request");
-		paymentStatus.setId("tf_payment_status");
+		paymentStatus.setId("cb_payment_status");
 
 		customer.setPopupWidth(null); // so that the entire text row can be seen
 		offering.setPopupWidth(null);
+		paymentStatus.setPopupWidth(null);
 
 		if (bookingToSave.getId() == null) { // passed in an unsaved object
 			subwindow = new Window("Create new customer");
@@ -208,6 +206,10 @@ public class BookingEditor extends VerticalLayout {
 		}
 
 		offering.setItems(potentialOfferings);
+
+		Collection<String> potentialPaymentStatus = new ArrayList<>(Arrays.asList("pending", "paid", "cancelled"));
+		paymentStatus.setItems(potentialPaymentStatus);
+		paymentStatus.setSelectedItem("pending");
 
 		Binder<Booking> binder = new Binder<Booking>();
 

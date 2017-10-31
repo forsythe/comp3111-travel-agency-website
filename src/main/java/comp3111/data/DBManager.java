@@ -197,4 +197,14 @@ public class DBManager {
 		}
 		return ans;
 	}
+
+	public int countNumberOfPeopleInOffering(Offering offering) {
+		int num = 0;
+		for (Booking record : bookingRepo.findByOffering(offering)) {
+			if (record.getOffering().equals(offering)) {
+				num += record.getNumAdults() + record.getNumChildren() + record.getNumToddlers();
+			}
+		}
+		return num;
+	}
 }

@@ -97,6 +97,7 @@ public class OfferingEditor extends VerticalLayout {
 		offeringGrid.removeColumn(DB.OFFERING_TOUR); // we'll combine days of week and dates
 		offeringGrid.removeColumn(DB.OFFERING_TOUR_GUIDE);
 		offeringGrid.removeColumn(DB.OFFERING_DATE);
+		offeringGrid.removeColumn(DB.OFFERING_LAST_EDITABLE_DATE);
 
 		offeringGrid.setColumnOrder(DB.OFFERING_ID, DB.OFFERING_START_DATE, DB.OFFERING_TOUR_GUIDE_NAME,
 				DB.OFFERING_TOUR_GUIDE_LINE_ID, DB.OFFERING_TOUR_NAME, DB.OFFERING_MIN_CAPACITY,

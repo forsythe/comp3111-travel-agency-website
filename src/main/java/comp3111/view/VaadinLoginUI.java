@@ -60,6 +60,24 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 				// NO-OP
 			}
 		});
+
+		getUI().getNavigator().addViewChangeListener(new ViewChangeListener() {
+			@Override
+			public boolean beforeViewChange(ViewChangeEvent event) {
+				View newView = event.getNewView();
+				String newViewName = event.getViewName();
+				if (newViewName.equals(GuidedByManagmentView.VIEW_NAME)) {
+					// prevent a user from directly accessing
+					return ((GuidedByManagmentView) newView).userHasSelectedTourGuide();
+				}
+				return true;
+			}
+
+			@Override
+			public void afterViewChange(ViewChangeEvent event) {
+				// NO-OP
+			}
+		});
 	}
 
 	private Button createNavigationButton(String caption, final String viewName) {
