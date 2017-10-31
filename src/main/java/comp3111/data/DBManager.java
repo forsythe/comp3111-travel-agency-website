@@ -112,7 +112,7 @@ public class DBManager {
 					|| proposedStart.before(takenStart) && proposedEnd.after(takenEnd)
 					|| proposedStart.before(takenEnd) && proposedEnd.after(takenEnd) || proposedStart.equals(takenStart)
 					|| proposedEnd.equals(takenEnd)) {
-				log.info("Offering timerange [{}]-[[}] is occupied for tourguide [{}]", proposedStart, proposedEnd,
+				log.info("Offering timerange [{}]-[{}] is occupied for tourguide [{}]", proposedStart, proposedEnd,
 						tg.getName());
 
 				return false;

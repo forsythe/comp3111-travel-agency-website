@@ -27,6 +27,7 @@ repositories {
     maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
     maven { url "http://oss.sonatype.org/content/repositories/vaadin-snapshots/" }
     maven { url "http://vaadin.com/nexus/content/repositories/vaadin-addons/"}
+    maven { url "https://mvnrepository.com/artifact/org.json/json"}
 }
 
 sourceCompatibility = 1.8
@@ -48,6 +49,10 @@ dependencies {
 	dev("org.springframework.boot:spring-boot-devtools")
     compile 'org.springframework.security:spring-security-core:4.0.1.RELEASE'
     testCompile group: 'com.vaadin', name: 'vaadin-testbench', version: '4.2.0'
+    compile 'org.apache.httpcomponents:httpclient:4.4-alpha1'
+    compile group: 'org.json', name: 'json', version: '20090211'
+    
+    
  }
 
 

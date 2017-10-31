@@ -146,7 +146,7 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 		navigationBar.addComponent(createNavigationButton("Customers", CustomersManagementView.VIEW_NAME));
 		navigationBar.addComponent(createNavigationButton("Tour Guides", TourGuidesManagementView.VIEW_NAME));
 		navigationBar.addComponent(
-				createNavigationButton("Customer Engagement", CustomerEngagementManagementView.VIEW_NAME));
+				createNavigationButton("Customer Engagement", CustomerEngagementView.VIEW_NAME));
 		navigationBar.addComponent(createLogoutButton());
 
 		navigationBar.setSizeUndefined();
