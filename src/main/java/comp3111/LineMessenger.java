@@ -126,17 +126,18 @@ public class LineMessenger {
 	public boolean sendToOffering(Offering o, String text) {
 		log.info("\tBroadcasting to all users who booked for offering [{}]", o);
 		log.info("there are [{}] booked customers", bRepo.findByOffering(o).size());
+		boolean oneFailed = false;
 		for (Booking record : bRepo.findByOffering(o)) {
 			if (!record.getCustomer().getLineId().isEmpty()) {
 				if (!sendToUser(record.getCustomer().getLineId(), text))
-					return false;
+					oneFailed = true;
 			} else {
 				log.info("customer [{}] doesn't have a line id, so nothing was sent to them",
 						record.getCustomer().getName());
 			}
 		}
 		log.info("Succesfully sent to participants in this offering [{}]", o);
-		return true;
+		return !oneFailed;
 	}
 
 	/**
@@ -152,13 +153,13 @@ public class LineMessenger {
 		log.info("Broadcasting to all users who booked for offerings in the tour [{}]", t);
 
 		oRepo.findByTour(t);
-
+		boolean oneFailed = false;
 		for (Offering o : oRepo.findByTour(t)) {
 			if (!sendToOffering(o, text))
-				return false;
+				oneFailed = true;
 		}
 		log.info("Succesfully sent to participants in this tour [{}]", t.getTourName());
-		return true;
+		return !oneFailed;
 	}
 
 	/**
