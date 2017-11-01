@@ -58,10 +58,13 @@ public class LineMessenger {
 	 *            used internally by LINE's push API)
 	 * @param text
 	 *            the content to send them
+	 * @param keepTrackOfSent
+	 *            increment the static variable {@link LineMessenger#count}, which
+	 *            tracks how many people got the message
 	 * @return true or false, depending on whether the message was sent successfully
 	 *         (200 OK)
 	 */
-	public boolean sendToUser(String custLineId, String text) {
+	public boolean sendToUser(String custLineId, String text, boolean keepTrackOfSent) {
 		// for testing only. in reality, can assume lineId is unique, so use
 		// findOneByLineId instead
 		Collection<Customer> col = cRepo.findByLineId(custLineId);
@@ -113,7 +116,8 @@ public class LineMessenger {
 					+ response.getStatusLine().getReasonPhrase() + "\n" + response.getEntity().toString());
 
 			if (response.getStatusLine().getStatusCode() == 200) {
-				count++;
+				if (keepTrackOfSent)
+					count++;
 				return true;
 			} else {
 				return false;
@@ -141,7 +145,7 @@ public class LineMessenger {
 		boolean oneFailed = false;
 		for (Booking record : bRepo.findByOffering(o)) {
 			if (!record.getCustomer().getLineId().isEmpty()) {
-				if (!sendToUser(record.getCustomer().getLineId(), text))
+				if (!sendToUser(record.getCustomer().getLineId(), text, true))
 					oneFailed = true;
 			} else {
 				log.info("customer [{}] doesn't have a line id, so nothing was sent to them",
@@ -185,10 +189,27 @@ public class LineMessenger {
 
 		for (Customer c : cRepo.findAll()) {
 			if (!c.getLineId().isEmpty())
-				if (!this.sendToUser(c.getLineId(), text))
+				if (!this.sendToUser(c.getLineId(), text, true))
 					return false;
 		}
 		log.info("Successfully sent message to all known customers");
 		return true;
+	}
+
+	/**
+	 * @param custLineId
+	 *            the target recipient customer's line ID
+	 * @param query
+	 *            what they asked
+	 * @param answer
+	 *            what the employee answered via the web interface
+	 * @return true or false, depending on if successfully sent
+	 */
+	public boolean respondToQuery(String custLineId, String query, String answer) {
+		StringBuilder toSend = new StringBuilder();
+		toSend.append("[Q: " + query + "]");
+		toSend.append("\n");
+		toSend.append("[A: " + answer + "]");
+		return this.sendToUser(custLineId, toSend.toString(), false);
 	}
 }

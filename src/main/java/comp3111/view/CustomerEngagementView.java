@@ -148,7 +148,7 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 			case BY_SINGLE_LINE_CUSTOMER:
 				if (customerBox.isEmpty())
 					return;
-				status = lineMessenger.sendToUser(customerBox.getValue().getLineId(), message.getValue());
+				status = lineMessenger.sendToUser(customerBox.getValue().getLineId(), message.getValue(), true);
 				break;
 			case BY_OFFERING:
 				if (offeringBox.isEmpty())
@@ -207,7 +207,8 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 
 		submit.addClickListener(event -> {
 			if (!replyBox.isEmpty()) {
-				boolean status = lineMessenger.sendToUser(selectedQuery.getCustomer().getLineId(), replyBox.getValue());
+				boolean status = lineMessenger.respondToQuery(selectedQuery.getCustomer().getLineId(),
+						selectedQuery.getQuery(), replyBox.getValue());
 				Notification.show("Message delivery to " + LineMessenger.getAndResetCount() + " recepient(s) "
 						+ (status ? " succeeded!" : " failed!"));
 
