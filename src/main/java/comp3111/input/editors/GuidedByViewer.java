@@ -1,38 +1,27 @@
 package comp3111.input.editors;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.BinderValidationStatus;
-import com.vaadin.data.BindingValidationStatus;
-import com.vaadin.data.ValueProvider;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.spring.annotation.SpringComponent;
-import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.*;
-import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.Grid.SelectionMode;
-import comp3111.Utils;
-import comp3111.data.DB;
-import comp3111.data.DBManager;
-import comp3111.data.model.Offering;
-import comp3111.data.model.Tour;
-import comp3111.data.model.TourGuide;
-import comp3111.data.repo.OfferingRepository;
-import comp3111.input.converters.LocalDateToUtilDateConverter;
-import comp3111.input.exceptions.OfferingDateUnsupportedException;
-import comp3111.input.exceptions.OfferingDayOfWeekUnsupportedException;
-import comp3111.input.exceptions.TourGuideUnavailableException;
-import comp3111.input.validators.ValidatorFactory;
-import comp3111.view.TourGuidesManagementView;
-import comp3111.view.TourManagementView;
+import java.util.HashSet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.Instant;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.VerticalLayout;
+
+import comp3111.data.DB;
+import comp3111.data.DBManager;
+import comp3111.data.model.Offering;
+import comp3111.data.model.TourGuide;
+import comp3111.data.repo.OfferingRepository;
+import comp3111.view.TourGuideManagementView;
 
 @SpringComponent
 @UIScope
@@ -92,7 +81,7 @@ public class GuidedByViewer extends VerticalLayout {
 		this.addComponent(offeringGrid);
 
 		returnButton.addClickListener(event -> {
-			getUI().getNavigator().navigateTo(TourGuidesManagementView.VIEW_NAME);
+			getUI().getNavigator().navigateTo(TourGuideManagementView.VIEW_NAME);
 		});
 
 	}

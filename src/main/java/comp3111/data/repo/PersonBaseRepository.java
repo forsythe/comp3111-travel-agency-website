@@ -10,7 +10,9 @@ import java.util.Collection;
 public interface PersonBaseRepository<T extends Person> extends CrudRepository<T, Long> {
 
 	Collection<T> findByName(String name);
-	
+
+	T findOneByName(String name);
+
 	Collection<T> findById(Long id);
 
 }

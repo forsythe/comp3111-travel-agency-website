@@ -7,9 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = { "comp3111.data", "comp3111.input.auth", "comp3111.data.model", "comp3111.view",
-		"comp3111.data.repo", "comp3111.presenter", "comp3111.input.editors", "comp3111.input.exceptions", "comp3111.input.validators",
-		"comp3111.input.converters" })
 public class Application {
 
 	private static final Logger log = LoggerFactory.getLogger(Application.class);

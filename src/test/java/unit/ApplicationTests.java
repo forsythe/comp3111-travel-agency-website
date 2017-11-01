@@ -1,18 +1,16 @@
 package unit;
 
-import static org.assertj.core.api.BDDAssertions.then;
-
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 
+import static org.assertj.core.api.BDDAssertions.then;
+
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +27,7 @@ import comp3111.data.model.TourGuide;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.LoginUserRepository;
+import comp3111.data.repo.NonFAQQueryRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.data.repo.TourRepository;
@@ -54,6 +53,8 @@ public class ApplicationTests {
 	@Autowired
 	private TourGuideRepository tourGuideRepo;
 	@Autowired
+	private NonFAQQueryRepository nonFAQQuery;
+	@Autowired
 	private DBManager actionManager;
 
 	Customer c1, c2;
@@ -65,6 +66,13 @@ public class ApplicationTests {
 	static final String TG1_LINE_USERNAME = "line123";
 	static final String TG2_NAME = "Peppa";
 	static final String TG2_LINE_USERNAME = "line445";
+
+	// @Test
+	// public void testLol() {
+	// Customer heng = customerRepo.findOneByName("Heng");
+	// NonFAQQuery f = new NonFAQQuery("how is spaghet", heng);
+	// nonFAQQuery.save(f);
+	// }
 
 	@Before // called before each test
 	public void setUp() {

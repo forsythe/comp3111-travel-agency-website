@@ -29,7 +29,7 @@ public class Utils {
 	public static String generateRequiredError() {
 		return "cannot be empty";
 	}
-	
+
 	public static String generateNoTourGuideAvailableError() {
 		return "no tour guides are free for this date";
 	}
@@ -201,6 +201,14 @@ public class Utils {
 
 	public static Date addDate(LocalDate value, int days) {
 		return addDate(localDateToDate(value), days);
+	}
+
+	public static <T> Collection<T> iterableToCollection(Iterable<T> iterable) {
+		Collection<T> c = new ArrayList<T>();
+		for (T o : iterable) {
+			c.add(o);
+		}
+		return c;
 	}
 
 }

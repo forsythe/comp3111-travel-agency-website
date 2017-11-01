@@ -31,6 +31,7 @@ public class Customer extends Person {
 		this.phone = phone;
 		this.age = age;
 		this.hkid = hkid;
+		this.lineId = lineId;
 	}
 
 	public String getPhone() {

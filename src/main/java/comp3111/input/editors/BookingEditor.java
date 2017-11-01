@@ -65,10 +65,7 @@ public class BookingEditor extends VerticalLayout {
 		this.addComponent(rowOfButtons);
 
 		// get from DB
-		Iterable<Booking> bookingRecords = bookingRepo.findAll();
-		Collection<Booking> bookingRecordsCached = new HashSet<>();
-		bookingRecords.forEach(bookingRecordsCached::add);
-		bookingGrid.setItems(bookingRecordsCached);
+		bookingGrid.setItems(Utils.iterableToCollection(bookingRepo.findAll()));
 
 		bookingGrid.setWidth("100%");
 		bookingGrid.setSelectionMode(SelectionMode.SINGLE);
@@ -103,7 +100,7 @@ public class BookingEditor extends VerticalLayout {
 			col.setHidingToggleCaption(col.getCaption());
 			col.setExpandRatio(1);
 		}
-		
+
 		this.addComponent(bookingGrid);
 
 		createBookingButton.addClickListener(event -> {
