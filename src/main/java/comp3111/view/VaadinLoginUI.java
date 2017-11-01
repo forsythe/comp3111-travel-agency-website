@@ -11,9 +11,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.themes.ValoTheme;
-
 import comp3111.input.auth.Authentication;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Theme("valo")
@@ -53,6 +51,24 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 					// prevent a user from directly accessing offering management view without
 					// selecting a tour for the offerings
 					return ((OfferingManagementView) newView).userHasSelectedTour();
+				}
+				return true;
+			}
+
+			@Override
+			public void afterViewChange(ViewChangeEvent event) {
+				// NO-OP
+			}
+		});
+
+		getUI().getNavigator().addViewChangeListener(new ViewChangeListener() {
+			@Override
+			public boolean beforeViewChange(ViewChangeEvent event) {
+				View newView = event.getNewView();
+				String newViewName = event.getViewName();
+				if (newViewName.equals(GuidedByManagmentView.VIEW_NAME)) {
+					// prevent a user from directly accessing
+					return ((GuidedByManagmentView) newView).userHasSelectedTourGuide();
 				}
 				return true;
 			}

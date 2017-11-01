@@ -4,7 +4,9 @@ import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
 
-public class IntegerRangeValidator implements Validator<String> {
+import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
+
+public class IntegerRangeValidator implements Validator<Integer> {
 	private int min;
 	private int max;
 
@@ -14,15 +16,14 @@ public class IntegerRangeValidator implements Validator<String> {
 	}
 
 	@Override
-	public ValidationResult apply(String value, ValueContext context) {
+	public ValidationResult apply(Integer value, ValueContext context) {
 		try {
-			int val = Integer.parseInt(value.replace(",", ""));
-			if (val >= min && val < max)
+			if (value >= min && value < max)
 				return ValidationResult.ok();
 		} catch (NumberFormatException e) {
-			return ValidationResult.error("Must be an integer");
+			return getValidationErrorLogged("Must be an integer");
 		}
-		return ValidationResult.error("The integer must be [" + min + ", " + max + ")");
+		return getValidationErrorLogged("The integer must be [" + min + ", " + max + ")");
 
 	}
 }

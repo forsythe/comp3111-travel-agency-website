@@ -4,7 +4,9 @@ import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
 
-public class IntegerLowerBoundValidator implements Validator<String> {
+import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
+
+public class IntegerLowerBoundValidator implements Validator<Integer> {
 	private int min;
 
 	public IntegerLowerBoundValidator(int minInclusive) {
@@ -12,15 +14,14 @@ public class IntegerLowerBoundValidator implements Validator<String> {
 	}
 
 	@Override
-	public ValidationResult apply(String value, ValueContext context) {
+	public ValidationResult apply(Integer value, ValueContext context) {
 		try {
-			int val = Integer.parseInt(value.replace(",", ""));
-			if (val >= min)
+			if (value >= min)
 				return ValidationResult.ok();
 		} catch (NumberFormatException e) {
-			return ValidationResult.error("Must be an integer");
+			return getValidationErrorLogged("Must be an integer");
 		}
-		return ValidationResult.error("The integer must be >= " + min);
+		return getValidationErrorLogged("The integer must be >= " + min);
 
 	}
 }

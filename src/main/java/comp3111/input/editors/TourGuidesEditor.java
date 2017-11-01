@@ -4,9 +4,6 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.event.selection.SelectionEvent;
-import com.vaadin.event.selection.SelectionListener;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
@@ -14,16 +11,13 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.components.grid.HeaderCell;
-import com.vaadin.ui.components.grid.HeaderRow;
-
 import comp3111.Utils;
 import comp3111.data.DB;
-import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.input.validators.ValidatorFactory;
-
+import comp3111.view.GuidedByManagmentView;
+import comp3111.view.OfferingManagementView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +31,12 @@ import java.util.HashSet;
 public class TourGuidesEditor extends VerticalLayout {
 	private static final Logger log = LoggerFactory.getLogger(TourGuidesEditor.class);
 
+	@Autowired
+	GuidedByViewer guidedByViewer;
+
 	private Window subwindow;
 
-	// Editable fields
-	private TextField tourGuideName;
-	private TextField tourGuideLineUsername;
-
-	HorizontalLayout rowOfButtons = new HorizontalLayout();
+	private HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createTourGuideButton = new Button("Create new tour guide");
 	private Button editTourGuideButton = new Button("Edit tour guide");
 	private Button viewGuidedToursButton = new Button("View guided tours");
@@ -51,9 +44,9 @@ public class TourGuidesEditor extends VerticalLayout {
 	/* subwindow action buttons */
 	private Button subwindowConfirm;
 
-	Grid<TourGuide> tourGuideGrid = new Grid<TourGuide>(TourGuide.class);
+	private Grid<TourGuide> tourGuideGrid = new Grid<TourGuide>(TourGuide.class);
 
-	TourGuide selectedTourGuide;
+	private TourGuide selectedTourGuide;
 
 	private TourGuideRepository tourGuideRepo;
 	private final HashSet<TourGuide> tourGuideCollectionCached = new HashSet<TourGuide>();
@@ -105,32 +98,34 @@ public class TourGuidesEditor extends VerticalLayout {
 
 		this.addComponent(tourGuideGrid);
 
-		createTourGuideButton.addClickListener(new ClickListener() {
-			@Override
-			public void buttonClick(ClickEvent event) {
-				getUI().getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, new TourGuide()));
-			}
+		createTourGuideButton.addClickListener(event -> {
+			getUI().getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, new TourGuide()));
 
 		});
 
-		editTourGuideButton.addClickListener(new ClickListener() {
-			@Override
-			public void buttonClick(ClickEvent event) {
-				getUI().getCurrent()
-						.addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, selectedTourGuide));
-			}
+		editTourGuideButton.addClickListener(event -> {
+			getUI().getCurrent()
+					.addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, selectedTourGuide));
+
+		});
+
+		viewGuidedToursButton.addClickListener(event->{
+			guidedByViewer.setSelectedTourGuide(selectedTourGuide);
+			guidedByViewer.setTourGuidesEditor(this);
+			getUI().getNavigator().navigateTo(GuidedByManagmentView.VIEW_NAME);
+			refreshData();
 		});
 	}
 
 	private Window getSubwindow(TourGuideRepository tourGuideRepo, Collection<TourGuide> tourGuideCollectionCached,
-			TourGuide tourGuideToSave) {
+								TourGuide tourGuideToSave) {
 		// Creating the confirm button
 		subwindowConfirm = new Button("Confirm");
 		subwindowConfirm.setId("btn_confirm_tour_guide");
 
-		tourGuideName = new TextField("Name");
+		TextField tourGuideName = new TextField("Name");
 		tourGuideName.setId("tf_tour_guide_name");
-		tourGuideLineUsername = new TextField("LINE Username");
+		TextField tourGuideLineUsername = new TextField("LINE Username");
 		tourGuideLineUsername.setId("tf_tour_guide_line_id");
 
 		if (tourGuideToSave.getId() == null) { // passed in an unsaved object
@@ -169,8 +164,6 @@ public class TourGuidesEditor extends VerticalLayout {
 			BinderValidationStatus<TourGuide> validationStatus = binder.validate();
 
 			if (validationStatus.isOk()) {
-				// Customer must be created by Spring, otherwise it cannot be saved.
-				// I do not have access to an empty constructor here
 				binder.writeBeanIfValid(tourGuideToSave);
 
 				log.info("About to save tour guide [{}]", tourGuideName.getValue());
@@ -200,26 +193,6 @@ public class TourGuidesEditor extends VerticalLayout {
 
 	public interface ChangeHandler {
 		void onChange();
-	}
-
-	public TextField getTourGuideName() {
-		return tourGuideName;
-	}
-
-	public TextField getTourGuideLineId() {
-		return tourGuideLineUsername;
-	}
-
-	public Button getCreateTourGuideButton() {
-		return createTourGuideButton;
-	}
-
-	public Button getEditTourGuideButton() {
-		return editTourGuideButton;
-	}
-
-	public Button getViewGuidedToursButton() {
-		return viewGuidedToursButton;
 	}
 
 	public void refreshData() {

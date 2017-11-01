@@ -5,6 +5,8 @@ import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.elements.*;
 import com.vaadin.ui.TextArea;
 import comp3111.Application;
+import comp3111.data.model.Customer;
+import comp3111.data.model.Tour;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.TourRepository;
 
@@ -20,6 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
+import static integration.TestConstants.TEST_CUSTOMER_NAME;
+import static integration.TestConstants.TEST_TOUR_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -32,7 +40,6 @@ public class TourEditorTests extends TestBenchTestCase {
 	@BeforeClass
 	public static void init() {
 		System.setProperty(TestConstants.CHROME_DRIVER, TestConstants.CHROME_PATH);
-
 	}
 
 	@Before
@@ -42,6 +49,8 @@ public class TourEditorTests extends TestBenchTestCase {
 
 	@Test
 	public void testCreateTour() {
+		Collection<Tour> originalTours = tourRepo.findByTourName(TEST_TOUR_NAME);
+
 		getDriver().get(TestConstants.HOME_URL);
 
 		WebDriverWait wait1 = new WebDriverWait(getDriver(), 10);
@@ -59,8 +68,8 @@ public class TourEditorTests extends TestBenchTestCase {
 		$(VerticalLayoutElement.class).$(ButtonElement.class).id("Tour Management").click();
 
 		WebDriverWait wait4 = new WebDriverWait(getDriver(), 10);
-		wait4.until(ExpectedConditions.presenceOfElementLocated(By.id("button_create_tour")));
-		$(ButtonElement.class).id("button_create_tour").click();
+		wait4.until(ExpectedConditions.presenceOfElementLocated(By.id("btn_create_tour")));
+		$(ButtonElement.class).id("btn_create_tour").click();
 
 		WebDriverWait wait5 = new WebDriverWait(getDriver(), 10);
 		wait5.until(ExpectedConditions.presenceOfElementLocated(By.id("tf_tour_name")));
@@ -75,9 +84,27 @@ public class TourEditorTests extends TestBenchTestCase {
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_weekend_price").setValue("666");
 		$(FormLayoutElement.class).$(TextAreaElement.class).id("tf_description").setValue("Martians not welcomed!");
 
-		$(FormLayoutElement.class).$(ButtonElement.class).id("confirm_tour").click();
+		$(FormLayoutElement.class).$(ButtonElement.class).id("btn_confirm_tour").click();
 
-		assertThat (tourRepo.findByTourName("One Day Trip to Mars").size() != 0);
+		Collection<Tour> afterAddingTours = tourRepo.findByTourName(TEST_TOUR_NAME);
+
+		int count = 0;
+		for (Tour tour : afterAddingTours){
+			if (!originalTours.contains(tour)){
+				assertThat (tour.getTourName().equals(TEST_TOUR_NAME));
+				assertThat (tour.getDays() == 1);
+				assertThat (tour.getAllowedDaysOfWeek().equals(new ArrayList<>(Arrays.asList(2))));
+				assertThat (tour.getChildDiscount() == 1.0);
+				assertThat (tour.getToddlerDiscount() == 0.2);
+				assertThat (tour.getWeekdayPrice() == 555);
+				assertThat (tour.getWeekendPrice() == 666);
+				assertThat (tour.getDescription().equals("Martians not welcomed!"));
+
+				count++;
+			}
+		}
+
+		assertThat(count == 1);
 	}
 
 	@After

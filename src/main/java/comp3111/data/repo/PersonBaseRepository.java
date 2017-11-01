@@ -1,9 +1,8 @@
 package comp3111.data.repo;
 
+import comp3111.data.model.Person;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
-
-import comp3111.data.model.Person;
 
 import java.util.Collection;
 
