@@ -5,7 +5,9 @@ import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
 import com.vaadin.ui.AbstractTextField;
 
-public class IntegerLowerBoundedByAnotherFieldValidator implements Validator<String> {
+import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
+
+public class IntegerLowerBoundedByAnotherFieldValidator implements Validator<Integer> {
 	private AbstractTextField field;
 
 	public IntegerLowerBoundedByAnotherFieldValidator(AbstractTextField field) {
@@ -13,21 +15,20 @@ public class IntegerLowerBoundedByAnotherFieldValidator implements Validator<Str
 	}
 
 	@Override
-	public ValidationResult apply(String value, ValueContext context) {
+	public ValidationResult apply(Integer value, ValueContext context) {
 		try {
 			int boundedBy = Integer.parseInt(field.getValue().replaceAll(",", ""));
 			try {
-				int target = Integer.parseInt(value);
-				if (target >= boundedBy)
+				if (value >= boundedBy)
 					return ValidationResult.ok();
 			} catch (NumberFormatException e) {
-				return ValidationResult.error("Must be an integer");
+				return getValidationErrorLogged("Must be an integer");
 			}
 		} catch (NumberFormatException e) {
 			// The lower bound itself is not valid. None of my business here :)
 			return ValidationResult.ok();
 		}
-		return ValidationResult.error("The integer must be >= " + field.getCaption());
+		return getValidationErrorLogged("The integer must be >= " + field.getCaption());
 
 	}
 }

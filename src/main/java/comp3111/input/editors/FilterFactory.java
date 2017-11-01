@@ -2,11 +2,8 @@ package comp3111.input.editors;
 
 import comp3111.Utils;
 import comp3111.data.DB;
-import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.input.exceptions.ColumnNameNotFoundException;
-
-import java.util.Collection;
 
 /*
  * a class for getting filters, based on a vaadin grid column

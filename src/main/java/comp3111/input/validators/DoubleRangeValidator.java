@@ -4,7 +4,9 @@ import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
 
-public class DoubleRangeValidator implements Validator<String> {
+import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
+
+public class DoubleRangeValidator implements Validator<Double> {
 	private double min;
 	private double max;
 
@@ -14,15 +16,14 @@ public class DoubleRangeValidator implements Validator<String> {
 	}
 
 	@Override
-	public ValidationResult apply(String value, ValueContext context) {
+	public ValidationResult apply(Double value, ValueContext context) {
 		try {
-			double val = Double.parseDouble(value.replace(",", ""));
-			if (val >= min && val <= max)
+			if (value >= min && value <= max)
 				return ValidationResult.ok();
 		} catch (NumberFormatException e) {
-			return ValidationResult.error("Must be a number");
+			return getValidationErrorLogged("Must be a number");
 		}
-		return ValidationResult.error("The number must be [" + min + ", " + max + "]");
+		return getValidationErrorLogged("The number must be [" + min + ", " + max + "]");
 
 	}
 }

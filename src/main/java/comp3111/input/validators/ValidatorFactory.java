@@ -1,5 +1,10 @@
 package comp3111.input.validators;
 
+import com.vaadin.ui.AbstractTextField;
+import com.vaadin.ui.DateField;
+import comp3111.data.DBManager;
+import comp3111.data.model.Tour;
+
 import java.util.Date;
 
 public class ValidatorFactory {
@@ -8,8 +13,13 @@ public class ValidatorFactory {
 		return new IntegerRangeValidator(minInclusive, maxExclusive);
 	}
 
-	public static IntegerLowerBoundValidator getIntegerLowerBoundValidator(int minInclusive) {
+	public static IntegerLowerBoundValidator getIntegerRangeValidator(int minInclusive) {
 		return new IntegerLowerBoundValidator(minInclusive);
+	}
+
+	public static IntegerLowerBoundedByAnotherFieldValidator getIntegerLowerBoundedByAnotherFieldValidator
+			(AbstractTextField field) {
+		return new IntegerLowerBoundedByAnotherFieldValidator(field);
 	}
 
 	public static DoubleRangeValidator getDoubleRangeValidator(double minInclusive, double maxInclusive) {
@@ -42,5 +52,14 @@ public class ValidatorFactory {
 
 	public static OfferingStillOpenValidator getOfferingStillOpenValidator() {
 		return new OfferingStillOpenValidator();
+	}
+
+	public static DateAvailableInTourValidator getDateAvailableInTourValidator(Tour tour){
+		return new DateAvailableInTourValidator(tour);
+	}
+
+	public static TourGuideAvailableForDatesValidation getTourGuideAvailableForDatesValidation
+			(DateField startDateField, int duration, DBManager dbManager){
+		return new TourGuideAvailableForDatesValidation(startDateField, duration, dbManager);
 	}
 }
