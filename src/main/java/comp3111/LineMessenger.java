@@ -28,7 +28,7 @@ import comp3111.view.CustomerEngagementView;
 @Component
 public class LineMessenger {
 	private static final String HENG_BOT_AUTH_TOKEN_LINE = "Bearer H5M2+yupl+owBVJunHjV6z3NVMWJ51vRa2j8NcVgpQ0NwSoR2xGvMlGq+mD4NwZ8JHDOAUbM8ss+BKUPMQIXLYXazbSLZvH5qzqmOEi3Khvg/71Ye90O4DIGsnOJ0JJVSewSzBNMS3VYAQARZUE39QdB04t89/1O/w1cDnyilFU=";
-
+	private static final String KV_BOT_AUTH_TOKEN_LINE = "Bearer JFhHaVBxYB/U/b1uBaYk1rOERP2w6tHAoBAUOBfk6iu8xu4CDhi5vFX7DCdu4+vEG4mE+fmjZQ8a1xUM+WhYZJ2FD9CC9bIoidXujGC6MQHi9OGWMAAqo/1fZyQr9ix54kzwh+uy5QZJG3arVVu0TgdB04t89/1O/w1cDnyilFU=";
 	private static final Logger log = LoggerFactory.getLogger(CustomerEngagementView.class);
 
 	@Autowired
@@ -113,7 +113,7 @@ public class LineMessenger {
 			StringEntity params = new StringEntity(body.toString());
 
 			postRequest.addHeader("Content-Type", "application/json");
-			postRequest.addHeader("Authorization", HENG_BOT_AUTH_TOKEN_LINE);
+			postRequest.addHeader("Authorization", KV_BOT_AUTH_TOKEN_LINE);
 			postRequest.setEntity(params);
 
 			HttpResponse response = client.execute(postRequest);
