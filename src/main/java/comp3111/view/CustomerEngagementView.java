@@ -145,7 +145,10 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 			if (message.isEmpty())
 				return;
 			boolean status = false;
+			LineMessenger.resetCounter();
+
 			switch (broadcastTarget.getValue()) {
+
 			case BY_SINGLE_LINE_CUSTOMER:
 				if (customerBox.isEmpty())
 					return;
@@ -167,7 +170,7 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 			}
 
 			NotificationFactory.getTopBarNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
-					LineMessenger.getAndResetCount() + " recepient(s)", 5).show(Page.getCurrent());
+					LineMessenger.getCounter() + " recepient(s)", 5).show(Page.getCurrent());
 
 		});
 		VerticalLayout container = new VerticalLayout();
@@ -175,6 +178,9 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		return container;
 	}
 
+	/**
+	 * @return
+	 */
 	private VerticalLayout getQueryTab() {
 		VerticalLayout layout = new VerticalLayout();
 
@@ -189,7 +195,8 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		submit.setEnabled(false);
 
 		grid.setDataProvider(new ListDataProvider<NonFAQQuery>(Utils.iterableToCollection(qRepo.findAll())));
-		grid.setColumnOrder(GridCol.NONFAQQUERY_ID, GridCol.NONFAQQUERY_CUSTOMER, GridCol.NONFAQQUERY_QUERY, GridCol.NONFAQQUERY_ANSWER);
+		grid.setColumnOrder(GridCol.NONFAQQUERY_ID, GridCol.NONFAQQUERY_CUSTOMER, GridCol.NONFAQQUERY_QUERY,
+				GridCol.NONFAQQUERY_ANSWER);
 		grid.setHeight("90%");
 		log.info("there are [{}] unresolved queries",
 				Utils.iterableToCollection(qRepo.findAll()).stream().filter(q -> q.getAnswer().isEmpty()).count());
@@ -209,11 +216,11 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 
 		submit.addClickListener(event -> {
 			if (!replyBox.isEmpty()) {
+				LineMessenger.resetCounter();
 				boolean status = lineMessenger.respondToQuery(selectedQuery.getCustomer().getLineId(),
 						selectedQuery.getQuery(), replyBox.getValue());
-
 				NotificationFactory.getTopBarNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
-						LineMessenger.getAndResetCount() + " recepient(s)", 5).show(Page.getCurrent());
+						LineMessenger.getCounter() + " recepient(s)", 5).show(Page.getCurrent());
 
 				if (status) {
 					selectedQuery.setAnswer(replyBox.getValue());

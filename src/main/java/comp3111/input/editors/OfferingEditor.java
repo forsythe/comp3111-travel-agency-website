@@ -27,9 +27,10 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
+import comp3111.LineMessenger;
 import comp3111.Utils;
-import comp3111.data.GridCol;
 import comp3111.data.DBManager;
+import comp3111.data.GridCol;
 import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
@@ -67,6 +68,7 @@ public class OfferingEditor extends VerticalLayout {
 	private HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createNewOfferingButton = new Button("Create New Offering");
 	private Button editOfferingButton = new Button("Edit Offering");
+	private Button cancelOfferingButton = new Button("Manually Cancel Offering");
 	private Button returnButton = new Button("Return");
 
 	@Autowired
@@ -76,13 +78,16 @@ public class OfferingEditor extends VerticalLayout {
 
 		rowOfButtons.addComponent(createNewOfferingButton);
 		rowOfButtons.addComponent(editOfferingButton);
+		rowOfButtons.addComponent(cancelOfferingButton);
 		rowOfButtons.addComponent(returnButton);
 
 		createNewOfferingButton.setId("btn_create_new_offering");
 		editOfferingButton.setId("btn_edit_offering");
+		cancelOfferingButton.setId("btn_cancel_offering");
 		returnButton.setId("btn_return_offering");
 
 		editOfferingButton.setEnabled(false);
+		cancelOfferingButton.setEnabled(false);
 
 		this.addComponent(rowOfButtons);
 
@@ -96,10 +101,13 @@ public class OfferingEditor extends VerticalLayout {
 				selectedOffering = event.getFirstSelectedItem().get();
 				createNewOfferingButton.setEnabled(false);
 				editOfferingButton.setEnabled(true);
+				if (selectedOffering.getStatus().equals(Offering.STATUS_PENDING))
+					cancelOfferingButton.setEnabled(true);
 			} else {
 				selectedOffering = null;
 				createNewOfferingButton.setEnabled(true);
 				editOfferingButton.setEnabled(false);
+				cancelOfferingButton.setEnabled(false);
 			}
 		});
 
@@ -137,6 +145,47 @@ public class OfferingEditor extends VerticalLayout {
 
 		returnButton.addClickListener(event -> {
 			getUI().getNavigator().navigateTo(TourManagementView.VIEW_NAME);
+		});
+
+		cancelOfferingButton.addClickListener(event -> {
+			final Window confirmWindow = new Window("Are you sure?");
+			confirmWindow.center();
+			confirmWindow.setClosable(false);
+			confirmWindow.setModal(true);
+			confirmWindow.setResizable(false);
+			confirmWindow.setDraggable(false);
+			confirmWindow.setWidth("500px");
+
+			VerticalLayout vLayout = new VerticalLayout();
+			confirmWindow.setContent(vLayout);
+			Label msg = new Label("All associated customer bookings will be cancelled, "
+					+ "and the customers will be notified via LINE.");
+			msg.setWidth("100%");
+			vLayout.addComponent(msg);
+
+			HorizontalLayout buttonRow = new HorizontalLayout();
+			Button confirm = new Button("Yes");
+			Button cancel = new Button("Cancel");
+
+			buttonRow.addComponent(confirm);
+			buttonRow.addComponent(cancel);
+			vLayout.addComponent(buttonRow);
+
+			confirm.addClickListener(e -> {
+				LineMessenger.resetCounter();
+				dbManager.cancelOffering(selectedOffering);
+				this.refreshData();
+				NotificationFactory
+						.getTopBarSuccessNotification("Notified " + LineMessenger.getCounter() + " customer(s)")
+						.show(Page.getCurrent());
+				confirmWindow.close();
+			});
+
+			cancel.addClickListener(e -> {
+				confirmWindow.close();
+			});
+
+			UI.getCurrent().addWindow(confirmWindow);
 		});
 
 	}

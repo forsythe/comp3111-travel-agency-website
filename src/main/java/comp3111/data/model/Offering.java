@@ -132,7 +132,7 @@ public class Offering {
 
 	@Override
 	public String toString() {
-		return String.format("Offering[id=%d, %s, %s]", id, Utils.simpleDateFormat(startDate), this.tour.getTourName());
+		return String.format("Offering[id=%d, %s, tour=%s]", id, Utils.simpleDateFormat(startDate), this.tour.getTourName());
 	}
 
 	@Override
