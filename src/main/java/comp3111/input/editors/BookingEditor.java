@@ -166,29 +166,30 @@ public class BookingEditor extends VerticalLayout {
 			subwindow = new Window("Edit a customer");
 		}
 
-		FormLayout subContent = new FormLayout();
+		FormLayout form = new FormLayout();
+		VerticalLayout formContainer = new VerticalLayout();
 
 		subwindow.setWidth("800px");
-		subwindow.setContent(subContent);
+		subwindow.setContent(formContainer);
 		subwindow.center();
 		subwindow.setClosable(false);
 		subwindow.setModal(true);
 		subwindow.setResizable(false);
 		subwindow.setDraggable(false);
 
-		subContent.addComponent(customer);
-		subContent.addComponent(offering);
-		subContent.addComponent(numberAdults);
-		subContent.addComponent(numberChildren);
-		subContent.addComponent(numberToddlers);
-		subContent.addComponent(amountPaid);
-		subContent.addComponent(specialRequest);
-		subContent.addComponent(paymentStatus);
+		form.addComponent(customer);
+		form.addComponent(offering);
+		form.addComponent(numberAdults);
+		form.addComponent(numberChildren);
+		form.addComponent(numberToddlers);
+		form.addComponent(amountPaid);
+		form.addComponent(specialRequest);
+		form.addComponent(paymentStatus);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
 		buttonActions.addComponent(confirmButton);
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
-		subContent.addComponent(buttonActions);
+		form.addComponent(buttonActions);
 
 		Collection<Customer> potentialCustomers = new ArrayList<Customer>();
 

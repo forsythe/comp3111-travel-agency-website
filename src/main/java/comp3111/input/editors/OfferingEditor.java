@@ -162,31 +162,33 @@ public class OfferingEditor extends VerticalLayout {
 
 		tourGuide.setItems(Utils.iterableToCollection(tourGuideRepo.findAll()));
 
-		FormLayout subContent = new FormLayout();
+		FormLayout form = new FormLayout();
+		VerticalLayout formContainer = new VerticalLayout();
+		formContainer.addComponent(form);
 
 		subWindow.setWidth("800px");
+		subWindow.setContent(formContainer);
 
-		subWindow.setContent(subContent);
 		subWindow.center();
 		subWindow.setClosable(false);
 		subWindow.setModal(true);
 		subWindow.setResizable(false);
 		subWindow.setDraggable(false);
 
-		subContent.addComponent(tourName);
-		subContent.addComponent(availablityHint);
+		form.addComponent(tourName);
+		form.addComponent(availablityHint);
 
-		subContent.addComponent(startDate);
-		subContent.addComponent(tourGuide);
-		subContent.addComponent(hotelName);
-		subContent.addComponent(minCustomer);
-		subContent.addComponent(maxCustomer);
-		subContent.addComponent(statusHint);
+		form.addComponent(startDate);
+		form.addComponent(tourGuide);
+		form.addComponent(hotelName);
+		form.addComponent(minCustomer);
+		form.addComponent(maxCustomer);
+		form.addComponent(statusHint);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
 		buttonActions.addComponent(confirm);
 		buttonActions.addComponent(new Button("Cancel", event -> subWindow.close()));
-		subContent.addComponent(buttonActions);
+		form.addComponent(buttonActions);
 
 		// Binding method according to docs
 		Binder<Offering> binder = new Binder<>(Offering.class);

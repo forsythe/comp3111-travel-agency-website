@@ -287,9 +287,12 @@ public class TourEditor extends VerticalLayout {
 		}
 
 		FormLayout subContent = new FormLayout();
-		subwindow.setWidth("800px");
+		VerticalLayout formContainer = new VerticalLayout();
+		formContainer.addComponent(subContent);
 
-		subwindow.setContent(subContent);
+		subwindow.setWidth("800px");
+		subwindow.setContent(formContainer);
+
 		subwindow.center();
 		subwindow.setClosable(false);
 		subwindow.setModal(true);
@@ -347,8 +350,7 @@ public class TourEditor extends VerticalLayout {
 
 		binder.forField(days).asRequired(Utils.generateRequiredError())
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
-				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
-				.bind(Tour::getDays, Tour::setDays);
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(0)).bind(Tour::getDays, Tour::setDays);
 
 		binder.forField(allowedDates).withValidator(ValidatorFactory.getListOfDatesValidator())
 				.withConverter(new StringToDateCollectionConverter())

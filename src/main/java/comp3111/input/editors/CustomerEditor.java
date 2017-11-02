@@ -136,27 +136,31 @@ public class CustomerEditor extends VerticalLayout {
 			subwindow = new Window("Edit a customer");
 		}
 
-		FormLayout subContent = new FormLayout();
+		FormLayout form = new FormLayout();
 
 		subwindow.setWidth("800px");
 
-		subwindow.setContent(subContent);
+		VerticalLayout formContainer = new VerticalLayout();
+
+		formContainer.addComponent(formContainer);
+		subwindow.setContent(form);
+
 		subwindow.center();
 		subwindow.setClosable(false);
 		subwindow.setModal(true);
 		subwindow.setResizable(false);
 		subwindow.setDraggable(false);
 
-		subContent.addComponent(customerName);
-		subContent.addComponent(customerLineId);
-		subContent.addComponent(customerHKID);
-		subContent.addComponent(customerPhone);
-		subContent.addComponent(customerAge);
+		form.addComponent(customerName);
+		form.addComponent(customerLineId);
+		form.addComponent(customerHKID);
+		form.addComponent(customerPhone);
+		form.addComponent(customerAge);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
 		buttonActions.addComponent(subwindowConfirm);
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
-		subContent.addComponent(buttonActions);
+		form.addComponent(buttonActions);
 
 		Binder<Customer> binder = new Binder<>();
 
@@ -174,11 +178,9 @@ public class CustomerEditor extends VerticalLayout {
 				.withValidator(ValidatorFactory.getPhoneNumberValidator()).asRequired(Utils.generateRequiredError())
 				.bind(Customer::getPhone, Customer::setPhone);
 
-		binder.forField(customerAge)
-				.asRequired(Utils.generateRequiredError())
+		binder.forField(customerAge).asRequired(Utils.generateRequiredError())
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
-				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
-				.bind(Customer::getAge, Customer::setAge);
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(0)).bind(Customer::getAge, Customer::setAge);
 
 		binder.setBean(customerToSave);
 

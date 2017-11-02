@@ -148,6 +148,13 @@ public class DBManager {
 				booking.getSpecialRequests(), booking.getPaymentStatus());
 	}
 
+	/**
+	 * @param tg
+	 *            A tour guide
+	 * @return A collection of offerings (of ALL statuses; pending, confirmed,
+	 *         cancelled) led by this tour guide in the past and assigned in the
+	 *         future
+	 */
 	public Collection<Offering> findPastAndUpcomingGuidedOfferingsByTourGuide(TourGuide tg) {
 		Collection<Offering> guidedOfferingsByTourGuide = new HashSet<Offering>();
 		log.info("Finding offerings for tour guide [{}]", tg.getName());

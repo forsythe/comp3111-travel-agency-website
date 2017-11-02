@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import comp3111.data.DBManager;
 import comp3111.data.model.Booking;
 import comp3111.data.model.Customer;
 import comp3111.data.model.Offering;
@@ -25,7 +26,7 @@ public class ScheduledTasks {
 	@Autowired
 	private BookingRepository bookingRepo;
 	@Autowired
-	private CustomerRepository customerRepo;
+	private DBManager actionManager;
 	@Autowired
 	private LineMessenger lineMessenger;
 
@@ -39,15 +40,15 @@ public class ScheduledTasks {
 		for (Offering o : offeringRepo.findByStatus(Offering.STATUS_PENDING)) {
 
 			log.info("Offering [{}] still has time left, not updating its status yet...");
+
 			if (o.getStatus().equals(Offering.STATUS_PENDING) && now.after(Utils.addDate(o.getStartDate(), -3))) {
 				log.info("Offering [{}] has reached t=-3 days before start!");
-				int totalCustomers = 0;
-				for (Booking b : bookingRepo.findByOffering(o)) {
-					totalCustomers += b.getNumAdults() + b.getNumChildren() + b.getNumToddlers();
-				}
+				int totalCustomers = actionManager.countNumberOfPaidPeopleInOffering(o);
+
 				if (totalCustomers >= o.getMinCustomers()) {
-					log.info("Success! Offering [{}] can be offered, having [{}] of [{}] minimum customers", o,
-							totalCustomers, o.getMinCustomers());
+					log.info(
+							"Success! Offering [{}] can be offered, having [{}] of [{}] minimum confirmed payment customers",
+							o, totalCustomers, o.getMinCustomers());
 					o.setStatus(Offering.STATUS_CONFIRMED);
 					o = offeringRepo.save(o);
 					offeringConfirmed = true;
