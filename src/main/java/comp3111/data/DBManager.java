@@ -1,15 +1,17 @@
 package comp3111.data;
 
-import java.util.Calendar;
+
 import java.util.Collection;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.vaadin.data.ValidationResult;
+import com.vaadin.data.ValueContext;
 
 import comp3111.Utils;
 import comp3111.data.model.Booking;
@@ -21,14 +23,17 @@ import comp3111.data.model.TourGuide;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.LoginUserRepository;
+import comp3111.data.repo.NonFAQQueryRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.data.repo.TourRepository;
 import comp3111.input.exceptions.OfferingDateUnsupportedException;
-import comp3111.input.exceptions.OfferingDayOfWeekUnsupportedException;
 import comp3111.input.exceptions.OfferingOutOfRoomException;
 import comp3111.input.exceptions.TourGuideUnavailableException;
 import comp3111.input.exceptions.UsernameTakenException;
+import comp3111.input.validators.DateAvailableInTourValidator;
+import comp3111.input.validators.ValidatorFactory;
+
 
 @Component
 public class DBManager {
@@ -46,39 +51,19 @@ public class DBManager {
 	private OfferingRepository offeringRepo;
 	@Autowired
 	private TourGuideRepository tourGuideRepo;
+	@Autowired
+	private NonFAQQueryRepository nonFAQQueryRepo;
 
 	public Offering createOfferingForTour(Tour tour, TourGuide tg, Date startDate, String hotelName, int minCustomers,
-			int maxCustomers) throws OfferingDateUnsupportedException, OfferingDayOfWeekUnsupportedException,
-			TourGuideUnavailableException {
+			int maxCustomers) throws OfferingDateUnsupportedException, TourGuideUnavailableException {
 
+		//Make sure both the tour and the tour guide are concrete entity in the database
 		tourRepo.save(tour);
 		tourGuideRepo.save(tg);
 
-		// check that the day of week is correct
-		Collection<Integer> supportedDaysOfWeek = tour.getAllowedDaysOfWeek();
-		if (!supportedDaysOfWeek.isEmpty()) {
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(startDate);
-			int startDateDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-			// Sunday: 1, Monday: 2, Tuesday: 3...
-			log.info("For offering for tour[{}], proposed startDate = [{}]", tour.getTourName(),
-					Utils.dayToString(startDateDayOfWeek));
-			if (!supportedDaysOfWeek.contains(startDateDayOfWeek)) {
-				log.error("Error! only the following days are supported");
-				for (Integer i : supportedDaysOfWeek) {
-					log.error("\t[{}]", Utils.dayToString(i));
-				}
-
-				throw new OfferingDayOfWeekUnsupportedException();
-			}
-		}
-		Collection<Date> supportedDates = tour.getAllowedDates();
-		log.info("For offering for tour[{}], proposed startDate is [{}]", tour.getTourName(), startDate);
-		if (!supportedDates.isEmpty() && !supportedDates.contains(startDate)) {
-			log.error("Error! only the following dates are supported");
-			for (Date d : supportedDates) {
-				log.error("\t[{}]", d);
-			}
+		DateAvailableInTourValidator dateValidator = ValidatorFactory.getDateAvailableInTourValidator(tour);
+		ValidationResult result = dateValidator.apply(startDate, new ValueContext());
+		if (result.isError()){
 			throw new OfferingDateUnsupportedException();
 		}
 
@@ -112,7 +97,7 @@ public class DBManager {
 					|| proposedStart.before(takenStart) && proposedEnd.after(takenEnd)
 					|| proposedStart.before(takenEnd) && proposedEnd.after(takenEnd) || proposedStart.equals(takenStart)
 					|| proposedEnd.equals(takenEnd)) {
-				log.info("Offering timerange [{}]-[[}] is occupied for tourguide [{}]", proposedStart, proposedEnd,
+				log.info("Offering timerange [{}]-[{}] is occupied for tourguide [{}]", proposedStart, proposedEnd,
 						tg.getName());
 
 				return false;
@@ -123,7 +108,7 @@ public class DBManager {
 	}
 
 	public void createOfferingForTour(Offering offering) throws OfferingDateUnsupportedException,
-			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
+			TourGuideUnavailableException {
 		createOfferingForTour(offering.getTour(), offering.getTourGuide(), offering.getStartDate(),
 				offering.getHotelName(), offering.getMinCustomers(), offering.getMaxCustomers());
 	}
@@ -187,6 +172,7 @@ public class DBManager {
 		this.offeringRepo.deleteAll();
 		this.tourRepo.deleteAll();
 		this.tourGuideRepo.deleteAll();
+		this.nonFAQQueryRepo.deleteAll();
 		this.customerRepo.deleteAll();
 
 		log.info("successfully cleared all repos");
@@ -228,5 +214,16 @@ public class DBManager {
 			}
 		}
 		return ans;
+	}
+
+	public int countNumberOfPaidPeopleInOffering(Offering offering) {
+		int num = 0;
+		for (Booking record : bookingRepo.findByOffering(offering)) {
+			if (record.getOffering().equals(offering)
+					&& record.getPaymentStatus().equals(Booking.PAYMENT_CONFIRMED)) {
+				num += record.getNumAdults() + record.getNumChildren() + record.getNumToddlers();
+			}
+		}
+		return num;
 	}
 }

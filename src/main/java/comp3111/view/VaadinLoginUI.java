@@ -11,9 +11,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.themes.ValoTheme;
-
 import comp3111.input.auth.Authentication;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Theme("valo")
@@ -62,6 +60,24 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 				// NO-OP
 			}
 		});
+
+		getUI().getNavigator().addViewChangeListener(new ViewChangeListener() {
+			@Override
+			public boolean beforeViewChange(ViewChangeEvent event) {
+				View newView = event.getNewView();
+				String newViewName = event.getViewName();
+				if (newViewName.equals(GuidedByManagmentView.VIEW_NAME)) {
+					// prevent a user from directly accessing
+					return ((GuidedByManagmentView) newView).userHasSelectedTourGuide();
+				}
+				return true;
+			}
+
+			@Override
+			public void afterViewChange(ViewChangeEvent event) {
+				// NO-OP
+			}
+		});
 	}
 
 	private Button createNavigationButton(String caption, final String viewName) {
@@ -76,16 +92,11 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 		Button button = new Button("Logout");
 		button.addStyleName(ValoTheme.BUTTON_LINK);
 
-		button.addClickListener(new ClickListener() {
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				navigationBar.setVisible(false);
-				springViewDisplay.setVisible(false);
-				getUI().getNavigator().navigateTo(HomeView.VIEW_NAME);
-				drawLoginForm();
-			}
-
+		button.addClickListener(event -> {
+			navigationBar.setVisible(false);
+			springViewDisplay.setVisible(false);
+			getUI().getNavigator().navigateTo(HomeView.VIEW_NAME);
+			drawLoginForm();
 		});
 		return button;
 	}
@@ -143,10 +154,9 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 		navigationBar.addComponent(createNavigationButton("Home View", HomeView.VIEW_NAME));
 		navigationBar.addComponent(createNavigationButton("Tour Management", TourManagementView.VIEW_NAME));
 		navigationBar.addComponent(createNavigationButton("Bookings", BookingsManagementView.VIEW_NAME));
-		navigationBar.addComponent(createNavigationButton("Customers", CustomersManagementView.VIEW_NAME));
-		navigationBar.addComponent(createNavigationButton("Tour Guides", TourGuidesManagementView.VIEW_NAME));
-		navigationBar.addComponent(
-				createNavigationButton("Customer Engagement", CustomerEngagementManagementView.VIEW_NAME));
+		navigationBar.addComponent(createNavigationButton("Customers", CustomerManagementView.VIEW_NAME));
+		navigationBar.addComponent(createNavigationButton("Tour Guides", TourGuideManagementView.VIEW_NAME));
+		navigationBar.addComponent(createNavigationButton("Customer Engagement", CustomerEngagementView.VIEW_NAME));
 		navigationBar.addComponent(createLogoutButton());
 
 		navigationBar.setSizeUndefined();

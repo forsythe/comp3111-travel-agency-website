@@ -4,6 +4,8 @@ import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
 
+import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
+
 public class PhoneNumberValidator implements Validator<String> {
 
 	public PhoneNumberValidator() {
@@ -21,13 +23,13 @@ public class PhoneNumberValidator implements Validator<String> {
 						Integer.parseInt(s);
 					}
 				}else{
-					return ValidationResult.error("Wrong Format");
+					return getValidationErrorLogged("Wrong Format");
 				}
 			}else{
 				Integer.parseInt(value);
 			}
 		}catch (NumberFormatException e){
-			return ValidationResult.error("Must be a number");
+			return getValidationErrorLogged("Must be a number");
 		}
 
 		return ValidationResult.ok();

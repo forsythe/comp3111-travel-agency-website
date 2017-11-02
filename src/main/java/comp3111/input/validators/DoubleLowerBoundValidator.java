@@ -4,7 +4,7 @@ import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
 
-public class DoubleLowerBoundValidator implements Validator<String> {
+public class DoubleLowerBoundValidator implements Validator<Double> {
 	private double min;
 
 	public DoubleLowerBoundValidator(double minInclusive) {
@@ -12,15 +12,13 @@ public class DoubleLowerBoundValidator implements Validator<String> {
 	}
 
 	@Override
-	public ValidationResult apply(String value, ValueContext context) {
+	public ValidationResult apply(Double value, ValueContext context) {
 		try {
-			double val = Double.parseDouble(value);
-			if (val >= min)
+			if (value >= min)
 				return ValidationResult.ok();
 		} catch (NumberFormatException e) {
 			return ValidationResult.error("Must be a number");
 		}
 		return ValidationResult.error("The number must be >= " + min);
-
 	}
 }

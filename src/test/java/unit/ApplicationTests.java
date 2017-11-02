@@ -1,18 +1,16 @@
 package unit;
 
-import static org.assertj.core.api.BDDAssertions.then;
-
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 
+import static org.assertj.core.api.BDDAssertions.then;
+
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +27,7 @@ import comp3111.data.model.TourGuide;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.LoginUserRepository;
+import comp3111.data.repo.NonFAQQueryRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.data.repo.TourRepository;
@@ -54,6 +53,8 @@ public class ApplicationTests {
 	@Autowired
 	private TourGuideRepository tourGuideRepo;
 	@Autowired
+	private NonFAQQueryRepository nonFAQQuery;
+	@Autowired
 	private DBManager actionManager;
 
 	Customer c1, c2;
@@ -65,6 +66,13 @@ public class ApplicationTests {
 	static final String TG1_LINE_USERNAME = "line123";
 	static final String TG2_NAME = "Peppa";
 	static final String TG2_LINE_USERNAME = "line445";
+
+	// @Test
+	// public void testLol() {
+	// Customer heng = customerRepo.findOneByName("Heng");
+	// NonFAQQuery f = new NonFAQQuery("how is spaghet", heng);
+	// nonFAQQuery.save(f);
+	// }
 
 	@Before // called before each test
 	public void setUp() {
@@ -102,7 +110,7 @@ public class ApplicationTests {
 
 	@Test
 	public void testSuccessCreateOfferingAndBookingForUnsavedEntities() throws OfferingOutOfRoomException,
-			OfferingDateUnsupportedException, OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
+			OfferingDateUnsupportedException, TourGuideUnavailableException {
 		TourGuide anonTg = new TourGuide("lucy", "LINEID123");
 		Customer anonCust = new Customer("morgan freeman", 35);
 		Tour anonTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
@@ -124,7 +132,7 @@ public class ApplicationTests {
 
 	@Test
 	public void testSuccessCreateOfferingAndBookingForSavedEntities() throws OfferingOutOfRoomException,
-			OfferingDateUnsupportedException, OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
+			OfferingDateUnsupportedException, TourGuideUnavailableException {
 
 		Tour tour1 = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
 		tour1.setAllowedDates(
@@ -145,7 +153,7 @@ public class ApplicationTests {
 
 	@Test
 	public void testSuccessTwoCustomersMakeBookingForATour() throws OfferingDateUnsupportedException,
-			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
+			TourGuideUnavailableException, OfferingOutOfRoomException {
 		Tour tour1 = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
 		tour1.setAllowedDates(
 				new HashSet<Date>(Arrays.asList(new GregorianCalendar(2017, Calendar.DECEMBER, 9).getTime(),
@@ -169,7 +177,7 @@ public class ApplicationTests {
 
 	@Test
 	public void testSuccessCreateTwoOfferingsWithDifferentTourGuidesForATour() throws OfferingDateUnsupportedException,
-			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
+			TourGuideUnavailableException, OfferingOutOfRoomException {
 
 		Tour tour1 = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
 		tour1.setAllowedDates(
@@ -198,7 +206,7 @@ public class ApplicationTests {
 
 	@Test(expected = TourGuideUnavailableException.class)
 	public void testFailureCreateTwoOfferingsWithSameTourGuide() throws OfferingDateUnsupportedException,
-			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
+			TourGuideUnavailableException, OfferingOutOfRoomException {
 
 		Tour tour1 = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
 		tour1.setAllowedDates(
@@ -217,7 +225,7 @@ public class ApplicationTests {
 
 	@Test(expected = OfferingDateUnsupportedException.class)
 	public void testFailureTryToMakeOfferingForUnsupportedDate() throws OfferingDateUnsupportedException,
-			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
+			TourGuideUnavailableException {
 
 		Tour yangshanTour = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
 		yangshanTour.setAllowedDates(
@@ -230,9 +238,9 @@ public class ApplicationTests {
 				new GregorianCalendar(2020, Calendar.DECEMBER, 12).getTime(), "hotel bob", 5, 18);
 	}
 
-	@Test(expected = OfferingDayOfWeekUnsupportedException.class)
+	@Test(expected = OfferingDateUnsupportedException.class)
 	public void testFailureTryToMakeOfferingForUnsupportedDayOfWeek() throws OfferingOutOfRoomException,
-			OfferingDateUnsupportedException, OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException {
+			OfferingDateUnsupportedException, TourGuideUnavailableException {
 
 		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
 		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.TUESDAY, Calendar.SUNDAY)));
@@ -244,7 +252,7 @@ public class ApplicationTests {
 
 	@Test(expected = OfferingOutOfRoomException.class)
 	public void testFailureOfferingOutOfRoomWhenBooking() throws OfferingDateUnsupportedException,
-			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
+			TourGuideUnavailableException, OfferingOutOfRoomException {
 
 		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
 		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.MONDAY, Calendar.SUNDAY)));

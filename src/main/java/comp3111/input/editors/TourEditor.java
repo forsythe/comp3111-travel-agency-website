@@ -1,13 +1,5 @@
 package comp3111.input.editors;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
@@ -16,43 +8,32 @@ import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.data.converter.StringToDoubleConverter;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.event.selection.SelectionEvent;
-import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.CheckBoxGroup;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.RadioButtonGroup;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
-
 import comp3111.Utils;
 import comp3111.data.DB;
 import comp3111.data.DBManager;
-import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.data.repo.TourRepository;
-import comp3111.view.HomeView;
-import comp3111.view.OfferingManagementView;
-import comp3111.view.TourManagementView;
 import comp3111.input.converters.StringCollectionToIntegerCollectionConverter;
 import comp3111.input.converters.StringToDateCollectionConverter;
 import comp3111.input.validators.ValidatorFactory;
+import comp3111.view.OfferingManagementView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * A simple example to introduce building forms. As your real application is
@@ -139,16 +120,10 @@ public class TourEditor extends VerticalLayout {
 		tourGrid.setWidth("100%");
 		tourGrid.setSelectionMode(SelectionMode.SINGLE);
 
-		tourGrid.addSelectionListener(new SelectionListener<Tour>() {
-			@Override
-			public void selectionChange(SelectionEvent event) {
-				Collection<Tour> selectedItems = tourGrid.getSelectionModel().getSelectedItems();
-				selectedTour = null;
-				for (Tour rt : selectedItems) { // easy way to get first element of set
-					selectedTour = rt;
-					break;
-				}
-				if (selectedTour != null) {
+		tourGrid.addSelectionListener(event -> {
+			{
+				if (event.getFirstSelectedItem().isPresent()) {
+					selectedTour = event.getFirstSelectedItem().get();
 					editTourButton.setEnabled(true);
 					manageOfferingButton.setEnabled(true);
 					createTourButton.setEnabled(false);
@@ -370,9 +345,10 @@ public class TourEditor extends VerticalLayout {
 		binder.forField(tourName).withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.asRequired(Utils.generateRequiredError()).bind(Tour::getTourName, Tour::setTourName);
 
-		binder.forField(days).withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
-				.asRequired(Utils.generateRequiredError())
-				.withConverter(new StringToIntegerConverter("Must be an integer")).bind(Tour::getDays, Tour::setDays);
+		binder.forField(days).asRequired(Utils.generateRequiredError())
+				.withConverter(new StringToIntegerConverter("Must be an integer"))
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
+				.bind(Tour::getDays, Tour::setDays);
 
 		binder.forField(allowedDates).withValidator(ValidatorFactory.getListOfDatesValidator())
 				.withConverter(new StringToDateCollectionConverter())
@@ -381,24 +357,24 @@ public class TourEditor extends VerticalLayout {
 		binder.forField(allowedDaysOfWeek).withConverter(new StringCollectionToIntegerCollectionConverter())
 				.bind(Tour::getAllowedDaysOfWeek, Tour::setAllowedDaysOfWeek);
 
-		binder.forField(childDiscount).withValidator(ValidatorFactory.getDoubleRangeValidator(0, 1))
-				.asRequired(Utils.generateRequiredError())
+		binder.forField(childDiscount).asRequired(Utils.generateRequiredError())
 				.withConverter(new StringToDoubleConverter("Must be a double"))
+				.withValidator(ValidatorFactory.getDoubleRangeValidator(0, 1))
 				.bind(Tour::getChildDiscount, Tour::setChildDiscount);
 
-		binder.forField(toddlerDiscount).withValidator(ValidatorFactory.getDoubleRangeValidator(0, 1))
-				.asRequired(Utils.generateRequiredError())
+		binder.forField(toddlerDiscount).asRequired(Utils.generateRequiredError())
 				.withConverter(new StringToDoubleConverter("Must be a double"))
+				.withValidator(ValidatorFactory.getDoubleRangeValidator(0, 1))
 				.bind(Tour::getToddlerDiscount, Tour::setToddlerDiscount);
 
-		binder.forField(weekdayPrice).withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
-				.asRequired(Utils.generateRequiredError())
+		binder.forField(weekdayPrice).asRequired(Utils.generateRequiredError())
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
 				.bind(Tour::getWeekdayPrice, Tour::setWeekdayPrice);
 
-		binder.forField(weekendPrice).withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
-				.asRequired(Utils.generateRequiredError())
+		binder.forField(weekendPrice).asRequired(Utils.generateRequiredError())
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
 				.bind(Tour::getWeekendPrice, Tour::setWeekendPrice);
 
 		binder.forField(descrip).withValidator(ValidatorFactory.getStringLengthValidator(255))

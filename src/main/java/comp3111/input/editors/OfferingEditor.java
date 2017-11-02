@@ -1,14 +1,5 @@
 package comp3111.input.editors;
 
-import java.time.Instant;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
@@ -16,25 +7,12 @@ import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.DateField;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Grid;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-
 import comp3111.Utils;
 import comp3111.data.DB;
 import comp3111.data.DBManager;
-
 import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
@@ -44,10 +22,16 @@ import comp3111.input.converters.LocalDateToUtilDateConverter;
 import comp3111.input.exceptions.OfferingDateUnsupportedException;
 import comp3111.input.exceptions.OfferingDayOfWeekUnsupportedException;
 import comp3111.input.exceptions.TourGuideUnavailableException;
-import comp3111.input.validators.IntegerLowerBoundedByAnotherFieldValidator;
 import comp3111.input.validators.ValidatorFactory;
-import comp3111.view.OfferingManagementView;
 import comp3111.view.TourManagementView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.Instant;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
 
 @SpringComponent
 @UIScope
@@ -60,10 +44,10 @@ public class OfferingEditor extends VerticalLayout {
 	@Autowired
 	private TourGuideRepository tourGuideRepo;
 
-	TourEditor tourEditor;
+	private TourEditor tourEditor;
 
 	@Autowired
-	private DBManager actionManager;
+	private DBManager dbManager;
 
 	private Tour selectedTour;
 	private final Grid<Offering> offeringGrid = new Grid<Offering>(Offering.class);
@@ -72,7 +56,7 @@ public class OfferingEditor extends VerticalLayout {
 	private Long selectedOfferingId;
 
 	/* Action buttons */
-	HorizontalLayout rowOfButtons = new HorizontalLayout();
+	private HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createNewOfferingButton = new Button("Create New Offering");
 	private Button editOfferingButton = new Button("Edit Offering");
 	private Button returnButton = new Button("Return");
@@ -85,10 +69,12 @@ public class OfferingEditor extends VerticalLayout {
 		rowOfButtons.addComponent(createNewOfferingButton);
 		rowOfButtons.addComponent(editOfferingButton);
 		rowOfButtons.addComponent(returnButton);
-		
+
 		createNewOfferingButton.setId("btn_create_new_offering");
 		editOfferingButton.setId("btn_edit_offering");
 		returnButton.setId("btn_return_offering");
+
+		editOfferingButton.setEnabled(false);
 
 		this.addComponent(rowOfButtons);
 
@@ -100,12 +86,12 @@ public class OfferingEditor extends VerticalLayout {
 		offeringGrid.addSelectionListener(event -> {
 			if (event.getFirstSelectedItem().isPresent()) {
 				selectedOffering = event.getFirstSelectedItem().get();
-				editOfferingButton.setEnabled(true);
 				createNewOfferingButton.setEnabled(false);
+				editOfferingButton.setEnabled(true);
 			} else {
 				selectedOffering = null;
-				editOfferingButton.setEnabled(false);
 				createNewOfferingButton.setEnabled(true);
+				editOfferingButton.setEnabled(false);
 			}
 		});
 
@@ -131,7 +117,7 @@ public class OfferingEditor extends VerticalLayout {
 			getUI().getCurrent().addWindow(getSubWindow(selectedTour, new Offering(), tourEditor));
 			selectedOfferingId = null;
 		});
-		
+
 		editOfferingButton.addClickListener(event -> {
 			getUI().getCurrent().addWindow(getSubWindow(selectedTour, selectedOffering, tourEditor));
 			selectedOfferingId = selectedOffering.getId();
@@ -164,10 +150,8 @@ public class OfferingEditor extends VerticalLayout {
 		Window subWindow = new Window("Create new offering");
 
 		tourGuide.setPopupWidth(null);
-		Iterable<TourGuide> tourGuideList = tourGuideRepo.findAll();
-		Collection<TourGuide> tourGuideCollection = new HashSet<TourGuide>();
-		tourGuideList.forEach(tourGuideCollection::add);
-		tourGuide.setItems(tourGuideCollection);
+
+		tourGuide.setItems(Utils.iterableToCollection(tourGuideRepo.findAll()));
 
 		FormLayout subContent = new FormLayout();
 
@@ -197,12 +181,15 @@ public class OfferingEditor extends VerticalLayout {
 		// Binding method according to docs
 		Binder<Offering> binder = new Binder<>(Offering.class);
 
-		binder.forField(tourGuide).asRequired(Utils.generateRequiredError()).bind(Offering::getTourGuide,
-				Offering::setTourGuide);
+		binder.forField(tourGuide).asRequired(Utils.generateRequiredError())
+				.withValidator(ValidatorFactory.getTourGuideAvailableForDatesValidation(
+						startDate, hostTour.getDays(), dbManager))
+				.bind(Offering::getTourGuide, Offering::setTourGuide);
 
 		binder.forField(startDate).asRequired(Utils.generateRequiredError())
 				.withConverter(new LocalDateToUtilDateConverter())
 				.withValidator(ValidatorFactory.getDateNotEarlierThanValidator(Date.from(Instant.now())))
+				.withValidator(ValidatorFactory.getDateAvailableInTourValidator(hostTour))
 				.bind(Offering::getStartDate, Offering::setStartDate);
 
 		binder.forField(hotelName).asRequired(Utils.generateRequiredError())
@@ -210,14 +197,14 @@ public class OfferingEditor extends VerticalLayout {
 				.bind(Offering::getHotelName, Offering::setHotelName);
 
 		binder.forField(minCustomer).asRequired(Utils.generateRequiredError())
-				.withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
 				.bind(Offering::getMinCustomers, Offering::setMinCustomers);
 
 		binder.forField(maxCustomer).asRequired(Utils.generateRequiredError())
-				.withValidator(new IntegerLowerBoundedByAnotherFieldValidator(minCustomer))
-				.withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
+				.withValidator(ValidatorFactory.getIntegerLowerBoundedByAnotherFieldValidator(minCustomer))
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
 				.bind(Offering::getMaxCustomers, Offering::setMaxCustomers);
 
 		// Do set bean to assign value to fields
@@ -242,7 +229,7 @@ public class OfferingEditor extends VerticalLayout {
 				log.info("About to save tour [{}]", tourName.getValue());
 
 				try {
-					actionManager.createOfferingForTour(offeringToSave);
+					dbManager.createOfferingForTour(offeringToSave);
 
 					tourEditor.refreshData();
 					this.refreshData();
@@ -250,8 +237,9 @@ public class OfferingEditor extends VerticalLayout {
 					log.info("created/edited offering [{}] successfully", tourName.getValue());
 					binder.removeBean();
 					return; // This return skip the error reporting procedure below
-				} catch (OfferingDayOfWeekUnsupportedException | OfferingDateUnsupportedException e) {
-					errorStringBuilder.append("This tour may only be offered on " + hostTour.getOfferingAvailability());
+				} catch (OfferingDateUnsupportedException e) {
+					errorStringBuilder.append("This tour may only be offered on ");
+					errorStringBuilder.append(hostTour.getOfferingAvailability());
 
 				} catch (TourGuideUnavailableException e) {
 					errorStringBuilder.append("The tour guide is occupied.");
@@ -292,7 +280,7 @@ public class OfferingEditor extends VerticalLayout {
 	public void setSelectedTour(Tour selectedTour) {
 		this.selectedTour = selectedTour;
 	}
-	
+
 	public Tour getSelectedTour() {
 		return this.selectedTour;
 	}

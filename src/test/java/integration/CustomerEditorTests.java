@@ -4,6 +4,7 @@ import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.elements.*;
 import comp3111.Application;
+import comp3111.data.DBManager;
 import comp3111.data.model.Customer;
 import comp3111.data.repo.CustomerRepository;
 
@@ -19,6 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Collection;
+
+import static integration.TestConstants.TEST_CUSTOMER_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -27,6 +31,9 @@ public class CustomerEditorTests extends TestBenchTestCase {
 
 	@Autowired
 	private CustomerRepository customerRepo;
+
+	@Autowired
+	private DBManager dbManager;
 
 	@BeforeClass
 	public static void init() {
@@ -41,6 +48,8 @@ public class CustomerEditorTests extends TestBenchTestCase {
 
 	@Test
 	public void testCreateCustomer() {
+		Collection<Customer> originalCustomers = customerRepo.findByName(TEST_CUSTOMER_NAME);
+
 		getDriver().get(TestConstants.HOME_URL);
 
 		WebDriverWait wait1 = new WebDriverWait(getDriver(), 10);
@@ -58,13 +67,13 @@ public class CustomerEditorTests extends TestBenchTestCase {
 		$(VerticalLayoutElement.class).$(ButtonElement.class).id("Customers").click();
 
 		WebDriverWait wait4 = new WebDriverWait(getDriver(), 10);
-		wait4.until(ExpectedConditions.presenceOfElementLocated(By.id("button_create_customer")));
-		$(ButtonElement.class).id("button_create_customer").click();
+		wait4.until(ExpectedConditions.presenceOfElementLocated(By.id("btn_create_customer")));
+		$(ButtonElement.class).id("btn_create_customer").click();
 
 		WebDriverWait wait5 = new WebDriverWait(getDriver(), 10);
 		wait5.until(ExpectedConditions.presenceOfElementLocated(By.id("tf_customer_name")));
 
-		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_name").setValue("Peter The Great Tester");
+		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_name").setValue(TEST_CUSTOMER_NAME);
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_line_id").setValue("123452334");
 
 		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_hkid")
@@ -81,9 +90,24 @@ public class CustomerEditorTests extends TestBenchTestCase {
 
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_age").setValue("23");
 
-		$(FormLayoutElement.class).$(ButtonElement.class).id("confirm_customer").click();
+		$(FormLayoutElement.class).$(ButtonElement.class).id("btn_confirm_customer").click();
 
-		assertThat (customerRepo.findByName("Peter The Great Tester").size() != 0);
+		Collection<Customer> afterAddingCustomers = customerRepo.findByName(TEST_CUSTOMER_NAME);
+
+		int count = 0;
+		for (Customer customer : afterAddingCustomers){
+			if (!originalCustomers.contains(customer)){
+				assertThat (customer.getName().equals(TEST_CUSTOMER_NAME));
+				assertThat (customer.getHkid().equals("G123456(A)"));
+				assertThat (customer.getPhone().equals("(852)1234567"));
+				assertThat (customer.getAge() == 23);
+
+				count++;
+				//customerRepo.delete(customer.getId());
+			}
+		}
+
+		assertThat(count == 1);
 	}
 
 	@After

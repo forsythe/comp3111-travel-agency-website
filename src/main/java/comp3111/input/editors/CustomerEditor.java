@@ -11,18 +11,13 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.components.grid.HeaderCell;
-import com.vaadin.ui.components.grid.HeaderRow;
-
 import comp3111.Utils;
 import comp3111.data.DB;
 import comp3111.data.model.Customer;
-import comp3111.data.model.TourGuide;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.input.field.HKIDEntryField;
 import comp3111.input.field.PhoneNumberEntryField;
 import comp3111.input.validators.ValidatorFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,15 +90,15 @@ public class CustomerEditor extends VerticalLayout {
 		customersGrid.setColumnOrder(DB.CUSTOMER_ID, DB.CUSTOMER_NAME, DB.CUSTOMER_LINE_ID, DB.CUSTOMER_HKID,
 				DB.CUSTOMER_PHONE, DB.CUSTOMER_AGE);
 
-//		HeaderRow filterRow = customersGrid.appendHeaderRow();
-		
+		// HeaderRow filterRow = customersGrid.appendHeaderRow();
+
 		for (Column<Customer, ?> col : customersGrid.getColumns()) {
 			col.setMinimumWidth(120);
 			col.setHidable(true);
 			col.setHidingToggleCaption(col.getCaption());
 			col.setExpandRatio(1);
 		}
-		
+
 		this.addComponent(customersGrid);
 
 		createNewCustomerButton.addClickListener(event -> {
@@ -179,9 +174,10 @@ public class CustomerEditor extends VerticalLayout {
 				.withValidator(ValidatorFactory.getPhoneNumberValidator()).asRequired(Utils.generateRequiredError())
 				.bind(Customer::getPhone, Customer::setPhone);
 
-		binder.forField(customerAge).withValidator(ValidatorFactory.getIntegerLowerBoundValidator(0))
+		binder.forField(customerAge)
 				.asRequired(Utils.generateRequiredError())
 				.withConverter(new StringToIntegerConverter("Must be an integer"))
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
 				.bind(Customer::getAge, Customer::setAge);
 
 		binder.setBean(customerToSave);
@@ -224,15 +220,10 @@ public class CustomerEditor extends VerticalLayout {
 	}
 
 	public void refreshData() {
-		Iterable<Customer> customers = customerRepo.findAll();
-		// it's possible the customerRepo can return null!
-		if (null == customers) {
-			customers = new HashSet<>();
-		}
-		Collection<Customer> customerCollectionCached = new HashSet<Customer>();
-		customerCollectionCached.clear();
-		customers.forEach(customerCollectionCached::add);
-		ListDataProvider<Customer> provider = new ListDataProvider<Customer>(customerCollectionCached);
+
+		ListDataProvider<Customer> provider = new ListDataProvider<Customer>(
+				Utils.iterableToCollection(customerRepo.findAll()));
 		customersGrid.setDataProvider(provider);
+
 	}
 }
