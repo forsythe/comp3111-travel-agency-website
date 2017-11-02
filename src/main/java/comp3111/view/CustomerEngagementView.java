@@ -200,6 +200,7 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		submit.setEnabled(false);
 
 		grid.setDataProvider(new ListDataProvider<NonFAQQuery>(Utils.iterableToCollection(qRepo.findAll())));
+		grid.removeColumn(DB.NONFAQQUERY_CUSTOMER_NAME);
 		grid.setColumnOrder(DB.NONFAQQUERY_ID, DB.NONFAQQUERY_CUSTOMER, DB.NONFAQQUERY_QUERY, DB.NONFAQQUERY_ANSWER);
 		grid.setHeight("90%");
 		log.info("there are [{}] unresolved queries",

@@ -144,9 +144,9 @@ public class FilterFactory {
 			return new ProviderAndPredicate<NonFAQQuery, String>(NonFAQQuery::getQuery,
 					t -> Utils.containsIgnoreCase(t, searchVal));
 		//TODO finish this part of the factory
-//		if (colId.equals(DB.NONFAQQUERY_CUSTOMER))
-//			return new ProviderAndPredicate<NonFAQQuery, String>(NonFAQQuery::getCustomer,
-//					t -> Utils.containsIgnoreCase(t, searchVal));
+		if (colId.equals(DB.NONFAQQUERY_CUSTOMER))
+			return new ProviderAndPredicate<NonFAQQuery, String>(NonFAQQuery::getCustomerName,
+					t -> Utils.containsIgnoreCase(t, searchVal));
 		
 		throw new ColumnNameNotFoundException("[" + colId + "] isn't a valid column id for [NonFAQQuery]");
 	}
