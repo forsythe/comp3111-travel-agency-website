@@ -1,32 +1,38 @@
 package comp3111.input.editors;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.BinderValidationStatus;
-import com.vaadin.data.BindingValidationStatus;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.server.Page;
-import com.vaadin.spring.annotation.SpringComponent;
-import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.*;
-import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.Grid.SelectionMode;
-import comp3111.Utils;
-import comp3111.data.DB;
-import comp3111.data.model.Customer;
-import comp3111.data.repo.CustomerRepository;
-import comp3111.input.field.HKIDEntryField;
-import comp3111.input.field.PhoneNumberEntryField;
-import comp3111.input.validators.ValidatorFactory;
-import comp3111.view.NotificationFactory;
+import java.util.Collection;
+import java.util.HashSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
-import java.util.HashSet;
+import com.vaadin.data.Binder;
+import com.vaadin.data.BinderValidationStatus;
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.Page;
+import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.SpringUI;
+import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+
+import comp3111.Utils;
+import comp3111.data.DB;
+import comp3111.data.model.Customer;
+import comp3111.data.repo.CustomerRepository;
+import comp3111.input.converters.ConverterFactory;
+import comp3111.input.field.HKIDEntryField;
+import comp3111.input.field.PhoneNumberEntryField;
+import comp3111.input.validators.ValidatorFactory;
+import comp3111.view.NotificationFactory;
 
 @SuppressWarnings("serial")
 @SpringComponent
@@ -181,7 +187,7 @@ public class CustomerEditor extends VerticalLayout {
 				.bind(Customer::getPhone, Customer::setPhone);
 
 		binder.forField(customerAge).asRequired(Utils.generateRequiredError())
-				.withConverter(new StringToIntegerConverter("Must be an integer"))
+				.withConverter(ConverterFactory.getStringToIntegerConverter())
 				.withValidator(ValidatorFactory.getIntegerRangeValidator(0)).bind(Customer::getAge, Customer::setAge);
 
 		binder.setBean(customerToSave);

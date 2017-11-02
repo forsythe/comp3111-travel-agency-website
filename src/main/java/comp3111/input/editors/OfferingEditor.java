@@ -2,7 +2,6 @@ package comp3111.input.editors;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.HashSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,13 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
-import com.vaadin.data.BindingValidationStatus;
-import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateField;
@@ -26,8 +22,6 @@ import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -40,6 +34,7 @@ import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.TourGuideRepository;
+import comp3111.input.converters.ConverterFactory;
 import comp3111.input.converters.LocalDateToUtilDateConverter;
 import comp3111.input.exceptions.OfferingDateUnsupportedException;
 import comp3111.input.exceptions.TourGuideUnavailableException;
@@ -209,12 +204,12 @@ public class OfferingEditor extends VerticalLayout {
 				.bind(Offering::getHotelName, Offering::setHotelName);
 
 		binder.forField(minCustomer).asRequired(Utils.generateRequiredError())
-				.withConverter(new StringToIntegerConverter("Must be an integer"))
+				.withConverter(ConverterFactory.getStringToIntegerConverter())
 				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
 				.bind(Offering::getMinCustomers, Offering::setMinCustomers);
 
 		binder.forField(maxCustomer).asRequired(Utils.generateRequiredError())
-				.withConverter(new StringToIntegerConverter("Must be an integer"))
+				.withConverter(ConverterFactory.getStringToIntegerConverter())
 				.withValidator(ValidatorFactory.getIntegerLowerBoundedByAnotherFieldValidator(minCustomer))
 				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
 				.bind(Offering::getMaxCustomers, Offering::setMaxCustomers);
