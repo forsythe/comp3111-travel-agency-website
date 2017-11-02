@@ -6,6 +6,7 @@ import com.vaadin.data.BindingValidationStatus;
 import com.vaadin.data.converter.StringToDoubleConverter;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
@@ -22,6 +23,8 @@ import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.input.exceptions.OfferingOutOfRoomException;
 import comp3111.input.validators.ValidatorFactory;
+import comp3111.view.NotificationFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,8 +127,11 @@ public class BookingEditor extends VerticalLayout {
 		Date threeDayBeforeStart = booking.getOffering().getLastEditableDate();
 
 		if (today.after(threeDayBeforeStart)) {
-			Notification.show("It's too late to edit this offering. It cannot be edited after "
-					+ Utils.simpleDateFormat(threeDayBeforeStart));
+			NotificationFactory
+					.getTopBarWarningNotification("It's too late to edit this offering. It can't be editied after "
+							+ Utils.simpleDateFormat(threeDayBeforeStart), 5)
+					.show(Page.getCurrent());
+
 			return false;
 		}
 		return true;
@@ -168,6 +174,7 @@ public class BookingEditor extends VerticalLayout {
 
 		FormLayout form = new FormLayout();
 		VerticalLayout formContainer = new VerticalLayout();
+		formContainer.addComponent(form);
 
 		subwindow.setWidth("800px");
 		subwindow.setContent(formContainer);
@@ -252,7 +259,7 @@ public class BookingEditor extends VerticalLayout {
 		confirmButton.addClickListener(event -> {
 			BinderValidationStatus<Booking> validationStatus = binder.validate();
 
-			StringBuilder errorStringBuilder = new StringBuilder();
+			String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);
 
 			if (validationStatus.isOk()) {
 				binder.writeBeanIfValid(bookingToSave);
@@ -273,38 +280,23 @@ public class BookingEditor extends VerticalLayout {
 					binder.removeBean();
 					this.refreshData();
 					subwindow.close();
+					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
 
 					return; // This return skip the error reporting procedure below
 				} catch (OfferingOutOfRoomException e) {
-					errorStringBuilder.append("Not enough room in offering");
-				}
-
-			}
-
-			for (BindingValidationStatus<?> result : validationStatus.getFieldValidationErrors()) {
-				if (result.getField() instanceof AbstractField && result.getMessage().isPresent()) {
-					errorStringBuilder.append(((AbstractField) result.getField()).getCaption()).append(": ")
-							.append(result.getMessage().get()).append("\n");
+					errors += "Not enough room in offering";
 				}
 			}
+			NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 
-			Notification.show("Could not create/edit customer!", errorStringBuilder.toString(),
-					Notification.TYPE_ERROR_MESSAGE);
 		});
 
 		return subwindow;
 	}
 
 	public void refreshData() {
-		Iterable<Booking> bookings = bookingRepo.findAll();
-		// it's possible the bookingRepo can return null!
-		if (null == bookings) {
-			bookings = new HashSet<>();
-		}
-		Collection<Booking> customerCollectionCached = new HashSet<>();
-		customerCollectionCached.clear();
-		bookings.forEach(customerCollectionCached::add);
-		ListDataProvider<Booking> provider = new ListDataProvider<>(customerCollectionCached);
+
+		ListDataProvider<Booking> provider = new ListDataProvider<>(Utils.iterableToCollection(bookingRepo.findAll()));
 		bookingGrid.setDataProvider(provider);
 	}
 

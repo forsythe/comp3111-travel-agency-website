@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button;
@@ -164,8 +165,9 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 				status = lineMessenger.sendToAll(message.getValue());
 				break;
 			}
-			Notification.show("Message delivery to " + LineMessenger.getAndResetCount() + " recepient(s) "
-					+ (status ? " succeeded!" : " failed!"));
+
+			NotificationFactory.getTopBarNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
+					LineMessenger.getAndResetCount() + " recepient(s)", 5).show(Page.getCurrent());
 
 		});
 		VerticalLayout container = new VerticalLayout();
@@ -209,8 +211,9 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 			if (!replyBox.isEmpty()) {
 				boolean status = lineMessenger.respondToQuery(selectedQuery.getCustomer().getLineId(),
 						selectedQuery.getQuery(), replyBox.getValue());
-				Notification.show("Message delivery to " + LineMessenger.getAndResetCount() + " recepient(s) "
-						+ (status ? " succeeded!" : " failed!"));
+
+				NotificationFactory.getTopBarNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
+						LineMessenger.getAndResetCount() + " recepient(s)", 5).show(Page.getCurrent());
 
 				if (status) {
 					selectedQuery.setAnswer(replyBox.getValue());

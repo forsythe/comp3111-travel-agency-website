@@ -1,5 +1,8 @@
 package comp3111.input.validators;
 
+import com.vaadin.data.BinderValidationStatus;
+import com.vaadin.data.BindingValidationStatus;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.DateField;
 import comp3111.data.DBManager;
@@ -17,8 +20,8 @@ public class ValidatorFactory {
 		return new IntegerLowerBoundValidator(minInclusive);
 	}
 
-	public static IntegerLowerBoundedByAnotherFieldValidator getIntegerLowerBoundedByAnotherFieldValidator
-			(AbstractTextField field) {
+	public static IntegerLowerBoundedByAnotherFieldValidator getIntegerLowerBoundedByAnotherFieldValidator(
+			AbstractTextField field) {
 		return new IntegerLowerBoundedByAnotherFieldValidator(field);
 	}
 
@@ -54,12 +57,23 @@ public class ValidatorFactory {
 		return new OfferingStillOpenValidator();
 	}
 
-	public static DateAvailableInTourValidator getDateAvailableInTourValidator(Tour tour){
+	public static DateAvailableInTourValidator getDateAvailableInTourValidator(Tour tour) {
 		return new DateAvailableInTourValidator(tour);
 	}
 
-	public static TourGuideAvailableForDatesValidation getTourGuideAvailableForDatesValidation
-			(DateField startDateField, int duration, DBManager dbManager){
+	public static TourGuideAvailableForDatesValidation getTourGuideAvailableForDatesValidation(DateField startDateField,
+			int duration, DBManager dbManager) {
 		return new TourGuideAvailableForDatesValidation(startDateField, duration, dbManager);
+	}
+
+	public static <T> String getValidatorErrorsString(BinderValidationStatus<T> validationStatus) {
+		StringBuilder sb = new StringBuilder();
+		for (BindingValidationStatus<?> result : validationStatus.getFieldValidationErrors()) {
+			if (result.getField() instanceof AbstractField && result.getMessage().isPresent()) {
+				sb.append("[" + ((AbstractField) result.getField()).getCaption() + "]").append(" ")
+						.append(result.getMessage().get()).append("\n");
+			}
+		}
+		return sb.toString();
 	}
 }

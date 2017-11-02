@@ -7,13 +7,15 @@ import org.springframework.stereotype.Repository;
 
 import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
-
+import comp3111.data.model.TourGuide;
 
 @Repository
 public interface OfferingRepository extends CrudRepository<Offering, Long> {
 	Collection<Offering> findByHotelName(String hotelName);
 
 	Collection<Offering> findByTour(Tour t);
-	
+
 	Collection<Offering> findByStatus(String status);
+
+	Collection<Offering> findByTourGuide(TourGuide tg);
 }

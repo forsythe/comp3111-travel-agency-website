@@ -4,6 +4,7 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
@@ -17,6 +18,7 @@ import comp3111.data.model.TourGuide;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.input.validators.ValidatorFactory;
 import comp3111.view.GuidedByManagmentView;
+import comp3111.view.NotificationFactory;
 import comp3111.view.OfferingManagementView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,17 +178,11 @@ public class TourGuidesEditor extends VerticalLayout {
 				log.info("Saved a new/edited tour guide [{}] successfully", tourGuideName.getValue());
 
 				binder.removeBean();
-			} else {
-				StringBuilder stringBuilder = new StringBuilder();
+				NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
 
-				for (BindingValidationStatus<?> result : validationStatus.getFieldValidationErrors()) {
-					if (result.getField() instanceof AbstractField && result.getMessage().isPresent()) {
-						stringBuilder.append(((AbstractField) result.getField()).getCaption()).append(" ")
-								.append(result.getMessage().get()).append("\n");
-					}
-				}
-				Notification.show("Could not create/edit tour guide!", stringBuilder.toString(),
-						Notification.TYPE_ERROR_MESSAGE);
+			} else {
+				String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);
+				NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 			}
 		});
 

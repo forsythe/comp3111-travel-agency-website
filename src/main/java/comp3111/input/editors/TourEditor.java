@@ -8,6 +8,7 @@ import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.data.converter.StringToDoubleConverter;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
@@ -26,6 +27,7 @@ import comp3111.data.repo.TourRepository;
 import comp3111.input.converters.StringCollectionToIntegerCollectionConverter;
 import comp3111.input.converters.StringToDateCollectionConverter;
 import comp3111.input.validators.ValidatorFactory;
+import comp3111.view.NotificationFactory;
 import comp3111.view.OfferingManagementView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -389,10 +391,7 @@ public class TourEditor extends VerticalLayout {
 			BinderValidationStatus<Tour> validationStatus = binder.validate();
 
 			// Special case for tours only to ensure that this field must be filled
-			if (allowedDates.isEmpty() && allowedDaysOfWeek.isEmpty()) {
-				Notification.show("Could not edit tour, offering availability is required!",
-						Notification.TYPE_ERROR_MESSAGE);
-			} else if (validationStatus.isOk()) {
+			if (validationStatus.isOk() && !(allowedDates.isEmpty() && allowedDaysOfWeek.isEmpty())) {
 				binder.writeBeanIfValid(tourToSave);
 
 				log.info("About to save tour [{}]", tourName.getValue());
@@ -401,19 +400,17 @@ public class TourEditor extends VerticalLayout {
 				this.refreshData();
 				subwindow.close();
 				log.info("created/edited tour [{}] successfully", tourName.getValue());
+				NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
+
 				binder.removeBean();
 			} else {
-				StringBuilder stringBuilder = new StringBuilder();
 
-				for (BindingValidationStatus<?> result : validationStatus.getFieldValidationErrors()) {
-					if (result.getField() instanceof AbstractField && result.getMessage().isPresent()) {
-						stringBuilder.append(((AbstractField) result.getField()).getCaption()).append(" ")
-								.append(result.getMessage().get()).append("\n");
-					}
+				String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);
+				if (allowedDates.isEmpty() && allowedDaysOfWeek.isEmpty()) {
+					errors += "Offering availability is required\n";
 				}
+				NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 
-				Notification.show("Could not create/edit tour!", stringBuilder.toString(),
-						Notification.TYPE_ERROR_MESSAGE);
 			}
 		});
 

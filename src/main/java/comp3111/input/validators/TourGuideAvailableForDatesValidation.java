@@ -38,7 +38,7 @@ public class TourGuideAvailableForDatesValidation implements Validator<TourGuide
 			if (dbManager.isTourGuideAvailableBetweenDate(value, startDate, endDate)) {
 				return ValidationResult.ok();
 			}else{
-				return getValidationErrorLogged("Tour Guide not available in given period");
+				return getValidationErrorLogged("Tour guide not available in given period");
 			}
 		}catch (NullPointerException e){
 			//Some values are null, just jump to ok

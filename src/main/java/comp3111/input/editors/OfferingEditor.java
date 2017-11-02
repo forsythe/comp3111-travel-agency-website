@@ -13,6 +13,7 @@ import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.AbstractField;
@@ -43,6 +44,7 @@ import comp3111.input.converters.LocalDateToUtilDateConverter;
 import comp3111.input.exceptions.OfferingDateUnsupportedException;
 import comp3111.input.exceptions.TourGuideUnavailableException;
 import comp3111.input.validators.ValidatorFactory;
+import comp3111.view.NotificationFactory;
 import comp3111.view.TourManagementView;
 
 @SpringComponent
@@ -51,7 +53,6 @@ public class OfferingEditor extends VerticalLayout {
 	private static final Logger log = LoggerFactory.getLogger(OfferingEditor.class);
 
 	private OfferingRepository offeringRepo;
-	private final HashSet<Offering> offeringsCollectionCached = new HashSet<>();
 
 	@Autowired
 	private TourGuideRepository tourGuideRepo;
@@ -230,7 +231,7 @@ public class OfferingEditor extends VerticalLayout {
 		confirm.addClickListener(event -> {
 			BinderValidationStatus<Offering> validationStatus = binder.validate();
 
-			StringBuilder errorStringBuilder = new StringBuilder();
+			String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);
 			if (validationStatus.isOk()) {
 				binder.writeBeanIfValid(offeringToSave);
 				offeringToSave.setTour(hostTour);
@@ -245,27 +246,20 @@ public class OfferingEditor extends VerticalLayout {
 					this.refreshData();
 					subWindow.close();
 					log.info("created/edited offering [{}] successfully", tourName.getValue());
-					binder.removeBean();
+					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
 
+					binder.removeBean();
 					return; // This return skip the error reporting procedure below
 				} catch (OfferingDateUnsupportedException e) {
-					errorStringBuilder.append("This tour may only be offered on ");
-					errorStringBuilder.append(hostTour.getOfferingAvailability());
+					errors += "This tour may only be offered on " + hostTour.getOfferingAvailability() + "\n";
 
 				} catch (TourGuideUnavailableException e) {
-					errorStringBuilder.append("The tour guide is occupied.");
+					errors += "The tour guide is occupied\n";
 				}
 			}
 
-			for (BindingValidationStatus<?> result : validationStatus.getFieldValidationErrors()) {
-				if (result.getField() instanceof AbstractField && result.getMessage().isPresent()) {
-					errorStringBuilder.append(((AbstractField) result.getField()).getCaption()).append(" ")
-							.append(result.getMessage().get()).append("\n");
-				}
-			}
+			NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 
-			Notification.show("Could not create/edit offering!", errorStringBuilder.toString(),
-					Notification.TYPE_ERROR_MESSAGE);
 		});
 
 		return subWindow;
@@ -276,14 +270,9 @@ public class OfferingEditor extends VerticalLayout {
 	}
 
 	public void refreshData() {
-		offeringsCollectionCached.clear();
-		for (Offering o : offeringRepo.findAll()) {
-			if (o.getTour().equals(this.selectedTour))
-				offeringsCollectionCached.add(o);
 
-		}
-		// offerings.forEach(offeringsCollectionCached::add);
-		ListDataProvider<Offering> provider = new ListDataProvider<>(offeringsCollectionCached);
+		ListDataProvider<Offering> provider = new ListDataProvider<>(
+				Utils.iterableToCollection(offeringRepo.findByTour(this.selectedTour)));
 		offeringGrid.setDataProvider(provider);
 	}
 
