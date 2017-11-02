@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,12 @@ import comp3111.LineMessenger;
 import comp3111.data.DBManager;
 import comp3111.data.model.Booking;
 import comp3111.data.model.Customer;
+import comp3111.data.model.NonFAQQuery;
 import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
 import comp3111.data.repo.CustomerRepository;
+import comp3111.data.repo.NonFAQQueryRepository;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.data.repo.TourRepository;
 import comp3111.input.exceptions.OfferingDateUnsupportedException;
@@ -43,15 +46,22 @@ public class LineInteractionTests {
 	@Autowired
 	private TourGuideRepository tourGuideRepo;
 	@Autowired
+	private NonFAQQueryRepository nonFAQQueryRepo;
+	@Autowired
 	private LineMessenger lineMessenger;
 	@Autowired
 	private DBManager actionManager;
+
+	@After
+	public void tearDown() {
+		actionManager.deleteAll();
+	}
 
 	@Test
 	public void testSuccessSendMessageToHengsPhone() {
 		Customer heng = new Customer("heng", "U6934790c40beeed33b8b89fa359aa9cf", "12312341234", 20, "A1234563");
 		heng = customerRepo.save(heng);
-		boolean recieved200ok = lineMessenger.sendToUser(heng.getLineId(), "hi heng's phone, this is test case");
+		boolean recieved200ok = lineMessenger.sendToUser(heng.getLineId(), "hi heng's phone, this is test case", true);
 		assertTrue(recieved200ok);
 		assertEquals(LineMessenger.getAndResetCount(), 1);
 		customerRepo.delete(heng);
@@ -61,7 +71,7 @@ public class LineInteractionTests {
 	public void testSuccessSendMessageToKVsPhone() {
 		Customer kv = new Customer("KV", "Ufbae1ebc457e163d0f351c1865daccf5", "12312341234", 20, "A1234563");
 		kv = customerRepo.save(kv);
-		boolean recieved200ok = lineMessenger.sendToUser(kv.getLineId(), "hi kv's phone, this is test case");
+		boolean recieved200ok = lineMessenger.sendToUser(kv.getLineId(), "hi kv's phone, this is test case", true);
 		assertTrue(recieved200ok);
 		assertEquals(LineMessenger.getAndResetCount(), 1);
 		customerRepo.delete(kv);
@@ -93,6 +103,20 @@ public class LineInteractionTests {
 				Booking.PAYMENT_PENDING);
 
 		boolean status = lineMessenger.sendToOffering(offering, "send to all participants in offering test case");
+		assertTrue(status);
+	}
+
+	@Test
+	public void testSuccessCanPersistNonFAQQueryAndRespond() {
+		Customer heng = new Customer("heng", "U6934790c40beeed33b8b89fa359aa9cf", "12312341234", 20, "A1234563");
+		heng = customerRepo.save(heng);
+		NonFAQQuery question = new NonFAQQuery("what is spaghet", heng);
+		question = nonFAQQueryRepo.save(question);
+		assertTrue(nonFAQQueryRepo.findOne(question.getId()) != null);
+
+		question.setAnswer("the answer is spaghet");
+
+		boolean status = lineMessenger.respondToQuery(heng.getLineId(), question.getQuery(), question.getAnswer());
 		assertTrue(status);
 	}
 

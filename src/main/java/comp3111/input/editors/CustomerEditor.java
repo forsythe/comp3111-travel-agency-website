@@ -1,29 +1,38 @@
 package comp3111.input.editors;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.BinderValidationStatus;
-import com.vaadin.data.BindingValidationStatus;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.spring.annotation.SpringComponent;
-import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.*;
-import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.Grid.SelectionMode;
-import comp3111.Utils;
-import comp3111.data.DB;
-import comp3111.data.model.Customer;
-import comp3111.data.repo.CustomerRepository;
-import comp3111.input.field.HKIDEntryField;
-import comp3111.input.field.PhoneNumberEntryField;
-import comp3111.input.validators.ValidatorFactory;
+import java.util.Collection;
+import java.util.HashSet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
-import java.util.HashSet;
+import com.vaadin.data.Binder;
+import com.vaadin.data.BinderValidationStatus;
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.Page;
+import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.SpringUI;
+import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+
+import comp3111.Utils;
+import comp3111.data.DB;
+import comp3111.data.model.Customer;
+import comp3111.data.repo.CustomerRepository;
+import comp3111.input.converters.ConverterFactory;
+import comp3111.input.field.HKIDEntryField;
+import comp3111.input.field.PhoneNumberEntryField;
+import comp3111.input.validators.ValidatorFactory;
+import comp3111.view.NotificationFactory;
 
 @SuppressWarnings("serial")
 @SpringComponent
@@ -136,27 +145,30 @@ public class CustomerEditor extends VerticalLayout {
 			subwindow = new Window("Edit a customer");
 		}
 
-		FormLayout subContent = new FormLayout();
+		FormLayout form = new FormLayout();
 
 		subwindow.setWidth("800px");
 
-		subwindow.setContent(subContent);
+		VerticalLayout formContainer = new VerticalLayout();
+		formContainer.addComponent(form);
+		subwindow.setContent(formContainer);
+
 		subwindow.center();
 		subwindow.setClosable(false);
 		subwindow.setModal(true);
 		subwindow.setResizable(false);
 		subwindow.setDraggable(false);
 
-		subContent.addComponent(customerName);
-		subContent.addComponent(customerLineId);
-		subContent.addComponent(customerHKID);
-		subContent.addComponent(customerPhone);
-		subContent.addComponent(customerAge);
+		form.addComponent(customerName);
+		form.addComponent(customerLineId);
+		form.addComponent(customerHKID);
+		form.addComponent(customerPhone);
+		form.addComponent(customerAge);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
 		buttonActions.addComponent(subwindowConfirm);
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
-		subContent.addComponent(buttonActions);
+		form.addComponent(buttonActions);
 
 		Binder<Customer> binder = new Binder<>();
 
@@ -174,11 +186,9 @@ public class CustomerEditor extends VerticalLayout {
 				.withValidator(ValidatorFactory.getPhoneNumberValidator()).asRequired(Utils.generateRequiredError())
 				.bind(Customer::getPhone, Customer::setPhone);
 
-		binder.forField(customerAge)
-				.asRequired(Utils.generateRequiredError())
-				.withConverter(new StringToIntegerConverter("Must be an integer"))
-				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
-				.bind(Customer::getAge, Customer::setAge);
+		binder.forField(customerAge).asRequired(Utils.generateRequiredError())
+				.withConverter(ConverterFactory.getStringToIntegerConverter())
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(0)).bind(Customer::getAge, Customer::setAge);
 
 		binder.setBean(customerToSave);
 
@@ -196,19 +206,12 @@ public class CustomerEditor extends VerticalLayout {
 				subwindow.close();
 
 				log.info("Saved a new/edited customer [{}] successfully", customerName.getValue());
+				NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
 
 				binder.removeBean();
 			} else {
-				StringBuilder stringBuilder = new StringBuilder();
-
-				for (BindingValidationStatus<?> result : validationStatus.getFieldValidationErrors()) {
-					if (result.getField() instanceof AbstractField && result.getMessage().isPresent()) {
-						stringBuilder.append(((AbstractField) result.getField()).getCaption()).append(" ")
-								.append(result.getMessage().get()).append("\n");
-					}
-				}
-				Notification.show("Could not create/edit customer!", stringBuilder.toString(),
-						Notification.TYPE_ERROR_MESSAGE);
+				String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);
+				NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 			}
 		});
 

@@ -19,6 +19,7 @@ public class TourGuideAvailableForDatesValidation implements Validator<TourGuide
 	private DateField startDateField;
 	private int duration;
 	private DBManager dbManager;
+
 	TourGuideAvailableForDatesValidation(DateField startDateField, int duration, DBManager dbManager) {
 		this.startDateField = startDateField;
 		this.duration = duration;
@@ -37,11 +38,11 @@ public class TourGuideAvailableForDatesValidation implements Validator<TourGuide
 
 			if (dbManager.isTourGuideAvailableBetweenDate(value, startDate, endDate)) {
 				return ValidationResult.ok();
-			}else{
-				return getValidationErrorLogged("Tour Guide not available in given period");
+			} else {
+				return getValidationErrorLogged("Tour guide not available in given period");
 			}
-		}catch (NullPointerException e){
-			//Some values are null, just jump to ok
+		} catch (NullPointerException e) {
+			// Some values are null, just jump to ok
 			return ValidationResult.ok();
 		}
 	}

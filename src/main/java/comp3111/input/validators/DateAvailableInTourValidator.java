@@ -32,7 +32,7 @@ public class DateAvailableInTourValidator implements Validator<Date> {
 			// Sunday: 1, Monday: 2, Tuesday: 3...
 			if (!supportedDaysOfWeek.contains(startDateDayOfWeek)) {
 				StringBuilder msgBuilder = new StringBuilder();
-				msgBuilder.append("Error! only the following days are supported");
+				msgBuilder.append("Only the following days are supported");
 				for (Integer i : supportedDaysOfWeek) {
 					msgBuilder.append(String.format("\t%s", Utils.dayToString(i)));
 				}
@@ -43,7 +43,7 @@ public class DateAvailableInTourValidator implements Validator<Date> {
 		Collection<Date> supportedDates = tour.getAllowedDates();
 		if (!supportedDates.isEmpty() && !supportedDates.contains(value)) {
 			StringBuilder msgBuilder = new StringBuilder();
-			msgBuilder.append("Error! only the following dates are supported");
+			msgBuilder.append("Only the following dates are supported");
 			for (Date d : supportedDates) {
 				msgBuilder.append(String.format("\t%s", d));
 			}
