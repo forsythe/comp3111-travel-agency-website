@@ -38,7 +38,7 @@ import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
 import comp3111.Utils;
-import comp3111.data.DB;
+import comp3111.data.GridCol;
 import comp3111.data.DBManager;
 import comp3111.data.model.Tour;
 import comp3111.data.repo.TourRepository;
@@ -128,7 +128,7 @@ public class TourEditor extends VerticalLayout {
 
 		this.addComponent(rowOfButtons);
 
-		// get the repetaingTours from DB
+		// get the repetaingTours from GridCol
 		this.refreshData();
 
 		tourGrid.setWidth("100%");
@@ -150,12 +150,12 @@ public class TourEditor extends VerticalLayout {
 			}
 		});
 
-		tourGrid.removeColumn(DB.TOUR_ALLOWED_DAYS_OF_WEEK); // we'll combine days of week and dates
-		tourGrid.removeColumn(DB.TOUR_ALLOWED_DATES);
+		tourGrid.removeColumn(GridCol.TOUR_ALLOWED_DAYS_OF_WEEK); // we'll combine days of week and dates
+		tourGrid.removeColumn(GridCol.TOUR_ALLOWED_DATES);
 
-		tourGrid.setColumnOrder(DB.TOUR_ID, DB.TOUR_TOUR_NAME, DB.TOUR_DAYS, DB.TOUR_OFFERING_AVAILABILITY,
-				DB.TOUR_DESCRIPTION, DB.TOUR_WEEKDAY_PRICE, DB.TOUR_WEEKEND_PRICE, DB.TOUR_CHILD_DISCOUNT,
-				DB.TOUR_TODDLER_DISCOUNT);
+		tourGrid.setColumnOrder(GridCol.TOUR_ID, GridCol.TOUR_TOUR_NAME, GridCol.TOUR_DAYS, GridCol.TOUR_OFFERING_AVAILABILITY,
+				GridCol.TOUR_DESCRIPTION, GridCol.TOUR_WEEKDAY_PRICE, GridCol.TOUR_WEEKEND_PRICE, GridCol.TOUR_CHILD_DISCOUNT,
+				GridCol.TOUR_TODDLER_DISCOUNT);
 
 		tourGrid.addColumn(tour -> {
 			return dbManager.countNumOfferingsForTour(tour);

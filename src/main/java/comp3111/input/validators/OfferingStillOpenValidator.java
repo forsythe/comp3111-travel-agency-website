@@ -19,12 +19,12 @@ public class OfferingStillOpenValidator implements Validator<Offering> {
 	public ValidationResult apply(Offering value, ValueContext context) {
 		if (value != null){
 			if (value.getLastEditableDate().before(Date.from(Instant.now()))){
-				return getValidationErrorLogged("Offering is no longer open for application");
+				return getValidationErrorLogged("offering is no longer open for application");
 			}else{
 				return  ValidationResult.ok();
 			}
 		}else{
-			return getValidationErrorLogged("Offering does not exist!");
+			return getValidationErrorLogged("offering does not exist");
 		}
 	}
 }

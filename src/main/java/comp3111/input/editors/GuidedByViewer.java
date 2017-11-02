@@ -17,7 +17,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 
 import comp3111.Utils;
-import comp3111.data.DB;
+import comp3111.data.GridCol;
 import comp3111.data.DBManager;
 import comp3111.data.model.Offering;
 import comp3111.data.model.TourGuide;
@@ -56,20 +56,20 @@ public class GuidedByViewer extends VerticalLayout {
 		offeringGrid.setWidth("100%");
 		offeringGrid.setSelectionMode(SelectionMode.SINGLE);
 
-		offeringGrid.removeColumn(DB.OFFERING_TOUR); // we'll combine days of week and dates
-		offeringGrid.removeColumn(DB.OFFERING_TOUR_GUIDE);
-		offeringGrid.removeColumn(DB.OFFERING_DATE);
-		offeringGrid.removeColumn(DB.OFFERING_TOUR_GUIDE_NAME);
-		offeringGrid.removeColumn(DB.OFFERING_TOUR_GUIDE_LINE_ID);
-		offeringGrid.removeColumn(DB.OFFERING_MAX_CAPACITY);
-		offeringGrid.removeColumn(DB.OFFERING_MIN_CAPACITY);
-		offeringGrid.removeColumn(DB.OFFERING_LAST_EDITABLE_DATE);
+		offeringGrid.removeColumn(GridCol.OFFERING_TOUR); // we'll combine days of week and dates
+		offeringGrid.removeColumn(GridCol.OFFERING_TOUR_GUIDE);
+		offeringGrid.removeColumn(GridCol.OFFERING_DATE);
+		offeringGrid.removeColumn(GridCol.OFFERING_TOUR_GUIDE_NAME);
+		offeringGrid.removeColumn(GridCol.OFFERING_TOUR_GUIDE_LINE_ID);
+		offeringGrid.removeColumn(GridCol.OFFERING_MAX_CAPACITY);
+		offeringGrid.removeColumn(GridCol.OFFERING_MIN_CAPACITY);
+		offeringGrid.removeColumn(GridCol.OFFERING_LAST_EDITABLE_DATE);
 
 		offeringGrid.addColumn(offering -> dbManager.countNumberOfPaidPeopleInOffering(offering))
 				.setCaption("Total number of paying people");
 
-		offeringGrid.setColumnOrder(DB.OFFERING_ID, DB.OFFERING_START_DATE, DB.OFFERING_TOUR_NAME,
-				DB.OFFERING_HOTEL_NAME);
+		offeringGrid.setColumnOrder(GridCol.OFFERING_ID, GridCol.OFFERING_START_DATE, GridCol.OFFERING_TOUR_NAME,
+				GridCol.OFFERING_HOTEL_NAME);
 
 		for (Column<Offering, ?> col : offeringGrid.getColumns()) {
 			col.setMinimumWidth(120);
