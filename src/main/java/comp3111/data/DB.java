@@ -22,8 +22,8 @@ public class DB {
 	/* hidden from grid */
 	public static final String TOUR_ALLOWED_DAYS_OF_WEEK = "allowedDaysOfWeek";
 	public static final String TOUR_ALLOWED_DATES = "allowedDates";
-	
-	//Offering
+
+	// Offering
 	/* shown in grid */
 	public static final String OFFERING_ID = "id";
 	public static final String OFFERING_HOTEL_NAME = "hotelName";
@@ -72,5 +72,12 @@ public class DB {
 	public static final String TOURGUIDE_ID = "id";
 	public static final String TOURGUIDE_NAME = "name";
 	public static final String TOURGUIDE_LINE_USERNAME = "lineUsername";
+
+	// NonFAQQuery
+	/* show in grd */
+	public static final String NONFAQQUERY_QUERY = "query";
+	public static final String NONFAQQUERY_ANSWER = "answer";
+	public static final String NONFAQQUERY_CUSTOMER = "customer";
+	public static final String NONFAQQUERY_ID = "id";
 
 }

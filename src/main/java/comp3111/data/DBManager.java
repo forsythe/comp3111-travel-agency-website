@@ -1,21 +1,39 @@
 package comp3111.data;
 
-import com.vaadin.data.ValidationResult;
-import com.vaadin.data.ValueContext;
-import comp3111.Utils;
-import comp3111.data.model.*;
-import comp3111.data.repo.*;
-import comp3111.input.exceptions.*;
-import comp3111.input.validators.DateAvailableInTourValidator;
-import comp3111.input.validators.ValidatorFactory;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
+import com.vaadin.data.ValidationResult;
+import com.vaadin.data.ValueContext;
+
+import comp3111.Utils;
+import comp3111.data.model.Booking;
+import comp3111.data.model.Customer;
+import comp3111.data.model.LoginUser;
+import comp3111.data.model.Offering;
+import comp3111.data.model.Tour;
+import comp3111.data.model.TourGuide;
+import comp3111.data.repo.BookingRepository;
+import comp3111.data.repo.CustomerRepository;
+import comp3111.data.repo.LoginUserRepository;
+import comp3111.data.repo.NonFAQQueryRepository;
+import comp3111.data.repo.OfferingRepository;
+import comp3111.data.repo.TourGuideRepository;
+import comp3111.data.repo.TourRepository;
+import comp3111.input.exceptions.OfferingDateUnsupportedException;
+import comp3111.input.exceptions.OfferingOutOfRoomException;
+import comp3111.input.exceptions.TourGuideUnavailableException;
+import comp3111.input.exceptions.UsernameTakenException;
+import comp3111.input.validators.DateAvailableInTourValidator;
+import comp3111.input.validators.ValidatorFactory;
+
 
 @Component
 public class DBManager {
@@ -33,6 +51,8 @@ public class DBManager {
 	private OfferingRepository offeringRepo;
 	@Autowired
 	private TourGuideRepository tourGuideRepo;
+	@Autowired
+	private NonFAQQueryRepository nonFAQQueryRepo;
 
 	public Offering createOfferingForTour(Tour tour, TourGuide tg, Date startDate, String hotelName, int minCustomers,
 			int maxCustomers) throws OfferingDateUnsupportedException, TourGuideUnavailableException {
@@ -77,7 +97,7 @@ public class DBManager {
 					|| proposedStart.before(takenStart) && proposedEnd.after(takenEnd)
 					|| proposedStart.before(takenEnd) && proposedEnd.after(takenEnd) || proposedStart.equals(takenStart)
 					|| proposedEnd.equals(takenEnd)) {
-				log.info("Offering timerange [{}]-[[}] is occupied for tourguide [{}]", proposedStart, proposedEnd,
+				log.info("Offering timerange [{}]-[{}] is occupied for tourguide [{}]", proposedStart, proposedEnd,
 						tg.getName());
 
 				return false;
@@ -152,6 +172,7 @@ public class DBManager {
 		this.offeringRepo.deleteAll();
 		this.tourRepo.deleteAll();
 		this.tourGuideRepo.deleteAll();
+		this.nonFAQQueryRepo.deleteAll();
 		this.customerRepo.deleteAll();
 
 		log.info("successfully cleared all repos");
