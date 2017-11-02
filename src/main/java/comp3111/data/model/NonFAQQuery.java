@@ -65,6 +65,10 @@ public class NonFAQQuery {
 	public Customer getCustomer() {
 		return customer;
 	}
+	
+	public String getCustomerName() {
+		return customer.getName();
+	}
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
