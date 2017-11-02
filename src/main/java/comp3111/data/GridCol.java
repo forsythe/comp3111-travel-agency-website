@@ -89,5 +89,7 @@ public class GridCol {
 	public static final String NONFAQQUERY_ANSWER = "answer";
 	public static final String NONFAQQUERY_CUSTOMER = "customer";
 	public static final String NONFAQQUERY_ID = "id";
+	/*hidden in grid*/
+	public static final String NONFAQQUERY_CUSTOMER_NAME = "customerName";
 
 }

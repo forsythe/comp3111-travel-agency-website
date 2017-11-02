@@ -2,6 +2,7 @@ package comp3111.input.editors;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Page;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
@@ -20,6 +22,8 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
@@ -70,6 +74,8 @@ public class OfferingEditor extends VerticalLayout {
 	private Button editOfferingButton = new Button("Edit Offering");
 	private Button cancelOfferingButton = new Button("Manually Cancel Offering");
 	private Button returnButton = new Button("Return");
+	
+	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	@Autowired
 	public OfferingEditor(OfferingRepository or) {
@@ -126,11 +132,53 @@ public class OfferingEditor extends VerticalLayout {
 				GridCol.OFFERING_TOUR_GUIDE_NAME, GridCol.OFFERING_TOUR_GUIDE_LINE_ID, GridCol.OFFERING_TOUR_NAME,
 				GridCol.OFFERING_NUM_CONFIRMED_CUSTOMERS, GridCol.OFFERING_MIN_CAPACITY, GridCol.OFFERING_MAX_CAPACITY);
 
+		HeaderRow filterRow = offeringGrid.appendHeaderRow();
+		
 		for (Column<Offering, ?> col : offeringGrid.getColumns()) {
 			col.setMinimumWidth(120);
 			col.setHidable(true);
 			col.setHidingToggleCaption(col.getCaption());
 			col.setExpandRatio(1);
+			HeaderCell cell = filterRow.getCell(col.getId());
+
+			// Have an input field to use for filter
+			TextField filterField = new TextField();
+			filterField.setWidth(130, Unit.PIXELS);
+			filterField.setHeight(30, Unit.PIXELS);
+
+			filterField.addValueChangeListener(change -> {
+				String searchVal = change.getValue();
+				String colId = col.getId();
+
+				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
+				ListDataProvider<Offering> dataProvider = (ListDataProvider<Offering>) offeringGrid.getDataProvider();
+
+				if (!filterField.isEmpty()) {
+					try {
+						// note: if we keep typing into same textfield, we will overwrite the old filter
+						// for this column, which is desirable (rather than having filters for "h",
+						// "he", "hel", etc
+						gridFilters.put(colId, FilterFactory.getFilterForOffering(colId, searchVal));
+						log.info("updated filter on attribute [{}]", colId);
+
+					} catch (Exception e) {
+						log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
+					}
+				} else {
+					// the filter field was empty, so try
+					// removing the filter associated with this col
+					gridFilters.remove(colId);
+					log.info("removed filter on attribute [{}]", colId);
+
+				}
+				dataProvider.clearFilters();
+				for (String colFilter : gridFilters.keySet()) {
+					ProviderAndPredicate paf = gridFilters.get(colFilter);
+					dataProvider.addFilter(paf.provider, paf.predicate);
+				}
+				dataProvider.refreshAll();
+			});
+			cell.setComponent(filterField);
 		}
 
 		this.addComponent(offeringGrid);
