@@ -27,6 +27,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
+import comp3111.LineMessenger;
 import comp3111.Utils;
 import comp3111.data.DBManager;
 import comp3111.data.GridCol;
@@ -171,9 +172,11 @@ public class OfferingEditor extends VerticalLayout {
 			vLayout.addComponent(buttonRow);
 
 			confirm.addClickListener(e -> {
-				int deliveredToCount = dbManager.cancelOffering(selectedOffering);
+				LineMessenger.resetCounter();
+				dbManager.cancelOffering(selectedOffering);
 				this.refreshData();
-				NotificationFactory.getTopBarSuccessNotification("Notified " + deliveredToCount + " customer(s)")
+				NotificationFactory
+						.getTopBarSuccessNotification("Notified " + LineMessenger.getCounter() + " customer(s)")
 						.show(Page.getCurrent());
 				confirmWindow.close();
 			});

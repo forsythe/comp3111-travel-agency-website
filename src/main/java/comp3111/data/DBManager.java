@@ -313,18 +313,22 @@ public class DBManager {
 		return num;
 	}
 
-	public int cancelOffering(Offering offering) {
+	/**
+	 * @param offering
+	 *            The offering to cancel
+	 * 
+	 */
+	public void cancelOffering(Offering offering) {
 		offering.setStatus(Offering.STATUS_CANCELLED);
 		log.info("Cancelling [{}]", offering);
 		offering = offeringRepo.save(offering);
 		for (Booking record : bookingRepo.findByOffering(offering)) {
 			record.setPaymentStatus(Booking.PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED);
 			record = bookingRepo.save(record);
-			lineMessenger.sendToOffering(offering, offering + " has been cancelled.");
 			log.info("Cancelling booking record [{}]", record);
 		}
-		return lineMessenger.getAndResetCount();
+		lineMessenger.sendToOffering(offering, offering + " has been cancelled.");
+
 	}
-	
 
 }
