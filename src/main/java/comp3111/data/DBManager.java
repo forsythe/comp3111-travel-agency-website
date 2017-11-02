@@ -89,7 +89,10 @@ public class DBManager {
 	}
 
 	public boolean isTourGuideAvailableBetweenDate(TourGuide tg, Date proposedStart, Date proposedEnd) {
-		for (Offering existingOffering : findGuidedOfferingsByTourGuide(tg)) {
+		for (Offering existingOffering : findPastAndUpcomingGuidedOfferingsByTourGuide(tg)) {
+			if (existingOffering.getStatus().equals(Offering.STATUS_CANCELLED)) {
+				continue;
+			}
 			Date takenStart = existingOffering.getStartDate();
 			Date takenEnd = Utils.addDate(takenStart, existingOffering.getTour().getDays());
 
@@ -145,7 +148,7 @@ public class DBManager {
 				booking.getSpecialRequests(), booking.getPaymentStatus());
 	}
 
-	public Collection<Offering> findGuidedOfferingsByTourGuide(TourGuide tg) {
+	public Collection<Offering> findPastAndUpcomingGuidedOfferingsByTourGuide(TourGuide tg) {
 		Collection<Offering> guidedOfferingsByTourGuide = new HashSet<Offering>();
 		log.info("Finding offerings for tour guide [{}]", tg.getName());
 		for (Offering o : offeringRepo.findAll()) {
