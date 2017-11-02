@@ -61,6 +61,7 @@ public class OfferingEditor extends VerticalLayout {
 	private final Grid<Offering> offeringGrid = new Grid<Offering>(Offering.class);
 
 	private Offering selectedOffering;
+	private Long selectedOfferingId;
 
 	/* Action buttons */
 	private HorizontalLayout rowOfButtons = new HorizontalLayout();
@@ -124,6 +125,12 @@ public class OfferingEditor extends VerticalLayout {
 
 		createNewOfferingButton.addClickListener(event -> {
 			getUI().getCurrent().addWindow(getSubWindow(selectedTour, new Offering(), tourEditor));
+			selectedOfferingId = null;
+		});
+
+		editOfferingButton.addClickListener(event -> {
+			getUI().getCurrent().addWindow(getSubWindow(selectedTour, selectedOffering, tourEditor));
+			selectedOfferingId = selectedOffering.getId();
 		});
 
 		returnButton.addClickListener(event -> {
@@ -229,7 +236,15 @@ public class OfferingEditor extends VerticalLayout {
 
 			String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);
 			if (validationStatus.isOk()) {
+				log.debug(selectedOfferingId.toString());
+				if(!selectedOfferingId.equals(null)) {
+					offeringRepo.delete(selectedOfferingId);
+					offeringToSave.setId(selectedOfferingId);
+				}
 				binder.writeBeanIfValid(offeringToSave);
+//				if(selectedOfferingId != -1) {
+//					selectedOffering.setId(selectedOfferingId);
+//				}
 				offeringToSave.setTour(hostTour);
 				offeringToSave.setStatus(Offering.STATUS_PENDING);
 
