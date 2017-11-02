@@ -5,10 +5,13 @@ import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
 import com.vaadin.data.HasValue.ValueChangeEvent;
 import com.vaadin.data.HasValue.ValueChangeListener;
+import com.vaadin.data.Result;
 import com.vaadin.data.converter.StringToDoubleConverter;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.ErrorMessage;
 import com.vaadin.server.Page;
+import com.vaadin.server.UserError;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
@@ -317,15 +320,10 @@ public class TourEditor extends VerticalLayout {
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
 		subContent.addComponent(buttonActions);
 
-		tourName.setRequiredIndicatorVisible(true);
-		days.setRequiredIndicatorVisible(true);
-		tourType.setRequiredIndicatorVisible(true);
+		// the other fields get their indicators from asRequired()
+		// However, these two cannot because only ONE of them can be filled
 		allowedDaysOfWeek.setRequiredIndicatorVisible(true);
 		allowedDates.setRequiredIndicatorVisible(true);
-		childDiscount.setRequiredIndicatorVisible(true);
-		toddlerDiscount.setRequiredIndicatorVisible(true);
-		weekdayPrice.setRequiredIndicatorVisible(true);
-		weekendPrice.setRequiredIndicatorVisible(true);
 
 		// For the radio button
 		tourType.addValueChangeListener(new ValueChangeListener<String>() {
@@ -408,6 +406,11 @@ public class TourEditor extends VerticalLayout {
 				String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);
 				if (allowedDates.isEmpty() && allowedDaysOfWeek.isEmpty()) {
 					errors += "[Offering Availability] cannot be empty\n";
+					if (tourType.getValue().equals(Tour.LIMITED_TOUR_TYPE)) {
+						allowedDates.setComponentError(new UserError(Utils.generateRequiredError()));
+					} else {
+						allowedDaysOfWeek.setComponentError(new UserError(Utils.generateRequiredError()));
+					}
 				}
 				NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 
