@@ -5,6 +5,7 @@ import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Page;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
@@ -12,8 +13,12 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
+
 import comp3111.Utils;
 import comp3111.data.DB;
+import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.input.validators.ValidatorFactory;
@@ -25,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 
 @SuppressWarnings("serial")
@@ -53,6 +59,9 @@ public class TourGuidesEditor extends VerticalLayout {
 	private TourGuideRepository tourGuideRepo;
 	private final HashSet<TourGuide> tourGuideCollectionCached = new HashSet<TourGuide>();
 
+	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
+
+	
 	@Autowired
 	public TourGuidesEditor(TourGuideRepository tgr) {
 		this.tourGuideRepo = tgr;
@@ -89,13 +98,47 @@ public class TourGuidesEditor extends VerticalLayout {
 
 		tourGuideGrid.setColumnOrder(DB.TOURGUIDE_ID, DB.TOURGUIDE_NAME, DB.TOURGUIDE_LINE_USERNAME);
 
-		// HeaderRow filterRow = tourGuideGrid.appendHeaderRow();
+		HeaderRow filterRow = tourGuideGrid.appendHeaderRow();
 
 		for (Column<TourGuide, ?> col : tourGuideGrid.getColumns()) {
 			col.setMinimumWidth(120);
 			col.setHidable(true);
 			col.setHidingToggleCaption(col.getCaption());
 			col.setExpandRatio(1);
+			
+			HeaderCell cell = filterRow.getCell(col.getId());
+			TextField filterField = new TextField();
+			filterField.setWidth(130, Unit.PIXELS);
+			filterField.setHeight(30, Unit.PIXELS);
+			
+			filterField.addValueChangeListener(change -> {
+				String searchVal = change.getValue();
+				String colId = col.getId();
+
+				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
+				ListDataProvider<TourGuide> dataProvider = (ListDataProvider<TourGuide>) tourGuideGrid.getDataProvider();
+
+				if (!filterField.isEmpty()) {
+					try {
+						gridFilters.put(colId, FilterFactory.getFilterForTourGuide(colId, searchVal));
+						log.info("updated filter on attribute [{}]", colId);
+
+					} catch (Exception e) {
+						log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
+					}
+				} else {
+					gridFilters.remove(colId);
+					log.info("removed filter on attribute [{}]", colId);
+
+				}
+				dataProvider.clearFilters();
+				for (String colFilter : gridFilters.keySet()) {
+					ProviderAndPredicate paf = gridFilters.get(colFilter);
+					dataProvider.addFilter(paf.provider, paf.predicate);
+				}
+				dataProvider.refreshAll();
+			});
+			cell.setComponent(filterField);
 		}
 
 		this.addComponent(tourGuideGrid);

@@ -1,5 +1,7 @@
 package comp3111.view;
 
+import java.util.HashMap;
+
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
@@ -10,6 +12,7 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button;
@@ -21,7 +24,11 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
 
 import comp3111.LineMessenger;
 import comp3111.Utils;
@@ -34,6 +41,8 @@ import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.NonFAQQueryRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.TourRepository;
+import comp3111.input.editors.FilterFactory;
+import comp3111.input.editors.ProviderAndPredicate;
 
 @SpringView(name = CustomerEngagementView.VIEW_NAME)
 public class CustomerEngagementView extends VerticalLayout implements View {
@@ -58,6 +67,8 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 	private NonFAQQueryRepository qRepo;
 
 	private NonFAQQuery selectedQuery;
+	
+	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	@PostConstruct
 	void init() {
@@ -203,6 +214,56 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 				submit.setEnabled(false);
 			}
 		});
+		
+		HeaderRow filterRow = grid.appendHeaderRow();
+		
+		for (Column<NonFAQQuery, ?> col : grid.getColumns()) {
+			col.setMinimumWidth(160);
+			col.setHidable(true);
+			col.setExpandRatio(1);
+			col.setHidingToggleCaption(col.getCaption());
+			HeaderCell cell = filterRow.getCell(col.getId());
+
+			// Have an input field to use for filter
+			TextField filterField = new TextField();
+			filterField.setWidth(130, Unit.PIXELS);
+			filterField.setHeight(30, Unit.PIXELS);
+
+			filterField.addValueChangeListener(change -> {
+				String searchVal = change.getValue();
+				String colId = col.getId();
+
+				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
+				ListDataProvider<NonFAQQuery> dataProvider = (ListDataProvider<NonFAQQuery>) grid.getDataProvider();
+
+				if (!filterField.isEmpty()) {
+					try {
+						// note: if we keep typing into same textfield, we will overwrite the old filter
+						// for this column, which is desirable (rather than having filters for "h",
+						// "he", "hel", etc
+						gridFilters.put(colId, FilterFactory.getFilterForNonFAQQuery(colId, searchVal));
+						log.info("updated filter on attribute [{}]", colId);
+
+					} catch (Exception e) {
+						log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
+					}
+				} else {
+					// the filter field was empty, so try
+					// removing the filter associated with this col
+					gridFilters.remove(colId);
+					log.info("removed filter on attribute [{}]", colId);
+
+				}
+				dataProvider.clearFilters();
+				for (String colFilter : gridFilters.keySet()) {
+					ProviderAndPredicate paf = gridFilters.get(colFilter);
+					dataProvider.addFilter(paf.provider, paf.predicate);
+				}
+				dataProvider.refreshAll();
+			});
+			cell.setComponent(filterField);
+
+		}
 
 		grid.setWidth("100%");
 		// TODO: check that the lengths of query and answer are <=255

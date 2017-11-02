@@ -1,6 +1,7 @@
 package comp3111.input.editors;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Page;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.annotation.UIScope;
@@ -23,10 +25,13 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
 
 import comp3111.Utils;
 import comp3111.data.DB;
 import comp3111.data.model.Customer;
+import comp3111.data.model.Tour;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.input.converters.ConverterFactory;
 import comp3111.input.field.HKIDEntryField;
@@ -55,6 +60,8 @@ public class CustomerEditor extends VerticalLayout {
 	private CustomerRepository customerRepo;
 	private final HashSet<Customer> customerCollectionCached = new HashSet<Customer>();
 
+	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
+	
 	@Autowired
 	public CustomerEditor(CustomerRepository cr) {
 		this.customerRepo = cr;
@@ -99,13 +106,54 @@ public class CustomerEditor extends VerticalLayout {
 		customersGrid.setColumnOrder(DB.CUSTOMER_ID, DB.CUSTOMER_NAME, DB.CUSTOMER_LINE_ID, DB.CUSTOMER_HKID,
 				DB.CUSTOMER_PHONE, DB.CUSTOMER_AGE);
 
-		// HeaderRow filterRow = customersGrid.appendHeaderRow();
+		HeaderRow filterRow = customersGrid.appendHeaderRow();
 
 		for (Column<Customer, ?> col : customersGrid.getColumns()) {
 			col.setMinimumWidth(120);
 			col.setHidable(true);
 			col.setHidingToggleCaption(col.getCaption());
 			col.setExpandRatio(1);
+			HeaderCell cell = filterRow.getCell(col.getId());
+
+			// Have an input field to use for filter
+			TextField filterField = new TextField();
+			filterField.setWidth(130, Unit.PIXELS);
+			filterField.setHeight(30, Unit.PIXELS);
+
+			filterField.addValueChangeListener(change -> {
+				String searchVal = change.getValue();
+				String colId = col.getId();
+
+				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
+				ListDataProvider<Customer> dataProvider = (ListDataProvider<Customer>) customersGrid.getDataProvider();
+
+				if (!filterField.isEmpty()) {
+					try {
+						// note: if we keep typing into same textfield, we will overwrite the old filter
+						// for this column, which is desirable (rather than having filters for "h",
+						// "he", "hel", etc
+						gridFilters.put(colId, FilterFactory.getFilterForCustomer(colId, searchVal));
+						log.info("updated filter on attribute [{}]", colId);
+
+					} catch (Exception e) {
+						log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
+					}
+				} else {
+					// the filter field was empty, so try
+					// removing the filter associated with this col
+					gridFilters.remove(colId);
+					log.info("removed filter on attribute [{}]", colId);
+
+				}
+				dataProvider.clearFilters();
+				for (String colFilter : gridFilters.keySet()) {
+					ProviderAndPredicate paf = gridFilters.get(colFilter);
+					dataProvider.addFilter(paf.provider, paf.predicate);
+				}
+				dataProvider.refreshAll();
+			});
+			cell.setComponent(filterField);
+
 		}
 
 		this.addComponent(customersGrid);

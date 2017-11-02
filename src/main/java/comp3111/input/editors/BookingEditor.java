@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Page;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
@@ -23,6 +25,8 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -34,6 +38,7 @@ import comp3111.data.DBManager;
 import comp3111.data.model.Booking;
 import comp3111.data.model.Customer;
 import comp3111.data.model.Offering;
+import comp3111.data.model.Tour;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
@@ -60,6 +65,8 @@ public class BookingEditor extends VerticalLayout {
 	private OfferingRepository offeringRepo;
 	@Autowired
 	private DBManager actionManager;
+	
+	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	@Autowired
 	public BookingEditor(BookingRepository bookingRepo) {
@@ -106,11 +113,49 @@ public class BookingEditor extends VerticalLayout {
 				DB.BOOKING_TOTAL_COST, DB.BOOKING_SPECIAL_REQUEST, DB.BOOKING_PAYMENT_STATUS);
 		bookingGrid.getColumn(DB.BOOKING_PEOPLE).setCaption("Number of Adults, Children, Toddlers");
 
+		HeaderRow filterRow = bookingGrid.appendHeaderRow();
+		
 		for (Column<Booking, ?> col : bookingGrid.getColumns()) {
 			col.setMinimumWidth(120);
 			col.setHidable(true);
 			col.setHidingToggleCaption(col.getCaption());
 			col.setExpandRatio(1);
+			HeaderCell cell = filterRow.getCell(col.getId());
+
+			// Have an input field to use for filter
+			TextField filterField = new TextField();
+			filterField.setWidth(130, Unit.PIXELS);
+			filterField.setHeight(30, Unit.PIXELS);
+
+			filterField.addValueChangeListener(change -> {
+				String searchVal = change.getValue();
+				String colId = col.getId();
+
+				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
+				ListDataProvider<Booking> dataProvider = (ListDataProvider<Booking>) bookingGrid.getDataProvider();
+
+				if (!filterField.isEmpty()) {
+					try {
+						gridFilters.put(colId, FilterFactory.getFilterForBooking(colId, searchVal));
+						log.info("updated filter on attribute [{}]", colId);
+
+					} catch (Exception e) {
+						log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
+					}
+				} else {
+					gridFilters.remove(colId);
+					log.info("removed filter on attribute [{}]", colId);
+
+				}
+				dataProvider.clearFilters();
+				for (String colFilter : gridFilters.keySet()) {
+					ProviderAndPredicate paf = gridFilters.get(colFilter);
+					dataProvider.addFilter(paf.provider, paf.predicate);
+				}
+				dataProvider.refreshAll();
+			});
+			cell.setComponent(filterField);
+
 		}
 
 		this.addComponent(bookingGrid);
