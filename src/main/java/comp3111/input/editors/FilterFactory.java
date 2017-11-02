@@ -109,7 +109,7 @@ public class FilterFactory {
 			return new ProviderAndPredicate<Booking, Long>(Booking::getOfferingId,
 					t -> Utils.safeParseLongEquals(t, searchVal));
 		if (colId.equals(GridCol.BOOKING_TOUR_ID))
-			return new ProviderAndPredicate<Booking, Long>(Booking::getOfferingId,
+			return new ProviderAndPredicate<Booking, Long>(Booking::getTourId,
 					t -> Utils.safeParseLongEquals(t, searchVal));
 		if (colId.equals(GridCol.BOOKING_TOUR_NAME))
 			return new ProviderAndPredicate<Booking, String>(Booking::getTourName,
