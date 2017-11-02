@@ -33,6 +33,11 @@ public class NotificationFactory {
 				Notification.TYPE_HUMANIZED_MESSAGE);
 	}
 
+	public static Notification getTopBarSuccessNotification(String caption) {
+		return getNotification("Success!", caption, 3, Notification.POSITION_CENTERED_TOP,
+				Notification.TYPE_HUMANIZED_MESSAGE);
+	}
+	
 	private static Notification getNotification(String mainText, String subText, int s, Position pos, Type type) {
 		Notification notif = new Notification(mainText, subText, type);
 		notif.setDelayMsec(s * 1000);

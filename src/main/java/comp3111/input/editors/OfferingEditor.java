@@ -171,9 +171,10 @@ public class OfferingEditor extends VerticalLayout {
 			vLayout.addComponent(buttonRow);
 
 			confirm.addClickListener(e -> {
-				dbManager.cancelOffering(selectedOffering);
+				int deliveredToCount = dbManager.cancelOffering(selectedOffering);
 				this.refreshData();
-				NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
+				NotificationFactory.getTopBarSuccessNotification("Delivered to " + deliveredToCount + " recipient(s)")
+						.show(Page.getCurrent());
 				confirmWindow.close();
 			});
 

@@ -313,7 +313,7 @@ public class DBManager {
 		return num;
 	}
 
-	public void cancelOffering(Offering offering) {
+	public int cancelOffering(Offering offering) {
 		offering.setStatus(Offering.STATUS_CANCELLED);
 		log.info("Cancelling [{}]", offering);
 		offering = offeringRepo.save(offering);
@@ -323,6 +323,8 @@ public class DBManager {
 			lineMessenger.sendToOffering(offering, offering + " has been cancelled.");
 			log.info("Cancelling booking record [{}]", record);
 		}
+		return lineMessenger.getAndResetCount();
 	}
+	
 
 }
