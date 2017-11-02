@@ -11,15 +11,17 @@ import java.util.Date;
 
 public class LocalDateToUtilDateConverter implements Converter<LocalDate, Date> {
 
-    @Override
-    public Result<Date> convertToModel(LocalDate local, ValueContext context) {
-        return Result.ok(Utils.localDateToDate(local));
-    }
+	@Override
+	public Result<Date> convertToModel(LocalDate local, ValueContext context) {
+		if (local == null)
+			return Result.error("invalid date");
+		return Result.ok(Utils.localDateToDate(local));
+	}
 
-
-    @Override
-    public LocalDate convertToPresentation(Date date, ValueContext context) {
-        if (date == null) return LocalDate.now();
-        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    }
+	@Override
+	public LocalDate convertToPresentation(Date date, ValueContext context) {
+		if (date == null)
+			return LocalDate.now();
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	}
 }

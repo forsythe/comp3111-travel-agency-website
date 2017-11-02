@@ -22,12 +22,12 @@ public class DateNotEarlierThanValidator implements Validator<Date> {
 		if (value != null) {
 			if (value.before(notEarlierThanThis)) {
 				return getValidationErrorLogged(
-						"Date cannot be earlier than " + Utils.simpleDateFormat(notEarlierThanThis));
+						"date cannot be earlier than " + Utils.simpleDateFormat(notEarlierThanThis));
 			} else {
 				return ValidationResult.ok();
 			}
 		} else {
-			return getValidationErrorLogged("Date does not exist!");
+			return getValidationErrorLogged("date does not exist");
 		}
 	}
 }

@@ -19,9 +19,9 @@ public class IntegerLowerBoundValidator implements Validator<Integer> {
 			if (value >= min)
 				return ValidationResult.ok();
 		} catch (NumberFormatException e) {
-			return getValidationErrorLogged("Must be an integer");
+			return getValidationErrorLogged("must be an integer");
 		}
-		return getValidationErrorLogged("The integer must be >= " + min);
+		return getValidationErrorLogged("the integer must be >= " + min);
 
 	}
 }

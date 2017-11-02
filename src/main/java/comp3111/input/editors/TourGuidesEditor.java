@@ -17,8 +17,7 @@ import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 
 import comp3111.Utils;
-import comp3111.data.DB;
-import comp3111.data.model.Tour;
+import comp3111.data.GridCol;
 import comp3111.data.model.TourGuide;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.input.validators.ValidatorFactory;
@@ -61,7 +60,7 @@ public class TourGuidesEditor extends VerticalLayout {
 
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
-	
+
 	@Autowired
 	public TourGuidesEditor(TourGuideRepository tgr) {
 		this.tourGuideRepo = tgr;
@@ -96,7 +95,7 @@ public class TourGuidesEditor extends VerticalLayout {
 			}
 		});
 
-		tourGuideGrid.setColumnOrder(DB.TOURGUIDE_ID, DB.TOURGUIDE_NAME, DB.TOURGUIDE_LINE_USERNAME);
+		tourGuideGrid.setColumnOrder(GridCol.TOURGUIDE_ID, GridCol.TOURGUIDE_NAME, GridCol.TOURGUIDE_LINE_USERNAME);
 
 		HeaderRow filterRow = tourGuideGrid.appendHeaderRow();
 
@@ -105,12 +104,12 @@ public class TourGuidesEditor extends VerticalLayout {
 			col.setHidable(true);
 			col.setHidingToggleCaption(col.getCaption());
 			col.setExpandRatio(1);
-			
+
 			HeaderCell cell = filterRow.getCell(col.getId());
 			TextField filterField = new TextField();
 			filterField.setWidth(130, Unit.PIXELS);
 			filterField.setHeight(30, Unit.PIXELS);
-			
+
 			filterField.addValueChangeListener(change -> {
 				String searchVal = change.getValue();
 				String colId = col.getId();

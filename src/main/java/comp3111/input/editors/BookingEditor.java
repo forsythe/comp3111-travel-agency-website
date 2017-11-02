@@ -33,7 +33,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 import comp3111.Utils;
-import comp3111.data.DB;
+import comp3111.data.GridCol;
 import comp3111.data.DBManager;
 import comp3111.data.model.Booking;
 import comp3111.data.model.Customer;
@@ -83,7 +83,7 @@ public class BookingEditor extends VerticalLayout {
 		// add component to view
 		this.addComponent(rowOfButtons);
 
-		// get from DB
+		// get from GridCol
 		bookingGrid.setItems(Utils.iterableToCollection(bookingRepo.findAll()));
 
 		bookingGrid.setWidth("100%");
@@ -101,17 +101,17 @@ public class BookingEditor extends VerticalLayout {
 			}
 		});
 
-		bookingGrid.removeColumn(DB.BOOKING_NUM_CHILDREN);
-		bookingGrid.removeColumn(DB.BOOKING_NUM_ADULTS);
-		bookingGrid.removeColumn(DB.BOOKING_NUM_TODDLERS);
-		bookingGrid.removeColumn(DB.BOOKING_CUSTOMER);
-		bookingGrid.removeColumn(DB.BOOKING_OFFERING);
-		bookingGrid.removeColumn(DB.BOOKING_ID);
+		bookingGrid.removeColumn(GridCol.BOOKING_NUM_CHILDREN);
+		bookingGrid.removeColumn(GridCol.BOOKING_NUM_ADULTS);
+		bookingGrid.removeColumn(GridCol.BOOKING_NUM_TODDLERS);
+		bookingGrid.removeColumn(GridCol.BOOKING_CUSTOMER);
+		bookingGrid.removeColumn(GridCol.BOOKING_OFFERING);
+		bookingGrid.removeColumn(GridCol.BOOKING_ID);
 
-		bookingGrid.setColumnOrder(DB.BOOKING_CUSTOMER_HKID, DB.BOOKING_CUSTOMER_NAME, DB.BOOKING_OFFERING_ID,
-				DB.BOOKING_TOUR_ID, DB.BOOKING_TOUR_NAME, DB.BOOKING_PEOPLE, DB.BOOKING_AMOUNT_PAID,
-				DB.BOOKING_TOTAL_COST, DB.BOOKING_SPECIAL_REQUEST, DB.BOOKING_PAYMENT_STATUS);
-		bookingGrid.getColumn(DB.BOOKING_PEOPLE).setCaption("Number of Adults, Children, Toddlers");
+		bookingGrid.setColumnOrder(GridCol.BOOKING_CUSTOMER_HKID, GridCol.BOOKING_CUSTOMER_NAME, GridCol.BOOKING_OFFERING_ID,
+				GridCol.BOOKING_TOUR_ID, GridCol.BOOKING_TOUR_NAME, GridCol.BOOKING_PEOPLE, GridCol.BOOKING_AMOUNT_PAID,
+				GridCol.BOOKING_TOTAL_COST, GridCol.BOOKING_SPECIAL_REQUEST, GridCol.BOOKING_PAYMENT_STATUS);
+		bookingGrid.getColumn(GridCol.BOOKING_PEOPLE).setCaption("Number of Adults, Children, Toddlers");
 
 		HeaderRow filterRow = bookingGrid.appendHeaderRow();
 		

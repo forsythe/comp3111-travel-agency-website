@@ -17,8 +17,8 @@ public class DoubleLowerBoundValidator implements Validator<Double> {
 			if (value >= min)
 				return ValidationResult.ok();
 		} catch (NumberFormatException e) {
-			return ValidationResult.error("Must be a number");
+			return ValidationResult.error("must be a number");
 		}
-		return ValidationResult.error("The number must be >= " + min);
+		return ValidationResult.error("the number must be >= " + min);
 	}
 }
