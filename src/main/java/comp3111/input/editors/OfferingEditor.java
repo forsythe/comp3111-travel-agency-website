@@ -23,6 +23,7 @@ import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
@@ -123,11 +124,11 @@ public class OfferingEditor extends VerticalLayout {
 		this.addComponent(offeringGrid);
 
 		createNewOfferingButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(getSubWindow(selectedTour, new Offering(), tourEditor));
+			UI.getCurrent().addWindow(getSubWindow(selectedTour, new Offering(), tourEditor));
 		});
 
 		editOfferingButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(getSubWindow(selectedTour, selectedOffering, tourEditor));
+			UI.getCurrent().addWindow(getSubWindow(selectedTour, selectedOffering, tourEditor));
 		});
 
 		returnButton.addClickListener(event -> {
@@ -137,6 +138,8 @@ public class OfferingEditor extends VerticalLayout {
 	}
 
 	Window getSubWindow(Tour hostTour, final Offering offeringToSave, TourEditor tourEditor) {
+		boolean isCreatingNewOffering = offeringToSave.getId() == null;
+
 		// Creating the confirm button
 		Button confirm = new Button("Confirm");
 		confirm.setId("btn_confirm_offering");
@@ -157,7 +160,7 @@ public class OfferingEditor extends VerticalLayout {
 		statusHint.setWidth("100%");
 
 		Window subWindow;
-		if (offeringToSave.getId() == null) {
+		if (isCreatingNewOffering) {
 			subWindow = new Window("Create new offering");
 		} else {
 			subWindow = new Window("Edit an offering");
@@ -198,8 +201,9 @@ public class OfferingEditor extends VerticalLayout {
 		// Binding method according to docs
 		Binder<Offering> binder = new Binder<>(Offering.class);
 
-		binder.forField(tourGuide).asRequired(Utils.generateRequiredError()).withValidator(
-				ValidatorFactory.getTourGuideAvailableForDatesValidation(startDate, hostTour.getDays(), dbManager))
+		binder.forField(tourGuide).asRequired(Utils.generateRequiredError())
+				.withValidator(ValidatorFactory.getTourGuideAvailableForDatesValidationIgnoreOneOffering(startDate,
+						hostTour.getDays(), dbManager, isCreatingNewOffering ? null : offeringToSave))
 				.bind(Offering::getTourGuide, Offering::setTourGuide);
 
 		binder.forField(startDate).asRequired(Utils.generateRequiredError())
@@ -227,10 +231,12 @@ public class OfferingEditor extends VerticalLayout {
 		binder.setBean(offeringToSave);
 
 		startDate.addValueChangeListener(event -> {
-			Date threeDaysBeforeStart = Utils.addDate(Utils.localDateToDate(startDate.getValue()), -3);
-			statusHint.setValue(
-					"All participating customers will automatically be notified whether this offering is confirmed or cancelled on "
-							+ Utils.simpleDateFormat(threeDaysBeforeStart));
+			if (!startDate.isEmpty()) {
+				Date threeDaysBeforeStart = Utils.addDate(Utils.localDateToDate(startDate.getValue()), -3);
+				statusHint.setValue(
+						"All participating customers will automatically be notified whether this offering is confirmed or cancelled on "
+								+ Utils.simpleDateFormat(threeDaysBeforeStart));
+			}
 		});
 
 		confirm.addClickListener(event -> {
@@ -241,18 +247,26 @@ public class OfferingEditor extends VerticalLayout {
 
 				binder.writeBeanIfValid(offeringToSave);
 
-				offeringToSave.setTour(hostTour);
-				//offeringToSave.setStatus(Offering.STATUS_PENDING);
-
-				log.info("About to save offering [{}]", tourName.getValue());
+				if (isCreatingNewOffering) {
+					offeringToSave.setTour(hostTour);
+					offeringToSave.setStatus(Offering.STATUS_PENDING);
+				}
 
 				try {
-					dbManager.createOfferingForTour(offeringToSave);
+					if (isCreatingNewOffering) {
+						log.info("About to save offering [{}]", tourName.getValue());
+						dbManager.createOfferingForTour(offeringToSave);
+						log.info("created offering [{}] successfully", tourName.getValue());
+
+					} else {
+						log.info("About to edit offering [{}]", tourName.getValue());
+						dbManager.editOfferingTorTour(offeringToSave);
+						log.info("edited offering [{}] successfully", tourName.getValue());
+					}
 
 					tourEditor.refreshData();
 					this.refreshData();
 					subWindow.close();
-					log.info("created/edited offering [{}] successfully", tourName.getValue());
 					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
 
 					binder.removeBean();

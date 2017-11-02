@@ -20,7 +20,7 @@ public class OfferingIDConverter implements Converter<Long, Offering> {
         if (found != null) {
             return Result.ok(found);
         }else{
-            return Result.error("Offering not found!");
+            return Result.error("offering not found!");
         }
     }
 

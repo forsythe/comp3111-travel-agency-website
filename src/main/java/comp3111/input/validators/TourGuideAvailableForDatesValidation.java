@@ -6,6 +6,7 @@ import com.vaadin.data.ValueContext;
 import com.vaadin.ui.DateField;
 import comp3111.Utils;
 import comp3111.data.DBManager;
+import comp3111.data.model.Offering;
 import comp3111.data.model.TourGuide;
 import comp3111.input.converters.LocalDateToUtilDateConverter;
 
@@ -14,16 +15,42 @@ import java.util.Date;
 
 import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
 
+/**
+ * A validator which checks whether a tour guide is available between a certain
+ * date range.
+ * 
+ * 
+ * 
+ * @author Forsythe
+ *
+ */
 public class TourGuideAvailableForDatesValidation implements Validator<TourGuide> {
 
 	private DateField startDateField;
 	private int duration;
 	private DBManager dbManager;
+	private Offering ignoredOffering;
 
-	TourGuideAvailableForDatesValidation(DateField startDateField, int duration, DBManager dbManager) {
+	/**
+	 * @param startDateField
+	 *            The start date range to check
+	 * @param duration
+	 *            How long the duration you want to check, starting from startDate
+	 * @param dbManager
+	 *            The database manager
+	 * @param ignoredOffering
+	 *            An offering to ignore when checking if any date collisions occur
+	 *            for this tour guide. Useful when you're editing an offering, and
+	 *            you want to scan whether there are any date collisions (but you
+	 *            don't want the offering to collide with itself when saving the
+	 *            updated version to DB). Can be null
+	 */
+	TourGuideAvailableForDatesValidation(DateField startDateField, int duration, DBManager dbManager,
+			Offering ignoredOffering) {
 		this.startDateField = startDateField;
 		this.duration = duration;
 		this.dbManager = dbManager;
+		this.ignoredOffering = ignoredOffering;
 	}
 
 	@Override
@@ -35,11 +62,19 @@ public class TourGuideAvailableForDatesValidation implements Validator<TourGuide
 			cal.setTime(startDate);
 			cal.add(Calendar.DATE, duration);
 			Date endDate = cal.getTime();
-
-			if (dbManager.isTourGuideAvailableBetweenDate(value, startDate, endDate)) {
-				return ValidationResult.ok();
+			if (ignoredOffering == null || ignoredOffering.getId() == null) {
+				if (dbManager.isTourGuideAvailableBetweenDate(value, startDate, endDate)) {
+					return ValidationResult.ok();
+				} else {
+					return getValidationErrorLogged("tour guide not available in given period");
+				}
 			} else {
-				return getValidationErrorLogged("tour guide not available in given period");
+				if (dbManager.isTourGuideAvailableBetweenDateExcludeOffering(value, startDate, endDate,
+						ignoredOffering)) {
+					return ValidationResult.ok();
+				} else {
+					return getValidationErrorLogged("tour guide not available in given period");
+				}
 			}
 		} catch (NullPointerException e) {
 			// Some values are null, just jump to ok

@@ -12,6 +12,10 @@ import java.util.Date;
 
 import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
 
+/**
+ * @author Forsythe
+ *
+ */
 public class DateAvailableInTourValidator implements Validator<Date> {
 
 	private Tour tour;
