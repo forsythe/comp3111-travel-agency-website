@@ -17,14 +17,15 @@ public class OfferingStillOpenValidator implements Validator<Offering> {
 
 	@Override
 	public ValidationResult apply(Offering value, ValueContext context) {
-		if (value != null){
-			if (value.getLastEditableDate().before(Date.from(Instant.now()))){
-				return getValidationErrorLogged("Offering is no longer open for application");
-			}else{
-				return  ValidationResult.ok();
+		if (value != null) {
+			if (value.getStatus().equals(Offering.STATUS_CANCELLED)
+					|| value.getLastEditableDate().before(Date.from(Instant.now()))) {
+				return getValidationErrorLogged("offering is no longer open for application");
+			} else {
+				return ValidationResult.ok();
 			}
-		}else{
-			return getValidationErrorLogged("Offering does not exist!");
+		} else {
+			return getValidationErrorLogged("offering does not exist");
 		}
 	}
 }

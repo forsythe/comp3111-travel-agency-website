@@ -1,13 +1,15 @@
 package comp3111.data;
 
-public class DB {
-	/*
-	 * for easy referencing of column IDs in vaadin they should match the getters
-	 * and setters' name. Note: these names must match the getters of the class
-	 * 
-	 * e.g. <Class>'s getTourName() ---> <CLASS>_TOUR_NAME = "tourName"
-	 */
-
+/**
+ * Each constant represents the column ID of a grid in vaadin. They MUST match
+ * the getter/setter name.
+ * 
+ * e.g. Tour's getChildDiscount() ---> TOUR_CHILD_DISCOUNT = "childDiscount"
+ * 
+ * @author Forsythe
+ *
+ */
+public class GridCol {
 	// Tour
 	/* shown in grid */
 	public static final String TOUR_ID = "id";
@@ -39,6 +41,8 @@ public class DB {
 	public static final String OFFERING_TOUR_GUIDE = "tourGuide";
 	public static final String OFFERING_DATE = "startDate";
 	public static final String OFFERING_LAST_EDITABLE_DATE = "lastEditableDate";
+	/* custom generated */
+	public static final String OFFERING_NUM_CONFIRMED_CUSTOMERS = "confirmedCustomers";
 
 	// Customer
 	/* shown in grid */
@@ -80,5 +84,7 @@ public class DB {
 	public static final String NONFAQQUERY_ANSWER = "answer";
 	public static final String NONFAQQUERY_CUSTOMER = "customer";
 	public static final String NONFAQQUERY_ID = "id";
+	/*hidden in grid*/
+	public static final String NONFAQQUERY_CUSTOMER_NAME = "customerName";
 
 }

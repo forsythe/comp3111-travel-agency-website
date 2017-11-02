@@ -162,6 +162,11 @@ public class Utils {
 		return false;
 	}
 
+	/**
+	 * @param dates
+	 *            A collection of dates
+	 * @return A nicely formatted string of the dates, with commas in between
+	 */
 	public static String dateCollectionToString(Collection<Date> dates) {
 		ArrayList<String> dateList = new ArrayList<>();
 		for (Date day : dates) {
@@ -170,6 +175,12 @@ public class Utils {
 		return String.join(", ", dateList);
 	}
 
+	/**
+	 * @param integerCollection
+	 *            A collection of integers representing days of the week
+	 * @return A nicely formatted string of the days, with commas in between; (e.g.
+	 *         Mon, Tue, Wed)
+	 */
 	public static String integerCollectionToString(Collection<Integer> integerCollection) {
 		ArrayList<String> integerList = new ArrayList<>();
 		for (int integer : integerCollection) {

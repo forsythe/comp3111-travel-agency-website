@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.vaadin.data.ValidationResult;
 import com.vaadin.data.ValueContext;
 
+import comp3111.LineMessenger;
 import comp3111.Utils;
 import comp3111.data.model.Booking;
 import comp3111.data.model.Customer;
@@ -51,14 +52,16 @@ public class DBManager {
 	private TourGuideRepository tourGuideRepo;
 	@Autowired
 	private NonFAQQueryRepository nonFAQQueryRepo;
+	@Autowired
+	private LineMessenger lineMessenger;
 
 	public Offering createOfferingForTour(Tour tour, TourGuide tg, Date startDate, String hotelName, int minCustomers,
 			int maxCustomers) throws OfferingDateUnsupportedException, TourGuideUnavailableException {
 
 		// Make sure both the tour and the tour guide are concrete entity in the
 		// database
-		tourRepo.save(tour);
-		tourGuideRepo.save(tg);
+		tour = tourRepo.save(tour);
+		tg = tourGuideRepo.save(tg);
 
 		DateAvailableInTourValidator dateValidator = ValidatorFactory.getDateAvailableInTourValidator(tour);
 		ValidationResult result = dateValidator.apply(startDate, new ValueContext());
@@ -82,12 +85,42 @@ public class DBManager {
 		return o;
 	}
 
+	public Offering editOfferingTorTour(Offering o)
+			throws TourGuideUnavailableException, OfferingDateUnsupportedException {
+		Tour t = o.getTour();
+		Date startDate = o.getStartDate();
+		TourGuide tg = o.getTourGuide();
+
+		DateAvailableInTourValidator dateValidator = ValidatorFactory.getDateAvailableInTourValidator(t);
+		ValidationResult result = dateValidator.apply(startDate, new ValueContext());
+		if (result.isError()) {
+			throw new OfferingDateUnsupportedException();
+		}
+
+		if (!isTourGuideAvailableBetweenDateExcludeOffering(tg, startDate, Utils.addDate(startDate, t.getDays()), o)) {
+			throw new TourGuideUnavailableException();
+		}
+
+		log.info("successfully edited offering on [{}] for tour [{}]", startDate, t.getTourName());
+		return offeringRepo.save(o);
+	}
+
 	public boolean isTourGuideAvailableForOffering(TourGuide tg, Offering proposedOffering) {
 		Date proposedStart = proposedOffering.getStartDate();
 		Date proposedEnd = Utils.addDate(proposedOffering.getStartDate(), proposedOffering.getTour().getDays());
 		return isTourGuideAvailableBetweenDate(tg, proposedStart, proposedEnd);
 	}
 
+	/**
+	 * @param tg
+	 *            The tour guide
+	 * @param proposedStart
+	 *            The beginning date
+	 * @param proposedEnd
+	 *            The ending date
+	 * @return Whether or not the tour guide is free (to lead more offerings)
+	 *         between this date interval
+	 */
 	public boolean isTourGuideAvailableBetweenDate(TourGuide tg, Date proposedStart, Date proposedEnd) {
 		for (Offering existingOffering : findPastAndUpcomingGuidedOfferingsByTourGuide(tg)) {
 			if (existingOffering.getStatus().equals(Offering.STATUS_CANCELLED)) {
@@ -103,6 +136,50 @@ public class DBManager {
 				log.info("Offering timerange [{}]-[{}] is occupied for tourguide [{}]", proposedStart, proposedEnd,
 						tg.getName());
 
+				return false;
+			}
+
+		}
+		return true;
+	}
+
+	/**
+	 * @param tg
+	 *            The tour guide
+	 * @param proposedStart
+	 *            The start date interval to check if the tour guide is free
+	 * @param proposedEnd
+	 *            The end date
+	 * @param ignoredOffering
+	 *            The offering to ignore.
+	 * @return True or false, if the tour guide is indeed available between the
+	 *         specified range. It scans all offerings associated with this tour
+	 *         guide, and checks if there are any time collisions with the provided
+	 *         date range. We also ignore the timerange used by the offering
+	 *         "ignoredOffering"
+	 */
+	public boolean isTourGuideAvailableBetweenDateExcludeOffering(TourGuide tg, Date proposedStart, Date proposedEnd,
+			Offering ignoredOffering) {
+		Collection<Offering> relevantOfferings = findPastAndUpcomingGuidedOfferingsByTourGuide(tg);
+		int size = relevantOfferings.size();
+		log.info("size before removing: [{}]", size);
+		relevantOfferings.removeIf(offer -> offer.equals(ignoredOffering));
+		assert relevantOfferings.size() == size - 1;
+		log.info("size after removing: [{}]", relevantOfferings.size());
+
+		for (Offering existingOffering : relevantOfferings) {
+			if (existingOffering.getStatus().equals(Offering.STATUS_CANCELLED)) {
+				continue;
+			}
+			Date takenStart = existingOffering.getStartDate();
+			Date takenEnd = Utils.addDate(takenStart, existingOffering.getTour().getDays());
+
+			if (proposedStart.after(takenStart) && proposedEnd.before(takenEnd)
+					|| proposedStart.before(takenStart) && proposedEnd.after(takenEnd)
+					|| proposedStart.before(takenEnd) && proposedEnd.after(takenEnd) || proposedStart.equals(takenStart)
+					|| proposedEnd.equals(takenEnd)) {
+				log.info("Offering timerange [{}]-[{}] is occupied for tourguide [{}]", proposedStart, proposedEnd,
+						tg.getName());
 				return false;
 			}
 
@@ -229,10 +306,29 @@ public class DBManager {
 	public int countNumberOfPaidPeopleInOffering(Offering offering) {
 		int num = 0;
 		for (Booking record : bookingRepo.findByOffering(offering)) {
-			if (record.getOffering().equals(offering) && record.getPaymentStatus().equals(Booking.PAYMENT_CONFIRMED)) {
+			if (record.getPaymentStatus().equals(Booking.PAYMENT_CONFIRMED)) {
 				num += record.getNumAdults() + record.getNumChildren() + record.getNumToddlers();
 			}
 		}
 		return num;
 	}
+
+	/**
+	 * @param offering
+	 *            The offering to cancel
+	 * 
+	 */
+	public void cancelOffering(Offering offering) {
+		offering.setStatus(Offering.STATUS_CANCELLED);
+		log.info("Cancelling [{}]", offering);
+		offering = offeringRepo.save(offering);
+		for (Booking record : bookingRepo.findByOffering(offering)) {
+			record.setPaymentStatus(Booking.PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED);
+			record = bookingRepo.save(record);
+			log.info("Cancelling booking record [{}]", record);
+		}
+		lineMessenger.sendToOffering(offering, offering + " has been cancelled.");
+
+	}
+
 }

@@ -43,13 +43,18 @@ public class LineMessenger {
 	private static int count;
 
 	/**
-	 * @return how many individuals have received your message since the last reset.
-	 *         Will also reset per call
+	 * Reset the counter, which counts how many messages our LineMessenger sent
 	 */
-	public static int getAndResetCount() {
-		int temp = count;
+	public static void resetCounter() {
 		count = 0;
-		return temp;
+	}
+
+	/**
+	 * @return how many recipients have received a message since we called
+	 *         {@link LineMessenger#resetCounter()}}
+	 */
+	public static int getCounter() {
+		return count;
 	}
 
 	/**

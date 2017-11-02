@@ -22,14 +22,14 @@ public class PhoneNumberValidator implements Validator<String> {
 					for (String s : parts) {
 						Integer.parseInt(s);
 					}
-				}else{
-					return getValidationErrorLogged("Wrong Format");
+				} else {
+					return getValidationErrorLogged("wrong format");
 				}
-			}else{
+			} else {
 				Integer.parseInt(value);
 			}
-		}catch (NumberFormatException e){
-			return getValidationErrorLogged("Must be a number");
+		} catch (NumberFormatException e) {
+			return getValidationErrorLogged("must be a number");
 		}
 
 		return ValidationResult.ok();
