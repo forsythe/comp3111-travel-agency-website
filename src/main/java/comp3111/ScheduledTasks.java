@@ -42,10 +42,10 @@ public class ScheduledTasks {
 
 		for (Offering o : offeringRepo.findByStatus(Offering.STATUS_PENDING)) {
 
-			log.info("Offering [{}] still has time left, not updating its status yet...");
-
+			log.info("Offering [{}] still has time left, not updating its status yet...", o);
+			// if now >= start-3
 			if (o.getStatus().equals(Offering.STATUS_PENDING) && now.after(Utils.addDate(o.getStartDate(), -3))) {
-				log.info("Offering [{}] has reached t=-3 days before start!");
+				log.info("Offering [{}] has reached t=-3 days before start!", o);
 				int totalCustomers = actionManager.countNumberOfPaidPeopleInOffering(o);
 
 				if (totalCustomers >= o.getMinCustomers()) {
@@ -61,20 +61,21 @@ public class ScheduledTasks {
 					o.setStatus(Offering.STATUS_CANCELLED);
 					o = offeringRepo.save(o);
 				}
-			}
-			for (Booking b : bookingRepo.findByOffering(o)) {
-				Customer recipient = b.getCustomer();
-				String msg = String.format("Dear %s, offering %s has been %s!", recipient.getName(), o,
-						offeringConfirmed ? "confirmed" : "cancelled");
-				boolean deliveryResult = lineMessenger.sendToOffering(o, msg);
-				log.info("delivery result to [{}] customers is [{}]", LineMessenger.getCounter(), deliveryResult);
-				if (!offeringConfirmed) {
-					b.setPaymentStatus(Booking.PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED);
-					b = bookingRepo.save(b);
+
+				for (Booking b : bookingRepo.findByOffering(o)) {
+					Customer recipient = b.getCustomer();
+					String msg = String.format("Dear %s, offering %s has been %s!", recipient.getName(), o,
+							offeringConfirmed ? "confirmed" : "cancelled");
+					boolean deliveryResult = lineMessenger.sendToUser(recipient.getLineId(), msg, true);
+					log.info("\tdelivery result to  customers is [{}]", recipient.getName(), deliveryResult);
+					if (!offeringConfirmed) {
+						b.setPaymentStatus(Booking.PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED);
+						b = bookingRepo.save(b);
+					}
 				}
 			}
-
 		}
+		log.info("[{}] people were notified", LineMessenger.getCounter());
 
 	}
 }

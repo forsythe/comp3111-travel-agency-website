@@ -306,7 +306,7 @@ public class DBManager {
 	public int countNumberOfPaidPeopleInOffering(Offering offering) {
 		int num = 0;
 		for (Booking record : bookingRepo.findByOffering(offering)) {
-			if (record.getOffering().equals(offering) && record.getPaymentStatus().equals(Booking.PAYMENT_CONFIRMED)) {
+			if (record.getPaymentStatus().equals(Booking.PAYMENT_CONFIRMED)) {
 				num += record.getNumAdults() + record.getNumChildren() + record.getNumToddlers();
 			}
 		}

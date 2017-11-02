@@ -22,6 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import comp3111.Application;
 import comp3111.LineMessenger;
 import comp3111.ScheduledTasks;
+import comp3111.Utils;
 import comp3111.data.DBManager;
 import comp3111.data.model.Booking;
 import comp3111.data.model.Customer;
@@ -134,7 +135,7 @@ public class LineInteractionTests {
 	}
 
 	@Test
-	public void testSuccessManuallyCancelOfferingNotifiedAllRecipientsAndBookingStatusesAreCancelled()
+	public void testSuccessManuallyCancelOffering()
 			throws OfferingDateUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
 		Customer heng = new Customer("heng", "U6934790c40beeed33b8b89fa359aa9cf", "12312341234", 20, "A1234563");
 		heng = customerRepo.save(heng);
@@ -173,9 +174,10 @@ public class LineInteractionTests {
 	}
 
 	@Test
-	public void testSuccessOfferingAutomaticConfirmedCapacityAndNotifiedAllRecipientsAndBookingStatusesUpdated()
+	public void testSuccessOfferingAutomaticConfirmedCapacity()
 			throws OfferingDateUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
 		Date now = new Date();
+		Date twoDaysAgo = Utils.addDate(now, -2); // so that our trigger will act on this tour
 
 		Customer heng = new Customer("heng", "U6934790c40beeed33b8b89fa359aa9cf", "12312341234", 20, "A1234563");
 		heng = customerRepo.save(heng);
@@ -183,26 +185,22 @@ public class LineInteractionTests {
 		kv = customerRepo.save(kv);
 
 		Tour comp3111Tour = new Tour("comp3111h", "learn about design patterns", 3, 0.8, 0.0, 599, 699);
-		comp3111Tour.setAllowedDates(
-				new HashSet<Date>(Arrays.asList(new GregorianCalendar(2017, Calendar.DECEMBER, 9).getTime(),
-						new GregorianCalendar(2017, Calendar.DECEMBER, 12).getTime())));
-
-		tourRepo.save(comp3111Tour);
+		comp3111Tour.setAllowedDates(new HashSet<Date>(Arrays.asList(twoDaysAgo)));
+		comp3111Tour = tourRepo.save(comp3111Tour);
 
 		TourGuide tg1 = new TourGuide("professor kim", "line123");
 		tg1 = tourGuideRepo.save(tg1);
 
 		int minCapacity = 5;
-		Offering offering = actionManager.createOfferingForTour(comp3111Tour, tg1,
-				new ArrayList<Date>(comp3111Tour.getAllowedDates()).get(0), "hotel bob", minCapacity, 20);
+		Offering offering = actionManager.createOfferingForTour(comp3111Tour, tg1, twoDaysAgo, "hotel bob", minCapacity,
+				20);
 
 		Booking hengBooking = actionManager.createBookingForOffering(offering, heng, 3, 4, 2, 0, "kids meal",
-				Booking.PAYMENT_PENDING);
+				Booking.PAYMENT_CONFIRMED);
 		Booking kvBooking = actionManager.createBookingForOffering(offering, kv, 3, 4, 2, 0, "kids meal",
-				Booking.PAYMENT_PENDING);
+				Booking.PAYMENT_CONFIRMED);
 
 		// this should be enough customers to trigger a success
-
 		sTask.updatePendingOfferingStatusIfNecessary();
 
 		assertEquals(2, LineMessenger.getCounter());
@@ -210,17 +208,51 @@ public class LineInteractionTests {
 		// task, without resetting the counter.
 
 		// need to refetch the items from DB
-		assertEquals(bookingRepo.findOne(hengBooking.getId()).getPaymentStatus(),
-				Booking.PAYMENT_CONFIRMED);
-		assertEquals(bookingRepo.findOne(kvBooking.getId()).getPaymentStatus(),
-				Booking.PAYMENT_CONFIRMED);
-
-		assertEquals(offeringRepo.findOne(offering.getId()).getStatus(), Offering.STATUS_CONFIRMED);
+		assertEquals(Booking.PAYMENT_CONFIRMED, bookingRepo.findOne(hengBooking.getId()).getPaymentStatus());
+		assertEquals(Booking.PAYMENT_CONFIRMED, bookingRepo.findOne(kvBooking.getId()).getPaymentStatus());
+		assertEquals(Offering.STATUS_CONFIRMED, offeringRepo.findOne(offering.getId()).getStatus());
 	}
 
 	@Test
-	public void testFailureOfferingAutomaticCancelledUnderfullAndNotifiedAllRecipientsAndBookingStatusesUpdated() {
+	public void testFailureOfferingAutomaticCancelNotEnoughConfirmedPayments()
+			throws OfferingDateUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
+		Date now = new Date();
+		Date twoDaysAgo = Utils.addDate(now, -2); // so that our trigger will act on this tour
 
+		Customer heng = new Customer("heng", "U6934790c40beeed33b8b89fa359aa9cf", "12312341234", 20, "A1234563");
+		heng = customerRepo.save(heng);
+		Customer kv = new Customer("KV", "Ufbae1ebc457e163d0f351c1865daccf5", "12312341234", 20, "A1234563");
+		kv = customerRepo.save(kv);
+
+		Tour comp3111Tour = new Tour("comp3111h", "learn about design patterns", 3, 0.8, 0.0, 599, 699);
+		comp3111Tour.setAllowedDates(new HashSet<Date>(Arrays.asList(twoDaysAgo)));
+		comp3111Tour = tourRepo.save(comp3111Tour);
+
+		TourGuide tg1 = new TourGuide("professor kim", "line123");
+		tg1 = tourGuideRepo.save(tg1);
+
+		int minCapacity = 5;
+		Offering offering = actionManager.createOfferingForTour(comp3111Tour, tg1, twoDaysAgo, "hotel bob", minCapacity,
+				20);
+
+		Booking hengBooking = actionManager.createBookingForOffering(offering, heng, 3, 4, 2, 0, "kids meal",
+				Booking.PAYMENT_PENDING);
+		Booking kvBooking = actionManager.createBookingForOffering(offering, kv, 3, 4, 2, 0, "kids meal",
+				Booking.PAYMENT_PENDING);
+
+		// this should be enough customers to trigger a success
+		sTask.updatePendingOfferingStatusIfNecessary();
+
+		assertEquals(2, LineMessenger.getCounter());
+		// should have two "200 OK"s from LINE. we get it immediately after the schedule
+		// task, without resetting the counter.
+
+		// need to refetch the items from DB
+		assertEquals(Booking.PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED,
+				bookingRepo.findOne(hengBooking.getId()).getPaymentStatus());
+		assertEquals(Booking.PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED,
+				bookingRepo.findOne(kvBooking.getId()).getPaymentStatus());
+		assertEquals(Offering.STATUS_CANCELLED, offeringRepo.findOne(offering.getId()).getStatus());
 	}
 
 	@Test
