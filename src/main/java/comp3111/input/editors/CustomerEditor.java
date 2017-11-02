@@ -25,7 +25,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 import comp3111.Utils;
-import comp3111.data.DB;
+import comp3111.data.GridCol;
 import comp3111.data.model.Customer;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.input.converters.ConverterFactory;
@@ -76,7 +76,7 @@ public class CustomerEditor extends VerticalLayout {
 		// Render component
 		this.addComponent(rowOfButtons);
 
-		// Get from DB
+		// Get from GridCol
 		refreshData();
 
 		customersGrid.setWidth("100%");
@@ -96,8 +96,8 @@ public class CustomerEditor extends VerticalLayout {
 			}
 		});
 
-		customersGrid.setColumnOrder(DB.CUSTOMER_ID, DB.CUSTOMER_NAME, DB.CUSTOMER_LINE_ID, DB.CUSTOMER_HKID,
-				DB.CUSTOMER_PHONE, DB.CUSTOMER_AGE);
+		customersGrid.setColumnOrder(GridCol.CUSTOMER_ID, GridCol.CUSTOMER_NAME, GridCol.CUSTOMER_LINE_ID, GridCol.CUSTOMER_HKID,
+				GridCol.CUSTOMER_PHONE, GridCol.CUSTOMER_AGE);
 
 		// HeaderRow filterRow = customersGrid.appendHeaderRow();
 

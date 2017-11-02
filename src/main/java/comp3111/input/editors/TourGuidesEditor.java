@@ -13,7 +13,7 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
 import comp3111.Utils;
-import comp3111.data.DB;
+import comp3111.data.GridCol;
 import comp3111.data.model.TourGuide;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.input.validators.ValidatorFactory;
@@ -87,7 +87,7 @@ public class TourGuidesEditor extends VerticalLayout {
 			}
 		});
 
-		tourGuideGrid.setColumnOrder(DB.TOURGUIDE_ID, DB.TOURGUIDE_NAME, DB.TOURGUIDE_LINE_USERNAME);
+		tourGuideGrid.setColumnOrder(GridCol.TOURGUIDE_ID, GridCol.TOURGUIDE_NAME, GridCol.TOURGUIDE_LINE_USERNAME);
 
 		// HeaderRow filterRow = tourGuideGrid.appendHeaderRow();
 

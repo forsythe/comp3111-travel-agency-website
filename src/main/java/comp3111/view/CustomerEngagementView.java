@@ -25,7 +25,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import comp3111.LineMessenger;
 import comp3111.Utils;
-import comp3111.data.DB;
+import comp3111.data.GridCol;
 import comp3111.data.model.Customer;
 import comp3111.data.model.NonFAQQuery;
 import comp3111.data.model.Offering;
@@ -189,7 +189,7 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		submit.setEnabled(false);
 
 		grid.setDataProvider(new ListDataProvider<NonFAQQuery>(Utils.iterableToCollection(qRepo.findAll())));
-		grid.setColumnOrder(DB.NONFAQQUERY_ID, DB.NONFAQQUERY_CUSTOMER, DB.NONFAQQUERY_QUERY, DB.NONFAQQUERY_ANSWER);
+		grid.setColumnOrder(GridCol.NONFAQQUERY_ID, GridCol.NONFAQQUERY_CUSTOMER, GridCol.NONFAQQUERY_QUERY, GridCol.NONFAQQUERY_ANSWER);
 		grid.setHeight("90%");
 		log.info("there are [{}] unresolved queries",
 				Utils.iterableToCollection(qRepo.findAll()).stream().filter(q -> q.getAnswer().isEmpty()).count());

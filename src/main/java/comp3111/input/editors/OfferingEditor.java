@@ -23,11 +23,12 @@ import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 import comp3111.Utils;
-import comp3111.data.DB;
+import comp3111.data.GridCol;
 import comp3111.data.DBManager;
 import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
@@ -61,7 +62,6 @@ public class OfferingEditor extends VerticalLayout {
 	private final Grid<Offering> offeringGrid = new Grid<Offering>(Offering.class);
 
 	private Offering selectedOffering;
-	private Long selectedOfferingId;
 
 	/* Action buttons */
 	private HorizontalLayout rowOfButtons = new HorizontalLayout();
@@ -103,16 +103,20 @@ public class OfferingEditor extends VerticalLayout {
 			}
 		});
 
-		offeringGrid.removeColumn(DB.OFFERING_TOUR); // we'll combine days of week and dates
-		offeringGrid.removeColumn(DB.OFFERING_TOUR_GUIDE);
-		offeringGrid.removeColumn(DB.OFFERING_DATE);
-		offeringGrid.removeColumn(DB.OFFERING_LAST_EDITABLE_DATE);
+		offeringGrid.removeColumn(GridCol.OFFERING_TOUR); // we'll combine days of week and dates
+		offeringGrid.removeColumn(GridCol.OFFERING_TOUR_GUIDE);
+		offeringGrid.removeColumn(GridCol.OFFERING_DATE);
+		offeringGrid.removeColumn(GridCol.OFFERING_LAST_EDITABLE_DATE);
 
-		offeringGrid.setColumnOrder(DB.OFFERING_ID, DB.OFFERING_STATUS, DB.OFFERING_START_DATE,
-				DB.OFFERING_TOUR_GUIDE_NAME, DB.OFFERING_TOUR_GUIDE_LINE_ID, DB.OFFERING_TOUR_NAME,
-				DB.OFFERING_MIN_CAPACITY, DB.OFFERING_MAX_CAPACITY);
+		offeringGrid.getColumn(GridCol.OFFERING_START_DATE).setCaption("Start Date");
 
-		offeringGrid.getColumn(DB.OFFERING_START_DATE).setCaption("Start Date");
+		offeringGrid.addColumn(offering -> {
+			return dbManager.countNumberOfPaidPeopleInOffering(offering);
+		}).setId(GridCol.OFFERING_NUM_CONFIRMED_CUSTOMERS).setCaption("Confirmed Participants");
+
+		offeringGrid.setColumnOrder(GridCol.OFFERING_ID, GridCol.OFFERING_STATUS, GridCol.OFFERING_START_DATE,
+				GridCol.OFFERING_TOUR_GUIDE_NAME, GridCol.OFFERING_TOUR_GUIDE_LINE_ID, GridCol.OFFERING_TOUR_NAME,
+				GridCol.OFFERING_NUM_CONFIRMED_CUSTOMERS, GridCol.OFFERING_MIN_CAPACITY, GridCol.OFFERING_MAX_CAPACITY);
 
 		for (Column<Offering, ?> col : offeringGrid.getColumns()) {
 			col.setMinimumWidth(120);
@@ -124,13 +128,11 @@ public class OfferingEditor extends VerticalLayout {
 		this.addComponent(offeringGrid);
 
 		createNewOfferingButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(getSubWindow(selectedTour, new Offering(), tourEditor));
-			selectedOfferingId = null;
+			UI.getCurrent().addWindow(getSubWindow(selectedTour, new Offering(), tourEditor));
 		});
 
 		editOfferingButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(getSubWindow(selectedTour, selectedOffering, tourEditor));
-			selectedOfferingId = selectedOffering.getId();
+			UI.getCurrent().addWindow(getSubWindow(selectedTour, selectedOffering, tourEditor));
 		});
 
 		returnButton.addClickListener(event -> {
@@ -139,7 +141,9 @@ public class OfferingEditor extends VerticalLayout {
 
 	}
 
-	Window getSubWindow(Tour hostTour, Offering offeringToSave, TourEditor tourEditor) {
+	Window getSubWindow(Tour hostTour, final Offering offeringToSave, TourEditor tourEditor) {
+		boolean isCreatingNewOffering = offeringToSave.getId() == null;
+
 		// Creating the confirm button
 		Button confirm = new Button("Confirm");
 		confirm.setId("btn_confirm_offering");
@@ -159,7 +163,12 @@ public class OfferingEditor extends VerticalLayout {
 		Label statusHint = new Label();
 		statusHint.setWidth("100%");
 
-		Window subWindow = new Window("Create new offering");
+		Window subWindow;
+		if (isCreatingNewOffering) {
+			subWindow = new Window("Create new offering");
+		} else {
+			subWindow = new Window("Edit an offering");
+		}
 
 		tourGuide.setPopupWidth(null);
 
@@ -196,8 +205,9 @@ public class OfferingEditor extends VerticalLayout {
 		// Binding method according to docs
 		Binder<Offering> binder = new Binder<>(Offering.class);
 
-		binder.forField(tourGuide).asRequired(Utils.generateRequiredError()).withValidator(
-				ValidatorFactory.getTourGuideAvailableForDatesValidation(startDate, hostTour.getDays(), dbManager))
+		binder.forField(tourGuide).asRequired(Utils.generateRequiredError())
+				.withValidator(ValidatorFactory.getTourGuideAvailableForDatesValidationIgnoreOneOffering(startDate,
+						hostTour.getDays(), dbManager, isCreatingNewOffering ? null : offeringToSave))
 				.bind(Offering::getTourGuide, Offering::setTourGuide);
 
 		binder.forField(startDate).asRequired(Utils.generateRequiredError())
@@ -225,10 +235,12 @@ public class OfferingEditor extends VerticalLayout {
 		binder.setBean(offeringToSave);
 
 		startDate.addValueChangeListener(event -> {
-			Date threeDaysBeforeStart = Utils.addDate(Utils.localDateToDate(startDate.getValue()), -3);
-			statusHint.setValue(
-					"All participating customers will automatically be notified whether this offering is confirmed or cancelled on "
-							+ Utils.simpleDateFormat(threeDaysBeforeStart));
+			if (!startDate.isEmpty()) {
+				Date threeDaysBeforeStart = Utils.addDate(Utils.localDateToDate(startDate.getValue()), -3);
+				statusHint.setValue(
+						"All participating customers will automatically be notified whether this offering is confirmed or cancelled on "
+								+ Utils.simpleDateFormat(threeDaysBeforeStart));
+			}
 		});
 
 		confirm.addClickListener(event -> {
@@ -236,27 +248,29 @@ public class OfferingEditor extends VerticalLayout {
 
 			String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);
 			if (validationStatus.isOk()) {
-				log.debug(selectedOfferingId.toString());
-				if(!selectedOfferingId.equals(null)) {
-					offeringRepo.delete(selectedOfferingId);
-					offeringToSave.setId(selectedOfferingId);
-				}
-				binder.writeBeanIfValid(offeringToSave);
-//				if(selectedOfferingId != -1) {
-//					selectedOffering.setId(selectedOfferingId);
-//				}
-				offeringToSave.setTour(hostTour);
-				offeringToSave.setStatus(Offering.STATUS_PENDING);
 
-				log.info("About to save tour [{}]", tourName.getValue());
+				binder.writeBeanIfValid(offeringToSave);
+
+				if (isCreatingNewOffering) {
+					offeringToSave.setTour(hostTour);
+					offeringToSave.setStatus(Offering.STATUS_PENDING);
+				}
 
 				try {
-					dbManager.createOfferingForTour(offeringToSave);
+					if (isCreatingNewOffering) {
+						log.info("About to save offering [{}]", tourName.getValue());
+						dbManager.createOfferingForTour(offeringToSave);
+						log.info("created offering [{}] successfully", tourName.getValue());
+
+					} else {
+						log.info("About to edit offering [{}]", tourName.getValue());
+						dbManager.editOfferingTorTour(offeringToSave);
+						log.info("edited offering [{}] successfully", tourName.getValue());
+					}
 
 					tourEditor.refreshData();
 					this.refreshData();
 					subWindow.close();
-					log.info("created/edited offering [{}] successfully", tourName.getValue());
 					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
 
 					binder.removeBean();

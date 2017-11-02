@@ -30,6 +30,7 @@ public class ScheduledTasks {
 	@Autowired
 	private LineMessenger lineMessenger;
 
+	
 //	@Scheduled(fixedRate = 5000)
 //	public void updatePendingOfferingStatusIfNecessary() {
 //		boolean offeringConfirmed = false;

@@ -12,9 +12,14 @@ import java.util.Date;
 
 import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
 
+/**
+ * @author Forsythe
+ *
+ */
 public class DateAvailableInTourValidator implements Validator<Date> {
 
 	private Tour tour;
+
 	DateAvailableInTourValidator(Tour tour) {
 		this.tour = tour;
 	}
@@ -32,10 +37,8 @@ public class DateAvailableInTourValidator implements Validator<Date> {
 			// Sunday: 1, Monday: 2, Tuesday: 3...
 			if (!supportedDaysOfWeek.contains(startDateDayOfWeek)) {
 				StringBuilder msgBuilder = new StringBuilder();
-				msgBuilder.append("Only the following days are supported");
-				for (Integer i : supportedDaysOfWeek) {
-					msgBuilder.append(String.format("\t%s", Utils.dayToString(i)));
-				}
+				msgBuilder.append("only the following days are supported: ");
+				msgBuilder.append(Utils.integerCollectionToString(supportedDaysOfWeek));
 				return getValidationErrorLogged(msgBuilder.toString());
 			}
 		}
@@ -43,10 +46,9 @@ public class DateAvailableInTourValidator implements Validator<Date> {
 		Collection<Date> supportedDates = tour.getAllowedDates();
 		if (!supportedDates.isEmpty() && !supportedDates.contains(value)) {
 			StringBuilder msgBuilder = new StringBuilder();
-			msgBuilder.append("Only the following dates are supported");
-			for (Date d : supportedDates) {
-				msgBuilder.append(String.format("\t%s", d));
-			}
+			msgBuilder.append("only the following dates are supported: ");
+
+			msgBuilder.append(Utils.dateCollectionToString(supportedDates));
 			return getValidationErrorLogged(msgBuilder.toString());
 		}
 

@@ -12,6 +12,7 @@ import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.DateField;
 
 import comp3111.data.DBManager;
+import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 
 public class ValidatorFactory {
@@ -66,9 +67,23 @@ public class ValidatorFactory {
 		return new DateAvailableInTourValidator(tour);
 	}
 
-	public static TourGuideAvailableForDatesValidation getTourGuideAvailableForDatesValidation(DateField startDateField,
-			int duration, DBManager dbManager) {
-		return new TourGuideAvailableForDatesValidation(startDateField, duration, dbManager);
+	/**
+	 * @param startDateField
+	 *            the starting date to check
+	 * @param duration
+	 *            the length of the interval to check (in days)
+	 * @param dbManager
+	 * @param ignoredOffering
+	 *            the offering to ignore (can be null)
+	 * @return whether or not the tour guide is available from time startDateField
+	 *         to startDateField+duration. If ignoredOffering is not null, then we
+	 *         ignore the time interval used by ignoredOffering when checking if
+	 *         tour guide is free. Useful for when editing offerings, we don't want
+	 *         the edited offering time-colliding with itself
+	 */
+	public static TourGuideAvailableForDatesValidation getTourGuideAvailableForDatesValidationIgnoreOneOffering(
+			DateField startDateField, int duration, DBManager dbManager, Offering ignoredOffering) {
+		return new TourGuideAvailableForDatesValidation(startDateField, duration, dbManager, ignoredOffering);
 	}
 
 	/**
@@ -85,9 +100,7 @@ public class ValidatorFactory {
 				sb.append("[" + ((AbstractComponent) result.getField()).getCaption() + "]").append(" ")
 						.append(result.getMessage().get()).append("\n");
 			}
-
 		}
-
 		return sb.toString();
 	}
 }

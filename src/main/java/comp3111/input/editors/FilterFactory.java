@@ -1,7 +1,7 @@
 package comp3111.input.editors;
 
 import comp3111.Utils;
-import comp3111.data.DB;
+import comp3111.data.GridCol;
 import comp3111.data.model.Tour;
 import comp3111.input.exceptions.ColumnNameNotFoundException;
 
@@ -20,29 +20,29 @@ public class FilterFactory {
 		 * because the predicate must be generated at runtime, based on the varying
 		 * search values.
 		 */
-		if (colId.equals(DB.TOUR_ID))
+		if (colId.equals(GridCol.TOUR_ID))
 			return new ProviderAndPredicate<Tour, Long>(Tour::getId, t -> Utils.safeParseLongEquals(t, searchVal));
-		if (colId.equals(DB.TOUR_TOUR_NAME))
+		if (colId.equals(GridCol.TOUR_TOUR_NAME))
 			return new ProviderAndPredicate<Tour, String>(Tour::getTourName,
 					t -> Utils.containsIgnoreCase(t, searchVal));
-		if (colId.equals(DB.TOUR_DAYS))
+		if (colId.equals(GridCol.TOUR_DAYS))
 			return new ProviderAndPredicate<Tour, Integer>(Tour::getDays, t -> Utils.safeParseIntEquals(t, searchVal));
-		if (colId.equals(DB.TOUR_OFFERING_AVAILABILITY))
+		if (colId.equals(GridCol.TOUR_OFFERING_AVAILABILITY))
 			return new ProviderAndPredicate<Tour, String>(Tour::getOfferingAvailability,
 					t -> Utils.containsIgnoreCase(t, searchVal));
-		if (colId.equals(DB.TOUR_DESCRIPTION))
+		if (colId.equals(GridCol.TOUR_DESCRIPTION))
 			return new ProviderAndPredicate<Tour, String>(Tour::getDescription,
 					t -> Utils.containsIgnoreCase(t, searchVal));
-		if (colId.equals(DB.TOUR_WEEKDAY_PRICE))
+		if (colId.equals(GridCol.TOUR_WEEKDAY_PRICE))
 			return new ProviderAndPredicate<Tour, Integer>(Tour::getWeekdayPrice,
 					t -> Utils.safeParseIntEquals(t, searchVal));
-		if (colId.equals(DB.TOUR_WEEKEND_PRICE))
+		if (colId.equals(GridCol.TOUR_WEEKEND_PRICE))
 			return new ProviderAndPredicate<Tour, Integer>(Tour::getWeekendPrice,
 					t -> Utils.safeParseIntEquals(t, searchVal));
-		if (colId.equals(DB.TOUR_CHILD_DISCOUNT))
+		if (colId.equals(GridCol.TOUR_CHILD_DISCOUNT))
 			return new ProviderAndPredicate<Tour, Double>(Tour::getChildDiscount,
 					t -> Utils.safeParseDoubleEquals(t, searchVal));
-		if (colId.equals(DB.TOUR_TODDLER_DISCOUNT))
+		if (colId.equals(GridCol.TOUR_TODDLER_DISCOUNT))
 			return new ProviderAndPredicate<Tour, Double>(Tour::getToddlerDiscount,
 					t -> Utils.safeParseDoubleEquals(t, searchVal));
 

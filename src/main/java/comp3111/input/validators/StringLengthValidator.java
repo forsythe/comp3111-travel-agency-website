@@ -20,9 +20,9 @@ public class StringLengthValidator implements Validator<String> {
 			if(value.length() <= maxLength)
 				return ValidationResult.ok();
 		} catch (Exception e) {
-			return getValidationErrorLogged("Something went wrong");
+			return getValidationErrorLogged("something went wrong");
 		}
-		return getValidationErrorLogged("The string must be <= " + maxLength + " characters");
+		return getValidationErrorLogged("the string must be <= " + maxLength + " characters");
 
 	}
 }

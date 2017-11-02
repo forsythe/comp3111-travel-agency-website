@@ -33,7 +33,7 @@ public class ListOfDatesValidator implements Validator<String> {
 
 		} catch (ParseException e) {
 			return getValidationErrorLogged(
-					"Provide at least 1 date, " + Utils.DATE_LOCALE.toLowerCase() + ", separated by commas");
+					"provide at least 1 date, " + Utils.DATE_LOCALE.toLowerCase() + ", separated by commas");
 		}
 		return ValidationResult.ok();
 

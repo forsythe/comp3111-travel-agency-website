@@ -22,13 +22,13 @@ public class IntegerLowerBoundedByAnotherFieldValidator implements Validator<Int
 				if (value >= boundedBy)
 					return ValidationResult.ok();
 			} catch (NumberFormatException e) {
-				return getValidationErrorLogged("Must be an integer");
+				return getValidationErrorLogged("must be an integer");
 			}
 		} catch (NumberFormatException e) {
 			// The lower bound itself is not valid. None of my business here :)
 			return ValidationResult.ok();
 		}
-		return getValidationErrorLogged("The integer must be >= " + field.getCaption());
+		return getValidationErrorLogged("the integer must be >= " + field.getCaption());
 
 	}
 }

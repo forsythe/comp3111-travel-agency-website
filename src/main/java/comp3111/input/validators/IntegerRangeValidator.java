@@ -21,9 +21,9 @@ public class IntegerRangeValidator implements Validator<Integer> {
 			if (value >= min && value < max)
 				return ValidationResult.ok();
 		} catch (NumberFormatException e) {
-			return getValidationErrorLogged("Must be an integer");
+			return getValidationErrorLogged("must be an integer");
 		}
-		return getValidationErrorLogged("The integer must be [" + min + ", " + max + ")");
+		return getValidationErrorLogged("the integer must be [" + min + ", " + max + ")");
 
 	}
 }
