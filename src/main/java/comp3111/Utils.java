@@ -6,6 +6,7 @@ import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
 import com.vaadin.server.UserError;
 import com.vaadin.ui.AbstractField;
+import com.vaadin.ui.DateField;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,18 +15,7 @@ import java.util.*;
 
 public class Utils {
 
-	public static void addValidator(AbstractField<?> field, Validator validator) {
-		field.addValueChangeListener(event -> {
-			ValidationResult result = validator.apply(event.getValue(), new ValueContext(field));
-
-			if (result.isError()) {
-				UserError error = new UserError(result.getErrorMessage());
-				field.setComponentError(error);
-			} else {
-				field.setComponentError(null);
-			}
-		});
-	}
+	private static final String DATE_LOCALE = "dd/MM/yyyy";
 
 	public static String generateRequiredError() {
 		return "cannot be empty";
@@ -41,7 +31,7 @@ public class Utils {
 			return dates;
 		String[] temp = listOfDates.replace(" ", "").split(",");
 
-		SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat parser = new SimpleDateFormat(DATE_LOCALE);
 		parser.setLenient(false);
 
 		for (String s : temp) {
@@ -129,12 +119,12 @@ public class Utils {
 	}
 
 	public static String simpleDateFormat(Date d) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_LOCALE);
 		return sdf.format(d);
 	}
 
 	public static Date parseSimpleDateFormat(String s) throws ParseException {
-		SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat parser = new SimpleDateFormat(DATE_LOCALE);
 		parser.setLenient(false);
 		return parser.parse(s);
 	}
@@ -210,6 +200,12 @@ public class Utils {
 			c.add(o);
 		}
 		return c;
+	}
+
+	public static DateField getDateFieldWithOurLocale(String caption) {
+		DateField d = new DateField(caption);
+		d.setDateFormat(DATE_LOCALE);
+		return d;
 	}
 
 }

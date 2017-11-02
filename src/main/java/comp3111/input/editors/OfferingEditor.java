@@ -148,7 +148,7 @@ public class OfferingEditor extends VerticalLayout {
 		tourName.setEnabled(false);
 
 		ComboBox<TourGuide> tourGuide = new ComboBox<TourGuide>("Tour Guide");
-		DateField startDate = new DateField("Start Date");
+		DateField startDate = Utils.getDateFieldWithOurLocale("Start Date");
 		Label availablityHint = new Label("Can be offered on " + hostTour.getOfferingAvailability());
 
 		TextField hotelName = new TextField("Hotel Name");
