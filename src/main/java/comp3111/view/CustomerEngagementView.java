@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button;
@@ -148,7 +149,7 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 			case BY_SINGLE_LINE_CUSTOMER:
 				if (customerBox.isEmpty())
 					return;
-				status = lineMessenger.sendToUser(customerBox.getValue().getLineId(), message.getValue());
+				status = lineMessenger.sendToUser(customerBox.getValue().getLineId(), message.getValue(), true);
 				break;
 			case BY_OFFERING:
 				if (offeringBox.isEmpty())
@@ -164,8 +165,9 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 				status = lineMessenger.sendToAll(message.getValue());
 				break;
 			}
-			Notification.show("Message delivery to " + LineMessenger.getAndResetCount() + " recepient(s) "
-					+ (status ? " succeeded!" : " failed!"));
+
+			NotificationFactory.getTopBarNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
+					LineMessenger.getAndResetCount() + " recepient(s)", 5).show(Page.getCurrent());
 
 		});
 		VerticalLayout container = new VerticalLayout();
@@ -207,9 +209,11 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 
 		submit.addClickListener(event -> {
 			if (!replyBox.isEmpty()) {
-				boolean status = lineMessenger.sendToUser(selectedQuery.getCustomer().getLineId(), replyBox.getValue());
-				Notification.show("Message delivery to " + LineMessenger.getAndResetCount() + " recepient(s) "
-						+ (status ? " succeeded!" : " failed!"));
+				boolean status = lineMessenger.respondToQuery(selectedQuery.getCustomer().getLineId(),
+						selectedQuery.getQuery(), replyBox.getValue());
+
+				NotificationFactory.getTopBarNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
+						LineMessenger.getAndResetCount() + " recepient(s)", 5).show(Page.getCurrent());
 
 				if (status) {
 					selectedQuery.setAnswer(replyBox.getValue());

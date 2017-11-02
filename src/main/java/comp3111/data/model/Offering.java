@@ -17,6 +17,11 @@ import java.util.Date;
  */
 @Entity
 public class Offering {
+
+	public static final String STATUS_PENDING = "Pending";
+	public static final String STATUS_CANCELLED = "Cancelled";
+	public static final String STATUS_CONFIRMED = "Confirmed";
+
 	@Id
 	@GeneratedValue
 	private Long id;
@@ -30,17 +35,20 @@ public class Offering {
 	private int minCustomers;
 	private int maxCustomers;
 
+	private String status;
+
 	public Offering() {
 	}
 
 	public Offering(Tour tour, TourGuide tourGuide, Date startDate, String hotelName, int minCustomers,
-			int maxCustomers) {
+			int maxCustomers, String status) {
 		this.tour = tour;
 		this.tourGuide = tourGuide;
 		this.startDate = startDate;
 		this.hotelName = hotelName;
 		this.minCustomers = minCustomers;
 		this.maxCustomers = maxCustomers;
+		this.status = status;
 	}
 
 	public Long getId() {
@@ -100,6 +108,18 @@ public class Offering {
 	}
 
 	/**
+	 * @return the status of the offering, i.e. {@link Offering#STATUS_CANCELLED},
+	 *         {@link Offering#STATUS_PENDING}, or {@link Offering#STATUS_CONFIRMED}
+	 */
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	/**
 	 * @return the last date on which the offering may be edited. When the offering
 	 *         is about to happen within 3 days, the offering is no longer editable.
 	 */
@@ -121,22 +141,22 @@ public class Offering {
 			return other != null && this.getId() != null && ((Offering) other).getId().equals(this.getId());
 		return false;
 	}
-	
-	//Helper functions for vaadin columns
+
+	// Helper functions for vaadin columns
 	public String getTourGuideName() {
 		return this.tourGuide.getName();
 	}
-	
+
 	public String getTourGuideLineId() {
 		return this.tourGuide.getLineUsername();
 	}
-	
+
 	public String getTourName() {
 		return this.tour.getTourName();
 	}
 
-	public String getStartDateString () {
+	public String getStartDateString() {
 		return Utils.simpleDateFormat(this.getStartDate());
 	}
-	
+
 }

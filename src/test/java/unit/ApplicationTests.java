@@ -205,7 +205,7 @@ public class ApplicationTests {
 	}
 
 	@Test(expected = TourGuideUnavailableException.class)
-	public void testFailureCreateTwoOfferingsWithSameTourGuide() throws OfferingDateUnsupportedException,
+	public void testFailureCreateTwoOfferingsWithSameTourGuideAtSameDate() throws OfferingDateUnsupportedException,
 			TourGuideUnavailableException, OfferingOutOfRoomException {
 
 		Tour tour1 = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);

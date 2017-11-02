@@ -4,6 +4,7 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.navigator.ViewDisplay;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.annotation.SpringViewDisplay;
@@ -11,6 +12,8 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.themes.ValoTheme;
+
+import comp3111.LineMessenger;
 import comp3111.input.auth.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -135,7 +138,10 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 					password.clear();
 					loginPanel.setVisible(false);
 				} else {
-					Notification.show("Invalid credentials", Notification.Type.WARNING_MESSAGE);
+					NotificationFactory.getTopBarErrorNotification("Invalid credentials.", null, 5)
+							.show(Page.getCurrent());
+					;
+
 				}
 			}
 
