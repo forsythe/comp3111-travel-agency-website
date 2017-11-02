@@ -33,6 +33,7 @@ public class DB {
 	public static final String OFFERING_TOUR_NAME = "tourName";
 	public static final String OFFERING_MIN_CAPACITY = "minCustomers";
 	public static final String OFFERING_MAX_CAPACITY = "maxCustomers";
+	public static final String OFFERING_STATUS = "status";
 	/* hidden from grid */
 	public static final String OFFERING_TOUR = "tour";
 	public static final String OFFERING_TOUR_GUIDE = "tourGuide";
