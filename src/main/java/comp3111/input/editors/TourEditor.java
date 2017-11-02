@@ -12,8 +12,6 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.HasValue.ValueChangeEvent;
 import com.vaadin.data.HasValue.ValueChangeListener;
-import com.vaadin.data.converter.StringToDoubleConverter;
-import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Page;
 import com.vaadin.server.UserError;
@@ -38,8 +36,8 @@ import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
 import comp3111.Utils;
-import comp3111.data.GridCol;
 import comp3111.data.DBManager;
+import comp3111.data.GridCol;
 import comp3111.data.model.Tour;
 import comp3111.data.repo.TourRepository;
 import comp3111.input.converters.ConverterFactory;
@@ -86,6 +84,7 @@ public class TourEditor extends VerticalLayout {
 	private TextField weekdayPrice;
 	private TextField weekendPrice;
 	private TextArea descrip;
+	private RadioButtonGroup<String> isChildFriendly;
 
 	/* Action buttons */
 	HorizontalLayout rowOfButtons = new HorizontalLayout();
@@ -153,9 +152,10 @@ public class TourEditor extends VerticalLayout {
 		tourGrid.removeColumn(GridCol.TOUR_ALLOWED_DAYS_OF_WEEK); // we'll combine days of week and dates
 		tourGrid.removeColumn(GridCol.TOUR_ALLOWED_DATES);
 
-		tourGrid.setColumnOrder(GridCol.TOUR_ID, GridCol.TOUR_TOUR_NAME, GridCol.TOUR_DAYS, GridCol.TOUR_OFFERING_AVAILABILITY,
-				GridCol.TOUR_DESCRIPTION, GridCol.TOUR_WEEKDAY_PRICE, GridCol.TOUR_WEEKEND_PRICE, GridCol.TOUR_CHILD_DISCOUNT,
-				GridCol.TOUR_TODDLER_DISCOUNT);
+		tourGrid.setColumnOrder(GridCol.TOUR_ID, GridCol.TOUR_TOUR_NAME, GridCol.TOUR_DAYS,
+				GridCol.TOUR_OFFERING_AVAILABILITY, GridCol.TOUR_DESCRIPTION, GridCol.TOUR_WEEKDAY_PRICE,
+				GridCol.TOUR_WEEKEND_PRICE, GridCol.TOUR_CHILD_DISCOUNT, GridCol.TOUR_TODDLER_DISCOUNT,
+				GridCol.TOUR_IS_CHILD_FRIENDLY);
 
 		tourGrid.addColumn(tour -> {
 			return dbManager.countNumOfferingsForTour(tour);
@@ -271,6 +271,9 @@ public class TourEditor extends VerticalLayout {
 		weekdayPrice.setId("tf_weekday_price");
 		weekendPrice = new TextField("Weekend Price");
 		weekendPrice.setId("tf_weekend_price");
+		isChildFriendly = new RadioButtonGroup<String>("Child Friendly");
+		isChildFriendly.setId("rbgrp_is_child_friendly");
+
 		descrip = new TextArea("Description");
 		descrip.setId("tf_description");
 
@@ -278,6 +281,9 @@ public class TourEditor extends VerticalLayout {
 		allowedDaysOfWeek.setItems(Utils.getDaysOfWeek());
 		tourType.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
 		allowedDaysOfWeek.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
+
+		isChildFriendly.setItems("true", "false");
+		isChildFriendly.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
 
 		if (tourToSave.getId() == null) { // passed in an unsaved object
 			subwindow = new Window("Create new tour");
@@ -322,6 +328,7 @@ public class TourEditor extends VerticalLayout {
 		subContent.addComponent(toddlerDiscount);
 		subContent.addComponent(weekdayPrice);
 		subContent.addComponent(weekendPrice);
+		subContent.addComponent(isChildFriendly);
 		subContent.addComponent(descrip);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
@@ -390,6 +397,10 @@ public class TourEditor extends VerticalLayout {
 
 		binder.forField(descrip).withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.asRequired(Utils.generateRequiredError()).bind(Tour::getDescription, Tour::setDescription);
+
+		binder.forField(isChildFriendly).asRequired(Utils.generateRequiredError())
+				.withConverter(ConverterFactory.getStringToBooleanConverter())
+				.bind(Tour::isChildFriendly, Tour::setChildFriendly);
 
 		// Do set bean to assign value to fields
 		binder.setBean(tourToSave);

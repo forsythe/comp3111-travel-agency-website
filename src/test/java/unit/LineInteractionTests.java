@@ -256,7 +256,7 @@ public class LineInteractionTests {
 	}
 
 	@Test
-	public void testSuccessAutomatedCheckingAt8AMEveryDayUpdateOfferings() {
+	public void testSuccessAutomatedCheckingAt8AMEveryDay() {
 		// to test if a cron expression runs every day at 8 AM
 		CronTrigger trigger = new CronTrigger(ScheduledTasks.EVERYDAY_8_AM);
 		Calendar today = Calendar.getInstance();
@@ -282,7 +282,7 @@ public class LineInteractionTests {
 		});
 
 		assertEquals(nextExecutionTime.getHours(), 8);
-
+		assertTrue(nextExecutionTime.before(Utils.addDate(yesterday, 1)));
 	}
 
 }
