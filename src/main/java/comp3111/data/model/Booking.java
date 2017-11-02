@@ -192,7 +192,7 @@ public class Booking {
 
 	@Override
 	public String toString() {
-		return offering.getStartDate().toString();
+		return "Booking[" + customer.getName() + ", " + offering + "]";
 	}
 
 	@Override
