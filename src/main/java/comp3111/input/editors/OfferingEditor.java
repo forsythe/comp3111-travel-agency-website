@@ -26,6 +26,7 @@ import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -152,6 +153,8 @@ public class OfferingEditor extends VerticalLayout {
 		TextField hotelName = new TextField("Hotel Name");
 		TextField minCustomer = new TextField("Min number of customer");
 		TextField maxCustomer = new TextField("Max number of customer");
+		Label statusHint = new Label();
+		statusHint.setWidth("100%");
 
 		Window subWindow = new Window("Create new offering");
 
@@ -178,6 +181,7 @@ public class OfferingEditor extends VerticalLayout {
 		subContent.addComponent(hotelName);
 		subContent.addComponent(minCustomer);
 		subContent.addComponent(maxCustomer);
+		subContent.addComponent(statusHint);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
 		buttonActions.addComponent(confirm);
@@ -215,6 +219,12 @@ public class OfferingEditor extends VerticalLayout {
 		// Do set bean to assign value to fields
 		binder.setBean(offeringToSave);
 
+		startDate.addValueChangeListener(event -> {
+			statusHint.setValue(
+					"All participating customers will automatically be notified whether this offering is confirmed or cancelled on "
+							+ Utils.simpleDateFormat(Utils.localDateToDate(startDate.getValue())) + ".");
+		});
+
 		confirm.addClickListener(event -> {
 			BinderValidationStatus<Offering> validationStatus = binder.validate();
 
@@ -234,9 +244,7 @@ public class OfferingEditor extends VerticalLayout {
 					subWindow.close();
 					log.info("created/edited offering [{}] successfully", tourName.getValue());
 					binder.removeBean();
-					Notification.show(
-							"All participating customers will automatically be notified whether this offering is confirmed or cancelled on "
-									+ Utils.simpleDateFormat(Utils.localDateToDate(startDate.getValue())) + ".");
+
 					return; // This return skip the error reporting procedure below
 				} catch (OfferingDateUnsupportedException e) {
 					errorStringBuilder.append("This tour may only be offered on ");
