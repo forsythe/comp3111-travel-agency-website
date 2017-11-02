@@ -15,7 +15,7 @@ import java.util.*;
 
 public class Utils {
 
-	private static final String DATE_LOCALE = "dd/MM/yyyy";
+	public static final String DATE_LOCALE = "dd/MM/yyyy";
 
 	public static String generateRequiredError() {
 		return "cannot be empty";

@@ -1,17 +1,33 @@
 package comp3111.input.editors;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
-import com.vaadin.data.BindingValidationStatus;
-import com.vaadin.data.converter.StringToDoubleConverter;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+
 import comp3111.Utils;
 import comp3111.data.DB;
 import comp3111.data.DBManager;
@@ -21,17 +37,10 @@ import comp3111.data.model.Offering;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
+import comp3111.input.converters.ConverterFactory;
 import comp3111.input.exceptions.OfferingOutOfRoomException;
 import comp3111.input.validators.ValidatorFactory;
 import comp3111.view.NotificationFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.awt.print.Book;
-import java.time.Instant;
-import java.util.*;
 
 @SuppressWarnings("serial")
 @SpringComponent
@@ -167,9 +176,9 @@ public class BookingEditor extends VerticalLayout {
 		paymentStatus.setPopupWidth(null);
 
 		if (bookingToSave.getId() == null) { // passed in an unsaved object
-			subwindow = new Window("Create new customer");
+			subwindow = new Window("Create new boooking");
 		} else {
-			subwindow = new Window("Edit a customer");
+			subwindow = new Window("Edit a booking");
 		}
 
 		FormLayout form = new FormLayout();
@@ -228,22 +237,22 @@ public class BookingEditor extends VerticalLayout {
 				.bind(Booking::getOffering, Booking::setOffering);
 
 		binder.forField(numberAdults).asRequired(Utils.generateRequiredError())
-				.withConverter(new StringToIntegerConverter("Must be an integer"))
+				.withConverter(ConverterFactory.getStringToIntegerConverter())
 				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
 				.bind(Booking::getNumAdults, Booking::setNumAdults);
 
 		binder.forField(numberChildren).asRequired(Utils.generateRequiredError())
-				.withConverter(new StringToIntegerConverter("Must be an integer"))
+				.withConverter(ConverterFactory.getStringToIntegerConverter())
 				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
 				.bind(Booking::getNumChildren, Booking::setNumChildren);
 
 		binder.forField(numberToddlers).asRequired(Utils.generateRequiredError())
-				.withConverter(new StringToIntegerConverter("Must be an integer"))
+				.withConverter(ConverterFactory.getStringToIntegerConverter())
 				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
 				.bind(Booking::getNumToddlers, Booking::setNumToddlers);
 
 		binder.forField(amountPaid).asRequired(Utils.generateRequiredError())
-				.withConverter(new StringToDoubleConverter("Must be an Number"))
+				.withConverter(ConverterFactory.getStringToDoubleConverter())
 				.withValidator(ValidatorFactory.getDoubleRangeValidator(0))
 				.bind(Booking::getAmountPaid, Booking::setAmountPaid);
 

@@ -359,7 +359,7 @@ public class TourEditor extends VerticalLayout {
 
 		binder.forField(days).asRequired(Utils.generateRequiredError())
 				.withConverter(ConverterFactory.getStringToIntegerConverter())
-				.withValidator(ValidatorFactory.getIntegerRangeValidator(0)).bind(Tour::getDays, Tour::setDays);
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(1)).bind(Tour::getDays, Tour::setDays);
 
 		binder.forField(allowedDates).withValidator(ValidatorFactory.getListOfDatesValidator())
 				.withConverter(new StringToDateCollectionConverter())

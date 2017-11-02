@@ -218,9 +218,10 @@ public class OfferingEditor extends VerticalLayout {
 		binder.setBean(offeringToSave);
 
 		startDate.addValueChangeListener(event -> {
+			Date threeDaysBeforeStart = Utils.addDate(Utils.localDateToDate(startDate.getValue()), -3);
 			statusHint.setValue(
 					"All participating customers will automatically be notified whether this offering is confirmed or cancelled on "
-							+ Utils.simpleDateFormat(Utils.localDateToDate(startDate.getValue())) + ".");
+							+ Utils.simpleDateFormat(threeDaysBeforeStart));
 		});
 
 		confirm.addClickListener(event -> {
