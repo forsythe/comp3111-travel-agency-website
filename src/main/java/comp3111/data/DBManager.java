@@ -1,6 +1,5 @@
 package comp3111.data;
 
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -34,7 +33,6 @@ import comp3111.input.exceptions.UsernameTakenException;
 import comp3111.input.validators.DateAvailableInTourValidator;
 import comp3111.input.validators.ValidatorFactory;
 
-
 @Component
 public class DBManager {
 	private static final Logger log = LoggerFactory.getLogger(DBManager.class);
@@ -57,13 +55,14 @@ public class DBManager {
 	public Offering createOfferingForTour(Tour tour, TourGuide tg, Date startDate, String hotelName, int minCustomers,
 			int maxCustomers) throws OfferingDateUnsupportedException, TourGuideUnavailableException {
 
-		//Make sure both the tour and the tour guide are concrete entity in the database
+		// Make sure both the tour and the tour guide are concrete entity in the
+		// database
 		tourRepo.save(tour);
 		tourGuideRepo.save(tg);
 
 		DateAvailableInTourValidator dateValidator = ValidatorFactory.getDateAvailableInTourValidator(tour);
 		ValidationResult result = dateValidator.apply(startDate, new ValueContext());
-		if (result.isError()){
+		if (result.isError()) {
 			throw new OfferingDateUnsupportedException();
 		}
 
@@ -71,7 +70,8 @@ public class DBManager {
 			throw new TourGuideUnavailableException();
 		}
 
-		Offering o = offeringRepo.save(new Offering(tour, tg, startDate, hotelName, minCustomers, maxCustomers));
+		Offering o = offeringRepo.save(
+				new Offering(tour, tg, startDate, hotelName, minCustomers, maxCustomers, Offering.STATUS_PENDING));
 
 		o.setTour(tour);
 		o.setTourGuide(tg);
@@ -89,7 +89,10 @@ public class DBManager {
 	}
 
 	public boolean isTourGuideAvailableBetweenDate(TourGuide tg, Date proposedStart, Date proposedEnd) {
-		for (Offering existingOffering : findGuidedOfferingsByTourGuide(tg)) {
+		for (Offering existingOffering : findPastAndUpcomingGuidedOfferingsByTourGuide(tg)) {
+			if (existingOffering.getStatus().equals(Offering.STATUS_CANCELLED)) {
+				continue;
+			}
 			Date takenStart = existingOffering.getStartDate();
 			Date takenEnd = Utils.addDate(takenStart, existingOffering.getTour().getDays());
 
@@ -107,8 +110,8 @@ public class DBManager {
 		return true;
 	}
 
-	public void createOfferingForTour(Offering offering) throws OfferingDateUnsupportedException,
-			TourGuideUnavailableException {
+	public void createOfferingForTour(Offering offering)
+			throws OfferingDateUnsupportedException, TourGuideUnavailableException {
 		createOfferingForTour(offering.getTour(), offering.getTourGuide(), offering.getStartDate(),
 				offering.getHotelName(), offering.getMinCustomers(), offering.getMaxCustomers());
 	}
@@ -145,7 +148,14 @@ public class DBManager {
 				booking.getSpecialRequests(), booking.getPaymentStatus());
 	}
 
-	public Collection<Offering> findGuidedOfferingsByTourGuide(TourGuide tg) {
+	/**
+	 * @param tg
+	 *            A tour guide
+	 * @return A collection of offerings (of ALL statuses; pending, confirmed,
+	 *         cancelled) led by this tour guide in the past and assigned in the
+	 *         future
+	 */
+	public Collection<Offering> findPastAndUpcomingGuidedOfferingsByTourGuide(TourGuide tg) {
 		Collection<Offering> guidedOfferingsByTourGuide = new HashSet<Offering>();
 		log.info("Finding offerings for tour guide [{}]", tg.getName());
 		for (Offering o : offeringRepo.findAll()) {
@@ -219,8 +229,7 @@ public class DBManager {
 	public int countNumberOfPaidPeopleInOffering(Offering offering) {
 		int num = 0;
 		for (Booking record : bookingRepo.findByOffering(offering)) {
-			if (record.getOffering().equals(offering)
-					&& record.getPaymentStatus().equals(Booking.PAYMENT_CONFIRMED)) {
+			if (record.getOffering().equals(offering) && record.getPaymentStatus().equals(Booking.PAYMENT_CONFIRMED)) {
 				num += record.getNumAdults() + record.getNumChildren() + record.getNumToddlers();
 			}
 		}

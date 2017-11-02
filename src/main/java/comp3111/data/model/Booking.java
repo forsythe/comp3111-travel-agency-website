@@ -14,10 +14,10 @@ import java.util.Calendar;
  */
 @Entity
 public class Booking {
-	
+
 	public static final String PAYMENT_PENDING = "Pending";
 	public static final String PAYMENT_CONFIRMED = "Confirmed";
-	
+	public static final String PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED = "Offering cancelled";
 	@Id
 	@GeneratedValue
 	private long id;

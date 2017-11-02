@@ -1,13 +1,15 @@
 package comp3111.input.validators;
 
-import com.vaadin.data.ValidationResult;
-import com.vaadin.data.Validator;
-import com.vaadin.data.ValueContext;
+import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
+import com.vaadin.data.ValidationResult;
+import com.vaadin.data.Validator;
+import com.vaadin.data.ValueContext;
+
+import comp3111.Utils;
 
 public class ListOfDatesValidator implements Validator<String> {
 
@@ -21,8 +23,8 @@ public class ListOfDatesValidator implements Validator<String> {
 		}
 		try {
 			String[] dates = listOfDates.replace(" ", "").split(",");
-	
-			SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yy");
+
+			SimpleDateFormat parser = new SimpleDateFormat(Utils.DATE_LOCALE);
 			parser.setLenient(false);
 
 			for (String s : dates) {
@@ -30,7 +32,8 @@ public class ListOfDatesValidator implements Validator<String> {
 			}
 
 		} catch (ParseException e) {
-			return getValidationErrorLogged("Provide at least 1 date, dd/mm/yyyy, separated by commas");
+			return getValidationErrorLogged(
+					"Provide at least 1 date, " + Utils.DATE_LOCALE.toLowerCase() + ", separated by commas");
 		}
 		return ValidationResult.ok();
 

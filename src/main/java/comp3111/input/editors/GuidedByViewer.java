@@ -16,6 +16,7 @@ import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 
+import comp3111.Utils;
 import comp3111.data.DB;
 import comp3111.data.DBManager;
 import comp3111.data.model.Offering;
@@ -37,7 +38,6 @@ public class GuidedByViewer extends VerticalLayout {
 	private DBManager dbManager;
 
 	private final Grid<Offering> offeringGrid = new Grid<Offering>(Offering.class);
-	private final HashSet<Offering> offeringsCollectionCached = new HashSet<>();
 
 	@Autowired
 	public GuidedByViewer(OfferingRepository or) {
@@ -68,8 +68,8 @@ public class GuidedByViewer extends VerticalLayout {
 		offeringGrid.addColumn(offering -> dbManager.countNumberOfPaidPeopleInOffering(offering))
 				.setCaption("Total number of paying people");
 
-		offeringGrid.setColumnOrder(DB.OFFERING_ID, DB.OFFERING_START_DATE,
-				DB.OFFERING_TOUR_NAME, DB.OFFERING_HOTEL_NAME);
+		offeringGrid.setColumnOrder(DB.OFFERING_ID, DB.OFFERING_START_DATE, DB.OFFERING_TOUR_NAME,
+				DB.OFFERING_HOTEL_NAME);
 
 		for (Column<Offering, ?> col : offeringGrid.getColumns()) {
 			col.setMinimumWidth(120);
@@ -91,13 +91,9 @@ public class GuidedByViewer extends VerticalLayout {
 	}
 
 	public void refreshData() {
-		offeringsCollectionCached.clear();
-		for (Offering o : offeringRepo.findAll()) {
-			if (o.getTourGuide().equals(this.selectedTourGuide))
-				offeringsCollectionCached.add(o);
 
-		}
-		ListDataProvider<Offering> provider = new ListDataProvider<>(offeringsCollectionCached);
+		ListDataProvider<Offering> provider = new ListDataProvider<>(
+				Utils.iterableToCollection(offeringRepo.findByTourGuide(this.selectedTourGuide)));
 		offeringGrid.setDataProvider(provider);
 	}
 

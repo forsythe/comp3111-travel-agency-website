@@ -71,7 +71,7 @@ public class HomeView extends VerticalLayout implements View {
 					amt += b.getNumAdults() + b.getNumChildren() + b.getNumToddlers();
 				}
 			}
-			if (amt > maxCustomersPerTour) {
+			if (amt >= maxCustomersPerTour) {
 				maxCustomersPerTour = amt;
 				mostPopTour = t;
 			}
