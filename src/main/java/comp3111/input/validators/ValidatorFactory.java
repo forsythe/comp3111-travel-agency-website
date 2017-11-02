@@ -85,9 +85,7 @@ public class ValidatorFactory {
 				sb.append("[" + ((AbstractComponent) result.getField()).getCaption() + "]").append(" ")
 						.append(result.getMessage().get()).append("\n");
 			}
-
 		}
-
 		return sb.toString();
 	}
 }

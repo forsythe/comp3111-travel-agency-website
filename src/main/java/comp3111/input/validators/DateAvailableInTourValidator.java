@@ -15,6 +15,7 @@ import static comp3111.input.validators.ReturnValidationErrorWithLogging.getVali
 public class DateAvailableInTourValidator implements Validator<Date> {
 
 	private Tour tour;
+
 	DateAvailableInTourValidator(Tour tour) {
 		this.tour = tour;
 	}
@@ -45,7 +46,7 @@ public class DateAvailableInTourValidator implements Validator<Date> {
 			StringBuilder msgBuilder = new StringBuilder();
 			msgBuilder.append("Only the following dates are supported");
 			for (Date d : supportedDates) {
-				msgBuilder.append(String.format("\t%s", d));
+				msgBuilder.append(Utils.simpleDateFormat(d));
 			}
 			return getValidationErrorLogged(msgBuilder.toString());
 		}
