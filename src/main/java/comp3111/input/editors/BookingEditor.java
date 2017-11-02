@@ -286,6 +286,7 @@ public class BookingEditor extends VerticalLayout {
 				} catch (OfferingOutOfRoomException e) {
 					errors += "Not enough room in offering";
 				}
+
 			}
 			NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 

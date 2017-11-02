@@ -407,7 +407,7 @@ public class TourEditor extends VerticalLayout {
 
 				String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);
 				if (allowedDates.isEmpty() && allowedDaysOfWeek.isEmpty()) {
-					errors += "Offering availability is required\n";
+					errors += "[Offering Availability] cannot be empty\n";
 				}
 				NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 
