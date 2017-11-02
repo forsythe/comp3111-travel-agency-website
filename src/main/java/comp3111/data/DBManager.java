@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.vaadin.data.ValidationResult;
 import com.vaadin.data.ValueContext;
 
+import comp3111.LineMessenger;
 import comp3111.Utils;
 import comp3111.data.model.Booking;
 import comp3111.data.model.Customer;
@@ -51,14 +52,16 @@ public class DBManager {
 	private TourGuideRepository tourGuideRepo;
 	@Autowired
 	private NonFAQQueryRepository nonFAQQueryRepo;
+	@Autowired
+	private LineMessenger lineMessenger;
 
 	public Offering createOfferingForTour(Tour tour, TourGuide tg, Date startDate, String hotelName, int minCustomers,
 			int maxCustomers) throws OfferingDateUnsupportedException, TourGuideUnavailableException {
 
 		// Make sure both the tour and the tour guide are concrete entity in the
 		// database
-		tourRepo.save(tour);
-		tourGuideRepo.save(tg);
+		tour = tourRepo.save(tour);
+		tg = tourGuideRepo.save(tg);
 
 		DateAvailableInTourValidator dateValidator = ValidatorFactory.getDateAvailableInTourValidator(tour);
 		ValidationResult result = dateValidator.apply(startDate, new ValueContext());
@@ -309,6 +312,17 @@ public class DBManager {
 		}
 		return num;
 	}
-	
-	
+
+	public void cancelOffering(Offering offering) {
+		offering.setStatus(Offering.STATUS_CANCELLED);
+		log.info("Cancelling [{}]", offering);
+		offering = offeringRepo.save(offering);
+		for (Booking record : bookingRepo.findByOffering(offering)) {
+			record.setPaymentStatus(Booking.PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED);
+			record = bookingRepo.save(record);
+			lineMessenger.sendToOffering(offering, offering + " has been cancelled.");
+			log.info("Cancelling booking record [{}]", record);
+		}
+	}
+
 }
