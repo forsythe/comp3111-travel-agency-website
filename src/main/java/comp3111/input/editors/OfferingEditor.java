@@ -173,7 +173,7 @@ public class OfferingEditor extends VerticalLayout {
 			confirm.addClickListener(e -> {
 				int deliveredToCount = dbManager.cancelOffering(selectedOffering);
 				this.refreshData();
-				NotificationFactory.getTopBarSuccessNotification("Delivered to " + deliveredToCount + " recipient(s)")
+				NotificationFactory.getTopBarSuccessNotification("Notified " + deliveredToCount + " customer(s)")
 						.show(Page.getCurrent());
 				confirmWindow.close();
 			});
