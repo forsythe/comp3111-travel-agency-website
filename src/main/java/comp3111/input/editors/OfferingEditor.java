@@ -152,6 +152,7 @@ public class OfferingEditor extends VerticalLayout {
 		TextField hotelName = new TextField("Hotel Name");
 		TextField minCustomer = new TextField("Min number of customer");
 		TextField maxCustomer = new TextField("Max number of customer");
+		Label infoAboutStatus = new Label();
 
 		Window subWindow = new Window("Create new offering");
 
@@ -178,11 +179,18 @@ public class OfferingEditor extends VerticalLayout {
 		subContent.addComponent(hotelName);
 		subContent.addComponent(minCustomer);
 		subContent.addComponent(maxCustomer);
+		subContent.addComponent(infoAboutStatus);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
 		buttonActions.addComponent(confirm);
 		buttonActions.addComponent(new Button("Cancel", event -> subWindow.close()));
 		subContent.addComponent(buttonActions);
+
+		startDate.addValueChangeListener(event -> {
+			infoAboutStatus.setCaption(
+					"All participating customers will be notified whether this offering is confirmed or cancelled on "
+							+ Utils.simpleDateFormat(Utils.localDateToDate(startDate.getValue())) + ".");
+		});
 
 		// Binding method according to docs
 		Binder<Offering> binder = new Binder<>(Offering.class);
