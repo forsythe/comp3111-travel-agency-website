@@ -36,7 +36,8 @@ public class ScheduledTasks {
 		log.info("The time is now [{}], checking if any offerings need updating (in terms of status)",
 				Utils.simpleDateFormat(now));
 
-		for (Offering o : offeringRepo.findAll()) {
+		for (Offering o : offeringRepo.findByStatus(Offering.STATUS_PENDING)) {
+
 			log.info("Offering [{}] still has time left, not updating its status yet...");
 			if (o.getStatus().equals(Offering.STATUS_PENDING) && now.after(Utils.addDate(o.getStartDate(), -3))) {
 				log.info("Offering [{}] has reached t=-3 days before start!");

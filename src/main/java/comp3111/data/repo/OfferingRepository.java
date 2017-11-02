@@ -14,4 +14,6 @@ public interface OfferingRepository extends CrudRepository<Offering, Long> {
 	Collection<Offering> findByHotelName(String hotelName);
 
 	Collection<Offering> findByTour(Tour t);
+	
+	Collection<Offering> findByStatus(String status);
 }
