@@ -37,6 +37,7 @@ public class DB {
 	public static final String OFFERING_TOUR = "tour";
 	public static final String OFFERING_TOUR_GUIDE = "tourGuide";
 	public static final String OFFERING_DATE = "startDate";
+	public static final String OFFERING_LAST_EDITABLE_DATE = "lastEditableDate";
 
 	// Customer
 	/* shown in grid */

@@ -69,6 +69,7 @@ public class OfferingEditor extends VerticalLayout {
 	private final Grid<Offering> offeringGrid = new Grid<Offering>(Offering.class);
 
 	private Offering selectedOffering;
+	private Long selectedOfferingId;
 
 	/* Action buttons */
 	HorizontalLayout rowOfButtons = new HorizontalLayout();
@@ -85,8 +86,6 @@ public class OfferingEditor extends VerticalLayout {
 		rowOfButtons.addComponent(editOfferingButton);
 		rowOfButtons.addComponent(returnButton);
 		
-		
-		
 		createNewOfferingButton.setId("btn_create_new_offering");
 		editOfferingButton.setId("btn_edit_offering");
 		returnButton.setId("btn_return_offering");
@@ -101,14 +100,19 @@ public class OfferingEditor extends VerticalLayout {
 		offeringGrid.addSelectionListener(event -> {
 			if (event.getFirstSelectedItem().isPresent()) {
 				selectedOffering = event.getFirstSelectedItem().get();
+				editOfferingButton.setEnabled(true);
+				createNewOfferingButton.setEnabled(false);
 			} else {
 				selectedOffering = null;
+				editOfferingButton.setEnabled(false);
+				createNewOfferingButton.setEnabled(true);
 			}
 		});
 
 		offeringGrid.removeColumn(DB.OFFERING_TOUR); // we'll combine days of week and dates
 		offeringGrid.removeColumn(DB.OFFERING_TOUR_GUIDE);
 		offeringGrid.removeColumn(DB.OFFERING_DATE);
+		offeringGrid.removeColumn(DB.OFFERING_LAST_EDITABLE_DATE);
 
 		offeringGrid.setColumnOrder(DB.OFFERING_ID, DB.OFFERING_START_DATE, DB.OFFERING_TOUR_GUIDE_NAME,
 				DB.OFFERING_TOUR_GUIDE_LINE_ID, DB.OFFERING_TOUR_NAME, DB.OFFERING_MIN_CAPACITY,
@@ -125,6 +129,12 @@ public class OfferingEditor extends VerticalLayout {
 
 		createNewOfferingButton.addClickListener(event -> {
 			getUI().getCurrent().addWindow(getSubWindow(selectedTour, new Offering(), tourEditor));
+			selectedOfferingId = null;
+		});
+		
+		editOfferingButton.addClickListener(event -> {
+			getUI().getCurrent().addWindow(getSubWindow(selectedTour, selectedOffering, tourEditor));
+			selectedOfferingId = selectedOffering.getId();
 		});
 
 		returnButton.addClickListener(event -> {
@@ -218,7 +228,15 @@ public class OfferingEditor extends VerticalLayout {
 
 			StringBuilder errorStringBuilder = new StringBuilder();
 			if (validationStatus.isOk()) {
+				log.debug(selectedOfferingId.toString());
+				if(!selectedOfferingId.equals(null)) {
+					offeringRepo.delete(selectedOfferingId);
+					offeringToSave.setId(selectedOfferingId);
+				}
 				binder.writeBeanIfValid(offeringToSave);
+//				if(selectedOfferingId != -1) {
+//					selectedOffering.setId(selectedOfferingId);
+//				}
 				offeringToSave.setTour(hostTour);
 
 				log.info("About to save tour [{}]", tourName.getValue());
