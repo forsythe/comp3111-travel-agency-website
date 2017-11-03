@@ -74,7 +74,7 @@ public class OfferingEditor extends VerticalLayout {
 	private Button editOfferingButton = new Button("Edit Offering");
 	private Button cancelOfferingButton = new Button("Manually Cancel Offering");
 	private Button returnButton = new Button("Return");
-	
+
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	@Autowired
@@ -133,7 +133,7 @@ public class OfferingEditor extends VerticalLayout {
 				GridCol.OFFERING_NUM_CONFIRMED_CUSTOMERS, GridCol.OFFERING_MIN_CAPACITY, GridCol.OFFERING_MAX_CAPACITY);
 
 		HeaderRow filterRow = offeringGrid.appendHeaderRow();
-		
+
 		for (Column<Offering, ?> col : offeringGrid.getColumns()) {
 			col.setMinimumWidth(120);
 			col.setHidable(true);
@@ -221,7 +221,7 @@ public class OfferingEditor extends VerticalLayout {
 
 			confirm.addClickListener(e -> {
 				LineMessenger.resetCounter();
-				dbManager.cancelOffering(selectedOffering);
+				dbManager.notifyOfferingStatus(selectedOffering, false);
 				this.refreshData();
 				NotificationFactory
 						.getTopBarSuccessNotification("Notified " + LineMessenger.getCounter() + " customer(s)")
