@@ -11,6 +11,7 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,21 @@ public class LineInteractionTests {
 	@Autowired
 	private DBManager actionManager;
 
+	Customer heng, kv;
+	static final String HENG_CHATBOT_TO_HENG = "U6934790c40beeed33b8b89fa359aa9cf";
+	static final String KV_CHATBOT_TO_HENG = "Uc8f613f85e41d93ed9ffa228188466d1";
+	static final String HENG_CHATBOT_TO_KV = "Ufbae1ebc457e163d0f351c1865daccf5";
+	static final String KV_CHATBOT_TO_KV = "U7e5b42b4ea64a1ff1d812a3ff33b48b0";
+
+	@Before
+	public void setUp() {
+
+		heng = new Customer("heng", KV_CHATBOT_TO_HENG, "12312341234", 20, "A1234563");
+		heng = customerRepo.save(heng);
+		kv = new Customer("KV", KV_CHATBOT_TO_KV, "12312341234", 20, "A1234563");
+		kv = customerRepo.save(kv);
+	}
+
 	@After
 	public void tearDown() {
 		actionManager.deleteAll();
@@ -72,31 +88,23 @@ public class LineInteractionTests {
 
 	@Test
 	public void testSuccessSendMessageToHengsPhone() {
-		Customer heng = new Customer("heng", "U6934790c40beeed33b8b89fa359aa9cf", "12312341234", 20, "A1234563");
-		heng = customerRepo.save(heng);
+
 		boolean recieved200ok = lineMessenger.sendToUser(heng.getLineId(), "hi heng's phone, this is test case", true);
 		assertTrue(recieved200ok);
 		assertEquals(1, LineMessenger.getCounter());
-		customerRepo.delete(heng);
 	}
 
 	@Test
 	public void testSuccessSendMessageToKVsPhone() {
-		Customer kv = new Customer("KV", "Ufbae1ebc457e163d0f351c1865daccf5", "12312341234", 20, "A1234563");
-		kv = customerRepo.save(kv);
+
 		boolean recieved200ok = lineMessenger.sendToUser(kv.getLineId(), "hi kv's phone, this is test case", true);
 		assertTrue(recieved200ok);
 		assertEquals(1, LineMessenger.getCounter());
-		customerRepo.delete(kv);
 	}
 
 	@Test
 	public void testSuccessSendMessageToOfferingParticipants() throws OfferingDateUnsupportedException,
 			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
-		Customer heng = new Customer("heng", "U6934790c40beeed33b8b89fa359aa9cf", "12312341234", 20, "A1234563");
-		heng = customerRepo.save(heng);
-		Customer kv = new Customer("KV", "Ufbae1ebc457e163d0f351c1865daccf5", "12312341234", 20, "A1234563");
-		kv = customerRepo.save(kv);
 
 		Tour comp3111Tour = new Tour("comp3111h", "learn about design patterns", 3, 0.8, 0.0, 599, 699);
 		comp3111Tour.setAllowedDates(
@@ -122,8 +130,7 @@ public class LineInteractionTests {
 
 	@Test
 	public void testSuccessCanPersistNonFAQQueryAndRespond() {
-		Customer heng = new Customer("heng", "U6934790c40beeed33b8b89fa359aa9cf", "12312341234", 20, "A1234563");
-		heng = customerRepo.save(heng);
+
 		NonFAQQuery question = new NonFAQQuery("what is spaghet", heng);
 		question = nonFAQQueryRepo.save(question);
 		assertTrue(nonFAQQueryRepo.findOne(question.getId()) != null);
@@ -137,10 +144,6 @@ public class LineInteractionTests {
 	@Test
 	public void testSuccessManuallyCancelOffering()
 			throws OfferingDateUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
-		Customer heng = new Customer("heng", "U6934790c40beeed33b8b89fa359aa9cf", "12312341234", 20, "A1234563");
-		heng = customerRepo.save(heng);
-		Customer kv = new Customer("KV", "Ufbae1ebc457e163d0f351c1865daccf5", "12312341234", 20, "A1234563");
-		kv = customerRepo.save(kv);
 
 		Tour comp3111Tour = new Tour("comp3111h", "learn about design patterns", 3, 0.8, 0.0, 599, 699);
 		comp3111Tour.setAllowedDates(
@@ -160,7 +163,7 @@ public class LineInteractionTests {
 				Booking.PAYMENT_PENDING);
 
 		LineMessenger.resetCounter();
-		actionManager.cancelOffering(offering);
+		actionManager.notifyOfferingStatus(offering, false);
 		assertEquals(2, LineMessenger.getCounter()); // should have two "200 OK"s from LINE
 
 		// need to refetch the items from DB
@@ -178,11 +181,6 @@ public class LineInteractionTests {
 			throws OfferingDateUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
 		Date now = new Date();
 		Date twoDaysAgo = Utils.addDate(now, -2); // so that our trigger will act on this tour
-
-		Customer heng = new Customer("heng", "U6934790c40beeed33b8b89fa359aa9cf", "12312341234", 20, "A1234563");
-		heng = customerRepo.save(heng);
-		Customer kv = new Customer("KV", "Ufbae1ebc457e163d0f351c1865daccf5", "12312341234", 20, "A1234563");
-		kv = customerRepo.save(kv);
 
 		Tour comp3111Tour = new Tour("comp3111h", "learn about design patterns", 3, 0.8, 0.0, 599, 699);
 		comp3111Tour.setAllowedDates(new HashSet<Date>(Arrays.asList(twoDaysAgo)));
@@ -218,11 +216,6 @@ public class LineInteractionTests {
 			throws OfferingDateUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
 		Date now = new Date();
 		Date twoDaysAgo = Utils.addDate(now, -2); // so that our trigger will act on this tour
-
-		Customer heng = new Customer("heng", "U6934790c40beeed33b8b89fa359aa9cf", "12312341234", 20, "A1234563");
-		heng = customerRepo.save(heng);
-		Customer kv = new Customer("KV", "Ufbae1ebc457e163d0f351c1865daccf5", "12312341234", 20, "A1234563");
-		kv = customerRepo.save(kv);
 
 		Tour comp3111Tour = new Tour("comp3111h", "learn about design patterns", 3, 0.8, 0.0, 599, 699);
 		comp3111Tour.setAllowedDates(new HashSet<Date>(Arrays.asList(twoDaysAgo)));
