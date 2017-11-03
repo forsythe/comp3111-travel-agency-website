@@ -1,0 +1,25 @@
+title Edit Bookings
+
+Employee->+BookingManagementView: Navigate to view from sidebar
+
+BookingManagementView->+BookingRepository: Fetch all data from repository
+
+BookingRepository-->-BookingManagementView: Return all data found
+
+Employee->BookingManagementView: Select a booking
+
+Employee->BookingManagementView: Click on Edit Booking
+
+Employee->+Form: Fill in form
+
+Employee->Form: Submit Form
+
+Form->Form: Validation
+
+Form->+BookingRepository: Push changes
+
+BookingRepository->Form: Return OK status
+
+Form-->-Employee: Form closed
+
+BookingRepository-->-BookingManagementView: View updated

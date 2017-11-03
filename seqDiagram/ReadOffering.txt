@@ -1,0 +1,19 @@
+title Read Offering
+
+Employee->+TourManagementView: Navigate to view from sidebar
+
+Employee->TourManagementView: Select a tour
+
+Employee->TourManagementView: Click Manage Offerings For Tour Button
+
+TourManagementView-->-Employee: 
+
+Employee->+OfferingManagementView:
+
+OfferingManagementView->+OfferingRepository: Fetch all entries in repository
+
+OfferingRepository-->-OfferingManagementView: Return all data in repository
+
+OfferingManagementView-->-Employee:Display to employee
+
+

@@ -10,7 +10,6 @@ out/
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
@@ -54,4 +53,3 @@ local.properties
 # PDT-specific
 .buildpath
 
-gradle/wrapper/gradle-wrapper\.properties
