@@ -6,6 +6,10 @@ package comp3111.data;
  * 
  * e.g. Tour's getChildDiscount() ---> TOUR_CHILD_DISCOUNT = "childDiscount"
  * 
+ * NB: for booleans, the convention for variable "situation" is different.
+ * getters look like "isSituation" and setters like "setSituation". Therefore
+ * for the grid id, it should just be "situation"
+ * 
  * @author Forsythe
  *
  */
@@ -21,6 +25,7 @@ public class GridCol {
 	public static final String TOUR_WEEKDAY_PRICE = "weekdayPrice";
 	public static final String TOUR_WEEKEND_PRICE = "weekendPrice";
 	public static final String TOUR_OFFERING_AVAILABILITY = "offeringAvailability";
+	public static final String TOUR_IS_CHILD_FRIENDLY = "childFriendly";
 	/* hidden from grid */
 	public static final String TOUR_ALLOWED_DAYS_OF_WEEK = "allowedDaysOfWeek";
 	public static final String TOUR_ALLOWED_DATES = "allowedDates";

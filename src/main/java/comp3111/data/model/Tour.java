@@ -39,6 +39,8 @@ public class Tour {
 	private int weekdayPrice;
 	private int weekendPrice;
 
+	private boolean isChildFriendly;
+
 	public static final String LIMITED_TOUR_TYPE = "Limited";
 
 	public static final String REPEATING_TOUR_TYPE = "Repeating";
@@ -56,6 +58,20 @@ public class Tour {
 		this.toddlerDiscount = toddlerDiscount;
 		this.weekdayPrice = weekdayPrice;
 		this.weekendPrice = weekendPrice;
+		this.isChildFriendly = false;
+	}
+
+	public Tour(String tourName, String description, int days, double childDiscount, double toddlerDiscount,
+			int weekdayPrice, int weekendPrice, boolean isChildFriendly) {
+		super();
+		this.tourName = tourName;
+		this.description = description;
+		this.days = days;
+		this.childDiscount = childDiscount;
+		this.toddlerDiscount = toddlerDiscount;
+		this.weekdayPrice = weekdayPrice;
+		this.weekendPrice = weekendPrice;
+		this.isChildFriendly = isChildFriendly;
 	}
 
 	public Long getId() {
@@ -142,6 +158,14 @@ public class Tour {
 		this.weekendPrice = weekendPrice;
 	}
 
+	public boolean isChildFriendly() {
+		return isChildFriendly;
+	}
+
+	public void setChildFriendly(boolean isChildFriendly) {
+		this.isChildFriendly = isChildFriendly;
+	}
+
 	/*
 	 * not an attribute, but helper function for vaadin column
 	 */
@@ -164,7 +188,7 @@ public class Tour {
 	public String toString() {
 		return String.format("Tour[id=%d, tourName=%s]", id, tourName);
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof Tour)

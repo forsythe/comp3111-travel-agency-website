@@ -315,19 +315,30 @@ public class DBManager {
 
 	/**
 	 * @param offering
-	 *            The offering to cancel
+	 *            The offering in question
+	 * @param confirmed
+	 *            Whether or not the offering has been confirmed
 	 * 
+	 *            This function should be called 3 days before the offering is about
+	 *            to start. It updates the status of the offering, potentially the
+	 *            booking payment records, and sends out line messages to the
+	 *            customers
 	 */
-	public void cancelOffering(Offering offering) {
-		offering.setStatus(Offering.STATUS_CANCELLED);
-		log.info("Cancelling [{}]", offering);
+	public void notifyOfferingStatus(Offering offering, boolean confirmed) {
+		log.info("Setting [{}] to be [{}]", offering, confirmed ? "confirmed" : "cancelled");
+		offering.setStatus(confirmed ? Offering.STATUS_CONFIRMED : Offering.STATUS_CANCELLED);
 		offering = offeringRepo.save(offering);
-		for (Booking record : bookingRepo.findByOffering(offering)) {
-			record.setPaymentStatus(Booking.PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED);
-			record = bookingRepo.save(record);
-			log.info("Cancelling booking record [{}]", record);
+		if (!confirmed) {
+			for (Booking record : bookingRepo.findByOffering(offering)) {
+				record.setPaymentStatus(Booking.PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED);
+				record = bookingRepo.save(record);
+				log.info("Cancelling booking record [{}]", record);
+			}
+			lineMessenger.sendToOffering(offering, offering + " has been cancelled.");
+		} else {
+
+			lineMessenger.sendToOffering(offering, offering + " has been confirmed! See you soon!");
 		}
-		lineMessenger.sendToOffering(offering, offering + " has been cancelled.");
 
 	}
 

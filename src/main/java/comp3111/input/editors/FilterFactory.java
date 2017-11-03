@@ -50,13 +50,18 @@ public class FilterFactory {
 		if (colId.equals(GridCol.TOUR_TODDLER_DISCOUNT))
 			return new ProviderAndPredicate<Tour, Double>(Tour::getToddlerDiscount,
 					t -> Utils.safeParseDoubleEquals(t, searchVal));
+		if (colId.equals(GridCol.TOUR_IS_CHILD_FRIENDLY))
+			return new ProviderAndPredicate<Tour, Boolean>(Tour::isChildFriendly,
+					t -> Utils.containsIgnoreCase(t.toString(), searchVal));
 
 		throw new ColumnNameNotFoundException("[" + colId + "] isn't a valid column id for [Tour]");
 	}
+
 	public static ProviderAndPredicate<TourGuide, ?> getFilterForTourGuide(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.TOURGUIDE_ID))
-			return new ProviderAndPredicate<TourGuide, Long>(TourGuide::getId, t -> Utils.safeParseLongEquals(t, searchVal));
+			return new ProviderAndPredicate<TourGuide, Long>(TourGuide::getId,
+					t -> Utils.safeParseLongEquals(t, searchVal));
 		if (colId.equals(GridCol.TOURGUIDE_NAME))
 			return new ProviderAndPredicate<TourGuide, String>(TourGuide::getName,
 					t -> Utils.containsIgnoreCase(t, searchVal));
@@ -66,10 +71,12 @@ public class FilterFactory {
 
 		throw new ColumnNameNotFoundException("[" + colId + "] isn't a valid column id for [TourGuide]");
 	}
+
 	public static ProviderAndPredicate<Customer, ?> getFilterForCustomer(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.CUSTOMER_ID))
-			return new ProviderAndPredicate<Customer, Long>(Customer::getId, t -> Utils.safeParseLongEquals(t, searchVal));
+			return new ProviderAndPredicate<Customer, Long>(Customer::getId,
+					t -> Utils.safeParseLongEquals(t, searchVal));
 		if (colId.equals(GridCol.CUSTOMER_NAME))
 			return new ProviderAndPredicate<Customer, String>(Customer::getName,
 					t -> Utils.containsIgnoreCase(t, searchVal));
@@ -88,6 +95,7 @@ public class FilterFactory {
 
 		throw new ColumnNameNotFoundException("[" + colId + "] isn't a valid column id for [Customer]");
 	}
+
 	public static ProviderAndPredicate<Booking, ?> getFilterForBooking(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.BOOKING_NUM_CHILDREN))
@@ -136,14 +144,15 @@ public class FilterFactory {
 	public static ProviderAndPredicate<NonFAQQuery, ?> getFilterForNonFAQQuery(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.NONFAQQUERY_ID))
-			return new ProviderAndPredicate<NonFAQQuery, Long>(NonFAQQuery::getId, t -> Utils.safeParseLongEquals(t, searchVal));
+			return new ProviderAndPredicate<NonFAQQuery, Long>(NonFAQQuery::getId,
+					t -> Utils.safeParseLongEquals(t, searchVal));
 		if (colId.equals(GridCol.NONFAQQUERY_ANSWER))
 			return new ProviderAndPredicate<NonFAQQuery, String>(NonFAQQuery::getAnswer,
 					t -> Utils.containsIgnoreCase(t, searchVal));
 		if (colId.equals(GridCol.NONFAQQUERY_QUERY))
 			return new ProviderAndPredicate<NonFAQQuery, String>(NonFAQQuery::getQuery,
 					t -> Utils.containsIgnoreCase(t, searchVal));
-		//TODO finish this part of the factory
+		// TODO finish this part of the factory
 		if (colId.equals(GridCol.NONFAQQUERY_CUSTOMER))
 			return new ProviderAndPredicate<NonFAQQuery, String>(NonFAQQuery::getCustomerName,
 					t -> Utils.containsIgnoreCase(t, searchVal));
@@ -154,7 +163,8 @@ public class FilterFactory {
 	public static ProviderAndPredicate<Offering, ?> getFilterForOffering(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.OFFERING_ID))
-			return new ProviderAndPredicate<Offering, Long>(Offering::getId, t -> Utils.safeParseLongEquals(t, searchVal));
+			return new ProviderAndPredicate<Offering, Long>(Offering::getId,
+					t -> Utils.safeParseLongEquals(t, searchVal));
 		if (colId.equals(GridCol.OFFERING_HOTEL_NAME))
 			return new ProviderAndPredicate<Offering, String>(Offering::getHotelName,
 					t -> Utils.containsIgnoreCase(t, searchVal));
