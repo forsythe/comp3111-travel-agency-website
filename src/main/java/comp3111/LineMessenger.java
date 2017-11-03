@@ -215,6 +215,7 @@ public class LineMessenger {
 		toSend.append("[Q: " + query + "]");
 		toSend.append("\n");
 		toSend.append("[A: " + answer + "]");
+		count++;
 		return this.sendToUser(custLineId, toSend.toString(), false);
 	}
 }
