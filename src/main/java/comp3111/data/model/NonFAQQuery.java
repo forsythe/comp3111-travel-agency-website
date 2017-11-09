@@ -26,7 +26,6 @@ public class NonFAQQuery {
 	private String answer;
 
 	@ManyToOne(fetch = FetchType.EAGER) // many queries to 1 customer
-	@JoinColumn(nullable = false)
 	private Customer customer;
 
 	public NonFAQQuery() {
