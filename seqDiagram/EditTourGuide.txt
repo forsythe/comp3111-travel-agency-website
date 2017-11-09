@@ -1,0 +1,25 @@
+title Edit Tour Guide
+
+Employee->+TourGuideManagementView: Navigate to view from sidebar
+
+TourGuideManagementView->+TourGuideRepository: Fetch all data from repository
+
+TourGuideRepository-->-TourGuideManagementView: Return all data found
+
+Employee->TourGuideManagementView: Click Edit Tour Guide
+
+Employee->+Form: Fill in form
+
+Employee->Form: Submit Form
+
+Form->Form: Validation
+
+Form->+TourGuideRepository: Push changes
+
+TourGuideRepository->Form: Return OK status
+
+Form-->-Employee: Form closed
+
+TourGuideRepository-->-TourGuideManagementView:View updated
+
+TourGuideManagementView-->-Employee: 

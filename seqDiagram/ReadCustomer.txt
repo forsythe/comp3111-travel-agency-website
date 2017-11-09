@@ -1,0 +1,9 @@
+title Read Customers
+
+Employee->+CustomerManagementView: Navigate to view from sidebar
+
+CustomerManagementView->+CustomerRepository: Fetch all data from repository
+
+CustomerRepository-->-CustomerManagementView: Return all data found
+
+CustomerManagementView-->-Employee: Display to employee

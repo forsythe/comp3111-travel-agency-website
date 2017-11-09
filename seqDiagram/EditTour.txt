@@ -1,0 +1,27 @@
+title Edit Tour
+
+Employee->+TourManagementView: Navigate to view from sidebar
+
+TourManagementView->+TourRepository: Fetch all data from repository
+
+TourRepository-->-TourManagementView: Return all data found
+
+Employee->TourManagementView: Select a tour
+
+Employee->TourManagementView: Click Edit Tour
+
+Employee->+Form: Fill in form
+
+Employee->Form: Submit Form
+
+Form->Form: Validation
+
+Form->+TourRepository: Push changes
+
+TourRepository->Form: Return OK status
+
+Form-->-Employee: Form closed
+
+TourRepository-->-TourManagementView:View updated
+
+TourManagementView-->-Employee: 

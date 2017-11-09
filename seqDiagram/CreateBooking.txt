@@ -1,0 +1,19 @@
+title Create Bookings
+
+Employee->+BookingManagementView: Navigate to view from sidebar
+
+Employee->BookingManagementView: Click on Create New Booking
+
+Employee->+Form: Fill in form
+
+Employee->Form: Submit Form
+
+Form->Form: Validation
+
+Form->+BookingRepository: Push changes
+
+BookingRepository->Form: Return OK status
+
+Form-->-Employee: Form closed
+
+BookingRepository-->-BookingManagementView: View updated
