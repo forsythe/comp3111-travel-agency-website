@@ -51,7 +51,6 @@ public class CustomerEditor extends VerticalLayout {
 	/* action buttons */
 	private Button createNewCustomerButton = new Button("Create new customer");
 	private Button editCustomerButton = new Button("Edit customer");
-	private Button viewCustomerBookingsButton = new Button("View bookings made by customer");
 
 	private Grid<Customer> customersGrid = new Grid<Customer>(Customer.class);
 
@@ -71,14 +70,11 @@ public class CustomerEditor extends VerticalLayout {
 
 		rowOfButtons.addComponent(createNewCustomerButton);
 		rowOfButtons.addComponent(editCustomerButton);
-		rowOfButtons.addComponent(viewCustomerBookingsButton);
 		createNewCustomerButton.setId("btn_create_customer");
 		editCustomerButton.setId("btn_edit_customer");
-		viewCustomerBookingsButton.setId("btn_view_customer_bookings");
 
 		// Shouldn't be enabled unless selected
 		editCustomerButton.setEnabled(false);
-		viewCustomerBookingsButton.setEnabled(false);
 
 		// Render component
 		this.addComponent(rowOfButtons);
@@ -93,12 +89,10 @@ public class CustomerEditor extends VerticalLayout {
 			if (event.getFirstSelectedItem().isPresent()) {
 				selectedCustomer = event.getFirstSelectedItem().get();
 				editCustomerButton.setEnabled(true);
-				viewCustomerBookingsButton.setEnabled(true);
 				createNewCustomerButton.setEnabled(false);
 			} else {
 				selectedCustomer = null;
 				editCustomerButton.setEnabled(false);
-				viewCustomerBookingsButton.setEnabled(false);
 				createNewCustomerButton.setEnabled(true);
 			}
 		});

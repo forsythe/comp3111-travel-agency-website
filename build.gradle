@@ -45,8 +45,8 @@ dependencies {
     testCompile("junit:junit")
     testCompile("org.springframework.boot:spring-boot-starter-test")
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    dev("org.springframework.boot:spring-boot-devtools")
 	compile group: 'postgresql', name: 'postgresql', version: '9.0-801.jdbc4'
-	dev("org.springframework.boot:spring-boot-devtools")
     compile 'org.springframework.security:spring-security-core:4.0.1.RELEASE'
     testCompile group: 'com.vaadin', name: 'vaadin-testbench', version: '4.2.0'
     compile 'org.apache.httpcomponents:httpclient:4.4-alpha1'
@@ -62,3 +62,5 @@ bootRun {
 test {
     exclude 'integration/**'
 }
+
+

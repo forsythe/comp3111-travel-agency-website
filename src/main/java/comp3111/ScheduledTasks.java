@@ -31,8 +31,9 @@ public class ScheduledTasks {
 	private LineMessenger lineMessenger;
 
 	public static final String EVERYDAY_8_AM = "0 0 8 * * *";
+	public static final String EVERY_10_SECONDS = "*/10 * * * * *";
 
-	@Scheduled(cron = EVERYDAY_8_AM) // every day at 8 AM
+	// @Scheduled(cron = EVERYDAY_8_AM)
 	public void updatePendingOfferingStatusIfNecessary() {
 		LineMessenger.resetCounter();
 		Date now = new Date();
