@@ -282,8 +282,11 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		submit.addClickListener(event -> {
 			if (!replyBox.isEmpty()) {
 				LineMessenger.resetCounter();
-				boolean status = lineMessenger.respondToQuery(selectedQuery.getCustomer().getLineId(),
-						selectedQuery.getQuery(), replyBox.getValue());
+				boolean status = false;
+				if (selectedQuery.getCustomer() != null) {
+					status = lineMessenger.respondToQuery(selectedQuery.getCustomer().getLineId(),
+							selectedQuery.getQuery(), replyBox.getValue());
+				}
 				NotificationFactory.getTopBarNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
 						LineMessenger.getCounter() + " recepient(s)", 5).show(Page.getCurrent());
 
@@ -297,6 +300,7 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		});
 
 		return layout;
+
 	}
 
 	@Override

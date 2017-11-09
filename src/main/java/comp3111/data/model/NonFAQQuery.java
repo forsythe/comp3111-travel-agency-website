@@ -5,6 +5,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 /**
@@ -25,6 +26,7 @@ public class NonFAQQuery {
 	private String answer;
 
 	@ManyToOne(fetch = FetchType.EAGER) // many queries to 1 customer
+	@JoinColumn(nullable = false)
 	private Customer customer;
 
 	public NonFAQQuery() {
