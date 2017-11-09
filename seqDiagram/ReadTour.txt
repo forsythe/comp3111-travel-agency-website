@@ -1,0 +1,9 @@
+title Read Tour
+
+Employee->+TourManagementView: Navigate to view from sidebar
+
+TourManagementView->+TourRepository: Find all entries in repository
+
+TourRepository-->-TourManagementView: Returns all found entries
+
+TourManagementView-->-Employee: Display to employee

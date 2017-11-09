@@ -1,0 +1,19 @@
+title Create Customers
+
+Employee->+CustomerManagementView: Navigate to view from sidebar
+
+Employee->CustomerManagementView: Click on Create New Customer
+
+Employee->+Form: Fill in form
+
+Employee->Form: Submit Form
+
+Form->Form: Validation
+
+Form->+CustomerRepository: Push changes
+
+CustomerRepository->Form: Return OK status
+
+Form-->-Employee: Form closed
+
+CustomerRepository-->-CustomerManagementView: View updated

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.2.1" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
-  associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
+<class-diagram version="1.2.1" icons="false" automaticImage="JPEG" always-add-relationships="false" 
+  generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true" 
+  router="FAN">  
   <class id="1" language="java" name="comp3111.input.validators.PhoneNumberValidator" project="website" 
     file="/website/src/main/java/comp3111/input/validators/PhoneNumberValidator.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="101" width="258" x="157" y="80"/>    
+    <position height="99" width="249" x="56" y="76"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -14,7 +15,7 @@
   <class id="2" language="java" name="comp3111.input.validators.DoubleRangeValidator" project="website" 
     file="/website/src/main/java/comp3111/input/validators/DoubleRangeValidator.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="137" width="265" x="455" y="80"/>    
+    <position height="133" width="256" x="345" y="76"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -23,7 +24,7 @@
   </class>  
   <class id="3" language="java" name="comp3111.input.validators.HKIDValidator" project="website" 
     file="/website/src/main/java/comp3111/input/validators/HKIDValidator.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="101" width="258" x="760" y="80"/>    
+    <position height="99" width="249" x="641" y="76"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -32,7 +33,7 @@
   </class>  
   <class id="4" language="java" name="comp3111.input.validators.ValidatorFactory" project="website" 
     file="/website/src/main/java/comp3111/input/validators/ValidatorFactory.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="353" width="744" x="1058" y="80"/>    
+    <position height="-1" width="-1" x="409" y="404"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -42,7 +43,7 @@
   <class id="5" language="java" name="comp3111.input.validators.IntegerRangeValidator" project="website" 
     file="/website/src/main/java/comp3111/input/validators/IntegerRangeValidator.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="137" width="264" x="1842" y="80"/>    
+    <position height="-1" width="-1" x="948" y="302"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -53,7 +54,7 @@
     project="website" 
     file="/website/src/main/java/comp3111/input/validators/IntegerLowerBoundedByAnotherFieldValidator.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="119" width="373" x="2146" y="80"/>    
+    <position height="-1" width="-1" x="1110" y="146"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -63,7 +64,7 @@
   <class id="7" language="java" name="comp3111.input.validators.OfferingStillOpenValidator" project="website" 
     file="/website/src/main/java/comp3111/input/validators/OfferingStillOpenValidator.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="101" width="269" x="2559" y="80"/>    
+    <position height="-1" width="-1" x="1226" y="297"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -73,7 +74,7 @@
   <class id="8" language="java" name="comp3111.input.validators.DoubleLowerBoundValidator" project="website" 
     file="/website/src/main/java/comp3111/input/validators/DoubleLowerBoundValidator.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="119" width="265" x="2868" y="80"/>    
+    <position height="-1" width="-1" x="944" y="454"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -83,7 +84,7 @@
   <class id="9" language="java" name="comp3111.input.validators.IntegerLowerBoundValidator" project="website" 
     file="/website/src/main/java/comp3111/input/validators/IntegerLowerBoundValidator.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="119" width="264" x="3173" y="80"/>    
+    <position height="-1" width="-1" x="1239" y="454"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -93,7 +94,7 @@
   <class id="10" language="java" name="comp3111.input.validators.DateAvailableInTourValidator" project="website" 
     file="/website/src/main/java/comp3111/input/validators/DateAvailableInTourValidator.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="119" width="252" x="3477" y="80"/>    
+    <position height="-1" width="-1" x="180" y="662"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -103,7 +104,7 @@
   <class id="11" language="java" name="comp3111.input.validators.ReturnValidationErrorWithLogging" project="website" 
     file="/website/src/main/java/comp3111/input/validators/ReturnValidationErrorWithLogging.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="119" width="290" x="3769" y="80"/>    
+    <position height="-1" width="-1" x="942" y="586"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -113,7 +114,7 @@
   <class id="12" language="java" name="comp3111.input.validators.TourGuideAvailableForDatesValidation" project="website" 
     file="/website/src/main/java/comp3111/input/validators/TourGuideAvailableForDatesValidation.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="173" width="419" x="4099" y="80"/>    
+    <position height="-1" width="-1" x="548" y="695"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -123,7 +124,7 @@
   <class id="13" language="java" name="comp3111.input.validators.ListOfDatesValidator" project="website" 
     file="/website/src/main/java/comp3111/input/validators/ListOfDatesValidator.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="101" width="258" x="4558" y="80"/>    
+    <position height="-1" width="-1" x="917" y="713"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -133,7 +134,7 @@
   <class id="14" language="java" name="comp3111.input.validators.DateNotEarlierThanValidator" project="website" 
     file="/website/src/main/java/comp3111/input/validators/DateNotEarlierThanValidator.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="119" width="252" x="4856" y="80"/>    
+    <position height="-1" width="-1" x="1239" y="598"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -143,7 +144,7 @@
   <class id="15" language="java" name="comp3111.input.validators.StringLengthValidator" project="website" 
     file="/website/src/main/java/comp3111/input/validators/StringLengthValidator.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="119" width="258" x="5148" y="80"/>    
+    <position height="-1" width="-1" x="1193" y="734"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      

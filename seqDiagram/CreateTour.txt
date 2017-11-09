@@ -1,0 +1,21 @@
+title Create Tour
+
+Employee->+TourManagementView: Navigate to view from sidebar
+
+Employee->TourManagementView: Click Create New Tour
+
+Employee->+Form: Fill in form
+
+Employee->Form: Submit Form
+
+Form->Form: Validation
+
+Form->+TourRepository: Push changes
+
+TourRepository->Form: Return OK status
+
+Form-->-Employee: Form closed
+
+TourRepository-->-TourManagementView:View updated
+
+TourManagementView-->-Employee: 

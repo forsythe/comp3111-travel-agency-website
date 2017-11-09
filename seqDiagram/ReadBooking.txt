@@ -1,0 +1,9 @@
+title Read Bookings
+
+Employee->+BookingManagementView: Navigate to view from sidebar
+
+BookingManagementView->+BookingRepository: Fetch all data from repository
+
+BookingRepository-->-BookingManagementView: Return all data found
+
+BookingManagementView-->-Employee: Display to employee
