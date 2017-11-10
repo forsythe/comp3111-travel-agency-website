@@ -18,6 +18,7 @@ import comp3111.data.model.Booking;
 import comp3111.data.model.Customer;
 import comp3111.data.model.LoginUser;
 import comp3111.data.model.Offering;
+import comp3111.data.model.PromoEvent;
 import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
 import comp3111.data.repo.BookingRepository;
@@ -25,10 +26,13 @@ import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.LoginUserRepository;
 import comp3111.data.repo.NonFAQQueryRepository;
 import comp3111.data.repo.OfferingRepository;
+import comp3111.data.repo.PromoEventRepository;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.data.repo.TourRepository;
+import comp3111.input.exceptions.NoSuchPromoCodeException;
 import comp3111.input.exceptions.OfferingDateUnsupportedException;
 import comp3111.input.exceptions.OfferingOutOfRoomException;
+import comp3111.input.exceptions.PromoCodeUsedUpException;
 import comp3111.input.exceptions.TourGuideUnavailableException;
 import comp3111.input.exceptions.UsernameTakenException;
 import comp3111.input.validators.DateAvailableInTourValidator;
@@ -52,6 +56,8 @@ public class DBManager {
 	private TourGuideRepository tourGuideRepo;
 	@Autowired
 	private NonFAQQueryRepository nonFAQQueryRepo;
+	@Autowired
+	private PromoEventRepository promoEventRepo;
 	@Autowired
 	private LineMessenger lineMessenger;
 
@@ -194,7 +200,8 @@ public class DBManager {
 	}
 
 	public Booking createBookingForOffering(Offering o, Customer c, int numAdults, int numChildren, int numToddlers,
-			double amountPaid, String specialRequests, String paymentStatus) throws OfferingOutOfRoomException {
+			double amountPaid, String specialRequests, String paymentStatus, double discount)
+			throws OfferingOutOfRoomException {
 		int totalWantToJoin = numAdults + numChildren + numToddlers;
 		int spotsTaken = 0;
 
@@ -209,8 +216,8 @@ public class DBManager {
 			throw new OfferingOutOfRoomException();
 		}
 
-		Booking bookingRecord = bookingRepo.save(
-				new Booking(c, o, numAdults, numChildren, numToddlers, amountPaid, specialRequests, paymentStatus));
+		Booking bookingRecord = bookingRepo.save(new Booking(c, o, numAdults, numChildren, numToddlers, amountPaid,
+				specialRequests, paymentStatus, discount));
 
 		log.info("customer [{}] succesfully made a booking for tour [{}], offering [{}]", c.getName(),
 				o.getTour().getTourName(), o.getStartDate());
@@ -219,10 +226,35 @@ public class DBManager {
 
 	}
 
-	public void createBookingForOffering(Booking booking) throws OfferingOutOfRoomException {
+	public void createNormalBookingForOffering(Booking booking) throws OfferingOutOfRoomException {
 		createBookingForOffering(booking.getOffering(), booking.getCustomer(), booking.getNumAdults(),
 				booking.getNumChildren(), booking.getNumToddlers(), booking.getAmountPaid(),
-				booking.getSpecialRequests(), booking.getPaymentStatus());
+				booking.getSpecialRequests(), booking.getPaymentStatus(), 1);
+	}
+
+	private boolean validatePromoCode(Offering o, String promoCode)
+			throws PromoCodeUsedUpException, NoSuchPromoCodeException {
+		PromoEvent pe = promoEventRepo.findOneByOffering(o);
+
+		if (pe == null)
+			throw new NoSuchPromoCodeException();
+		if (pe.getPromoCodeUsesLeft() == 0)
+			throw new PromoCodeUsedUpException();
+		return true;
+	}
+
+	public void createBookingForOfferingWithPromoCode(Booking booking, String promocode)
+			throws OfferingOutOfRoomException, PromoCodeUsedUpException, NoSuchPromoCodeException {
+		validatePromoCode(booking.getOffering(), promocode);
+
+		PromoEvent pe = promoEventRepo.findOneByOffering(booking.getOffering());
+
+		createBookingForOffering(booking.getOffering(), booking.getCustomer(), booking.getNumAdults(),
+				booking.getNumChildren(), booking.getNumToddlers(), booking.getAmountPaid(),
+				booking.getSpecialRequests(), booking.getPaymentStatus(), pe.getDiscount());
+
+		pe.setPromoCodeUsesLeft(pe.getPromoCodeUsesLeft() - 1);
+		promoEventRepo.save(pe);
 	}
 
 	/**

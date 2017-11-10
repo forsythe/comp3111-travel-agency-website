@@ -16,4 +16,8 @@ public class ConverterFactory {
 	public static StringToBooleanConverter getStringToBooleanConverter() {
 		return new StringToBooleanConverter("must be true or false");
 	}
+
+	public static LocalDateTimeToUtilDateTimeConverter getLocalDateTimeToUtilDateTimeConverter() {
+		return new LocalDateTimeToUtilDateTimeConverter();
+	}
 }
