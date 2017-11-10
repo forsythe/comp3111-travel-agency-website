@@ -287,6 +287,7 @@ public class DBManager {
 	}
 
 	public void deleteAll() {
+		this.promoEventRepo.deleteAll();
 		this.bookingRepo.deleteAll();
 		this.offeringRepo.deleteAll();
 		this.tourRepo.deleteAll();
