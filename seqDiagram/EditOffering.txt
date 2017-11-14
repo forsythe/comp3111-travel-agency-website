@@ -1,0 +1,33 @@
+title Edit Offering
+
+Employee->+TourManagementView: Navigate to view from sidebar
+
+Employee->TourManagementView: Select a tour
+
+Employee->TourManagementView: Click Manage Offerings For Tour Button
+
+TourManagementView-->-Employee: 
+
+OfferingManagementView->+OfferingRepository: Fetch all entries in repository
+
+OfferingRepository-->-OfferingManagementView: Return all data in repository
+
+Employee->+OfferingManagementView: Select an offering
+
+Employee->OfferingManagementView: Click Edit Offering
+
+Employee->+Form: Fill in form
+
+Employee->Form: Submit Form
+
+Form->Form: Validation
+
+Form->+OfferingRepository: Push changes
+
+OfferingRepository->Form: Return OK status
+
+Form-->-Employee: Form closed
+
+OfferingRepository-->-OfferingManagementView:View updated
+
+

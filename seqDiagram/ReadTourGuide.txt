@@ -1,0 +1,9 @@
+title Read Tour Guide
+
+Employee->+TourGuideManagementView: Navigate to view from sidebar
+
+TourGuideManagementView->+TourGuideRepository: Fetch all data from repository
+
+TourGuideRepository-->-TourGuideManagementView: Return all data found
+
+TourGuideManagementView-->-Employee: Display to employee

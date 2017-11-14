@@ -1,0 +1,27 @@
+title Create Offering
+
+Employee->+TourManagementView: Navigate to view from sidebar
+
+Employee->TourManagementView: Select a tour
+
+Employee->TourManagementView: Click Manage Offerings For Tour
+
+TourManagementView-->-Employee: 
+
+Employee->+OfferingManagementView: Click Create New Offering
+
+Employee->+Form: Fill in form
+
+Employee->Form: Submit Form
+
+Form->Form: Validation
+
+Form->+OfferingRepository: Push changes
+
+OfferingRepository->Form: Return OK status
+
+Form-->-Employee: Form closed
+
+OfferingRepository-->-OfferingManagementView:View updated
+
+

@@ -117,11 +117,14 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 
 		customerBox.setItems(Utils.iterableToCollection(//
 				cRepo.findAll()).stream().//
-				filter(c -> !c.getLineId().isEmpty()));//
+				filter(c -> !c.getLineId().isEmpty()).//
+				sorted((c1, c2) -> c1.getId().compareTo(c2.getId())));//
 		// only want LINE id enabled customers
 
-		offeringBox.setItems(Utils.iterableToCollection(oRepo.findAll()));
-		tourBox.setItems(Utils.iterableToCollection(tRepo.findAll()));
+		offeringBox.setItems(Utils.iterableToCollection(oRepo.findAll()).stream()
+				.sorted((o1, o2) -> o1.getId().compareTo(o2.getId())));
+		tourBox.setItems(Utils.iterableToCollection(tRepo.findAll()).stream()
+				.sorted((t1, t2) -> t1.getId().compareTo(t2.getId())));
 
 		customerBox.setPopupWidth(null);
 		offeringBox.setPopupWidth(null);
@@ -207,7 +210,8 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 
 		grid.setDataProvider(new ListDataProvider<NonFAQQuery>(Utils.iterableToCollection(qRepo.findAll())));
 		grid.removeColumn(GridCol.NONFAQQUERY_CUSTOMER_NAME);
-		grid.setColumnOrder(GridCol.NONFAQQUERY_ID, GridCol.NONFAQQUERY_CUSTOMER, GridCol.NONFAQQUERY_QUERY, GridCol.NONFAQQUERY_ANSWER);
+		grid.setColumnOrder(GridCol.NONFAQQUERY_ID, GridCol.NONFAQQUERY_CUSTOMER, GridCol.NONFAQQUERY_QUERY,
+				GridCol.NONFAQQUERY_ANSWER);
 		grid.setHeight("90%");
 		log.info("there are [{}] unresolved queries",
 				Utils.iterableToCollection(qRepo.findAll()).stream().filter(q -> q.getAnswer().isEmpty()).count());
@@ -278,8 +282,11 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		submit.addClickListener(event -> {
 			if (!replyBox.isEmpty()) {
 				LineMessenger.resetCounter();
-				boolean status = lineMessenger.respondToQuery(selectedQuery.getCustomer().getLineId(),
-						selectedQuery.getQuery(), replyBox.getValue());
+				boolean status = false;
+				if (selectedQuery.getCustomer() != null) {
+					status = lineMessenger.respondToQuery(selectedQuery.getCustomer().getLineId(),
+							selectedQuery.getQuery(), replyBox.getValue());
+				}
 				NotificationFactory.getTopBarNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
 						LineMessenger.getCounter() + " recepient(s)", 5).show(Page.getCurrent());
 
@@ -293,6 +300,7 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		});
 
 		return layout;
+
 	}
 
 	@Override

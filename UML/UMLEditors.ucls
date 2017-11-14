@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.2.1" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
-  associations="true" dependencies="true" nesting-relationships="true" router="FAN">  
+<class-diagram version="1.2.1" icons="false" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
   <interface id="1" language="java" name="comp3111.input.editors.GuidedByViewer.ChangeHandler" project="website" 
     file="/website/src/main/java/comp3111/input/editors/GuidedByViewer.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="83" width="128" x="-95" y="360"/>    
+    <position height="83" width="128" x="-176" y="385"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -12,7 +12,7 @@
   </interface>  
   <interface id="2" language="java" name="comp3111.input.editors.TourGuidesEditor.ChangeHandler" project="website" 
     file="/website/src/main/java/comp3111/input/editors/TourGuidesEditor.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="83" width="128" x="73" y="915"/>    
+    <position height="83" width="128" x="476" y="940"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -21,7 +21,7 @@
   </interface>  
   <class id="3" language="java" name="comp3111.input.editors.CustomerEditor" project="website" 
     file="/website/src/main/java/comp3111/input/editors/CustomerEditor.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="281" width="444" x="567" y="360"/>    
+    <position height="281" width="444" x="-8" y="385"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -30,7 +30,7 @@
   </class>  
   <class id="4" language="java" name="comp3111.input.editors.TourGuidesEditor" project="website" 
     file="/website/src/main/java/comp3111/input/editors/TourGuidesEditor.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="317" width="454" x="73" y="360"/>    
+    <position height="317" width="454" x="476" y="385"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -39,7 +39,7 @@
   </class>  
   <class id="5" language="java" name="comp3111.input.editors.ProviderAndPredicate" project="website" 
     file="/website/src/main/java/comp3111/input/editors/ProviderAndPredicate.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="119" width="607" x="1312" y="915"/>    
+    <position height="-1" width="-1" x="1009" y="1007"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -48,7 +48,7 @@
   </class>  
   <interface id="6" language="java" name="comp3111.input.editors.CustomerEditor.ChangeHandler" project="website" 
     file="/website/src/main/java/comp3111/input/editors/CustomerEditor.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="83" width="128" x="567" y="915"/>    
+    <position height="83" width="128" x="-8" y="940"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -57,7 +57,7 @@
   </interface>  
   <interface id="7" language="java" name="comp3111.input.editors.TourEditor.ChangeHandler" project="website" 
     file="/website/src/main/java/comp3111/input/editors/TourEditor.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="83" width="128" x="2003" y="915"/>    
+    <position height="83" width="128" x="1617" y="940"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -66,7 +66,7 @@
   </interface>  
   <class id="8" language="java" name="comp3111.input.editors.BookingEditor" project="website" 
     file="/website/src/main/java/comp3111/input/editors/BookingEditor.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="263" width="221" x="1051" y="360"/>    
+    <position height="263" width="221" x="970" y="385"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -75,7 +75,7 @@
   </class>  
   <class id="9" language="java" name="comp3111.input.editors.TourEditor" project="website" 
     file="/website/src/main/java/comp3111/input/editors/TourEditor.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="515" width="358" x="2003" y="360"/>    
+    <position height="515" width="358" x="1252" y="385"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -84,7 +84,7 @@
   </class>  
   <interface id="10" language="java" name="comp3111.input.editors.OfferingEditor.ChangeHandler" project="website" 
     file="/website/src/main/java/comp3111/input/editors/OfferingEditor.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="83" width="128" x="1814" y="360"/>    
+    <position height="83" width="128" x="1650" y="385"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -93,7 +93,7 @@
   </interface>  
   <class id="11" language="java" name="comp3111.input.editors.FilterFactory" project="website" 
     file="/website/src/main/java/comp3111/input/editors/FilterFactory.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="191" width="462" x="1312" y="360"/>    
+    <position height="191" width="462" x="-101" y="-44"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -102,7 +102,7 @@
   </class>  
   <class id="12" language="java" name="comp3111.input.editors.GuidedByViewer" project="website" 
     file="/website/src/main/java/comp3111/input/editors/GuidedByViewer.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="245" width="261" x="73" y="-51"/>    
+    <position height="245" width="261" x="476" y="-44"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -111,7 +111,7 @@
   </class>  
   <class id="13" language="java" name="comp3111.input.editors.OfferingEditor" project="website" 
     file="/website/src/main/java/comp3111/input/editors/OfferingEditor.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="371" width="288" x="1963" y="-51"/>    
+    <position height="389" width="288" x="1252" y="-44"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -119,100 +119,132 @@
     </display>  
   </class>  
   <association id="14">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="15" name="gridFilters"/>      
-      <multiplicity id="16" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="17">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="7"/>  
-  </nesting>  
-  <nesting id="18">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="2"/>  
-  </nesting>  
-  <nesting id="19">    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="1"/>  
-  </nesting>  
-  <association id="20">    
     <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="21" name="offeringEditor"/>      
-      <multiplicity id="22" minimum="0" maximum="1"/>    
+      <attribute id="15" name="offeringEditor">        
+        <position height="19" width="80" x="1415" y="345"/>      
+      </attribute>      
+      <multiplicity id="16" minimum="0" maximum="1">        
+        <position height="17" width="26" x="1369" y="357"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="13" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="23">    
+  <nesting id="17">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="10"/>  
+  </nesting>  
+  <association id="18">    
+    <bendpoint x="1221" y="385"/>    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="19" name="gridFilters">        
+        <position height="19" width="61" x="1029" y="884"/>      
+      </attribute>      
+      <multiplicity id="20" minimum="0" maximum="2147483647">        
+        <position height="17" width="24" x="1043" y="920"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="21">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="7"/>  
+  </nesting>  
+  <association id="22">    
     <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="24" name="guidedByViewer"/>      
-      <multiplicity id="25" minimum="0" maximum="1"/>    
+      <attribute id="23" name="guidedByViewer">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="24" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="12" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <dependency id="26">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="5"/>  
-  </dependency>  
-  <nesting id="27">    
+  <nesting id="25">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="2"/>  
+  </nesting>  
+  <association id="26">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="27" name="gridFilters">        
+        <position height="19" width="61" x="1099" y="899"/>      
+      </attribute>      
+      <multiplicity id="28" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="29">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="1"/>  
+  </nesting>  
+  <association id="30">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="31" name="gridFilters">        
+        <position height="19" width="61" x="893" y="896"/>      
+      </attribute>      
+      <multiplicity id="32" minimum="0" maximum="2147483647">        
+        <position height="17" width="24" x="942" y="919"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="33">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="34" name="gridFilters">        
+        <position height="19" width="61" x="971" y="886"/>      
+      </attribute>      
+      <multiplicity id="35" minimum="0" maximum="2147483647">        
+        <position height="17" width="24" x="997" y="915"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="36">    
     <end type="SOURCE" refId="3"/>    
     <end type="TARGET" refId="6"/>  
   </nesting>  
-  <association id="28">    
+  <association id="37">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="38" name="gridFilters">        
+        <position height="19" width="61" x="802" y="903"/>      
+      </attribute>      
+      <multiplicity id="39" minimum="0" maximum="2147483647">        
+        <position height="17" width="24" x="856" y="928"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="40">    
     <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="29" name="tourEditor"/>      
-      <multiplicity id="30" minimum="0" maximum="1"/>    
+      <attribute id="41" name="tourEditor">        
+        <position height="19" width="61" x="1299" y="354"/>      
+      </attribute>      
+      <multiplicity id="42" minimum="0" maximum="1">        
+        <position height="17" width="26" x="1421" y="361"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="9" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="31">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="32" name="gridFilters"/>      
-      <multiplicity id="33" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="34">    
+  <association id="43">    
     <end type="SOURCE" refId="12" navigable="false">      
-      <attribute id="35" name="tourGuidesEditor"/>      
-      <multiplicity id="36" minimum="0" maximum="1"/>    
+      <attribute id="44" name="tourGuidesEditor">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="45" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="37">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="10"/>  
-  </nesting>  
-  <association id="38">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="39" name="gridFilters"/>      
-      <multiplicity id="40" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="41">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="42" name="gridFilters"/>      
-      <multiplicity id="43" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="44">    
-    <bendpoint x="1972" y="360"/>    
-    <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="45" name="gridFilters"/>      
-      <multiplicity id="46" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

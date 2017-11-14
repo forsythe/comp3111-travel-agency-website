@@ -65,7 +65,7 @@ public class BookingEditor extends VerticalLayout {
 	private OfferingRepository offeringRepo;
 	@Autowired
 	private DBManager actionManager;
-	
+
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	@Autowired
@@ -84,7 +84,8 @@ public class BookingEditor extends VerticalLayout {
 		this.addComponent(rowOfButtons);
 
 		// get from GridCol
-		bookingGrid.setItems(Utils.iterableToCollection(bookingRepo.findAll()));
+		bookingGrid.setItems(Utils.iterableToCollection(bookingRepo.findAll()).stream()
+				.sorted((b1, b2) -> b1.getId().compareTo(b2.getId())));
 
 		bookingGrid.setWidth("100%");
 		bookingGrid.setSelectionMode(SelectionMode.SINGLE);
@@ -108,13 +109,14 @@ public class BookingEditor extends VerticalLayout {
 		bookingGrid.removeColumn(GridCol.BOOKING_OFFERING);
 		bookingGrid.removeColumn(GridCol.BOOKING_ID);
 
-		bookingGrid.setColumnOrder(GridCol.BOOKING_CUSTOMER_HKID, GridCol.BOOKING_CUSTOMER_NAME, GridCol.BOOKING_OFFERING_ID,
-				GridCol.BOOKING_TOUR_ID, GridCol.BOOKING_TOUR_NAME, GridCol.BOOKING_PEOPLE, GridCol.BOOKING_AMOUNT_PAID,
-				GridCol.BOOKING_TOTAL_COST, GridCol.BOOKING_SPECIAL_REQUEST, GridCol.BOOKING_PAYMENT_STATUS);
+		bookingGrid.setColumnOrder(GridCol.BOOKING_CUSTOMER_HKID, GridCol.BOOKING_CUSTOMER_NAME,
+				GridCol.BOOKING_OFFERING_ID, GridCol.BOOKING_TOUR_ID, GridCol.BOOKING_TOUR_NAME, GridCol.BOOKING_PEOPLE,
+				GridCol.BOOKING_AMOUNT_PAID, GridCol.BOOKING_TOTAL_COST, GridCol.BOOKING_SPECIAL_REQUEST,
+				GridCol.BOOKING_PAYMENT_STATUS);
 		bookingGrid.getColumn(GridCol.BOOKING_PEOPLE).setCaption("Number of Adults, Children, Toddlers");
 
 		HeaderRow filterRow = bookingGrid.appendHeaderRow();
-		
+
 		for (Column<Booking, ?> col : bookingGrid.getColumns()) {
 			col.setMinimumWidth(120);
 			col.setHidable(true);
@@ -252,20 +254,11 @@ public class BookingEditor extends VerticalLayout {
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
 		form.addComponent(buttonActions);
 
-		Collection<Customer> potentialCustomers = new ArrayList<Customer>();
+		customer.setItems(Utils.iterableToCollection(customerRepo.findAll()).stream()
+				.sorted((c1, c2) -> c1.getId().compareTo(c2.getId())));
 
-		for (Customer c : customerRepo.findAll()) {
-			potentialCustomers.add(c);
-		}
-		customer.setItems(potentialCustomers);
-
-		Collection<Offering> potentialOfferings = new ArrayList<Offering>();
-
-		for (Offering o : offeringRepo.findAll()) {
-			potentialOfferings.add(o);
-		}
-
-		offering.setItems(potentialOfferings);
+		offering.setItems(Utils.iterableToCollection(offeringRepo.findAll()).stream()
+				.sorted((o1, o2) -> o1.getId().compareTo(o2.getId())));
 
 		Collection<String> potentialPaymentStatus = new ArrayList<>(
 				Arrays.asList(Booking.PAYMENT_PENDING, Booking.PAYMENT_CONFIRMED));

@@ -1,0 +1,21 @@
+title Create Tour Guide
+
+Employee->+TourGuideManagementView: Navigate to view from sidebar
+
+Employee->TourGuideManagementView: Click Create New Tour Guide
+
+Employee->+Form: Fill in form
+
+Employee->Form: Submit Form
+
+Form->Form: Validation
+
+Form->+TourGuideRepository: Push changes
+
+TourGuideRepository->Form: Return OK status
+
+Form-->-Employee: Form closed
+
+TourGuideRepository-->-TourGuideManagementView:View updated
+
+TourGuideManagementView-->-Employee: 

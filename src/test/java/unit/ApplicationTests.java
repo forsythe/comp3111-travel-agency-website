@@ -104,8 +104,8 @@ public class ApplicationTests {
 	}
 
 	@Test
-	public void testSuccessShouldHaveOneLoginUser() {
-		then(this.loginUserRepo.count()).isEqualTo(1);
+	public void testSuccessShouldHaveAtLeastOneLoginUser() {
+		then(this.loginUserRepo.count()).isGreaterThanOrEqualTo(1);
 	}
 
 	@Test

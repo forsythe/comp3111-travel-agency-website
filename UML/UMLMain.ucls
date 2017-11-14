@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.2.1" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
-  associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
+<class-diagram version="1.2.1" icons="false" automaticImage="JPEG" always-add-relationships="false" 
+  generalizations="true" realizations="true" associations="true" dependencies="true" nesting-relationships="true" 
+  router="FAN">  
   <class id="1" language="java" name="comp3111.Application" project="website" 
     file="/website/src/main/java/comp3111/Application.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="119" width="124" x="123" y="-84"/>    
+    <position height="116" width="115" x="217" y="38"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -12,7 +13,7 @@
   </class>  
   <class id="2" language="java" name="comp3111.ScheduledTasks" project="website" 
     file="/website/src/main/java/comp3111/ScheduledTasks.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="155" width="205" x="287" y="-84"/>    
+    <position height="184" width="271" x="372" y="38"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -21,7 +22,7 @@
   </class>  
   <class id="3" language="java" name="comp3111.LineMessenger" project="website" 
     file="/website/src/main/java/comp3111/LineMessenger.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="299" width="270" x="287" y="453"/>    
+    <position height="303" width="261" x="217" y="262"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -30,7 +31,7 @@
   </class>  
   <class id="4" language="java" name="comp3111.Utils" project="website" 
     file="/website/src/main/java/comp3111/Utils.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="497" width="375" x="532" y="-84"/>    
+    <position height="473" width="366" x="518" y="262"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -45,6 +46,10 @@
     <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
+  <dependency id="8">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    
