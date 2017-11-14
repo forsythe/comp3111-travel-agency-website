@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 
+import comp3111.input.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +30,6 @@ import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.PromoEventRepository;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.data.repo.TourRepository;
-import comp3111.input.exceptions.NoSuchPromoCodeException;
-import comp3111.input.exceptions.OfferingDateUnsupportedException;
-import comp3111.input.exceptions.OfferingOutOfRoomException;
-import comp3111.input.exceptions.PromoCodeUsedUpException;
-import comp3111.input.exceptions.TourGuideUnavailableException;
-import comp3111.input.exceptions.UsernameTakenException;
 import comp3111.input.validators.DateAvailableInTourValidator;
 import comp3111.input.validators.ValidatorFactory;
 
@@ -200,7 +195,7 @@ public class DBManager {
 	}
 
 	public Booking createBookingForOffering(Offering o, Customer c, int numAdults, int numChildren, int numToddlers,
-			double amountPaid, String specialRequests, String paymentStatus, double discount)
+			double amountPaid, String specialRequests, String paymentStatus, double discount, String promoCodeUsed)
 			throws OfferingOutOfRoomException {
 		int totalWantToJoin = numAdults + numChildren + numToddlers;
 		int spotsTaken = 0;
@@ -217,7 +212,7 @@ public class DBManager {
 		}
 
 		Booking bookingRecord = bookingRepo.save(new Booking(c, o, numAdults, numChildren, numToddlers, amountPaid,
-				specialRequests, paymentStatus, discount));
+				specialRequests, paymentStatus, discount, promoCodeUsed));
 
 		log.info("customer [{}] succesfully made a booking for tour [{}], offering [{}]", c.getName(),
 				o.getTour().getTourName(), o.getStartDate());
@@ -229,7 +224,7 @@ public class DBManager {
 	public void createNormalBookingForOffering(Booking booking) throws OfferingOutOfRoomException {
 		createBookingForOffering(booking.getOffering(), booking.getCustomer(), booking.getNumAdults(),
 				booking.getNumChildren(), booking.getNumToddlers(), booking.getAmountPaid(),
-				booking.getSpecialRequests(), booking.getPaymentStatus(), 1);
+				booking.getSpecialRequests(), booking.getPaymentStatus(), 1, null);
 	}
 
 	private boolean validatePromoCode(Offering o, String promoCode)
@@ -244,14 +239,24 @@ public class DBManager {
 	}
 
 	public void createBookingForOfferingWithPromoCode(Booking booking, String promocode)
-			throws OfferingOutOfRoomException, PromoCodeUsedUpException, NoSuchPromoCodeException {
+			throws OfferingOutOfRoomException, PromoCodeUsedUpException, NoSuchPromoCodeException, PromoForCustomerExceededException {
 		validatePromoCode(booking.getOffering(), promocode);
 
 		PromoEvent pe = promoEventRepo.findOneByOffering(booking.getOffering());
 
+		int totalPromoUsed = booking.getTotalNumberOfPeople();
+		for (Booking b : bookingRepo.findByCustomer(booking.getCustomer())){
+			if (b.getPromoCodeUsed()!=null && b.getPromoCodeUsed().equals(promocode)){
+				totalPromoUsed += b.getTotalNumberOfPeople();
+			}
+		}
+		if (totalPromoUsed > pe.getMaxReservationsPerCustomer()){
+			throw new PromoForCustomerExceededException();
+		}
+
 		createBookingForOffering(booking.getOffering(), booking.getCustomer(), booking.getNumAdults(),
 				booking.getNumChildren(), booking.getNumToddlers(), booking.getAmountPaid(),
-				booking.getSpecialRequests(), booking.getPaymentStatus(), pe.getDiscount());
+				booking.getSpecialRequests(), booking.getPaymentStatus(), pe.getDiscount(), pe.getPromoCode());
 
 		pe.setPromoCodeUsesLeft(pe.getPromoCodeUsesLeft() - 1);
 		promoEventRepo.save(pe);

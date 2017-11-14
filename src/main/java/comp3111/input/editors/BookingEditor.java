@@ -11,6 +11,7 @@ import comp3111.data.model.PromoEvent;
 import comp3111.data.repo.PromoEventRepository;
 import comp3111.input.exceptions.NoSuchPromoCodeException;
 import comp3111.input.exceptions.PromoCodeUsedUpException;
+import comp3111.input.exceptions.PromoForCustomerExceededException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,6 +115,8 @@ public class BookingEditor extends VerticalLayout {
 		bookingGrid.removeColumn(GridCol.BOOKING_OFFERING);
 		bookingGrid.removeColumn(GridCol.BOOKING_ID);
 		bookingGrid.removeColumn(GridCol.BOOKING_PROMO_DISCOUNT_MULTIPLIER);
+		bookingGrid.removeColumn(GridCol.BOOKING_TOTAL_NUMBER_OF_PEOPLE);
+		bookingGrid.removeColumn(GridCol.BOOKING_PROMO_CODE_USED);
 
 		bookingGrid.setColumnOrder(GridCol.BOOKING_CUSTOMER_HKID, GridCol.BOOKING_CUSTOMER_NAME,
 				GridCol.BOOKING_OFFERING_ID, GridCol.BOOKING_TOUR_ID, GridCol.BOOKING_TOUR_NAME, GridCol.BOOKING_PEOPLE,
@@ -324,6 +327,9 @@ public class BookingEditor extends VerticalLayout {
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.bind(Booking::getPaymentStatus, Booking::setPaymentStatus);
 
+		binder.forField(promoCode).withValidator(ValidatorFactory.getStringLengthValidator(255))
+				.bind(Booking::getPromoCodeUsed, Booking::setPromoCodeUsed);
+
 		binder.setBean(bookingToSave);
 
 		confirmButton.addClickListener(event -> {
@@ -353,6 +359,8 @@ public class BookingEditor extends VerticalLayout {
 					this.refreshData();
 					subwindow.close();
 					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
+				} catch (PromoForCustomerExceededException e){
+					errors += "Too many this kind of promo code has been used by the customer.\n";
 				} catch (PromoCodeUsedUpException e) {
 					errors += "No enough quota left in promotion event.\n";
 				} catch (NoSuchPromoCodeException e) {
