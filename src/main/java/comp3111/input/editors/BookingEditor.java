@@ -13,10 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
-import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Page;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
@@ -25,20 +23,19 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.components.grid.HeaderCell;
-import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
 
 import comp3111.Utils;
-import comp3111.data.GridCol;
 import comp3111.data.DBManager;
+import comp3111.data.GridCol;
 import comp3111.data.model.Booking;
 import comp3111.data.model.Customer;
 import comp3111.data.model.Offering;
-import comp3111.data.model.Tour;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
@@ -69,7 +66,9 @@ public class BookingEditor extends VerticalLayout {
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	@Autowired
-	public BookingEditor(BookingRepository bookingRepo) {
+	public BookingEditor(BookingRepository br) {
+		this.bookingRepo = br;
+		
 		Button createBookingButton = new Button("Create new booking");
 		Button editBookingButton = new Button("Edit booking");
 
@@ -108,12 +107,22 @@ public class BookingEditor extends VerticalLayout {
 		bookingGrid.removeColumn(GridCol.BOOKING_CUSTOMER);
 		bookingGrid.removeColumn(GridCol.BOOKING_OFFERING);
 		bookingGrid.removeColumn(GridCol.BOOKING_ID);
+		bookingGrid.removeColumn(GridCol.BOOKING_PROMO_DISCOUNT_MULTIPLIER);
 
 		bookingGrid.setColumnOrder(GridCol.BOOKING_CUSTOMER_HKID, GridCol.BOOKING_CUSTOMER_NAME,
 				GridCol.BOOKING_OFFERING_ID, GridCol.BOOKING_TOUR_ID, GridCol.BOOKING_TOUR_NAME, GridCol.BOOKING_PEOPLE,
 				GridCol.BOOKING_AMOUNT_PAID, GridCol.BOOKING_TOTAL_COST, GridCol.BOOKING_SPECIAL_REQUEST,
 				GridCol.BOOKING_PAYMENT_STATUS);
 		bookingGrid.getColumn(GridCol.BOOKING_PEOPLE).setCaption("Number of Adults, Children, Toddlers");
+		
+		bookingGrid.addColumn(b->{
+			if (b.getPromoDiscountMultiplier() != 1) {
+				return b.getPromoDiscountMultiplier();
+			} else {
+				return "none";
+			}
+		}).setId("discountMultiplier").setCaption("Promotional Discount");
+
 
 		HeaderRow filterRow = bookingGrid.appendHeaderRow();
 
@@ -315,12 +324,12 @@ public class BookingEditor extends VerticalLayout {
 
 				try {
 					if (bookingToSave.getId() == null) {
-						actionManager.createBookingForOffering(bookingToSave);
+						actionManager.createNormalBookingForOffering(bookingToSave);
 						log.info("Saved a new booking [{}] successfully", bookingToSave);
 
 					} else {
 						bookingRepo.delete(bookingToSave);
-						actionManager.createBookingForOffering(bookingToSave);
+						actionManager.createNormalBookingForOffering(bookingToSave);
 						log.info("Saved an edited booking [{}] successfully", bookingToSave);
 
 					}

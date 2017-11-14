@@ -119,9 +119,9 @@ public class LineInteractionTests {
 		Offering offering = actionManager.createOfferingForTour(comp3111Tour, tg1,
 				new ArrayList<Date>(comp3111Tour.getAllowedDates()).get(0), "hotel bob", 5, 18);
 		Booking hengBooking = actionManager.createBookingForOffering(offering, heng, 3, 4, 2, 0, "kids meal",
-				Booking.PAYMENT_PENDING);
+				Booking.PAYMENT_PENDING,1);
 		Booking kvBooking = actionManager.createBookingForOffering(offering, kv, 3, 4, 2, 0, "kids meal",
-				Booking.PAYMENT_PENDING);
+				Booking.PAYMENT_PENDING,1);
 
 		boolean status = lineMessenger.sendToOffering(offering, "send to all participants in offering test case");
 		assertTrue(status);
@@ -158,9 +158,9 @@ public class LineInteractionTests {
 		Offering offering = actionManager.createOfferingForTour(comp3111Tour, tg1,
 				new ArrayList<Date>(comp3111Tour.getAllowedDates()).get(0), "hotel bob", 5, 18);
 		Booking hengBooking = actionManager.createBookingForOffering(offering, heng, 3, 4, 2, 0, "kids meal",
-				Booking.PAYMENT_PENDING);
+				Booking.PAYMENT_PENDING,1);
 		Booking kvBooking = actionManager.createBookingForOffering(offering, kv, 3, 4, 2, 0, "kids meal",
-				Booking.PAYMENT_PENDING);
+				Booking.PAYMENT_PENDING,1);
 
 		LineMessenger.resetCounter();
 		actionManager.notifyOfferingStatus(offering, false);
@@ -194,9 +194,9 @@ public class LineInteractionTests {
 				20);
 
 		Booking hengBooking = actionManager.createBookingForOffering(offering, heng, 3, 4, 2, 0, "kids meal",
-				Booking.PAYMENT_CONFIRMED);
+				Booking.PAYMENT_CONFIRMED,1);
 		Booking kvBooking = actionManager.createBookingForOffering(offering, kv, 3, 4, 2, 0, "kids meal",
-				Booking.PAYMENT_CONFIRMED);
+				Booking.PAYMENT_CONFIRMED,1);
 
 		// this should be enough customers to trigger a success
 		sTask.updatePendingOfferingStatusIfNecessary();
@@ -229,9 +229,9 @@ public class LineInteractionTests {
 				20);
 
 		Booking hengBooking = actionManager.createBookingForOffering(offering, heng, 3, 4, 2, 0, "kids meal",
-				Booking.PAYMENT_PENDING);
+				Booking.PAYMENT_PENDING,1);
 		Booking kvBooking = actionManager.createBookingForOffering(offering, kv, 3, 4, 2, 0, "kids meal",
-				Booking.PAYMENT_PENDING);
+				Booking.PAYMENT_PENDING,1);
 
 		// this should be enough customers to trigger a success
 		sTask.updatePendingOfferingStatusIfNecessary();

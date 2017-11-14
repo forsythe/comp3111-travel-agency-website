@@ -9,6 +9,7 @@ import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractTextField;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateField;
 
 import comp3111.data.DBManager;
@@ -57,6 +58,14 @@ public class ValidatorFactory {
 
 	public static DateNotEarlierThanValidator getDateNotEarlierThanValidator(Date notEarlierThanThis) {
 		return new DateNotEarlierThanValidator(notEarlierThanThis);
+	}
+	
+	/**
+	 * @param offering need to pass in the offering combobox because the value could change
+	 * @return 
+	 */
+	public static DateIsEarlierThanOfferingLastEditableDateValidator getDateIsEarlierThanOfferingLastEditableDateValidator(ComboBox<Offering> offering) {
+		return new DateIsEarlierThanOfferingLastEditableDateValidator(offering);
 	}
 
 	public static OfferingStillOpenValidator getOfferingStillOpenValidator() {

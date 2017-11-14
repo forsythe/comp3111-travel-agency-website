@@ -34,12 +34,14 @@ public class Booking {
 	private String specialRequests;
 	private String paymentStatus;
 
+	private double promoDiscountMultiplier;
+
 	public Booking() {
 
 	}
 
 	public Booking(Customer customer, Offering offering, int numAdults, int numChildren, int numToddlers,
-			double amountPaid, String specialRequests, String paymentStatus) {
+			double amountPaid, String specialRequests, String paymentStatus, double promoDiscountMultiplier) {
 		this.customer = customer;
 		this.offering = offering;
 		this.numAdults = numAdults;
@@ -48,6 +50,7 @@ public class Booking {
 		this.amountPaid = amountPaid;
 		this.specialRequests = specialRequests;
 		this.paymentStatus = paymentStatus;
+		this.promoDiscountMultiplier = promoDiscountMultiplier;
 	}
 
 	public Long getId() {
@@ -155,8 +158,9 @@ public class Booking {
 		} else {
 			price = this.offering.getTour().getWeekendPrice();
 		}
-		return numAdults * price + numChildren * price * this.offering.getTour().getChildDiscount()
+		double rawPrice = numAdults * price + numChildren * price * this.offering.getTour().getChildDiscount()
 				+ numToddlers * price * this.offering.getTour().getToddlerDiscount();
+		return rawPrice * promoDiscountMultiplier;
 	}
 
 	/**
@@ -188,6 +192,20 @@ public class Booking {
 
 	public void setPaymentStatus(String paymentStatus) {
 		this.paymentStatus = paymentStatus;
+	}
+
+	public double getPromoDiscountMultiplier() {
+		return promoDiscountMultiplier;
+	}
+
+	/**
+	 * @param promoDiscountMultiplier
+	 *            if this booking was made as a result of a promotional event, then
+	 *            this could e.g. be 0.8 (for a 20% off discount). Otherwise, it
+	 *            should be 1.0 (for full price)
+	 */
+	public void setPromoDiscountMultiplier(double promoDiscountMultiplier) {
+		this.promoDiscountMultiplier = promoDiscountMultiplier;
 	}
 
 	@Override

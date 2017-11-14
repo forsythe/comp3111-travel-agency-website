@@ -1,21 +1,27 @@
 package comp3111;
 
-import com.vaadin.data.ErrorMessageProvider;
-import com.vaadin.data.ValidationResult;
-import com.vaadin.data.Validator;
-import com.vaadin.data.ValueContext;
-import com.vaadin.server.UserError;
-import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.DateField;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.vaadin.shared.ui.datefield.DateTimeResolution;
+import com.vaadin.ui.DateField;
+import com.vaadin.ui.DateTimeField;
 
 public class Utils {
 
 	public static final String DATE_LOCALE = "dd/MM/yyyy";
+	public static final String DATE_TIME_LOCALE = DATE_LOCALE + " HH:mm:ss Z";
 
 	public static String generateRequiredError() {
 		return "cannot be empty";
@@ -201,6 +207,10 @@ public class Utils {
 		return java.sql.Date.valueOf(local);
 	}
 
+	public static Date localDateTimeToDate(LocalDateTime local) {
+		return Date.from(local.atZone(ZoneId.systemDefault()).toInstant());
+	}
+
 	public static Date addDate(LocalDate value, int days) {
 		return addDate(localDateToDate(value), days);
 	}
@@ -216,6 +226,13 @@ public class Utils {
 	public static DateField getDateFieldWithOurLocale(String caption) {
 		DateField d = new DateField(caption);
 		d.setDateFormat(DATE_LOCALE);
+		return d;
+	}
+
+	public static DateTimeField getDateTimeFieldWithOurLocale(String caption) {
+		DateTimeField d = new DateTimeField(caption);
+		d.setDateFormat(DATE_TIME_LOCALE);
+		d.setResolution(DateTimeResolution.MINUTE);
 		return d;
 	}
 

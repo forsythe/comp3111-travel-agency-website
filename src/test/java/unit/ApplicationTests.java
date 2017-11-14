@@ -120,7 +120,7 @@ public class ApplicationTests {
 		Offering anonOffering = actionManager.createOfferingForTour(anonTour, anonTg,
 				new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hotel chep", 4, 20);
 		Booking anonBooking = actionManager.createBookingForOffering(anonOffering, anonCust, 5, 2, 3, 0, "no smoking",
-				Booking.PAYMENT_CONFIRMED);
+				Booking.PAYMENT_CONFIRMED, 1);
 
 		then(this.tourGuideRepo.findByName(anonTg.getName()).size()).isEqualTo(1);
 		then(this.customerRepo.findByName(anonCust.getName()).size()).isEqualTo(1);
@@ -145,7 +145,7 @@ public class ApplicationTests {
 				tourGuideRepo.findOne(tg1.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0), "hotel bob", 5,
 				18);
 		Booking booking = actionManager.createBookingForOffering(offeringRepo.findOne(yangShanOffering.getId()),
-				customerRepo.findOne(c1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING);
+				customerRepo.findOne(c1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING, 1);
 
 		then(this.offeringRepo.findByHotelName(yangShanOffering.getHotelName()).size()).isEqualTo(1);
 		then(this.bookingRepo.findByPaymentStatus(booking.getPaymentStatus()).size()).isEqualTo(1);
@@ -166,10 +166,10 @@ public class ApplicationTests {
 				18);
 
 		actionManager.createBookingForOffering(offeringRepo.findOne(yangShanOffering.getId()),
-				customerRepo.findOne(c1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING);
+				customerRepo.findOne(c1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING, 1);
 
 		actionManager.createBookingForOffering(offeringRepo.findOne(yangShanOffering.getId()),
-				customerRepo.findOne(c2.getId()), 3, 4, 2, 0, "no smoking meal", Booking.PAYMENT_PENDING);
+				customerRepo.findOne(c2.getId()), 3, 4, 2, 0, "no smoking meal", Booking.PAYMENT_PENDING, 1);
 
 		then(this.offeringRepo.findByHotelName(yangShanOffering.getHotelName()).size()).isEqualTo(1);
 		then(this.bookingRepo.findByOffering(yangShanOffering).size()).isEqualTo(2);
@@ -190,13 +190,13 @@ public class ApplicationTests {
 				tourGuideRepo.findOne(tg1.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0), "hotel bob", 5,
 				18);
 		Booking book1 = actionManager.createBookingForOffering(offeringRepo.findOne(offering1.getId()),
-				customerRepo.findOne(c1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING);
+				customerRepo.findOne(c1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING, 1);
 
 		Offering offering2 = actionManager.createOfferingForTour(tourRepo.findOne(tour1.getId()),
 				tourGuideRepo.findOne(tg2.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0), "hotel cheap",
 				5, 18);
 		Booking book2 = actionManager.createBookingForOffering(offeringRepo.findOne(offering2.getId()),
-				customerRepo.findOne(c2.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_CONFIRMED);
+				customerRepo.findOne(c2.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_CONFIRMED, 1);
 
 		then(this.offeringRepo.findByHotelName(offering1.getHotelName()).size()).isEqualTo(1);
 		then(this.offeringRepo.findByHotelName(offering2.getHotelName()).size()).isEqualTo(1);
@@ -266,7 +266,7 @@ public class ApplicationTests {
 		int numToddlers = 2;
 		actionManager.createBookingForOffering(offeringRepo.findOne(shimenOffering.getId()),
 				customerRepo.findOne(c1.getId()), numAdults, numChildren, numToddlers, 0, "kids meal",
-				Booking.PAYMENT_CONFIRMED);
+				Booking.PAYMENT_CONFIRMED, 1);
 	}
 
 }
