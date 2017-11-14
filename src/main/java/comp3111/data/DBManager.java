@@ -195,7 +195,7 @@ public class DBManager {
 	}
 
 	public Booking createBookingForOffering(Offering o, Customer c, int numAdults, int numChildren, int numToddlers,
-			double amountPaid, String specialRequests, String paymentStatus, double discount, String promoCodeUsed)
+												 double amountPaid, String specialRequests, String paymentStatus, double discount, String promoCodeUsed)
 			throws OfferingOutOfRoomException {
 		int totalWantToJoin = numAdults + numChildren + numToddlers;
 		int spotsTaken = 0;
@@ -218,7 +218,13 @@ public class DBManager {
 				o.getTour().getTourName(), o.getStartDate());
 
 		return bookingRecord;
+	}
 
+	public Booking createBookingForOffering(Offering o, Customer c, int numAdults, int numChildren, int numToddlers,
+											double amountPaid, String specialRequests, String paymentStatus, double discount)
+			throws OfferingOutOfRoomException {
+		return createBookingForOffering(o, c, numAdults, numChildren, numToddlers, amountPaid, specialRequests,
+				paymentStatus, discount,null);
 	}
 
 	public void createNormalBookingForOffering(Booking booking) throws OfferingOutOfRoomException {
@@ -299,6 +305,7 @@ public class DBManager {
 		this.tourGuideRepo.deleteAll();
 		this.nonFAQQueryRepo.deleteAll();
 		this.customerRepo.deleteAll();
+		this.promoEventRepo.deleteAll();
 
 		log.info("successfully cleared all repos");
 		// this.loginUserRepo.deleteAll();
