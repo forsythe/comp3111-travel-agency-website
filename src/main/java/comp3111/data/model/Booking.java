@@ -36,12 +36,14 @@ public class Booking {
 
 	private double promoDiscountMultiplier;
 
+	private String promoCodeUsed;
+
 	public Booking() {
 
 	}
 
 	public Booking(Customer customer, Offering offering, int numAdults, int numChildren, int numToddlers,
-			double amountPaid, String specialRequests, String paymentStatus, double promoDiscountMultiplier) {
+				   double amountPaid, String specialRequests, String paymentStatus, double promoDiscountMultiplier) {
 		this.customer = customer;
 		this.offering = offering;
 		this.numAdults = numAdults;
@@ -51,6 +53,22 @@ public class Booking {
 		this.specialRequests = specialRequests;
 		this.paymentStatus = paymentStatus;
 		this.promoDiscountMultiplier = promoDiscountMultiplier;
+		this.promoCodeUsed = null;
+	}
+
+	public Booking(Customer customer, Offering offering, int numAdults, int numChildren, int numToddlers,
+			double amountPaid, String specialRequests, String paymentStatus, double promoDiscountMultiplier,
+				   String promoCodeUsed) {
+		this.customer = customer;
+		this.offering = offering;
+		this.numAdults = numAdults;
+		this.numChildren = numChildren;
+		this.numToddlers = numToddlers;
+		this.amountPaid = amountPaid;
+		this.specialRequests = specialRequests;
+		this.paymentStatus = paymentStatus;
+		this.promoDiscountMultiplier = promoDiscountMultiplier;
+		this.promoCodeUsed = promoCodeUsed;
 	}
 
 	public Long getId() {
@@ -137,6 +155,18 @@ public class Booking {
 
 	public void setNumToddlers(int numToddlers) {
 		this.numToddlers = numToddlers;
+	}
+
+	public int getTotalNumberOfPeople(){
+		return numAdults + numChildren + numToddlers;
+	}
+
+	public String getPromoCodeUsed() {
+		return promoCodeUsed;
+	}
+
+	public void setPromoCodeUsed(String promoCodeUsed) {
+		this.promoCodeUsed = promoCodeUsed;
 	}
 
 	/**

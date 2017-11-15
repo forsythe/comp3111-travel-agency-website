@@ -7,6 +7,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 
+import comp3111.data.model.PromoEvent;
+import comp3111.data.repo.PromoEventRepository;
+import comp3111.input.exceptions.NoSuchPromoCodeException;
+import comp3111.input.exceptions.PromoCodeUsedUpException;
+import comp3111.input.exceptions.PromoForCustomerExceededException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,13 +67,15 @@ public class BookingEditor extends VerticalLayout {
 	private OfferingRepository offeringRepo;
 	@Autowired
 	private DBManager actionManager;
+	@Autowired
+	private PromoEventRepository promoRepo;
 
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	@Autowired
 	public BookingEditor(BookingRepository br) {
 		this.bookingRepo = br;
-		
+
 		Button createBookingButton = new Button("Create new booking");
 		Button editBookingButton = new Button("Edit booking");
 
@@ -108,13 +115,15 @@ public class BookingEditor extends VerticalLayout {
 		bookingGrid.removeColumn(GridCol.BOOKING_OFFERING);
 		bookingGrid.removeColumn(GridCol.BOOKING_ID);
 		bookingGrid.removeColumn(GridCol.BOOKING_PROMO_DISCOUNT_MULTIPLIER);
+		bookingGrid.removeColumn(GridCol.BOOKING_TOTAL_NUMBER_OF_PEOPLE);
+		bookingGrid.removeColumn(GridCol.BOOKING_PROMO_CODE_USED);
 
 		bookingGrid.setColumnOrder(GridCol.BOOKING_CUSTOMER_HKID, GridCol.BOOKING_CUSTOMER_NAME,
 				GridCol.BOOKING_OFFERING_ID, GridCol.BOOKING_TOUR_ID, GridCol.BOOKING_TOUR_NAME, GridCol.BOOKING_PEOPLE,
 				GridCol.BOOKING_AMOUNT_PAID, GridCol.BOOKING_TOTAL_COST, GridCol.BOOKING_SPECIAL_REQUEST,
 				GridCol.BOOKING_PAYMENT_STATUS);
 		bookingGrid.getColumn(GridCol.BOOKING_PEOPLE).setCaption("Number of Adults, Children, Toddlers");
-		
+
 		bookingGrid.addColumn(b->{
 			if (b.getPromoDiscountMultiplier() != 1) {
 				return b.getPromoDiscountMultiplier();
@@ -217,6 +226,7 @@ public class BookingEditor extends VerticalLayout {
 		TextField amountPaid = new TextField("Amount Paid");
 		TextField specialRequest = new TextField("Special Request");
 		ComboBox<String> paymentStatus = new ComboBox<>("Payment Status");
+		ComboBox<String> promoCode = new ComboBox<>("Promotion Code");
 
 		customer.setId("cb_customer");
 		offering.setId("cb_offering");
@@ -226,10 +236,12 @@ public class BookingEditor extends VerticalLayout {
 		amountPaid.setId("tf_amount_paid");
 		specialRequest.setId("tf_special_request");
 		paymentStatus.setId("cb_payment_status");
+		promoCode.setId("cb_promotion_code");
 
 		customer.setPopupWidth(null); // so that the entire text row can be seen
 		offering.setPopupWidth(null);
 		paymentStatus.setPopupWidth(null);
+		promoCode.setPopupWidth(null);
 
 		if (bookingToSave.getId() == null) { // passed in an unsaved object
 			subwindow = new Window("Create new boooking");
@@ -257,6 +269,7 @@ public class BookingEditor extends VerticalLayout {
 		form.addComponent(amountPaid);
 		form.addComponent(specialRequest);
 		form.addComponent(paymentStatus);
+		form.addComponent(promoCode);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
 		buttonActions.addComponent(confirmButton);
@@ -273,6 +286,10 @@ public class BookingEditor extends VerticalLayout {
 				Arrays.asList(Booking.PAYMENT_PENDING, Booking.PAYMENT_CONFIRMED));
 		paymentStatus.setItems(potentialPaymentStatus);
 		paymentStatus.setSelectedItem(Booking.PAYMENT_PENDING);
+
+		promoCode.setItems(Utils.iterableToCollection(promoRepo.findAll()).stream()
+				.sorted((c1, c2) -> c1.getId().compareTo(c2.getId()))
+				.map(PromoEvent::getPromoCode));
 
 		Binder<Booking> binder = new Binder<Booking>();
 
@@ -310,6 +327,9 @@ public class BookingEditor extends VerticalLayout {
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.bind(Booking::getPaymentStatus, Booking::setPaymentStatus);
 
+		binder.forField(promoCode).withValidator(ValidatorFactory.getStringLengthValidator(255))
+				.bind(Booking::getPromoCodeUsed, Booking::setPromoCodeUsed);
+
 		binder.setBean(bookingToSave);
 
 		confirmButton.addClickListener(event -> {
@@ -324,28 +344,35 @@ public class BookingEditor extends VerticalLayout {
 
 				try {
 					if (bookingToSave.getId() == null) {
+						bookingRepo.delete(bookingToSave);
+					}
+					if (promoCode.getValue() != null && !promoCode.isEmpty()) {
+						//With promo code
+						actionManager.createBookingForOfferingWithPromoCode(bookingToSave, promoCode.getValue());
+						log.info("Saved a new booking [{}] with promo code [{}] successfully", bookingToSave, promoCode);
+					}else {
+						//Without promo code
 						actionManager.createNormalBookingForOffering(bookingToSave);
 						log.info("Saved a new booking [{}] successfully", bookingToSave);
-
-					} else {
-						bookingRepo.delete(bookingToSave);
-						actionManager.createNormalBookingForOffering(bookingToSave);
-						log.info("Saved an edited booking [{}] successfully", bookingToSave);
-
 					}
 					binder.removeBean();
 					this.refreshData();
 					subwindow.close();
 					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
-
-					return; // This return skip the error reporting procedure below
+				} catch (PromoForCustomerExceededException e){
+					errors += "Too many this kind of promo code has been used by the customer.\n";
+				} catch (PromoCodeUsedUpException e) {
+					errors += "No enough quota left in promotion event.\n";
+				} catch (NoSuchPromoCodeException e) {
+					errors += "Such promotion code does not exist.\n";
 				} catch (OfferingOutOfRoomException e) {
 					errors += "Not enough room in offering";
 				}
-
 			}
-			NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 
+			if (!errors.isEmpty()) {
+				NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
+			}
 		});
 
 		return subwindow;

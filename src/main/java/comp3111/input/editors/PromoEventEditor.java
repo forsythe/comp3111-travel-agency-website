@@ -245,6 +245,7 @@ public class PromoEventEditor extends VerticalLayout {
 		binder.forField(triggerDate).asRequired(Utils.generateRequiredError())
 				.withConverter(ConverterFactory.getLocalDateTimeToUtilDateTimeConverter())
 				.withValidator(ValidatorFactory.getDateIsEarlierThanOfferingLastEditableDateValidator(offering))
+				.withValidator(ValidatorFactory.getDateNotEarlierThanValidator(Date.from(Instant.now())))
 				.bind(PromoEvent::getTriggerDate, PromoEvent::setTriggerDate);
 
 		binder.forField(discountMultiplier).asRequired(Utils.generateRequiredError())
