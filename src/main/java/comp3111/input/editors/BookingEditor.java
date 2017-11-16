@@ -123,11 +123,11 @@ public class BookingEditor extends VerticalLayout {
 
 		bookingGrid.addColumn(b->{
 			if (b.getPromoDiscountMultiplier() != 1) {
-				return b.getPromoDiscountMultiplier();
+				return String.valueOf(b.getPromoDiscountMultiplier());
 			} else {
 				return "none";
 			}
-		}).setId("discountMultiplier").setCaption("Promotional Discount");
+		}).setId(GridCol.BOOKING_PROMO_DISCOUNT_MULTIPLIER_MASKED).setCaption("Promotional Discount");
 
 
 		HeaderRow filterRow = bookingGrid.appendHeaderRow();
@@ -274,8 +274,12 @@ public class BookingEditor extends VerticalLayout {
 				promoCode.setItems(Utils.iterableToCollection(promoRepo.findByOffering(o)).stream()
 						.sorted((c1, c2) -> c1.getId().compareTo(c2.getId()))
 						.map(PromoEvent::getPromoCode));
+				promoCode.setEnabled(true);
+			}else{
+				promoCode.setEnabled(false);
 			}
 		});
+		promoCode.setEnabled(false);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
 		buttonActions.addComponent(confirmButton);
@@ -329,7 +333,7 @@ public class BookingEditor extends VerticalLayout {
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.bind(Booking::getPaymentStatus, Booking::setPaymentStatus);
 
-		binder.forField(promoCode).withValidator(ValidatorFactory.getStringLengthValidator(255))
+		binder.forField(promoCode).withValidator(ValidatorFactory.getStringLengthCanNullValidator(255))
 				.bind(Booking::getPromoCodeUsed, Booking::setPromoCodeUsed);
 
 		binder.setBean(bookingToSave);
@@ -345,9 +349,6 @@ public class BookingEditor extends VerticalLayout {
 				log.info("About to save booking [{}]", bookingToSave);
 
 				try {
-					if (bookingToSave.getId() == null) {
-						bookingRepo.delete(bookingToSave);
-					}
 					if (promoCode.getValue() != null && !promoCode.isEmpty()) {
 						//With promo code
 						actionManager.createBookingForOfferingWithPromoCode(bookingToSave, promoCode.getValue());
@@ -356,6 +357,9 @@ public class BookingEditor extends VerticalLayout {
 						//Without promo code
 						actionManager.createNormalBookingForOffering(bookingToSave);
 						log.info("Saved a new booking [{}] successfully", bookingToSave);
+					}
+					if (bookingToSave.getId() == null) {
+						bookingRepo.delete(bookingToSave);
 					}
 					binder.removeBean();
 					this.refreshData();

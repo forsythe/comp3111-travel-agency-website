@@ -10,6 +10,8 @@ import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
 import comp3111.input.exceptions.ColumnNameNotFoundException;
 
+import javax.rmi.CORBA.Util;
+
 /*
  * a class for getting filters, based on a vaadin grid column
  */
@@ -137,6 +139,16 @@ public class FilterFactory {
 		if (colId.equals(GridCol.BOOKING_PAYMENT_STATUS))
 			return new ProviderAndPredicate<Booking, String>(Booking::getPaymentStatus,
 					t -> Utils.containsIgnoreCase(t, searchVal));
+
+		if (colId.equals(GridCol.BOOKING_PROMO_DISCOUNT_MULTIPLIER_MASKED)) {
+			if (Utils.containsIgnoreCase("none", searchVal)) {
+				return new ProviderAndPredicate<>(Booking::getPromoDiscountMultiplier,
+						t -> Utils.compareDoubleAsIs(t, 1.0));
+			}else{
+				return new ProviderAndPredicate<>(Booking::getPromoDiscountMultiplier,
+						t -> Utils.safeParseDoubleEquals(t, searchVal));
+			}
+		}
 
 		throw new ColumnNameNotFoundException("[" + colId + "] isn't a valid column id for [Booking]");
 	}

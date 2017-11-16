@@ -168,6 +168,10 @@ public class Utils {
 		return false;
 	}
 
+	public static Boolean compareDoubleAsIs(Double val, Double t){
+		return val.equals(t);
+	}
+
 	/**
 	 * @param dates
 	 *            A collection of dates
