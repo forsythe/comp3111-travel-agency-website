@@ -10,5 +10,7 @@ import comp3111.data.model.PromoEvent;
 
 @Repository
 public interface PromoEventRepository extends CrudRepository<PromoEvent, Long> {
+	Collection<PromoEvent> findByOffering(Offering o);
 	PromoEvent findOneByOffering(Offering o);
+	PromoEvent findOneByPromoCode(String promoCode);
 }

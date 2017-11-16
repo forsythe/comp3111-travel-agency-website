@@ -9,9 +9,7 @@ import java.util.HashMap;
 
 import comp3111.data.model.PromoEvent;
 import comp3111.data.repo.PromoEventRepository;
-import comp3111.input.exceptions.NoSuchPromoCodeException;
-import comp3111.input.exceptions.PromoCodeUsedUpException;
-import comp3111.input.exceptions.PromoForCustomerExceededException;
+import comp3111.input.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +43,6 @@ import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.input.converters.ConverterFactory;
-import comp3111.input.exceptions.OfferingOutOfRoomException;
 import comp3111.input.validators.ValidatorFactory;
 import comp3111.view.NotificationFactory;
 
@@ -271,6 +268,15 @@ public class BookingEditor extends VerticalLayout {
 		form.addComponent(paymentStatus);
 		form.addComponent(promoCode);
 
+		offering.addValueChangeListener(event -> {
+			Offering o = offering.getValue();
+			if (o != null){
+				promoCode.setItems(Utils.iterableToCollection(promoRepo.findByOffering(o)).stream()
+						.sorted((c1, c2) -> c1.getId().compareTo(c2.getId()))
+						.map(PromoEvent::getPromoCode));
+			}
+		});
+
 		HorizontalLayout buttonActions = new HorizontalLayout();
 		buttonActions.addComponent(confirmButton);
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
@@ -286,10 +292,6 @@ public class BookingEditor extends VerticalLayout {
 				Arrays.asList(Booking.PAYMENT_PENDING, Booking.PAYMENT_CONFIRMED));
 		paymentStatus.setItems(potentialPaymentStatus);
 		paymentStatus.setSelectedItem(Booking.PAYMENT_PENDING);
-
-		promoCode.setItems(Utils.iterableToCollection(promoRepo.findAll()).stream()
-				.sorted((c1, c2) -> c1.getId().compareTo(c2.getId()))
-				.map(PromoEvent::getPromoCode));
 
 		Binder<Booking> binder = new Binder<Booking>();
 
@@ -367,6 +369,8 @@ public class BookingEditor extends VerticalLayout {
 					errors += "Such promotion code does not exist.\n";
 				} catch (OfferingOutOfRoomException e) {
 					errors += "Not enough room in offering";
+				} catch (PromoCodeNotForOfferingException e){
+					errors += "The promo code that you have used is not for this offering.\n";
 				}
 			}
 
