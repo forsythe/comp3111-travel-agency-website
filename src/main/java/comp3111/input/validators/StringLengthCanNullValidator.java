@@ -7,10 +7,10 @@ import com.vaadin.data.ValueContext;
 import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
 
 /* Validates if a string is within a certain length, number inclusive*/
-public class StringLengthValidator implements Validator<String> {
+public class StringLengthCanNullValidator implements Validator<String> {
 	private int maxLength;
 
-	public StringLengthValidator(int maxLength) {
+	public StringLengthCanNullValidator(int maxLength) {
 		this.maxLength = maxLength;
 	}
 
@@ -20,7 +20,7 @@ public class StringLengthValidator implements Validator<String> {
 			if(value.length() <= maxLength)
 				return ValidationResult.ok();
 		} catch (NullPointerException e) {
-			return getValidationErrorLogged("string is null");
+			return ValidationResult.ok();
 		}
 		return getValidationErrorLogged("the string must be <= " + maxLength + " characters");
 

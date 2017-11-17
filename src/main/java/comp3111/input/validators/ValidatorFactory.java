@@ -48,6 +48,10 @@ public class ValidatorFactory {
 		return new StringLengthValidator(maxLength);
 	}
 
+	public static StringLengthCanNullValidator getStringLengthCanNullValidator(int maxLength) {
+		return new StringLengthCanNullValidator(maxLength);
+	}
+
 	public static PhoneNumberValidator getPhoneNumberValidator() {
 		return new PhoneNumberValidator();
 	}

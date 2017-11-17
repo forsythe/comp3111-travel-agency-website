@@ -228,6 +228,11 @@ public class PromoEventEditor extends VerticalLayout {
 		form.addComponent(promoCodeUses);
 		form.addComponent(customMessage);
 
+		if (promoEvent.getId() != null) {
+			//Old promo code cannot be changed to make our life easier
+			promoCode.setReadOnly(true);
+		}
+
 		HorizontalLayout buttonActions = new HorizontalLayout();
 		buttonActions.addComponent(confirmButton);
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
@@ -258,9 +263,11 @@ public class PromoEventEditor extends VerticalLayout {
 				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
 				.bind(PromoEvent::getMaxReservationsPerCustomer, PromoEvent::setMaxReservationsPerCustomer);
 
+		//For old promo event, the code cannot be changed to make our life easier
 		binder.forField(promoCode).asRequired(Utils.generateRequiredError())
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.bind(PromoEvent::getPromoCode, PromoEvent::setPromoCode);
+
 
 		binder.forField(promoCodeUses).asRequired(Utils.generateRequiredError())
 				.withConverter(ConverterFactory.getStringToIntegerConverter())
@@ -280,24 +287,26 @@ public class PromoEventEditor extends VerticalLayout {
 
 			if (validationStatus.isOk()) {
 				binder.writeBeanIfValid(promoEvent);
-
 				log.info("About to save promo event [{}]", promoEvent);
 
-				if (promoEvent.getId() == null) {
-					log.info("Saved a new promo event [{}] successfully", promoEvent);
+				if (promoEvent.getId() == null && promoEventRepo.findOneByPromoCode(promoEvent.getPromoCode()) != null) {
+					errors += "Promo code already used!\n";
+				}else{
+					promoEventRepo.save(promoEvent);
+					if (promoEvent.getId() == null) {
+						log.info("Saved a new promo event [{}] successfully", promoEvent);
+					} else {
+						log.info("Saved an edited booking [{}] successfully", promoEvent);
+					}
 
-				} else {
-					log.info("Saved an edited booking [{}] successfully", promoEvent);
+
+					binder.removeBean();
+					this.refreshData();
+					subwindow.close();
+					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
+
+					return; // This return skip the error reporting procedure below
 				}
-				promoEventRepo.save(promoEvent);
-
-				binder.removeBean();
-				this.refreshData();
-				subwindow.close();
-				NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
-
-				return; // This return skip the error reporting procedure below
-
 			}
 			NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 

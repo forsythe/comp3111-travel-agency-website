@@ -261,7 +261,7 @@ public class ApplicationTests {
 	@Test
 	public void testSuccessUsingPromoCode() throws OfferingDateUnsupportedException,
 			TourGuideUnavailableException, OfferingOutOfRoomException, NoSuchPromoCodeException,
-			PromoForCustomerExceededException, PromoCodeUsedUpException  {
+			PromoForCustomerExceededException, PromoCodeUsedUpException, PromoCodeNotForOfferingException  {
 
 		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
 		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.MONDAY, Calendar.SUNDAY)));
@@ -288,7 +288,7 @@ public class ApplicationTests {
 	@Test(expected = PromoForCustomerExceededException.class)
 	public void testFailTooManyPromoCodeUseOnce() throws OfferingDateUnsupportedException,
 			TourGuideUnavailableException, OfferingOutOfRoomException, NoSuchPromoCodeException,
-			PromoForCustomerExceededException, PromoCodeUsedUpException  {
+			PromoForCustomerExceededException, PromoCodeUsedUpException, PromoCodeNotForOfferingException  {
 
 		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
 		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.MONDAY, Calendar.SUNDAY)));
@@ -315,7 +315,7 @@ public class ApplicationTests {
 	@Test(expected = PromoForCustomerExceededException.class)
 	public void testFailTooManyPromoCodeUseMulti() throws OfferingDateUnsupportedException,
 			TourGuideUnavailableException, OfferingOutOfRoomException, NoSuchPromoCodeException,
-			PromoForCustomerExceededException, PromoCodeUsedUpException  {
+			PromoForCustomerExceededException, PromoCodeUsedUpException, PromoCodeNotForOfferingException  {
 
 		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
 		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.MONDAY, Calendar.SUNDAY)));

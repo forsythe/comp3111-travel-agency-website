@@ -233,9 +233,9 @@ public class DBManager {
 				booking.getSpecialRequests(), booking.getPaymentStatus(), 1, null);
 	}
 
-	private boolean validatePromoCode(Offering o, String promoCode)
+	private boolean validatePromoCode(String promoCode)
 			throws PromoCodeUsedUpException, NoSuchPromoCodeException {
-		PromoEvent pe = promoEventRepo.findOneByOffering(o);
+		PromoEvent pe = promoEventRepo.findOneByPromoCode(promoCode);
 
 		if (pe == null)
 			throw new NoSuchPromoCodeException();
@@ -245,10 +245,14 @@ public class DBManager {
 	}
 
 	public void createBookingForOfferingWithPromoCode(Booking booking, String promocode)
-			throws OfferingOutOfRoomException, PromoCodeUsedUpException, NoSuchPromoCodeException, PromoForCustomerExceededException {
-		validatePromoCode(booking.getOffering(), promocode);
+			throws OfferingOutOfRoomException, PromoCodeUsedUpException, NoSuchPromoCodeException
+			, PromoForCustomerExceededException, PromoCodeNotForOfferingException {
+		validatePromoCode(promocode);
 
-		PromoEvent pe = promoEventRepo.findOneByOffering(booking.getOffering());
+		PromoEvent pe = promoEventRepo.findOneByPromoCode(promocode);
+		if (!pe.getOffering().equals(booking.getOffering())){
+			throw new PromoCodeNotForOfferingException();
+		}
 
 		int totalPromoUsed = booking.getTotalNumberOfPeople();
 		for (Booking b : bookingRepo.findByCustomer(booking.getCustomer())){
