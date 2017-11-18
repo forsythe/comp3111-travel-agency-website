@@ -311,7 +311,8 @@ public class LineInteractionTests {
 				anonOffering);
 		p.setCustomMessage(String.format(
 				"For offering %s, use code %s for %d%% off! %d reservations per customer max, while offers last",
-				anonOffering, p.getPromoCode(), (int)((1-p.getDiscount())*100), p.getMaxReservationsPerCustomer()));
+				anonOffering, p.getPromoCode(), (int) ((1 - p.getDiscount()) * 100),
+				p.getMaxReservationsPerCustomer()));
 
 		promoEventRepo.save(p);
 
