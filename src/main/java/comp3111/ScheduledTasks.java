@@ -76,14 +76,13 @@ public class ScheduledTasks {
 		Date now = new Date();
 		log.info("The time is now [{}], checking if any promoevents are overdue", Utils.simpleDateFormat(now));
 
-		for (PromoEvent p : promoEventRepo.findAll()) {
-			if (p.isTriggered())
-				continue;
+		for (PromoEvent p : promoEventRepo.findAllByIsTriggered(false)) {
 
 			if (now.after(p.getTriggerDate())) {
 				log.info("Time to trigger promoevent [{}]", p.getId());
 				lineMessenger.sendToAll(p.getCustomMessage());
 			}
+			p.setTriggered(true);
 		}
 		log.info("[{}] people were notified", LineMessenger.getCounter());
 
