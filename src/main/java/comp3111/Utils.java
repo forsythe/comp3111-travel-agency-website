@@ -246,6 +246,17 @@ public class Utils {
 		}
 		return false;
 	}
+	
+	public static Boolean safeParseBoolEquals(boolean val, String s) {
+		try {
+			if (Boolean.parseBoolean(s) == val) {
+				return true;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return false;
+	}
 
 	/**
 	 * Safely parses a long, and check if it equals a value

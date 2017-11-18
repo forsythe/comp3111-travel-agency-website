@@ -205,6 +205,7 @@ public class PromoEvent {
 	public boolean isTriggered() {
 		return isTriggered;
 	}
+	
 
 	/**
 	 * @param hasTriggered

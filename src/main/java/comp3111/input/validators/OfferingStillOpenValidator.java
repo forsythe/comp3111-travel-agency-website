@@ -10,11 +10,30 @@ import java.util.Date;
 
 import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
 
+/**
+ * A validator that checks whether an offering is still open for new applications (has it gone over the last
+ * possible day of booking or not)
+ * 
+ * @author kristiansuhartono
+ * @version 1.0
+ * @since 2017-11-18
+ *
+ */
 public class OfferingStillOpenValidator implements Validator<Offering> {
 
+	/**
+	 * Constructor of the validator 
+	 */
 	OfferingStillOpenValidator() {
 	}
 
+	/** 
+	 * Overrides the apply method in vaadin validators, checks whether the offering is still open or not
+	 * 
+	 * @param value The offering object that is going to be checked
+	 * @param context A value context for converters. Contains relevant information for converting values. 
+	 * @see com.vaadin.data.Validator#apply(java.lang.Object, com.vaadin.data.ValueContext)
+	 */
 	@Override
 	public ValidationResult apply(Offering value, ValueContext context) {
 		if (value != null) {

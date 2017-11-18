@@ -16,46 +16,94 @@ import comp3111.data.DBManager;
 import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 
+/**
+ * A factory class that creates an instance of the validators when requested.
+ * 
+ * @author kristiansuhartono
+ * @version 1.0
+ * @since 2017-11-18
+ *
+ */
 public class ValidatorFactory {
 	private static final Logger log = LoggerFactory.getLogger(ValidatorFactory.class);
 
+	/**
+	 * @param minInclusive The lower integer bound, inclusive
+	 * @param maxExclusive The upper integer bound, inclusive
+	 * @return An IntegerRangeValidator object
+	 */
 	public static IntegerRangeValidator getIntegerRangeValidator(int minInclusive, int maxExclusive) {
 		return new IntegerRangeValidator(minInclusive, maxExclusive);
 	}
 
+	/**
+	 * @param minInclusive The lower integer bound, inclusive
+	 * @return An IntegerLowerBoundValidator object
+	 */
 	public static IntegerLowerBoundValidator getIntegerRangeValidator(int minInclusive) {
 		return new IntegerLowerBoundValidator(minInclusive);
 	}
 
+	/**
+	 * @param field The textfield that has the lower bound value
+	 * @return An IntegerLowerBoundedByAnotherFieldValidator object
+	 */
 	public static IntegerLowerBoundedByAnotherFieldValidator getIntegerLowerBoundedByAnotherFieldValidator(
 			AbstractTextField field) {
 		return new IntegerLowerBoundedByAnotherFieldValidator(field);
 	}
 
+	/**
+	 * @param minInclusive The lower bound, inclusive
+	 * @param maxInclusive The upper bound, inclusive
+	 * @return A DoubleRangeValidator object
+	 */
 	public static DoubleRangeValidator getDoubleRangeValidator(double minInclusive, double maxInclusive) {
 		return new DoubleRangeValidator(minInclusive, maxInclusive);
 	}
 
+	/**
+	 * @param minInclusive The lower bound, inclusive.
+	 * @return A DoubleLowerBoundValidator object
+	 */
 	public static DoubleLowerBoundValidator getDoubleRangeValidator(double minInclusive) {
 		return new DoubleLowerBoundValidator(minInclusive);
 	}
 
+	/**
+	 * @return A ListOfDatesValidator object
+	 */
 	public static ListOfDatesValidator getListOfDatesValidator() {
 		return new ListOfDatesValidator();
 	}
 
+	/**
+	 * @param maxLength The maximum length of the string
+	 * @return A StringLengthValidator object
+	 */
 	public static StringLengthValidator getStringLengthValidator(int maxLength) {
 		return new StringLengthValidator(maxLength);
 	}
 
+	/**
+	 * @param maxLength The maximum length of the string
+	 * @return A StringLengthCanNullValidator object
+	 */
 	public static StringLengthCanNullValidator getStringLengthCanNullValidator(int maxLength) {
 		return new StringLengthCanNullValidator(maxLength);
 	}
 
+	
+	/**
+	 * @return A PhoneNumberValidator object
+	 */
 	public static PhoneNumberValidator getPhoneNumberValidator() {
 		return new PhoneNumberValidator();
 	}
 
+	/**
+	 * @return A HKIDValidator object
+	 */
 	public static HKIDValidator getHKIDValidator() {
 		return new HKIDValidator();
 	}
@@ -65,20 +113,32 @@ public class ValidatorFactory {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * @param offering
 	 *            need to pass in the offering combobox because the value could
 	 *            change
 	 * @return a DateIsEarlierThanOfferingLastEditableDateValidator object
+=======
+	 * @param offering need to pass in the offering combobox because the value could change
+	 * @return A DateIsEarlierThanOfferingLastEditableDateValidator object
+>>>>>>> remotes/comp3111teamdootdudu/website/master
 	 */
 	public static DateIsEarlierThanOfferingLastEditableDateValidator getDateIsEarlierThanOfferingLastEditableDateValidator(
 			ComboBox<Offering> offering) {
 		return new DateIsEarlierThanOfferingLastEditableDateValidator(offering);
 	}
 
+	/**
+	 * @return An OfferingStillOpenValidator object
+	 */
 	public static OfferingStillOpenValidator getOfferingStillOpenValidator() {
 		return new OfferingStillOpenValidator();
 	}
 
+	/**
+	 * @param tour This is the tour object that is going to use for validation
+	 * @return A DateAvailableInTourValidator object
+	 */
 	public static DateAvailableInTourValidator getDateAvailableInTourValidator(Tour tour) {
 		return new DateAvailableInTourValidator(tour);
 	}

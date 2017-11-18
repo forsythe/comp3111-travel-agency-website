@@ -1,5 +1,11 @@
 package comp3111.input.exceptions;
 
+/**
+ * An exception that is thrown when the offering is trying to be created with a TourGuide that is 
+ * already guiding a different Tour at that specific time period.
+ * @author kristiansuhartono
+ *
+ */
 public class TourGuideUnavailableException extends Exception {
 
 	public TourGuideUnavailableException() {
