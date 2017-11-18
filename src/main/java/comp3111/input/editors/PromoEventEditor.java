@@ -277,7 +277,7 @@ public class PromoEventEditor extends VerticalLayout {
 
 		binder.forField(maxReservationsPerCustomer).asRequired(Utils.generateRequiredError())
 				.withConverter(ConverterFactory.getStringToIntegerConverter())
-				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(1))
 				.bind(PromoEvent::getMaxReservationsPerCustomer, PromoEvent::setMaxReservationsPerCustomer);
 
 		//For old promo event, the code cannot be changed to make our life easier
@@ -287,7 +287,7 @@ public class PromoEventEditor extends VerticalLayout {
 
 		binder.forField(promoCodeUses).asRequired(Utils.generateRequiredError())
 				.withConverter(ConverterFactory.getStringToIntegerConverter())
-				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(1))
 				.bind(PromoEvent::getPromoCodeUsesLeft, PromoEvent::setPromoCodeUsesLeft);
 
 		binder.forField(customMessage).asRequired(Utils.generateRequiredError())
