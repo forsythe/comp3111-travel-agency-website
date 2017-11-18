@@ -11,8 +11,6 @@ import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
 import comp3111.input.exceptions.ColumnNameNotFoundException;
 
-import javax.rmi.CORBA.Util;
-
 /*
  * a class for getting filters, based on a vaadin grid column
  */

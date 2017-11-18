@@ -73,3 +73,15 @@ test {
 }
 
 
+configurations {
+    javadocDeps
+}
+dependencies {
+    javadocDeps "javax.portlet:portlet-api:2.0"
+}
+javadoc {
+    options.addStringOption("sourcepath", "")
+    classpath += configurations.javadocDeps
+}
+
+

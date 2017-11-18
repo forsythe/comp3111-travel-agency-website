@@ -4,9 +4,8 @@ import javax.persistence.*;
 import java.util.Calendar;
 
 /**
- * Represents a booking record between a customer and an offering in the
- * database
  * 
+ * This class represents a single booking record between a customer and an offering in the database.
  */
 /**
  * @author Forsythe
@@ -42,8 +41,31 @@ public class Booking {
 
 	}
 
+	/**
+	 * Creates a new transient (not yet saved in DB) booking object without a promo
+	 * code.
+	 * 
+	 * @param customer
+	 *            The customer making the booking
+	 * @param offering
+	 *            The offering to book
+	 * @param numAdults
+	 *            How many adults in the booking
+	 * @param numChildren
+	 *            How many children in the booking
+	 * @param numToddlers
+	 *            How many toddlers in the booking
+	 * @param amountPaid
+	 *            How much the customer has already paid
+	 * @param specialRequests
+	 *            Special requests
+	 * @param paymentStatus
+	 *            The payment status. Can be {@link Booking#PAYMENT_PENDING},
+	 *            {@link Booking#PAYMENT_CONFIRMED}, or
+	 *            {@link Booking#PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED}
+	 */
 	public Booking(Customer customer, Offering offering, int numAdults, int numChildren, int numToddlers,
-				   double amountPaid, String specialRequests, String paymentStatus, double promoDiscountMultiplier) {
+			double amountPaid, String specialRequests, String paymentStatus) {
 		this.customer = customer;
 		this.offering = offering;
 		this.numAdults = numAdults;
@@ -52,13 +74,41 @@ public class Booking {
 		this.amountPaid = amountPaid;
 		this.specialRequests = specialRequests;
 		this.paymentStatus = paymentStatus;
-		this.promoDiscountMultiplier = promoDiscountMultiplier;
+		this.promoDiscountMultiplier = 1; // no promo discount
 		this.promoCodeUsed = null;
 	}
 
+	/**
+	 * Creates a new transient (not yet saved in DB) booking object, but with a
+	 * promo code code.
+	 * 
+	 * @param customer
+	 *            The customer making the booking
+	 * @param offering
+	 *            The offering to book
+	 * @param numAdults
+	 *            How many adults in the booking
+	 * @param numChildren
+	 *            How many children in the booking
+	 * @param numToddlers
+	 *            How many toddlers in the booking
+	 * @param amountPaid
+	 *            How much the customer has already paid
+	 * @param specialRequests
+	 *            Special requests
+	 * @param paymentStatus
+	 *            The payment status. Can be {@link Booking#PAYMENT_PENDING},
+	 *            {@link Booking#PAYMENT_CONFIRMED}, or
+	 *            {@link Booking#PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED}
+	 * @param promoDiscountMultiplier
+	 *            The discount provided by the promotion; a double between [0, 1].
+	 *            E.g. 0.7 indicates 30% off the final price.
+	 * @param promoCodeUsed
+	 *            The actual promo code.
+	 */
 	public Booking(Customer customer, Offering offering, int numAdults, int numChildren, int numToddlers,
 			double amountPaid, String specialRequests, String paymentStatus, double promoDiscountMultiplier,
-				   String promoCodeUsed) {
+			String promoCodeUsed) {
 		this.customer = customer;
 		this.offering = offering;
 		this.numAdults = numAdults;
@@ -99,6 +149,9 @@ public class Booking {
 		return getOffering() != null ? getOffering().getId() : null;
 	}
 
+	/**
+	 * @return Gets the Id of the tour that this offering belongs to.
+	 */
 	public Long getTourId() {
 		if (getOffering() != null) {
 			if (getOffering().getTour() != null) {
@@ -108,6 +161,9 @@ public class Booking {
 		return null;
 	}
 
+	/**
+	 * @return The name of the tour that this offering belongs to.
+	 */
 	public String getTourName() {
 		if (getOffering() != null) {
 			if (getOffering().getTour() != null) {
@@ -126,8 +182,8 @@ public class Booking {
 	}
 
 	/**
-	 * @return A string formatted to show the number of adults, children, and
-	 *         toddlers. Used for the vaadin grid column
+	 * @return A formatted string showing the number of adults, children, and
+	 *         toddlers. Used for the vaadin grid column values.
 	 */
 	public String getPeople() {
 		return (this.getNumAdults() + ", " + this.getNumChildren() + ", " + this.getNumToddlers());
@@ -157,7 +213,7 @@ public class Booking {
 		this.numToddlers = numToddlers;
 	}
 
-	public int getTotalNumberOfPeople(){
+	public int getTotalNumberOfPeople() {
 		return numAdults + numChildren + numToddlers;
 	}
 
@@ -172,11 +228,8 @@ public class Booking {
 	/**
 	 * @return The dollar cost of this booking record. Depends on if it's
 	 *         weekday/weekend, the number of adults, children, toddlers, child
-	 *         discount, and toddler discount.
-	 * @see #getWeekdayPrice()
-	 * @see #getWeekendPrice()
-	 * @see #getChildDiscount()
-	 * @see #getToddlerDiscount()
+	 *         discount, and toddler discount. Will also apply the promotional
+	 *         discount, if applicable.
 	 */
 	public double getTotalCost() {
 		Calendar cal = Calendar.getInstance();
@@ -194,7 +247,7 @@ public class Booking {
 	}
 
 	/**
-	 * @return the dollar amount that's already been paid by the customer
+	 * @return The dollar amount that's already been paid by the customer
 	 */
 	public double getAmountPaid() {
 		return amountPaid;
@@ -204,10 +257,6 @@ public class Booking {
 		this.amountPaid = amountPaid;
 	}
 
-	/**
-	 * @return a string, describing any (human readable) requests, e.g. "non-smoking
-	 *         room"
-	 */
 	public String getSpecialRequests() {
 		return specialRequests;
 	}
@@ -224,15 +273,18 @@ public class Booking {
 		this.paymentStatus = paymentStatus;
 	}
 
+	/**
+	 * @return Returns a double [0, 1.0] indicating the discount multiplier. E.g. 0.7 means
+	 * a 30% discount.
+	 */
 	public double getPromoDiscountMultiplier() {
 		return promoDiscountMultiplier;
 	}
 
 	/**
 	 * @param promoDiscountMultiplier
-	 *            if this booking was made as a result of a promotional event, then
-	 *            this could e.g. be 0.8 (for a 20% off discount). Otherwise, it
-	 *            should be 1.0 (for full price)
+	 *            A double between [0, 1.0] indicating the discount multiplier. 1.0
+	 *            for full price (no discount).
 	 */
 	public void setPromoDiscountMultiplier(double promoDiscountMultiplier) {
 		this.promoDiscountMultiplier = promoDiscountMultiplier;

@@ -98,8 +98,8 @@ public class ApplicationTests {
 	}
 
 	@Test
-	public void testSuccessCreateOfferingAndBookingForUnsavedEntities() throws OfferingOutOfRoomException,
-			OfferingDateUnsupportedException, TourGuideUnavailableException {
+	public void testSuccessCreateOfferingAndBookingForUnsavedEntities()
+			throws OfferingOutOfRoomException, OfferingDateUnsupportedException, TourGuideUnavailableException {
 		TourGuide anonTg = new TourGuide("lucy", "LINEID123");
 		Customer anonCust = new Customer("morgan freeman", 35);
 		Tour anonTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
@@ -120,8 +120,8 @@ public class ApplicationTests {
 	}
 
 	@Test
-	public void testSuccessCreateOfferingAndBookingForSavedEntities() throws OfferingOutOfRoomException,
-			OfferingDateUnsupportedException, TourGuideUnavailableException {
+	public void testSuccessCreateOfferingAndBookingForSavedEntities()
+			throws OfferingOutOfRoomException, OfferingDateUnsupportedException, TourGuideUnavailableException {
 
 		Tour tour1 = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
 		tour1.setAllowedDates(
@@ -134,15 +134,15 @@ public class ApplicationTests {
 				tourGuideRepo.findOne(tg1.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0), "hotel bob", 5,
 				18);
 		Booking booking = actionManager.createBookingForOffering(offeringRepo.findOne(yangShanOffering.getId()),
-				customerRepo.findOne(c1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING, 1 );
+				customerRepo.findOne(c1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING, 1);
 
 		then(this.offeringRepo.findByHotelName(yangShanOffering.getHotelName()).size()).isEqualTo(1);
 		then(this.bookingRepo.findByPaymentStatus(booking.getPaymentStatus()).size()).isEqualTo(1);
 	}
 
 	@Test
-	public void testSuccessTwoCustomersMakeBookingForATour() throws OfferingDateUnsupportedException,
-			TourGuideUnavailableException, OfferingOutOfRoomException {
+	public void testSuccessTwoCustomersMakeBookingForATour()
+			throws OfferingDateUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
 		Tour tour1 = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
 		tour1.setAllowedDates(
 				new HashSet<Date>(Arrays.asList(new GregorianCalendar(2017, Calendar.DECEMBER, 9).getTime(),
@@ -165,8 +165,8 @@ public class ApplicationTests {
 	}
 
 	@Test
-	public void testSuccessCreateTwoOfferingsWithDifferentTourGuidesForATour() throws OfferingDateUnsupportedException,
-			TourGuideUnavailableException, OfferingOutOfRoomException {
+	public void testSuccessCreateTwoOfferingsWithDifferentTourGuidesForATour()
+			throws OfferingDateUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
 
 		Tour tour1 = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
 		tour1.setAllowedDates(
@@ -179,7 +179,7 @@ public class ApplicationTests {
 				tourGuideRepo.findOne(tg1.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0), "hotel bob", 5,
 				18);
 		Booking book1 = actionManager.createBookingForOffering(offeringRepo.findOne(offering1.getId()),
-				customerRepo.findOne(c1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING, 1 );
+				customerRepo.findOne(c1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING, 1);
 
 		Offering offering2 = actionManager.createOfferingForTour(tourRepo.findOne(tour1.getId()),
 				tourGuideRepo.findOne(tg2.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0), "hotel cheap",
@@ -194,8 +194,8 @@ public class ApplicationTests {
 	}
 
 	@Test(expected = TourGuideUnavailableException.class)
-	public void testFailureCreateTwoOfferingsWithSameTourGuideAtSameDate() throws OfferingDateUnsupportedException,
-			TourGuideUnavailableException, OfferingOutOfRoomException {
+	public void testFailureCreateTwoOfferingsWithSameTourGuideAtSameDate()
+			throws OfferingDateUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
 
 		Tour tour1 = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
 		tour1.setAllowedDates(
@@ -213,8 +213,8 @@ public class ApplicationTests {
 	}
 
 	@Test(expected = OfferingDateUnsupportedException.class)
-	public void testFailureTryToMakeOfferingForUnsupportedDate() throws OfferingDateUnsupportedException,
-			TourGuideUnavailableException {
+	public void testFailureTryToMakeOfferingForUnsupportedDate()
+			throws OfferingDateUnsupportedException, TourGuideUnavailableException {
 
 		Tour yangshanTour = new Tour("Yangshan", "Many hotsprings", 3, 0.8, 0.0, 599, 699);
 		yangshanTour.setAllowedDates(
@@ -228,8 +228,8 @@ public class ApplicationTests {
 	}
 
 	@Test(expected = OfferingDateUnsupportedException.class)
-	public void testFailureTryToMakeOfferingForUnsupportedDayOfWeek() throws OfferingOutOfRoomException,
-			OfferingDateUnsupportedException, TourGuideUnavailableException {
+	public void testFailureTryToMakeOfferingForUnsupportedDayOfWeek()
+			throws OfferingOutOfRoomException, OfferingDateUnsupportedException, TourGuideUnavailableException {
 
 		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
 		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.TUESDAY, Calendar.SUNDAY)));
@@ -240,8 +240,8 @@ public class ApplicationTests {
 	}
 
 	@Test(expected = OfferingOutOfRoomException.class)
-	public void testFailureOfferingOutOfRoomWhenBooking() throws OfferingDateUnsupportedException,
-			TourGuideUnavailableException, OfferingOutOfRoomException {
+	public void testFailureOfferingOutOfRoomWhenBooking()
+			throws OfferingDateUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
 
 		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
 		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.MONDAY, Calendar.SUNDAY)));
@@ -259,9 +259,9 @@ public class ApplicationTests {
 	}
 
 	@Test
-	public void testSuccessUsingPromoCode() throws OfferingDateUnsupportedException,
-			TourGuideUnavailableException, OfferingOutOfRoomException, NoSuchPromoCodeException,
-			PromoForCustomerExceededException, PromoCodeUsedUpException, PromoCodeNotForOfferingException  {
+	public void testSuccessUsingPromoCode() throws OfferingDateUnsupportedException, TourGuideUnavailableException,
+			OfferingOutOfRoomException, NoSuchPromoCodeException, PromoForCustomerExceededException,
+			PromoCodeUsedUpException, PromoCodeNotForOfferingException {
 
 		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
 		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.MONDAY, Calendar.SUNDAY)));
@@ -272,15 +272,15 @@ public class ApplicationTests {
 		int codeUse = 5;
 		int maxUsePerCustomer = 2;
 
-		PromoEvent pe = new PromoEvent(new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hi",
-				"TEST_CODE", 0.5, codeUse, maxUsePerCustomer, shimenOffering);
+		PromoEvent pe = new PromoEvent(new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hi", "TEST_CODE",
+				0.5, codeUse, maxUsePerCustomer, shimenOffering);
 		promoRepo.save(pe);
 
 		int numAdults = 1;
 		int numChildren = 1;
 		int numToddlers = 0;
 
-		Booking bk = new Booking(c1, shimenOffering, numAdults, numChildren, numToddlers, 0, "", "", 1);
+		Booking bk = new Booking(c1, shimenOffering, numAdults, numChildren, numToddlers, 0, "", "");
 
 		actionManager.createBookingForOfferingWithPromoCode(bk, pe.getPromoCode());
 	}
@@ -288,7 +288,7 @@ public class ApplicationTests {
 	@Test(expected = PromoForCustomerExceededException.class)
 	public void testFailTooManyPromoCodeUseOnce() throws OfferingDateUnsupportedException,
 			TourGuideUnavailableException, OfferingOutOfRoomException, NoSuchPromoCodeException,
-			PromoForCustomerExceededException, PromoCodeUsedUpException, PromoCodeNotForOfferingException  {
+			PromoForCustomerExceededException, PromoCodeUsedUpException, PromoCodeNotForOfferingException {
 
 		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
 		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.MONDAY, Calendar.SUNDAY)));
@@ -299,15 +299,15 @@ public class ApplicationTests {
 		int codeUse = 5;
 		int maxUsePerCustomer = 2;
 
-		PromoEvent pe = new PromoEvent(new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hi",
-				"TEST_CODE", 0.5, codeUse, maxUsePerCustomer, shimenOffering);
+		PromoEvent pe = new PromoEvent(new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hi", "TEST_CODE",
+				0.5, codeUse, maxUsePerCustomer, shimenOffering);
 		promoRepo.save(pe);
 
 		int numAdults = 5;
 		int numChildren = 5;
 		int numToddlers = 5;
 
-		Booking bk = new Booking(c1, shimenOffering, numAdults, numChildren, numToddlers, 0, "", "", 1);
+		Booking bk = new Booking(c1, shimenOffering, numAdults, numChildren, numToddlers, 0, "", "");
 
 		actionManager.createBookingForOfferingWithPromoCode(bk, pe.getPromoCode());
 	}
@@ -315,7 +315,7 @@ public class ApplicationTests {
 	@Test(expected = PromoForCustomerExceededException.class)
 	public void testFailTooManyPromoCodeUseMulti() throws OfferingDateUnsupportedException,
 			TourGuideUnavailableException, OfferingOutOfRoomException, NoSuchPromoCodeException,
-			PromoForCustomerExceededException, PromoCodeUsedUpException, PromoCodeNotForOfferingException  {
+			PromoForCustomerExceededException, PromoCodeUsedUpException, PromoCodeNotForOfferingException {
 
 		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
 		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.MONDAY, Calendar.SUNDAY)));
@@ -326,18 +326,18 @@ public class ApplicationTests {
 		int codeUse = 5;
 		int maxUsePerCustomer = 2;
 
-		PromoEvent pe = new PromoEvent(new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hi",
-				"TEST_CODE", 0.5, codeUse, maxUsePerCustomer, shimenOffering);
+		PromoEvent pe = new PromoEvent(new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hi", "TEST_CODE",
+				0.5, codeUse, maxUsePerCustomer, shimenOffering);
 		promoRepo.save(pe);
 
 		int numAdults = 2;
 		int numChildren = 0;
 		int numToddlers = 0;
 
-		Booking bk = new Booking(c2, shimenOffering, numAdults, numChildren, numToddlers, 0, "", "", 1);
+		Booking bk = new Booking(c2, shimenOffering, numAdults, numChildren, numToddlers, 0, "", "");
 		actionManager.createBookingForOfferingWithPromoCode(bk, pe.getPromoCode());
 
-		Booking bk2 = new Booking(c2, shimenOffering, numAdults, numChildren, numToddlers, 0, "", "", 1);
+		Booking bk2 = new Booking(c2, shimenOffering, numAdults, numChildren, numToddlers, 0, "", "");
 		actionManager.createBookingForOfferingWithPromoCode(bk2, pe.getPromoCode());
 	}
 

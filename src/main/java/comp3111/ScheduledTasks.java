@@ -10,12 +10,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import comp3111.data.DBManager;
-import comp3111.data.model.Booking;
-import comp3111.data.model.Customer;
 import comp3111.data.model.Offering;
 import comp3111.data.model.PromoEvent;
 import comp3111.data.repo.BookingRepository;
-import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.PromoEventRepository;
 

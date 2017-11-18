@@ -3,11 +3,8 @@ package integration;
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.elements.*;
-import com.vaadin.ui.TextArea;
 import comp3111.Application;
-import comp3111.data.model.Customer;
 import comp3111.data.model.Tour;
-import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.TourRepository;
 
 import org.junit.After;
@@ -26,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static integration.TestConstants.TEST_CUSTOMER_NAME;
 import static integration.TestConstants.TEST_TOUR_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,25 +50,25 @@ public class TourEditorTests extends TestBenchTestCase {
 		getDriver().get(TestConstants.HOME_URL);
 
 		WebDriverWait wait1 = new WebDriverWait(getDriver(), 10);
-		wait1.until(ExpectedConditions.presenceOfElementLocated(By.id("tf_username")));
+		wait1.until(ExpectedConditions.presenceOfElementLocated(org.openqa.selenium.By.id("tf_username")));
 
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_username").setValue("admin");
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_password").setValue("Q1w2e3r4");
 		$(ButtonElement.class).id("btn_submit").click();
 
 		WebDriverWait wait2 = new WebDriverWait(getDriver(), 10);
-		wait2.until(ExpectedConditions.presenceOfElementLocated(By.id("lbl_title")));
+		wait2.until(ExpectedConditions.presenceOfElementLocated(org.openqa.selenium.By.id("lbl_title")));
 
 		WebDriverWait wait3 = new WebDriverWait(getDriver(), 10);
-		wait3.until(ExpectedConditions.presenceOfElementLocated(By.id("Tour Management")));
+		wait3.until(ExpectedConditions.presenceOfElementLocated(org.openqa.selenium.By.id("Tour Management")));
 		$(VerticalLayoutElement.class).$(ButtonElement.class).id("Tour Management").click();
 
 		WebDriverWait wait4 = new WebDriverWait(getDriver(), 10);
-		wait4.until(ExpectedConditions.presenceOfElementLocated(By.id("btn_create_tour")));
+		wait4.until(ExpectedConditions.presenceOfElementLocated(org.openqa.selenium.By.id("btn_create_tour")));
 		$(ButtonElement.class).id("btn_create_tour").click();
 
 		WebDriverWait wait5 = new WebDriverWait(getDriver(), 10);
-		wait5.until(ExpectedConditions.presenceOfElementLocated(By.id("tf_tour_name")));
+		wait5.until(ExpectedConditions.presenceOfElementLocated(org.openqa.selenium.By.id("tf_tour_name")));
 
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_tour_name").setValue("One Day Trip to Mars");
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_days").setValue("1");

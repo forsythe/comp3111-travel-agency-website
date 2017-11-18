@@ -10,10 +10,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -47,7 +47,6 @@ import comp3111.input.exceptions.OfferingDateUnsupportedException;
 import comp3111.input.exceptions.OfferingDayOfWeekUnsupportedException;
 import comp3111.input.exceptions.OfferingOutOfRoomException;
 import comp3111.input.exceptions.TourGuideUnavailableException;
-import comp3111.view.CustomerEngagementView;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -86,6 +85,8 @@ public class LineInteractionTests {
 
 	@Before
 	public void setUp() {
+		actionManager.deleteAll();
+		LineMessenger.resetCounter();
 
 		heng = new Customer("heng", KV_CHATBOT_TO_HENG, "12312341234", 20, "A1234563");
 		heng = customerRepo.save(heng);
@@ -294,6 +295,9 @@ public class LineInteractionTests {
 	}
 
 	@Test
+	@Ignore("since updatePendingPromotionalBroadcasts() executes every 10 seconds, "
+			+ "it may end up beating us to it. Comment out the scheduled annotation "
+			+ "for that function to test this one")
 	public void testTriggerPromoEvent()
 			throws OfferingDateUnsupportedException, TourGuideUnavailableException, InterruptedException {
 

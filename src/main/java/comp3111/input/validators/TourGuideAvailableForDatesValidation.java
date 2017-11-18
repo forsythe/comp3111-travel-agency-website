@@ -8,8 +8,6 @@ import comp3111.Utils;
 import comp3111.data.DBManager;
 import comp3111.data.model.Offering;
 import comp3111.data.model.TourGuide;
-import comp3111.input.converters.LocalDateToUtilDateConverter;
-
 import java.util.Calendar;
 import java.util.Date;
 
