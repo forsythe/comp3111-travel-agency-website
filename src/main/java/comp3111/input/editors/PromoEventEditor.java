@@ -268,7 +268,6 @@ public class PromoEventEditor extends VerticalLayout {
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.bind(PromoEvent::getPromoCode, PromoEvent::setPromoCode);
 
-
 		binder.forField(promoCodeUses).asRequired(Utils.generateRequiredError())
 				.withConverter(ConverterFactory.getStringToIntegerConverter())
 				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
