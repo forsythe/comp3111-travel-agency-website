@@ -186,7 +186,7 @@ public class PromoEventEditor extends VerticalLayout {
 		if (today.after(triggerDate)) {
 			NotificationFactory
 					.getTopBarWarningNotification(
-							"It's too late to edit this event, it the promotional event triggered on" + triggerDate, 5)
+							"It's too late to edit this promotion, it triggered on: " + triggerDate, 5)
 					.show(Page.getCurrent());
 			return false;
 		}
