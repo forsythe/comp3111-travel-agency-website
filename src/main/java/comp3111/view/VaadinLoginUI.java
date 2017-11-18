@@ -57,7 +57,6 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 		springViewDisplay.setVisible(false);
 
 		drawLoginForm();
-
 		getUI().getNavigator().setErrorView(HomeView.class);
 
 		getUI().getNavigator().addViewChangeListener(new ViewChangeListener() {
