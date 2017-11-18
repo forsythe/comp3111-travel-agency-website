@@ -2,6 +2,7 @@ package comp3111.input.editors;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Page;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
@@ -18,18 +20,22 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 
 import comp3111.Utils;
 import comp3111.data.DBManager;
+import comp3111.data.GridCol;
 import comp3111.data.model.Offering;
 import comp3111.data.model.PromoEvent;
+import comp3111.data.model.Tour;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
@@ -58,9 +64,8 @@ public class PromoEventEditor extends VerticalLayout {
 	private PromoEventRepository promoEventRepo;
 	@Autowired
 	private DBManager actionManager;
+	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
-	// private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new
-	// HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	@Autowired
 	public PromoEventEditor(PromoEventRepository per) {
@@ -97,52 +102,64 @@ public class PromoEventEditor extends VerticalLayout {
 				createEventButton.setEnabled(true);
 			}
 		});
+		
+		eventGrid.removeColumn(GridCol.PROMOEVENT_TRIGGER_DATE); 
+		eventGrid.removeColumn(GridCol.PROMOEVENT_OFFERING);
+		
+		eventGrid.setColumnOrder(GridCol.PROMOEVENT_ID, GridCol.PROMOEVENT_OFFERING_ID, 
+				GridCol.PROMOEVENT_CUSTOM_MESSAGE, GridCol.PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER,
+				GridCol.PROMOEVENT_PROMO_CODE, GridCol.PROMOEVENT_PROMO_CODE_USES_LEFT, 
+				GridCol.PROMOEVENT_DISCOUNT, GridCol.PROMOEVENT_TRIGGER_DATE_STRING);
 
 		HeaderRow filterRow = eventGrid.appendHeaderRow();
+		
+		for (Column<PromoEvent, ?> col : eventGrid.getColumns()) {
+			col.setMinimumWidth(160);
+			col.setHidable(true);
+			col.setExpandRatio(1);
+			col.setHidingToggleCaption(col.getCaption());
+			HeaderCell cell = filterRow.getCell(col.getId());
 
-		// for (Column<Booking, ?> col : eventGrid.getColumns()) {
-		// col.setMinimumWidth(120);
-		// col.setHidable(true);
-		// col.setHidingToggleCaption(col.getCaption());
-		// col.setExpandRatio(1);
-		// HeaderCell cell = filterRow.getCell(col.getId());
-		//
-		// // Have an input field to use for filter
-		// TextField filterField = new TextField();
-		// filterField.setWidth(130, Unit.PIXELS);
-		// filterField.setHeight(30, Unit.PIXELS);
-		//
-		// filterField.addValueChangeListener(change -> {
-		// String searchVal = change.getValue();
-		// String colId = col.getId();
-		//
-		// log.info("Value change in col [{}], val=[{}]", colId, searchVal);
-		// ListDataProvider<Booking> dataProvider = (ListDataProvider<Booking>)
-		// eventGrid.getDataProvider();
-		//
-		// if (!filterField.isEmpty()) {
-		// try {
-		// gridFilters.put(colId, FilterFactory.getFilterForBooking(colId, searchVal));
-		// log.info("updated filter on attribute [{}]", colId);
-		//
-		// } catch (Exception e) {
-		// log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
-		// }
-		// } else {
-		// gridFilters.remove(colId);
-		// log.info("removed filter on attribute [{}]", colId);
-		//
-		// }
-		// dataProvider.clearFilters();
-		// for (String colFilter : gridFilters.keySet()) {
-		// ProviderAndPredicate paf = gridFilters.get(colFilter);
-		// dataProvider.addFilter(paf.provider, paf.predicate);
-		// }
-		// dataProvider.refreshAll();
-		// });
-		// cell.setComponent(filterField);
-		//
-		// }
+			// Have an input field to use for filter
+			TextField filterField = new TextField();
+			filterField.setWidth(130, Unit.PIXELS);
+			filterField.setHeight(30, Unit.PIXELS);
+
+			filterField.addValueChangeListener(change -> {
+				String searchVal = change.getValue();
+				String colId = col.getId();
+
+				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
+				ListDataProvider<PromoEvent> dataProvider = (ListDataProvider<PromoEvent>) eventGrid.getDataProvider();
+
+				if (!filterField.isEmpty()) {
+					try {
+						// note: if we keep typing into same textfield, we will overwrite the old filter
+						// for this column, which is desirable (rather than having filters for "h",
+						// "he", "hel", etc
+						gridFilters.put(colId, FilterFactory.getFilterForPromoEvent(colId, searchVal));
+						log.info("updated filter on attribute [{}]", colId);
+
+					} catch (Exception e) {
+						log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
+					}
+				} else {
+					// the filter field was empty, so try
+					// removing the filter associated with this col
+					gridFilters.remove(colId);
+					log.info("removed filter on attribute [{}]", colId);
+
+				}
+				dataProvider.clearFilters();
+				for (String colFilter : gridFilters.keySet()) {
+					ProviderAndPredicate paf = gridFilters.get(colFilter);
+					dataProvider.addFilter(paf.provider, paf.predicate);
+				}
+				dataProvider.refreshAll();
+			});
+			cell.setComponent(filterField);
+
+		}
 
 		this.addComponent(eventGrid);
 
@@ -157,8 +174,8 @@ public class PromoEventEditor extends VerticalLayout {
 		});
 	}
 
-	// Check whether a customer offering is editable or not based on start date and
-	// current date
+	// Check whether a promo event is editable or not based on offering start date
+	// and current date
 	private boolean canEditEvent(PromoEvent event) {
 		if (event == null)
 			return true;
@@ -267,7 +284,6 @@ public class PromoEventEditor extends VerticalLayout {
 		binder.forField(promoCode).asRequired(Utils.generateRequiredError())
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.bind(PromoEvent::getPromoCode, PromoEvent::setPromoCode);
-
 
 		binder.forField(promoCodeUses).asRequired(Utils.generateRequiredError())
 				.withConverter(ConverterFactory.getStringToIntegerConverter())

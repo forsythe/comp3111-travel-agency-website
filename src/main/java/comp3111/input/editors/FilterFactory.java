@@ -6,6 +6,7 @@ import comp3111.data.model.Booking;
 import comp3111.data.model.Customer;
 import comp3111.data.model.NonFAQQuery;
 import comp3111.data.model.Offering;
+import comp3111.data.model.PromoEvent;
 import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
 import comp3111.input.exceptions.ColumnNameNotFoundException;
@@ -200,6 +201,35 @@ public class FilterFactory {
 					t -> Utils.safeParseIntEquals(t, searchVal));
 		if (colId.equals(GridCol.OFFERING_STATUS))
 			return new ProviderAndPredicate<Offering, String>(Offering::getStatus,
+					t -> Utils.containsIgnoreCase(t, searchVal));
+
+		throw new ColumnNameNotFoundException("[" + colId + "] isn't a valid column id for [Offering]");
+	}
+	public static ProviderAndPredicate<PromoEvent, ?> getFilterForPromoEvent(String colId, String searchVal)
+			throws ColumnNameNotFoundException {
+		if (colId.equals(GridCol.PROMOEVENT_ID))
+			return new ProviderAndPredicate<PromoEvent, Long>(PromoEvent::getId,
+					t -> Utils.safeParseLongEquals(t, searchVal));
+		if (colId.equals(GridCol.PROMOEVENT_PROMO_CODE))
+			return new ProviderAndPredicate<PromoEvent, String>(PromoEvent::getPromoCode,
+					t -> Utils.containsIgnoreCase(t, searchVal));
+		if (colId.equals(GridCol.PROMOEVENT_PROMO_CODE_USES_LEFT))
+			return new ProviderAndPredicate<PromoEvent, Integer>(PromoEvent::getPromoCodeUsesLeft,
+					t -> Utils.safeParseIntEquals(t, searchVal));
+		if (colId.equals(GridCol.PROMOEVENT_DISCOUNT))
+			return new ProviderAndPredicate<PromoEvent, Double>(PromoEvent::getDiscount,
+					t -> Utils.safeParseDoubleEquals(t, searchVal));
+		if (colId.equals(GridCol.PROMOEVENT_CUSTOM_MESSAGE))
+			return new ProviderAndPredicate<PromoEvent, String>(PromoEvent::getCustomMessage,
+					t -> Utils.containsIgnoreCase(t, searchVal));
+		if (colId.equals(GridCol.PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER))
+			return new ProviderAndPredicate<PromoEvent, Integer>(PromoEvent::getMaxReservationsPerCustomer,
+					t -> Utils.safeParseIntEquals(t, searchVal));
+		if (colId.equals(GridCol.PROMOEVENT_OFFERING_ID))
+			return new ProviderAndPredicate<PromoEvent, Long>(PromoEvent::getOfferingId,
+					t -> Utils.safeParseLongEquals(t, searchVal));
+		if (colId.equals(GridCol.PROMOEVENT_TRIGGER_DATE_STRING))
+			return new ProviderAndPredicate<PromoEvent, String>(PromoEvent::getTriggerDateString,
 					t -> Utils.containsIgnoreCase(t, searchVal));
 
 		throw new ColumnNameNotFoundException("[" + colId + "] isn't a valid column id for [Offering]");
