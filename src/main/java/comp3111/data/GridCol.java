@@ -97,5 +97,18 @@ public class GridCol {
 	public static final String NONFAQQUERY_ID = "id";
 	/*hidden in grid*/
 	public static final String NONFAQQUERY_CUSTOMER_NAME = "customerName";
-
+	
+	//PromotionEvent
+	/*show in grid*/
+	public static final String PROMOEVENT_ID = "id";
+	public static final String PROMOEVENT_PROMO_CODE = "promoCode";
+	public static final String PROMOEVENT_PROMO_CODE_USES_LEFT = "promoCodeUsesLeft";
+	public static final String PROMOEVENT_DISCOUNT = "discount";
+	public static final String PROMOEVENT_CUSTOM_MESSAGE = "customMessage";
+	public static final String PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER = "maxReservationsPerCustomer";
+	public static final String PROMOEVENT_OFFERING_ID = "offeringId";
+	public static final String PROMOEVENT_TRIGGER_DATE_STRING = "triggerDateString";
+	/* hidden in grid*/
+	public static final String PROMOEVENT_TRIGGER_DATE = "triggerDate";
+	public static final String PROMOEVENT_OFFERING = "offering";
 }

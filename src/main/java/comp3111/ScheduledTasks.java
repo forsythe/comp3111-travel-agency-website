@@ -1,5 +1,6 @@
 package comp3111;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -12,9 +13,11 @@ import comp3111.data.DBManager;
 import comp3111.data.model.Booking;
 import comp3111.data.model.Customer;
 import comp3111.data.model.Offering;
+import comp3111.data.model.PromoEvent;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
+import comp3111.data.repo.PromoEventRepository;
 
 @Component
 public class ScheduledTasks {
@@ -26,6 +29,9 @@ public class ScheduledTasks {
 	@Autowired
 	private BookingRepository bookingRepo;
 	@Autowired
+	private PromoEventRepository promoEventRepo;
+
+	@Autowired
 	private DBManager actionManager;
 	@Autowired
 	private LineMessenger lineMessenger;
@@ -33,7 +39,7 @@ public class ScheduledTasks {
 	public static final String EVERYDAY_8_AM = "0 0 8 * * *";
 	public static final String EVERY_10_SECONDS = "*/10 * * * * *";
 
-	// @Scheduled(cron = EVERYDAY_8_AM)
+	//@Scheduled(cron = EVERYDAY_8_AM)
 	public void updatePendingOfferingStatusIfNecessary() {
 		LineMessenger.resetCounter();
 		Date now = new Date();
@@ -61,6 +67,23 @@ public class ScheduledTasks {
 			} else {
 				log.info("Offering [{}] still has time left, not updating its status yet...", o);
 			}
+		}
+		log.info("[{}] people were notified", LineMessenger.getCounter());
+	}
+
+	//@Scheduled(cron = EVERY_10_SECONDS)
+	public void updatePendingPromotionalBroadcasts() {
+		LineMessenger.resetCounter();
+		Date now = Utils.localDateTimeToDate(LocalDateTime.now());
+		log.info("The time is now [{}], checking if any promoevents are overdue", Utils.simpleDateFormat(now));
+
+		for (PromoEvent p : promoEventRepo.findByIsTriggered(false)) {
+
+			if (now.after(p.getTriggerDate())) {
+				log.info("Time to trigger promoevent [{}]", p.getId());
+				lineMessenger.sendToAll(p.getCustomMessage());
+			}
+			p.setTriggered(true);
 		}
 		log.info("[{}] people were notified", LineMessenger.getCounter());
 
