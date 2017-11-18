@@ -413,7 +413,7 @@ public class TourEditor extends VerticalLayout {
 		binder.setBean(tourToSave);
 
 		getSubwindowConfirmButton().addClickListener(event -> {
-			validationStatus = this.binder.validate();
+			validationStatus = binder.validate();
 
 			// Special case for tours only to ensure that this field must be filled
 			if (validationStatus.isOk() && !(allowedDates.isEmpty() && allowedDaysOfWeek.isEmpty())) {
