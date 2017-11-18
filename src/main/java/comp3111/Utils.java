@@ -145,6 +145,17 @@ public class Utils {
 		}
 		return false;
 	}
+	
+	public static Boolean safeParseBoolEquals(boolean val, String s) {
+		try {
+			if (Boolean.parseBoolean(s) == val) {
+				return true;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return false;
+	}
 
 	public static Boolean safeParseLongEquals(Long val, String s) {
 		try {
