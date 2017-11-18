@@ -388,7 +388,7 @@ public class DBManager {
 	 */
 	public boolean validatePromoCode(String promoCode) throws PromoCodeUsedUpException, NoSuchPromoCodeException {
 		PromoEvent pe = promoEventRepo.findOneByPromoCode(promoCode);
-
+		System.out.println("called");
 		if (pe == null)
 			throw new NoSuchPromoCodeException();
 		if (pe.getPromoCodeUsesLeft() == 0)

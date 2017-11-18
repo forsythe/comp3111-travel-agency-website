@@ -63,26 +63,39 @@ public class BookingEditor extends VerticalLayout {
 
 	private Booking selectedBookingRecord;
 
-	@Autowired
 	private BookingRepository bookingRepo;
-	@Autowired
 	private CustomerRepository customerRepo;
-	@Autowired
 	private OfferingRepository offeringRepo;
-	@Autowired
-	private DBManager actionManager;
-	@Autowired
 	private PromoEventRepository promoRepo;
+	private DBManager dbManager;
+
+	// the fields in the subwindow
+	private ComboBox<Customer> customer;
+	private ComboBox<Offering> offering;
+	private TextField numberAdults;
+	private TextField numberChildren;
+	private TextField numberToddlers;
+	private TextField amountPaid;
+	private TextField specialRequest;
+	private ComboBox<String> paymentStatus;
+	private ComboBox<String> promoCode;
+	private Button confirmButton;
+	private BinderValidationStatus<Booking> validationStatus;
 
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	/**
-	 * @param br
-	 *            Autowired, constructor injection
+	 * Creates a new Booking editor. All fields autowired.
+	 * 
 	 */
 	@Autowired
-	public BookingEditor(BookingRepository br) {
+	public BookingEditor(BookingRepository br, CustomerRepository cr, OfferingRepository or, PromoEventRepository per,
+			DBManager dbm) {
 		this.bookingRepo = br;
+		this.customerRepo = cr;
+		this.offeringRepo = or;
+		this.promoRepo = per;
+		this.dbManager = dbm;
 
 		Button createBookingButton = new Button("Create new booking");
 		Button editBookingButton = new Button("Edit booking");
@@ -98,8 +111,9 @@ public class BookingEditor extends VerticalLayout {
 		this.addComponent(rowOfButtons);
 
 		// get from GridCol
-		bookingGrid.setItems(Utils.iterableToCollection(bookingRepo.findAll()).stream()
-				.sorted((b1, b2) -> b1.getId().compareTo(b2.getId())));
+		if (bookingRepo.findAll() != null) // can be null if mockito
+			bookingGrid.setItems(Utils.iterableToCollection(bookingRepo.findAll()).stream()
+					.sorted((b1, b2) -> b1.getId().compareTo(b2.getId())));
 
 		bookingGrid.setWidth("100%");
 		bookingGrid.setSelectionMode(SelectionMode.SINGLE);
@@ -206,32 +220,40 @@ public class BookingEditor extends VerticalLayout {
 		Date threeDayBeforeStart = booking.getOffering().getLastEditableDate();
 
 		if (today.after(threeDayBeforeStart)) {
-			NotificationFactory
-					.getTopBarWarningNotification("It's too late to edit this offering. It can't be editied after "
-							+ Utils.simpleDateFormat(threeDayBeforeStart), 5)
-					.show(Page.getCurrent());
+			if (Page.getCurrent() != null) // can be null if using mockito
+				NotificationFactory
+						.getTopBarWarningNotification("It's too late to edit this offering. It can't be editied after "
+								+ Utils.simpleDateFormat(threeDayBeforeStart), 5)
+						.show(Page.getCurrent());
 
 			return false;
 		}
 		return true;
 	}
 
-	private Window getSubwindow(Booking bookingToSave) {
+	/**
+	 * Creates the popup window for creating/editing bookings
+	 * 
+	 * @param bookingToSave
+	 *            The transient or detached booking record to save
+	 * @return The window
+	 */
+	public Window getSubwindow(Booking bookingToSave) {
 		Window subwindow;
 
 		// Creating the confirm button
-		Button confirmButton = new Button("Confirm");
+		confirmButton = new Button("Confirm");
 		confirmButton.setId("confirm_booking");
 
-		ComboBox<Customer> customer = new ComboBox<Customer>("Customer");
-		ComboBox<Offering> offering = new ComboBox<Offering>("Offering");
-		TextField numberAdults = new TextField("Number of adults");
-		TextField numberChildren = new TextField("Number of children");
-		TextField numberToddlers = new TextField("Number of toddlers");
-		TextField amountPaid = new TextField("Amount Paid");
-		TextField specialRequest = new TextField("Special Request");
-		ComboBox<String> paymentStatus = new ComboBox<>("Payment Status");
-		ComboBox<String> promoCode = new ComboBox<>("Promotion Code");
+		customer = new ComboBox<Customer>("Customer");
+		offering = new ComboBox<Offering>("Offering");
+		numberAdults = new TextField("Number of adults");
+		numberChildren = new TextField("Number of children");
+		numberToddlers = new TextField("Number of toddlers");
+		amountPaid = new TextField("Amount Paid");
+		specialRequest = new TextField("Special Request");
+		paymentStatus = new ComboBox<>("Payment Status");
+		promoCode = new ComboBox<>("Promotion Code");
 
 		customer.setId("cb_customer");
 		offering.setId("cb_offering");
@@ -293,11 +315,13 @@ public class BookingEditor extends VerticalLayout {
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
 		form.addComponent(buttonActions);
 
-		customer.setItems(Utils.iterableToCollection(customerRepo.findAll()).stream()
-				.sorted((c1, c2) -> c1.getId().compareTo(c2.getId())));
+		if (customerRepo.findAll() != null) // can be null if mockito
+			customer.setItems(Utils.iterableToCollection(customerRepo.findAll()).stream()
+					.sorted((c1, c2) -> c1.getId().compareTo(c2.getId())));
 
-		offering.setItems(Utils.iterableToCollection(offeringRepo.findAll()).stream()
-				.sorted((o1, o2) -> o1.getId().compareTo(o2.getId())));
+		if (offeringRepo.findAll() != null) // mockito
+			offering.setItems(Utils.iterableToCollection(offeringRepo.findAll()).stream()
+					.sorted((o1, o2) -> o1.getId().compareTo(o2.getId())));
 
 		Collection<String> potentialPaymentStatus = new ArrayList<>(
 				Arrays.asList(Booking.PAYMENT_PENDING, Booking.PAYMENT_CONFIRMED));
@@ -346,7 +370,7 @@ public class BookingEditor extends VerticalLayout {
 		binder.setBean(bookingToSave);
 
 		confirmButton.addClickListener(event -> {
-			BinderValidationStatus<Booking> validationStatus = binder.validate();
+			validationStatus = binder.validate();
 
 			String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);
 
@@ -358,12 +382,12 @@ public class BookingEditor extends VerticalLayout {
 				try {
 					if (promoCode.getValue() != null && !promoCode.isEmpty()) {
 						// With promo code
-						actionManager.createBookingForOfferingWithPromoCode(bookingToSave, promoCode.getValue());
+						dbManager.createBookingForOfferingWithPromoCode(bookingToSave, promoCode.getValue());
 						log.info("Saved a new booking [{}] with promo code [{}] successfully", bookingToSave,
-								promoCode);
+								promoCode.getValue());
 					} else {
 						// Without promo code
-						actionManager.createNormalBookingForOffering(bookingToSave);
+						dbManager.createNormalBookingForOffering(bookingToSave);
 						log.info("Saved a new booking [{}] successfully", bookingToSave);
 					}
 					if (bookingToSave.getId() == null) {
@@ -372,21 +396,22 @@ public class BookingEditor extends VerticalLayout {
 					binder.removeBean();
 					this.refreshData();
 					subwindow.close();
-					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
+					if (Page.getCurrent() != null) // can be null if using mockito
+						NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
 				} catch (PromoForCustomerExceededException e) {
-					errors += "Too many this kind of promo code has been used by the customer.\n";
+					errors += "The customer has exceeded the maximum number of reserations allowed.\n";
 				} catch (PromoCodeUsedUpException e) {
-					errors += "No enough quota left in promotion event.\n";
+					errors += "The promo code has been used up.\n";
 				} catch (NoSuchPromoCodeException e) {
-					errors += "Such promotion code does not exist.\n";
+					errors += "The promo code does not exist.\n";
 				} catch (OfferingOutOfRoomException e) {
 					errors += "Not enough room in offering";
 				} catch (PromoCodeNotForOfferingException e) {
-					errors += "The promo code that you have used is not for this offering.\n";
+					errors += "The promo code is not for this offering.\n";
 				}
 			}
 
-			if (!errors.isEmpty()) {
+			if (!errors.isEmpty() && Page.getCurrent() != null) {
 				NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 			}
 		});
@@ -398,9 +423,88 @@ public class BookingEditor extends VerticalLayout {
 	 * Refreshes the data in the vaadin grid
 	 */
 	public void refreshData() {
+		if (bookingRepo.findAll() != null) { // mockito
+			ListDataProvider<Booking> provider = new ListDataProvider<>(
+					Utils.iterableToCollection(bookingRepo.findAll()));
+			bookingGrid.setDataProvider(provider);
+		}
+	}
 
-		ListDataProvider<Booking> provider = new ListDataProvider<>(Utils.iterableToCollection(bookingRepo.findAll()));
-		bookingGrid.setDataProvider(provider);
+	/**
+	 * @return the customer field
+	 */
+	public ComboBox<Customer> getCustomer() {
+		return customer;
+	}
+
+	/**
+	 * @return the offering field
+	 */
+	public ComboBox<Offering> getOffering() {
+		return offering;
+	}
+
+	/**
+	 * @return the numberAdults field
+	 */
+	public TextField getNumberAdults() {
+		return numberAdults;
+	}
+
+	/**
+	 * @return the numberChildren field
+	 */
+	public TextField getNumberChildren() {
+		return numberChildren;
+	}
+
+	/**
+	 * @return the numberToddlers field
+	 */
+	public TextField getNumberToddlers() {
+		return numberToddlers;
+	}
+
+	/**
+	 * @return the amountPaid field
+	 */
+	public TextField getAmountPaid() {
+		return amountPaid;
+	}
+
+	/**
+	 * @return the specialRequest field
+	 */
+	public TextField getSpecialRequest() {
+		return specialRequest;
+	}
+
+	/**
+	 * @return the paymentStatus field
+	 */
+	public ComboBox<String> getPaymentStatus() {
+		return paymentStatus;
+	}
+
+	/**
+	 * @return the promoCode field
+	 */
+	public ComboBox<String> getPromoCode() {
+		return promoCode;
+	}
+
+	/**
+	 * @return the confirmButton
+	 */
+	public Button getConfirmButton() {
+		return confirmButton;
+	}
+
+	/**
+	 * @return the validationStatus object
+	 */
+	public BinderValidationStatus<Booking> getValidationStatus() {
+		return validationStatus;
 	}
 
 }

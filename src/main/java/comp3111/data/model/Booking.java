@@ -19,7 +19,7 @@ public class Booking {
 	public static final String PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED = "Offering cancelled";
 	@Id
 	@GeneratedValue
-	private long id;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Customer customer;
