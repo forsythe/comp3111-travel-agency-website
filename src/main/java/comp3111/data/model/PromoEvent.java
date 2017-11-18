@@ -1,20 +1,14 @@
 package comp3111.data.model;
 
-import comp3111.Utils;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import java.util.Date;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
+import comp3111.Utils;
 
 /**
  * represents a promo event associated with an offering

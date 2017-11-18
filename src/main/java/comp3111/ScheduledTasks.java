@@ -39,7 +39,7 @@ public class ScheduledTasks {
 	public static final String EVERYDAY_8_AM = "0 0 8 * * *";
 	public static final String EVERY_10_SECONDS = "*/10 * * * * *";
 
-	//@Scheduled(cron = EVERYDAY_8_AM)
+	@Scheduled(cron = EVERYDAY_8_AM)
 	public void updatePendingOfferingStatusIfNecessary() {
 		LineMessenger.resetCounter();
 		Date now = new Date();
@@ -71,7 +71,7 @@ public class ScheduledTasks {
 		log.info("[{}] people were notified", LineMessenger.getCounter());
 	}
 
-	//@Scheduled(cron = EVERY_10_SECONDS)
+	@Scheduled(cron = EVERY_10_SECONDS)
 	public void updatePendingPromotionalBroadcasts() {
 		LineMessenger.resetCounter();
 		Date now = Utils.localDateTimeToDate(LocalDateTime.now());
@@ -84,6 +84,7 @@ public class ScheduledTasks {
 				lineMessenger.sendToAll(p.getCustomMessage());
 			}
 			p.setTriggered(true);
+			promoEventRepo.save(p);
 		}
 		log.info("[{}] people were notified", LineMessenger.getCounter());
 

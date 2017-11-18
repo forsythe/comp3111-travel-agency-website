@@ -106,7 +106,7 @@ public class PromoEventEditor extends VerticalLayout {
 		eventGrid.removeColumn(GridCol.PROMOEVENT_TRIGGER_DATE); 
 		eventGrid.removeColumn(GridCol.PROMOEVENT_OFFERING);
 		
-		eventGrid.setColumnOrder(GridCol.PROMOEVENT_ID, GridCol.PROMOEVENT_OFFERING_ID, 
+		eventGrid.setColumnOrder(GridCol.PROMOEVENT_IS_TRIGGERED, GridCol.PROMOEVENT_ID, GridCol.PROMOEVENT_OFFERING_ID, 
 				GridCol.PROMOEVENT_CUSTOM_MESSAGE, GridCol.PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER,
 				GridCol.PROMOEVENT_PROMO_CODE, GridCol.PROMOEVENT_PROMO_CODE_USES_LEFT, 
 				GridCol.PROMOEVENT_DISCOUNT, GridCol.PROMOEVENT_TRIGGER_DATE_STRING, GridCol.PROMOEVENT_IS_TRIGGERED);
@@ -186,7 +186,7 @@ public class PromoEventEditor extends VerticalLayout {
 		if (today.after(triggerDate)) {
 			NotificationFactory
 					.getTopBarWarningNotification(
-							"It's too late to edit this event, it the promotional event triggered on" + triggerDate, 5)
+							"It's too late to edit this promotion, it triggered on: " + triggerDate, 5)
 					.show(Page.getCurrent());
 			return false;
 		}
@@ -277,7 +277,7 @@ public class PromoEventEditor extends VerticalLayout {
 
 		binder.forField(maxReservationsPerCustomer).asRequired(Utils.generateRequiredError())
 				.withConverter(ConverterFactory.getStringToIntegerConverter())
-				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(1))
 				.bind(PromoEvent::getMaxReservationsPerCustomer, PromoEvent::setMaxReservationsPerCustomer);
 
 		//For old promo event, the code cannot be changed to make our life easier
@@ -287,7 +287,7 @@ public class PromoEventEditor extends VerticalLayout {
 
 		binder.forField(promoCodeUses).asRequired(Utils.generateRequiredError())
 				.withConverter(ConverterFactory.getStringToIntegerConverter())
-				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(1))
 				.bind(PromoEvent::getPromoCodeUsesLeft, PromoEvent::setPromoCodeUsesLeft);
 
 		binder.forField(customMessage).asRequired(Utils.generateRequiredError())
