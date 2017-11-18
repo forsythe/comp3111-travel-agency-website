@@ -1,5 +1,11 @@
 package comp3111.input.exceptions;
 
+/**
+ * An exception that should be thrown when a customer tries to submit a promo code that does not exist.
+ * 
+ * @author kristiansuhartono
+ *
+ */
 public class NoSuchPromoCodeException extends Exception {
 
 	public NoSuchPromoCodeException() {
