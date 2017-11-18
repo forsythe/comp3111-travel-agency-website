@@ -26,7 +26,7 @@ public class ListOfDatesValidator implements Validator<String> {
 	/**
 	 * Constructor of the validator
 	 */
-	public ListOfDatesValidator() {
+	ListOfDatesValidator() {
 	}
 
 	/** 

@@ -1,18 +1,18 @@
 package unit;
 
-import java.util.Date;
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 
-import static org.assertj.core.api.BDDAssertions.then;
-import static org.junit.Assert.*;
-
-import comp3111.data.model.*;
-import comp3111.data.repo.*;
-import comp3111.input.exceptions.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +24,30 @@ import org.springframework.test.context.junit4.SpringRunner;
 import comp3111.Application;
 import comp3111.Utils;
 import comp3111.data.DBManager;
+import comp3111.data.model.Booking;
+import comp3111.data.model.Customer;
+import comp3111.data.model.LoginUser;
+import comp3111.data.model.Offering;
+import comp3111.data.model.PromoEvent;
+import comp3111.data.model.Tour;
+import comp3111.data.model.TourGuide;
+import comp3111.data.repo.BookingRepository;
+import comp3111.data.repo.CustomerRepository;
+import comp3111.data.repo.LoginUserRepository;
+import comp3111.data.repo.NonFAQQueryRepository;
+import comp3111.data.repo.OfferingRepository;
+import comp3111.data.repo.PromoEventRepository;
+import comp3111.data.repo.TourGuideRepository;
+import comp3111.data.repo.TourRepository;
+import comp3111.input.auth.Authentication;
+import comp3111.input.exceptions.NoSuchPromoCodeException;
+import comp3111.input.exceptions.OfferingDateUnsupportedException;
+import comp3111.input.exceptions.OfferingOutOfRoomException;
+import comp3111.input.exceptions.PromoCodeNotForOfferingException;
+import comp3111.input.exceptions.PromoCodeUsedUpException;
+import comp3111.input.exceptions.PromoForCustomerExceededException;
+import comp3111.input.exceptions.TourGuideUnavailableException;
+import comp3111.input.exceptions.UsernameTakenException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -45,6 +69,8 @@ public class DBManagerTests {
 	private NonFAQQueryRepository nonFAQQuery;
 	@Autowired
 	private PromoEventRepository promoRepo;
+	@Autowired
+	private Authentication authentication;
 	@Autowired
 	private DBManager dbManager;
 
@@ -520,4 +546,12 @@ public class DBManagerTests {
 		o1.setStartDate(Utils.addDate(now, 10));
 		dbManager.editOfferingTorTour(o1);
 	}
+
+	@Test
+	public void testAuthenticate() {
+		then(authentication.authenticate("admin", "Q1w2e3r4")).isTrue();
+		then(authentication.authenticate("asfas", "Q1w2e3r4")).isFalse();
+		then(authentication.authenticate("admin", "asdasd")).isFalse();
+	}
+
 }

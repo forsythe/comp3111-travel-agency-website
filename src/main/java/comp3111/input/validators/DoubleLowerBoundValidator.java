@@ -21,7 +21,7 @@ public class DoubleLowerBoundValidator implements Validator<Double> {
 	 * @param minInclusive
 	 *            The lower bound, inclusive.
 	 */
-	public DoubleLowerBoundValidator(double minInclusive) {
+	DoubleLowerBoundValidator(double minInclusive) {
 		this.min = minInclusive;
 	}
 
@@ -39,12 +39,8 @@ public class DoubleLowerBoundValidator implements Validator<Double> {
 	 */
 	@Override
 	public ValidationResult apply(Double value, ValueContext context) {
-		try {
-			if (value >= min)
-				return ValidationResult.ok();
-		} catch (NumberFormatException e) {
-			return ValidationResult.error("must be a number");
-		}
+		if (value >= min)
+			return ValidationResult.ok();
 		return ValidationResult.error("the number must be >= " + min);
 	}
 }

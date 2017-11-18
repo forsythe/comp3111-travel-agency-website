@@ -18,7 +18,7 @@ public class PhoneNumberValidator implements Validator<String> {
 	/**
 	 * Constructor of the validator
 	 */
-	public PhoneNumberValidator() {
+	PhoneNumberValidator() {
 	}
 
 	

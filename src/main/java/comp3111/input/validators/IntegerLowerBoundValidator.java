@@ -22,7 +22,7 @@ public class IntegerLowerBoundValidator implements Validator<Integer> {
 	 * @param minInclusive
 	 *            The lower bound integer value, inclusive
 	 */
-	public IntegerLowerBoundValidator(int minInclusive) {
+	IntegerLowerBoundValidator(int minInclusive) {
 		this.min = minInclusive;
 	}
 
@@ -40,12 +40,8 @@ public class IntegerLowerBoundValidator implements Validator<Integer> {
 	 */
 	@Override
 	public ValidationResult apply(Integer value, ValueContext context) {
-		try {
-			if (value >= min)
-				return ValidationResult.ok();
-		} catch (NumberFormatException e) {
-			return getValidationErrorLogged("must be an integer");
-		}
+		if (value >= min)
+			return ValidationResult.ok();
 		return getValidationErrorLogged("the integer must be >= " + min);
 
 	}

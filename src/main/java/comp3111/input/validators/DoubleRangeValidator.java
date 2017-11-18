@@ -23,7 +23,7 @@ public class DoubleRangeValidator implements Validator<Double> {
 	 * @param minInclusive The lower bound, inclusive
 	 * @param maxInclusive The upper bound, inclusive
 	 */
-	public DoubleRangeValidator(double minInclusive, double maxInclusive) {
+	DoubleRangeValidator(double minInclusive, double maxInclusive) {
 		this.min = minInclusive;
 		this.max = maxInclusive;
 	}
@@ -37,11 +37,8 @@ public class DoubleRangeValidator implements Validator<Double> {
 	 */
 	@Override
 	public ValidationResult apply(Double value, ValueContext context) {
-		try {
-			if (value >= min && value <= max)
-				return ValidationResult.ok();
-		} catch (NumberFormatException e) {
-			return getValidationErrorLogged("must be a number");
+		if (value >= min && value <= max){
+			return ValidationResult.ok();
 		}
 		return getValidationErrorLogged("the number must be [" + min + ", " + max + "]");
 
