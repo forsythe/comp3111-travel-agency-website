@@ -18,7 +18,7 @@ import com.vaadin.testbench.elements.FormLayoutElement;
 import com.vaadin.testbench.elements.NotificationElement;
 import com.vaadin.testbench.elements.TextFieldElement;
 
-public class LoginTests extends TestBenchTestCase {
+public class LoginUITests extends TestBenchTestCase {
 
 	@BeforeClass
 	public static void init() {
