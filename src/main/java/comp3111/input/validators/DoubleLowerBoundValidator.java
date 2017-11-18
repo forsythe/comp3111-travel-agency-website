@@ -5,7 +5,7 @@ import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
 
 /**
- * Validates whether a double value is lower than a lower bound value
+ * Validates whether a double value is higher than a lower bound value
  * 
  * @author kristiansuhartono
  * @version 1.0
@@ -18,18 +18,24 @@ public class DoubleLowerBoundValidator implements Validator<Double> {
 	/**
 	 * The constructor of the validator
 	 * 
-	 * @param minInclusive The lower bound, inclusive.
+	 * @param minInclusive
+	 *            The lower bound, inclusive.
 	 */
 	public DoubleLowerBoundValidator(double minInclusive) {
 		this.min = minInclusive;
 	}
 
-	/** 
-	 * Overrides the apply method in vaadin validators, checks whether the given value is lower than
-	 * the lower bound.
-	 * @param value The double value that is going to be validated.
-	 * @param context A value context for converters. Contains relevant information for converting values. 
-	 * @see com.vaadin.data.Validator#apply(java.lang.Object, com.vaadin.data.ValueContext)
+	/**
+	 * Overrides the apply method in vaadin validators, checks whether the given
+	 * value is higher than the lower bound.
+	 * 
+	 * @param value
+	 *            The double value that is going to be validated.
+	 * @param context
+	 *            A value context for converters. Contains relevant information for
+	 *            converting values.
+	 * @see com.vaadin.data.Validator#apply(java.lang.Object,
+	 *      com.vaadin.data.ValueContext)
 	 */
 	@Override
 	public ValidationResult apply(Double value, ValueContext context) {
