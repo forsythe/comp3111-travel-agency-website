@@ -6,11 +6,29 @@ import com.vaadin.data.ValueContext;
 
 import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
 
+/**
+ * Validates whether a string is a valid phone number string or not
+ * 
+ * @author kristiansuhartono
+ * @version 1.0
+ * @since 2017-11-18
+ */
 public class PhoneNumberValidator implements Validator<String> {
 
+	/**
+	 * Constructor of the validator
+	 */
 	PhoneNumberValidator() {
 	}
 
+	
+	/** 
+	 * Overrides the apply method in vaadin validators, checks whether the string is a valid phone number
+	 * 
+	 * @param value The phone number string that is to be validated
+	 * @param context A value context for converters. Contains relevant information for converting values. 
+	 * @see com.vaadin.data.Validator#apply(java.lang.Object, com.vaadin.data.ValueContext)
+	 */
 	@Override
 	@SuppressWarnings("ResultOfMethodCallIgnored")
 	public ValidationResult apply(String value, ValueContext context) {

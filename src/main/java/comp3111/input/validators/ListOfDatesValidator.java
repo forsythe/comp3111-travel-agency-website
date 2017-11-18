@@ -11,11 +11,31 @@ import com.vaadin.data.ValueContext;
 
 import comp3111.Utils;
 
+/**
+ * A validator for Tour creation, for a limited tour type, it needs a number of dates. This validator
+ * validates these dates, whether the dates are in the correct format or not, and also whether there is at
+ * least one date
+ * 
+ * @author kristiansuhartono
+ * @version 1.0
+ * @since 2017-11-18
+ *
+ */
 public class ListOfDatesValidator implements Validator<String> {
 
+	/**
+	 * Constructor of the validator
+	 */
 	ListOfDatesValidator() {
 	}
 
+	/** 
+	 * Overrides the apply method in vaadin validators, checks whether the list of dates is valid or not
+	 * 
+	 * @param value A string of the list of dates to be validated.
+	 * @param context A value context for converters. Contains relevant information for converting values. 
+	 * @see com.vaadin.data.Validator#apply(java.lang.Object, com.vaadin.data.ValueContext)
+	 */
 	@Override
 	public ValidationResult apply(String listOfDates, ValueContext context) {
 		if (listOfDates == null || listOfDates.isEmpty()) {

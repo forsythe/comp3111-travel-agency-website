@@ -12,14 +12,34 @@ import java.util.Date;
 
 import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
 
+/**
+ * Validates whether the date is earlier than an offering's last editable date, as in when creating
+ * an offering, it validates whether the date is allowed or not
+ * 
+ * @author kristiansuhartono
+ * @version 1.0
+ * @since 2017-11-18
+ *
+ */
 public class DateIsEarlierThanOfferingLastEditableDateValidator implements Validator<Date> {
 
 	private ComboBox<Offering> o;
 
+	/**
+	 * The constructor of the validator
+	 * @param offering The offering object that is going to be used for validation
+	 */
 	DateIsEarlierThanOfferingLastEditableDateValidator(ComboBox<Offering> offering) {
 		this.o = offering;
 	}
 
+	/** 
+	 * Overrides the apply method in vaadin validators, checks whether the given value
+	 * is valid in the offering object that the validator has.
+	 * @param value The date value that is going to be validated
+	 * @param context A value context for converters. Contains relevant information for converting values. 
+	 * @see com.vaadin.data.Validator#apply(java.lang.Object, com.vaadin.data.ValueContext)
+	 */
 	@Override
 	public ValidationResult apply(Date value, ValueContext context) {
 		if (o.getValue() == null) {

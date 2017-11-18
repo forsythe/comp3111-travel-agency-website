@@ -51,6 +51,15 @@ public class TourGuideAvailableForDatesValidation implements Validator<TourGuide
 		this.ignoredOffering = ignoredOffering;
 	}
 
+	
+	/** 
+	 * Overrides the apply method in vaadin validators, checks whether said tourguide is available on the 
+	 * dates that the validator was constructed with.
+	 * 
+	 * @param value The TourGuide object whose availability shall be checked
+	 * @param context A value context for converters. Contains relevant information for converting values. 
+	 * @see com.vaadin.data.Validator#apply(java.lang.Object, com.vaadin.data.ValueContext)
+	 */
 	@Override
 	public ValidationResult apply(TourGuide value, ValueContext context) {
 		try {

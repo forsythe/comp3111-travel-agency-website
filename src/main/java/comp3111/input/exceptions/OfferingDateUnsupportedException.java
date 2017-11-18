@@ -1,5 +1,12 @@
 package comp3111.input.exceptions;
 
+/**
+ * An exception that is thrown when someone is trying to create an Offering object with a date that is not
+ * available or valid in it's host tour (of the limited tour type)
+ * 
+ * @author kristiansuhartono
+ *
+ */
 public class OfferingDateUnsupportedException extends Exception {
 
 	public OfferingDateUnsupportedException() {
