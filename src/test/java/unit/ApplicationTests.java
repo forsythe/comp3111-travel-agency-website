@@ -9,6 +9,9 @@ import java.util.HashSet;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
+import comp3111.data.model.*;
+import comp3111.data.repo.*;
+import comp3111.input.exceptions.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,22 +22,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import comp3111.Application;
 import comp3111.data.DBManager;
-import comp3111.data.model.Booking;
-import comp3111.data.model.Customer;
-import comp3111.data.model.Offering;
-import comp3111.data.model.Tour;
-import comp3111.data.model.TourGuide;
-import comp3111.data.repo.BookingRepository;
-import comp3111.data.repo.CustomerRepository;
-import comp3111.data.repo.LoginUserRepository;
-import comp3111.data.repo.NonFAQQueryRepository;
-import comp3111.data.repo.OfferingRepository;
-import comp3111.data.repo.TourGuideRepository;
-import comp3111.data.repo.TourRepository;
-import comp3111.input.exceptions.OfferingDateUnsupportedException;
-import comp3111.input.exceptions.OfferingDayOfWeekUnsupportedException;
-import comp3111.input.exceptions.OfferingOutOfRoomException;
-import comp3111.input.exceptions.TourGuideUnavailableException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -54,6 +41,8 @@ public class ApplicationTests {
 	private TourGuideRepository tourGuideRepo;
 	@Autowired
 	private NonFAQQueryRepository nonFAQQuery;
+	@Autowired
+	private PromoEventRepository promoRepo;
 	@Autowired
 	private DBManager actionManager;
 
@@ -145,7 +134,7 @@ public class ApplicationTests {
 				tourGuideRepo.findOne(tg1.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0), "hotel bob", 5,
 				18);
 		Booking booking = actionManager.createBookingForOffering(offeringRepo.findOne(yangShanOffering.getId()),
-				customerRepo.findOne(c1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING, 1);
+				customerRepo.findOne(c1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING, 1 );
 
 		then(this.offeringRepo.findByHotelName(yangShanOffering.getHotelName()).size()).isEqualTo(1);
 		then(this.bookingRepo.findByPaymentStatus(booking.getPaymentStatus()).size()).isEqualTo(1);
@@ -190,7 +179,7 @@ public class ApplicationTests {
 				tourGuideRepo.findOne(tg1.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0), "hotel bob", 5,
 				18);
 		Booking book1 = actionManager.createBookingForOffering(offeringRepo.findOne(offering1.getId()),
-				customerRepo.findOne(c1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING, 1);
+				customerRepo.findOne(c1.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_PENDING, 1 );
 
 		Offering offering2 = actionManager.createOfferingForTour(tourRepo.findOne(tour1.getId()),
 				tourGuideRepo.findOne(tg2.getId()), new ArrayList<Date>(tour1.getAllowedDates()).get(0), "hotel cheap",
@@ -267,6 +256,89 @@ public class ApplicationTests {
 		actionManager.createBookingForOffering(offeringRepo.findOne(shimenOffering.getId()),
 				customerRepo.findOne(c1.getId()), numAdults, numChildren, numToddlers, 0, "kids meal",
 				Booking.PAYMENT_CONFIRMED, 1);
+	}
+
+	@Test
+	public void testSuccessUsingPromoCode() throws OfferingDateUnsupportedException,
+			TourGuideUnavailableException, OfferingOutOfRoomException, NoSuchPromoCodeException,
+			PromoForCustomerExceededException, PromoCodeUsedUpException, PromoCodeNotForOfferingException  {
+
+		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
+		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.MONDAY, Calendar.SUNDAY)));
+
+		Offering shimenOffering = actionManager.createOfferingForTour(shimenTour, tg1,
+				new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hotel chep", 4, 20);
+
+		int codeUse = 5;
+		int maxUsePerCustomer = 2;
+
+		PromoEvent pe = new PromoEvent(new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hi",
+				"TEST_CODE", 0.5, codeUse, maxUsePerCustomer, shimenOffering);
+		promoRepo.save(pe);
+
+		int numAdults = 1;
+		int numChildren = 1;
+		int numToddlers = 0;
+
+		Booking bk = new Booking(c1, shimenOffering, numAdults, numChildren, numToddlers, 0, "", "", 1);
+
+		actionManager.createBookingForOfferingWithPromoCode(bk, pe.getPromoCode());
+	}
+
+	@Test(expected = PromoForCustomerExceededException.class)
+	public void testFailTooManyPromoCodeUseOnce() throws OfferingDateUnsupportedException,
+			TourGuideUnavailableException, OfferingOutOfRoomException, NoSuchPromoCodeException,
+			PromoForCustomerExceededException, PromoCodeUsedUpException, PromoCodeNotForOfferingException  {
+
+		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
+		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.MONDAY, Calendar.SUNDAY)));
+
+		Offering shimenOffering = actionManager.createOfferingForTour(shimenTour, tg1,
+				new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hotel chep", 4, 20);
+
+		int codeUse = 5;
+		int maxUsePerCustomer = 2;
+
+		PromoEvent pe = new PromoEvent(new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hi",
+				"TEST_CODE", 0.5, codeUse, maxUsePerCustomer, shimenOffering);
+		promoRepo.save(pe);
+
+		int numAdults = 5;
+		int numChildren = 5;
+		int numToddlers = 5;
+
+		Booking bk = new Booking(c1, shimenOffering, numAdults, numChildren, numToddlers, 0, "", "", 1);
+
+		actionManager.createBookingForOfferingWithPromoCode(bk, pe.getPromoCode());
+	}
+
+	@Test(expected = PromoForCustomerExceededException.class)
+	public void testFailTooManyPromoCodeUseMulti() throws OfferingDateUnsupportedException,
+			TourGuideUnavailableException, OfferingOutOfRoomException, NoSuchPromoCodeException,
+			PromoForCustomerExceededException, PromoCodeUsedUpException, PromoCodeNotForOfferingException  {
+
+		Tour shimenTour = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
+		shimenTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.MONDAY, Calendar.SUNDAY)));
+
+		Offering shimenOffering = actionManager.createOfferingForTour(shimenTour, tg1,
+				new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hotel chep", 4, 20);
+
+		int codeUse = 5;
+		int maxUsePerCustomer = 2;
+
+		PromoEvent pe = new PromoEvent(new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hi",
+				"TEST_CODE", 0.5, codeUse, maxUsePerCustomer, shimenOffering);
+		promoRepo.save(pe);
+
+		int numAdults = 2;
+		int numChildren = 0;
+		int numToddlers = 0;
+
+		Booking bk = new Booking(c2, shimenOffering, numAdults, numChildren, numToddlers, 0, "", "", 1);
+		actionManager.createBookingForOfferingWithPromoCode(bk, pe.getPromoCode());
+
+		Booking bk2 = new Booking(c2, shimenOffering, numAdults, numChildren, numToddlers, 0, "", "", 1);
+		actionManager.createBookingForOfferingWithPromoCode(bk2, pe.getPromoCode());
 	}
 
 }

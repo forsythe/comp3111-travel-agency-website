@@ -52,6 +52,21 @@ public class PromoEvent {
 	@OneToOne(fetch = FetchType.EAGER) // one promoevent to 1 offering
 	private Offering offering;
 
+	public PromoEvent(){
+
+	}
+
+	public PromoEvent(Date triggerDate, String customMessage, String promoCode, double discount,
+					  int promoCodeUsesLeft, int maxReservationsPerCustomer, Offering offering){
+		this.triggerDate = triggerDate;
+		this.customMessage = customMessage;
+		this.promoCode = promoCode;
+		this.discount = discount;
+		this.promoCodeUsesLeft = promoCodeUsesLeft;
+		this.maxReservationsPerCustomer = maxReservationsPerCustomer;
+		this.offering = offering;
+	}
+
 	public Long getId() {
 		return id;
 	}

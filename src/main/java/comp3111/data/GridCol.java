@@ -76,8 +76,11 @@ public class GridCol {
 	public static final String BOOKING_TOTAL_COST = "totalCost";
 	public static final String BOOKING_SPECIAL_REQUEST = "specialRequests";
 	public static final String BOOKING_PAYMENT_STATUS = "paymentStatus";
+	public static final String BOOKING_PROMO_DISCOUNT_MULTIPLIER_MASKED = "paymentStatusMasked";
 	/* hidden */
 	public static final String BOOKING_PROMO_DISCOUNT_MULTIPLIER = "promoDiscountMultiplier";
+	public static final String BOOKING_TOTAL_NUMBER_OF_PEOPLE = "totalNumberOfPeople";
+	public static final String BOOKING_PROMO_CODE_USED = "promoCodeUsed";
 
 	
 	// TourGuide
