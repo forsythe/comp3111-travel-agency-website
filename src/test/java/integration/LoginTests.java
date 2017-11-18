@@ -66,7 +66,7 @@ public class LoginTests extends TestBenchTestCase {
 		$(ButtonElement.class).id("btn_submit").click();
 
 		NotificationElement invalidCredentials = $(NotificationElement.class).first();
-		assertEquals("Invalid credentials", invalidCredentials.getCaption());
+		assertEquals("Invalid credentials.", invalidCredentials.getCaption());
 		// assertEquals("The description", invalidCredentials.getDescription());
 		// assertEquals("warning", invalidCredentials.getType());
 		invalidCredentials.close();

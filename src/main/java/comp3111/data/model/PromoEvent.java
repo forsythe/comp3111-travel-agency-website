@@ -89,6 +89,10 @@ public class PromoEvent {
 		this.triggerDate = triggerDate;
 	}
 
+	public String getTriggerDateString() {
+		return Utils.simpleDateFormat(triggerDate);
+	}
+	
 	public String getCustomMessage() {
 		return customMessage;
 	}
@@ -131,6 +135,10 @@ public class PromoEvent {
 
 	public Offering getOffering() {
 		return offering;
+	}
+	
+	public long getOfferingId() {
+		return offering.getId();
 	}
 
 	public void setOffering(Offering offering) {
