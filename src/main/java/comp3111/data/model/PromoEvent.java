@@ -49,15 +49,20 @@ public class PromoEvent {
 	 */
 	private int maxReservationsPerCustomer;
 
+	/**
+	 * Keep track of whether we've announced the custom message yet
+	 */
+	private boolean isTriggered;
+
 	@OneToOne(fetch = FetchType.EAGER) // one promoevent to 1 offering
 	private Offering offering;
 
-	public PromoEvent(){
+	public PromoEvent() {
 
 	}
 
-	public PromoEvent(Date triggerDate, String customMessage, String promoCode, double discount,
-					  int promoCodeUsesLeft, int maxReservationsPerCustomer, Offering offering){
+	public PromoEvent(Date triggerDate, String customMessage, String promoCode, double discount, int promoCodeUsesLeft,
+			int maxReservationsPerCustomer, Offering offering) {
 		this.triggerDate = triggerDate;
 		this.customMessage = customMessage;
 		this.promoCode = promoCode;
@@ -65,6 +70,7 @@ public class PromoEvent {
 		this.promoCodeUsesLeft = promoCodeUsesLeft;
 		this.maxReservationsPerCustomer = maxReservationsPerCustomer;
 		this.offering = offering;
+		isTriggered = false;
 	}
 
 	public Long getId() {
@@ -131,17 +137,17 @@ public class PromoEvent {
 		this.offering = offering;
 	}
 
+	public boolean isTriggered() {
+		return isTriggered;
+	}
+
+	public void setTriggered(boolean hasTriggered) {
+		this.isTriggered = hasTriggered;
+	}
+
 	@Override
 	public String toString() {
 		return String.format("PromoEvent[id=%d, offeringId=%d, date=%s]", id, offering.getId(), triggerDate);
 	}
-
-	// @Override
-	// public boolean equals(Object other) {
-	// if (other instanceof Tour)
-	// return other != null && this.getId() != null && ((Tour)
-	// other).getId().equals(this.getId());
-	// return false;
-	// }
 
 }
