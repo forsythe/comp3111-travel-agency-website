@@ -386,7 +386,7 @@ public class DBManager {
 	 * @throws NoSuchPromoCodeException
 	 *             If the promo code doesn't exist
 	 */
-	private boolean validatePromoCode(String promoCode) throws PromoCodeUsedUpException, NoSuchPromoCodeException {
+	public boolean validatePromoCode(String promoCode) throws PromoCodeUsedUpException, NoSuchPromoCodeException {
 		PromoEvent pe = promoEventRepo.findOneByPromoCode(promoCode);
 
 		if (pe == null)
@@ -508,15 +508,17 @@ public class DBManager {
 	 *            The username
 	 * @param rawPassword
 	 *            The raw password
+	 * @return The LoginUser
 	 * @throws UsernameTakenException
 	 *             If the username is taken
 	 */
-	public void createNewLogin(String username, String rawPassword) throws UsernameTakenException {
+	public LoginUser createNewLogin(String username, String rawPassword) throws UsernameTakenException {
 		if (loginUserRepo.findByUsername(username) != null) {
 			throw new UsernameTakenException();
 		}
-		loginUserRepo.save(new LoginUser(username, rawPassword));
 		log.info("successfully created a new user login, username [{}]", username);
+
+		return loginUserRepo.save(new LoginUser(username, rawPassword));
 	}
 
 	/**
