@@ -21,8 +21,7 @@ import java.util.HashSet;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+
 public class FieldTests {
 
     @Test

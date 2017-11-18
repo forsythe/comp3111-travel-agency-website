@@ -49,6 +49,7 @@ import comp3111.input.exceptions.TourGuideUnavailableException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@Ignore("it works, but ignoring temporarily beacuse my phone cant handle the spam")
 public class LineInteractionTests {
 	private static final Logger log = LoggerFactory.getLogger(LineInteractionTests.class);
 
@@ -118,8 +119,8 @@ public class LineInteractionTests {
 	}
 
 	@Test
-	public void testSuccessSendMessageToOfferingParticipants() throws OfferingDateUnsupportedException,
-			TourGuideUnavailableException, OfferingOutOfRoomException {
+	public void testSuccessSendMessageToOfferingParticipants()
+			throws OfferingDateUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
 
 		Tour comp3111Tour = new Tour("comp3111h", "learn about design patterns", 3, 0.8, 0.0, 599, 699);
 		comp3111Tour.setAllowedDates(

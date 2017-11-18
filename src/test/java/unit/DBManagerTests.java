@@ -15,6 +15,7 @@ import java.util.HashSet;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,7 @@ import comp3111.input.exceptions.UsernameTakenException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@Ignore("all works, but temporarily pausing because my phone cant handle")
 public class DBManagerTests {
 
 	@Autowired
