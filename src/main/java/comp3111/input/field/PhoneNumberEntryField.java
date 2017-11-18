@@ -67,9 +67,12 @@ public class PhoneNumberEntryField extends CustomField<String> {
     protected void doSetValue(String value) {
 		if (value != null) {
 			String[] parts = value.split("-");
-			countryCode.setValue(parts[0]);
 			if (parts.length >= 2) {
 				phoneNumber.setValue(parts[1]);
+				countryCode.setValue(parts[0]);
+			}else{
+				countryCode.setValue("");
+				phoneNumber.setValue(parts[0]);
 			}
 		}else{
 			countryCode.setValue("");

@@ -56,15 +56,19 @@ public class ValidationTests {
         DateIsEarlierThanOfferingLastEditableDateValidator validator =
                 ValidatorFactory.getDateIsEarlierThanOfferingLastEditableDateValidator(comboBox);
 
-        Date now = new GregorianCalendar(2017, Calendar.DECEMBER, 5).getTime();
-        assert(validator.apply(now, new ValueContext()).isError());
-
         Offering o1 = new Offering();
         Offering o2 = new Offering();
+
+        assert (comboBox.isEmpty());
+        Date now = new GregorianCalendar(2017, Calendar.DECEMBER, 5).getTime();
+        assert(validator.apply(now, new ValueContext()).isError());
+        comboBox.setItems(o1, o2);
+        comboBox.setValue(null);
+        assert(validator.apply(now, new ValueContext()).isError());
+
         o1.setStartDate(new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime());
         o2.setStartDate(new GregorianCalendar(2017, Calendar.DECEMBER, 9).getTime());
 
-        comboBox.setItems(o1, o2);
         comboBox.setSelectedItem(o1);
         assert(validator.apply(null, new ValueContext()).isError());
         assert(validator.apply(now, new ValueContext()).isError());
@@ -142,6 +146,7 @@ public class ValidationTests {
 
         //OK
         assert (!validator.apply(null, new ValueContext()).isError());
+        assert (!validator.apply("", new ValueContext()).isError());
         assert (!validator.apply("11/11/2017", new ValueContext()).isError());
     }
 
@@ -151,10 +156,14 @@ public class ValidationTests {
 
         //Fail
         Offering o = new Offering();
-        o.setStatus(Offering.STATUS_CANCELLED);
-        o.setStartDate(new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime());
-        assert (validator.apply(o, new ValueContext()).isError());
+        o.setStatus(Offering.STATUS_PENDING);
+        o.setStartDate(new GregorianCalendar(2015, Calendar.DECEMBER, 4).getTime());
         assert (validator.apply(null, new ValueContext()).isError());
+        assert (validator.apply(o, new ValueContext()).isError());
+
+        o.setStatus(Offering.STATUS_CANCELLED);
+        o.setStartDate(Date.from(Instant.now().plusSeconds(345600)));
+        assert (validator.apply(o, new ValueContext()).isError());
 
         //OK
         o.setStatus(Offering.STATUS_PENDING);

@@ -4,7 +4,9 @@ import comp3111.Application;
 import comp3111.data.DBManager;
 import comp3111.data.model.*;
 import comp3111.data.repo.*;
+import comp3111.input.auth.Authentication;
 import comp3111.input.exceptions.*;
+import comp3111.input.validators.TourGuideAvailableForDatesValidation;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.validation.Valid;
 import java.util.*;
 
 import static org.assertj.core.api.BDDAssertions.then;
@@ -39,6 +42,8 @@ public class ApplicationTests {
 	private PromoEventRepository promoRepo;
 	@Autowired
 	private DBManager actionManager;
+	@Autowired
+	private Authentication authentication;
 
 	Customer c1, c2;
 	TourGuide tg1, tg2;
@@ -333,6 +338,13 @@ public class ApplicationTests {
 
 		Booking bk2 = new Booking(c2, shimenOffering, numAdults, numChildren, numToddlers, 0, "", "");
 		actionManager.createBookingForOfferingWithPromoCode(bk2, pe.getPromoCode());
+	}
+
+	@Test
+	public void testAuthenticate(){
+		then(authentication.authenticate("admin", "Q1w2e3r4")).isTrue();
+		then(authentication.authenticate("asfas", "Q1w2e3r4")).isFalse();
+		then(authentication.authenticate("admin", "asdasd")).isFalse();
 	}
 
 }
