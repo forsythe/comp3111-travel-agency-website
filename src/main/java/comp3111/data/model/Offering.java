@@ -167,8 +167,11 @@ public class Offering {
 
 	@Override
 	public String toString() {
-		return String.format("Offering[id=%d, %s, tour=%s]", id, Utils.simpleDateFormat(startDate),
-				this.tour.getTourName());
+		try {
+			return String.format("Offering[id=%d, %s, tour=%s]", id, Utils.simpleDateFormat(startDate), this.tour.getTourName());
+		}catch (NullPointerException e){
+			return "null";
+		}
 	}
 
 	@Override
