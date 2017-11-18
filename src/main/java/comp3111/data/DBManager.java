@@ -187,8 +187,8 @@ public class DBManager {
 			if (testStart.after(takenStart) && testEnd.before(takenEnd)
 					|| testStart.before(takenStart) && testEnd.after(takenEnd)
 					|| testStart.before(takenEnd) && testEnd.after(takenEnd)
-					|| testStart.before(takenStart) && testEnd.after(takenStart)
-					|| testStart.equals(takenStart) || testEnd.equals(takenEnd)) {
+					|| testStart.before(takenStart) && testEnd.after(takenStart) || testStart.equals(takenStart)
+					|| testEnd.equals(takenEnd)) {
 				log.info("Offering timerange [{}]-[{}] is occupied for tourguide [{}]", testStart, testEnd,
 						tg.getName());
 
@@ -205,10 +205,10 @@ public class DBManager {
 	 * 
 	 * @param tg
 	 *            The tour guide
-	 * @param proposedStart
+	 * @param testStart
 	 *            The start date interval to check if the tour guide is free
-	 * @param proposedEnd
-	 *            The end date
+	 * @param testEnd
+	 *            The end date of the interval to check
 	 * @param ignoredOffering
 	 *            The offering to ignore.
 	 * @return Whether the tour guide is available between the specified range. It
@@ -216,7 +216,7 @@ public class DBManager {
 	 *         there are any time collisions with the provided date range. We also
 	 *         ignore the timerange used by the offering "ignoredOffering"
 	 */
-	public boolean isTourGuideAvailableBetweenDateExcludeOffering(TourGuide tg, Date proposedStart, Date proposedEnd,
+	public boolean isTourGuideAvailableBetweenDateExcludeOffering(TourGuide tg, Date testStart, Date testEnd,
 			Offering ignoredOffering) {
 		Collection<Offering> relevantOfferings = findOfferingsByTourGuide(tg);
 		int size = relevantOfferings.size();
@@ -232,11 +232,12 @@ public class DBManager {
 			Date takenStart = existingOffering.getStartDate();
 			Date takenEnd = Utils.addDate(takenStart, existingOffering.getTour().getDays());
 
-			if (proposedStart.after(takenStart) && proposedEnd.before(takenEnd)
-					|| proposedStart.before(takenStart) && proposedEnd.after(takenEnd)
-					|| proposedStart.before(takenEnd) && proposedEnd.after(takenEnd) || proposedStart.equals(takenStart)
-					|| proposedEnd.equals(takenEnd)) {
-				log.info("Offering timerange [{}]-[{}] is occupied for tourguide [{}]", proposedStart, proposedEnd,
+			if (testStart.after(takenStart) && testEnd.before(takenEnd)
+					|| testStart.before(takenStart) && testEnd.after(takenEnd)
+					|| testStart.before(takenEnd) && testEnd.after(takenEnd)
+					|| testStart.before(takenStart) && testEnd.after(takenStart) || testStart.equals(takenStart)
+					|| testEnd.equals(takenEnd)) {
+				log.info("Offering timerange [{}]-[{}] is occupied for tourguide [{}]", testStart, testEnd,
 						tg.getName());
 				return false;
 			}
