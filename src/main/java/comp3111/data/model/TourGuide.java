@@ -3,6 +3,11 @@ package comp3111.data.model;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 
+/**
+ * Represents a tour guide in the database.
+ * @author Forsythe
+ *
+ */
 @Entity
 @Inheritance
 public class TourGuide extends Person {

@@ -33,6 +33,12 @@ import comp3111.data.repo.TourRepository;
 import comp3111.input.validators.DateAvailableInTourValidator;
 import comp3111.input.validators.ValidatorFactory;
 
+/**
+ * A mediator class responsible for handling common database actions.
+ * 
+ * @author Forsythe
+ *
+ */
 @Component
 public class DBManager {
 	private static final Logger log = LoggerFactory.getLogger(DBManager.class);
@@ -56,6 +62,30 @@ public class DBManager {
 	@Autowired
 	private LineMessenger lineMessenger;
 
+	/**
+	 * Creates and persists a new offering in the database.
+	 * 
+	 * @param tour
+	 *            The tour for which the offering belongs to
+	 * @param tg
+	 *            The tour guide leading this offering
+	 * @param startDate
+	 *            When the offering starts
+	 * @param hotelName
+	 *            The hotel name
+	 * @param minCustomers
+	 *            The minimum number of customers required for this offering to be
+	 *            considered as {@link Offering#STATUS_CONFIRMED}
+	 * @param maxCustomers
+	 *            The maximum number of spots available for this offering
+	 * @return The persisted offering object
+	 * @throws OfferingDateUnsupportedException
+	 *             If you try to create an offering on a date or day of week for
+	 *             which the Tour does not support
+	 * @throws TourGuideUnavailableException
+	 *             If you try to assign a tour guide who has a time conflict with
+	 *             this offering
+	 */
 	public Offering createOfferingForTour(Tour tour, TourGuide tg, Date startDate, String hotelName, int minCustomers,
 			int maxCustomers) throws OfferingDateUnsupportedException, TourGuideUnavailableException {
 
@@ -86,6 +116,17 @@ public class DBManager {
 		return o;
 	}
 
+	/**
+	 * @param o
+	 *            The updated transient Offering object
+	 * @return The persisted Offering object
+	 * @throws TourGuideUnavailableException
+	 *             If you try to assign a tour guide who has a time conflict with
+	 *             this offering
+	 * @throws OfferingDateUnsupportedException
+	 *             If you try to create an offering on a date or day of week for
+	 *             which the Tour does not support
+	 */
 	public Offering editOfferingTorTour(Offering o)
 			throws TourGuideUnavailableException, OfferingDateUnsupportedException {
 		Tour t = o.getTour();
@@ -106,6 +147,13 @@ public class DBManager {
 		return offeringRepo.save(o);
 	}
 
+	/**
+	 * @param tg
+	 *            The tour guide
+	 * @param proposedOffering
+	 *            An offering
+	 * @return Whether or not the tour guide is free to lead this offering.
+	 */
 	public boolean isTourGuideAvailableForOffering(TourGuide tg, Offering proposedOffering) {
 		Date proposedStart = proposedOffering.getStartDate();
 		Date proposedEnd = Utils.addDate(proposedOffering.getStartDate(), proposedOffering.getTour().getDays());
@@ -153,11 +201,10 @@ public class DBManager {
 	 *            The end date
 	 * @param ignoredOffering
 	 *            The offering to ignore.
-	 * @return True or false, if the tour guide is indeed available between the
-	 *         specified range. It scans all offerings associated with this tour
-	 *         guide, and checks if there are any time collisions with the provided
-	 *         date range. We also ignore the timerange used by the offering
-	 *         "ignoredOffering"
+	 * @return Whether the tour guide is available between the specified range. It
+	 *         scans all offerings associated with this tour guide, and checks if
+	 *         there are any time collisions with the provided date range. We also
+	 *         ignore the timerange used by the offering "ignoredOffering"
 	 */
 	public boolean isTourGuideAvailableBetweenDateExcludeOffering(TourGuide tg, Date proposedStart, Date proposedEnd,
 			Offering ignoredOffering) {
@@ -188,14 +235,56 @@ public class DBManager {
 		return true;
 	}
 
+	/**
+	 * Persists a transient offering object into the database
+	 * 
+	 * @param offering
+	 *            A transient offering object
+	 * @throws TourGuideUnavailableException
+	 *             If you try to assign a tour guide who has a time conflict with
+	 *             this offering
+	 * @throws OfferingDateUnsupportedException
+	 *             If you try to create an offering on a date or day of week for
+	 *             which the Tour does not support
+	 */
 	public void createOfferingForTour(Offering offering)
 			throws OfferingDateUnsupportedException, TourGuideUnavailableException {
 		createOfferingForTour(offering.getTour(), offering.getTourGuide(), offering.getStartDate(),
 				offering.getHotelName(), offering.getMinCustomers(), offering.getMaxCustomers());
 	}
 
+	/**
+	 * @param o
+	 *            An offering to make a booking in
+	 * @param c
+	 *            Customer who made the booking
+	 * @param numAdults
+	 *            Number of adults
+	 * @param numChildren
+	 *            Number of children
+	 * @param numToddlers
+	 *            Number of toddlers
+	 * @param amountPaid
+	 *            The dollar amount the customer has already paid
+	 * @param specialRequests
+	 *            Any special requests made by the customer
+	 * @param paymentStatus
+	 *            The payment status. Can be {@link Booking#PAYMENT_PENDING},
+	 *            {@link Booking#PAYMENT_CONFIRMED}, or
+	 *            {@link Booking#PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED}
+	 * @param discount
+	 *            A double between [0, 1.0] indicating the discount multiplier. 1.0
+	 *            for full price (no discount).
+	 * @param promoCodeUsed
+	 *            The promo code used
+	 * @return The persisted Booking object
+	 * @throws OfferingOutOfRoomException
+	 *             If, after adding the number of adults, children, and toddlers to
+	 *             the current number of people in this offering, the value exceeds
+	 *             {@link Offering#getMaxCustomers()}
+	 */
 	public Booking createBookingForOffering(Offering o, Customer c, int numAdults, int numChildren, int numToddlers,
-												 double amountPaid, String specialRequests, String paymentStatus, double discount, String promoCodeUsed)
+			double amountPaid, String specialRequests, String paymentStatus, double discount, String promoCodeUsed)
 			throws OfferingOutOfRoomException {
 		int totalWantToJoin = numAdults + numChildren + numToddlers;
 		int spotsTaken = 0;
@@ -220,21 +309,67 @@ public class DBManager {
 		return bookingRecord;
 	}
 
+	/**
+	 * @param o
+	 *            An offering to make a booking in
+	 * @param c
+	 *            Customer who made the booking
+	 * @param numAdults
+	 *            Number of adults
+	 * @param numChildren
+	 *            Number of children
+	 * @param numToddlers
+	 *            Number of toddlers
+	 * @param amountPaid
+	 *            The dollar amount the customer has already paid
+	 * @param specialRequests
+	 *            Any special requests made by the customer
+	 * @param paymentStatus
+	 *            The payment status. Can be {@link Booking#PAYMENT_PENDING},
+	 *            {@link Booking#PAYMENT_CONFIRMED}, or
+	 *            {@link Booking#PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED}
+	 * @param discount
+	 *            A double between [0, 1.0] indicating the discount multiplier. 1.0
+	 *            for full price (no discount).
+	 * @return The persisted Booking object
+	 * @throws OfferingOutOfRoomException
+	 *             If, after adding the number of adults, children, and toddlers to
+	 *             the current number of people in this offering, the value exceeds
+	 *             {@link Offering#getMaxCustomers()}
+	 */
 	public Booking createBookingForOffering(Offering o, Customer c, int numAdults, int numChildren, int numToddlers,
-											double amountPaid, String specialRequests, String paymentStatus, double discount)
+			double amountPaid, String specialRequests, String paymentStatus, double discount)
 			throws OfferingOutOfRoomException {
 		return createBookingForOffering(o, c, numAdults, numChildren, numToddlers, amountPaid, specialRequests,
-				paymentStatus, discount,null);
+				paymentStatus, discount, null);
 	}
 
+	/**
+	 * Persists a transient booking object
+	 * 
+	 * @param booking
+	 *            A transient Booking object
+	 * @throws OfferingOutOfRoomException
+	 *             If, after adding the number of adults, children, and toddlers to
+	 *             the current number of people in this offering, the value exceeds
+	 *             {@link Offering#getMaxCustomers()}
+	 */
 	public void createNormalBookingForOffering(Booking booking) throws OfferingOutOfRoomException {
 		createBookingForOffering(booking.getOffering(), booking.getCustomer(), booking.getNumAdults(),
 				booking.getNumChildren(), booking.getNumToddlers(), booking.getAmountPaid(),
 				booking.getSpecialRequests(), booking.getPaymentStatus(), 1, null);
 	}
 
-	private boolean validatePromoCode(String promoCode)
-			throws PromoCodeUsedUpException, NoSuchPromoCodeException {
+	/**
+	 * @param promoCode
+	 *            The promo code
+	 * @return Whether this promo code is valid
+	 * @throws PromoCodeUsedUpException
+	 *             If the promo code has been used up
+	 * @throws NoSuchPromoCodeException
+	 *             If the promo code doesn't exist
+	 */
+	private boolean validatePromoCode(String promoCode) throws PromoCodeUsedUpException, NoSuchPromoCodeException {
 		PromoEvent pe = promoEventRepo.findOneByPromoCode(promoCode);
 
 		if (pe == null)
@@ -244,23 +379,34 @@ public class DBManager {
 		return true;
 	}
 
+	/**
+	 * @param booking
+	 *            The booking to make an offering for
+	 * @param promocode
+	 *            The promo code
+	 * @throws OfferingOutOfRoomException
+	 * @throws PromoCodeUsedUpException
+	 * @throws NoSuchPromoCodeException
+	 * @throws PromoForCustomerExceededException
+	 * @throws PromoCodeNotForOfferingException
+	 */
 	public void createBookingForOfferingWithPromoCode(Booking booking, String promocode)
-			throws OfferingOutOfRoomException, PromoCodeUsedUpException, NoSuchPromoCodeException
-			, PromoForCustomerExceededException, PromoCodeNotForOfferingException {
+			throws OfferingOutOfRoomException, PromoCodeUsedUpException, NoSuchPromoCodeException,
+			PromoForCustomerExceededException, PromoCodeNotForOfferingException {
 		validatePromoCode(promocode);
 
 		PromoEvent pe = promoEventRepo.findOneByPromoCode(promocode);
-		if (!pe.getOffering().equals(booking.getOffering())){
+		if (!pe.getOffering().equals(booking.getOffering())) {
 			throw new PromoCodeNotForOfferingException();
 		}
 
 		int totalPromoUsed = booking.getTotalNumberOfPeople();
-		for (Booking b : bookingRepo.findByCustomer(booking.getCustomer())){
-			if (b.getPromoCodeUsed()!=null && b.getPromoCodeUsed().equals(promocode)){
+		for (Booking b : bookingRepo.findByCustomer(booking.getCustomer())) {
+			if (b.getPromoCodeUsed() != null && b.getPromoCodeUsed().equals(promocode)) {
 				totalPromoUsed += b.getTotalNumberOfPeople();
 			}
 		}
-		if (totalPromoUsed > pe.getMaxReservationsPerCustomer()){
+		if (totalPromoUsed > pe.getMaxReservationsPerCustomer()) {
 			throw new PromoForCustomerExceededException();
 		}
 
@@ -291,6 +437,11 @@ public class DBManager {
 		return guidedOfferingsByTourGuide;
 	}
 
+	/**
+	 * @param offering
+	 *            An offering
+	 * @return All bookings made for this offering
+	 */
 	public Collection<Booking> findBookingsForOffering(Offering offering) {
 		Collection<Booking> bookingsForOffering = new HashSet<Booking>();
 		for (Booking record : bookingRepo.findAll()) {
@@ -301,6 +452,9 @@ public class DBManager {
 		return bookingsForOffering;
 	}
 
+	/**
+	 * Clears out all the repositories (except the login user one)
+	 */
 	public void deleteAll() {
 		this.promoEventRepo.deleteAll();
 		this.bookingRepo.deleteAll();
@@ -315,6 +469,16 @@ public class DBManager {
 		// this.loginUserRepo.deleteAll();
 	}
 
+	/**
+	 * Create a new login user
+	 * 
+	 * @param username
+	 *            The username
+	 * @param rawPassword
+	 *            The raw password
+	 * @throws UsernameTakenException
+	 *             If the username is taken
+	 */
 	public void createNewLogin(String username, String rawPassword) throws UsernameTakenException {
 		if (loginUserRepo.findByUsername(username) != null) {
 			throw new UsernameTakenException();
@@ -323,6 +487,11 @@ public class DBManager {
 		log.info("successfully created a new user login, username [{}]", username);
 	}
 
+	/**
+	 * @param t
+	 *            A tour
+	 * @return How many offerings have been made for this tour
+	 */
 	public int countNumOfferingsForTour(Tour t) {
 		int count = 0;
 		for (Offering o : offeringRepo.findAll()) {
@@ -332,26 +501,12 @@ public class DBManager {
 		return count;
 	}
 
-	public Collection<TourGuide> findAvailableTourGuidesForOffering(Offering offering) {
-		Collection<TourGuide> ans = new HashSet<TourGuide>();
-		for (TourGuide tg : tourGuideRepo.findAll()) {
-			if (this.isTourGuideAvailableForOffering(tg, offering)) {
-				ans.add(tg);
-			}
-		}
-		return ans;
-	}
-
-	public Collection<TourGuide> findAvailableTourGuidesBetweenDates(Date start, Date end) {
-		Collection<TourGuide> ans = new HashSet<TourGuide>();
-		for (TourGuide tg : tourGuideRepo.findAll()) {
-			if (this.isTourGuideAvailableBetweenDate(tg, start, end)) {
-				ans.add(tg);
-			}
-		}
-		return ans;
-	}
-
+	/**
+	 * @param offering
+	 *            An offering
+	 * @return How many paid customers (adults, children, toddlers) are registered
+	 *         for this offering
+	 */
 	public int countNumberOfPaidPeopleInOffering(Offering offering) {
 		int num = 0;
 		for (Booking record : bookingRepo.findByOffering(offering)) {
@@ -363,15 +518,23 @@ public class DBManager {
 	}
 
 	/**
-	 * @param offering
-	 *            The offering in question
-	 * @param confirmed
-	 *            Whether or not the offering has been confirmed
+	 * Notifies all customers via LINE who have made bookings for the specified
+	 * offering about the status of said offering.
 	 * 
-	 *            This function should be called 3 days before the offering is about
-	 *            to start. It updates the status of the offering, potentially the
-	 *            booking payment records, and sends out line messages to the
-	 *            customers
+	 * It updates the offering object's status in the database (
+	 * {@link Offering#STATUS_CANCELLED} or {@link Offering#STATUS_CONFIRMED} ).
+	 * 
+	 * If confirmed, a success message is sent to all associated customers.
+	 * 
+	 * However, if the offering is cancelled, then all booking records associated
+	 * with this offering are set to
+	 * {@link Booking#PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED}
+	 * 
+	 * @param offering
+	 *            An offering
+	 * @param confirmed
+	 *            The new status of the offering
+	 * 
 	 */
 	public void notifyOfferingStatus(Offering offering, boolean confirmed) {
 		log.info("Setting [{}] to be [{}]", offering, confirmed ? "confirmed" : "cancelled");

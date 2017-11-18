@@ -12,7 +12,6 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Page;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
@@ -25,6 +24,7 @@ import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
@@ -35,7 +35,6 @@ import comp3111.data.DBManager;
 import comp3111.data.GridCol;
 import comp3111.data.model.Offering;
 import comp3111.data.model.PromoEvent;
-import comp3111.data.model.Tour;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
@@ -106,7 +105,7 @@ public class PromoEventEditor extends VerticalLayout {
 		eventGrid.removeColumn(GridCol.PROMOEVENT_TRIGGER_DATE); 
 		eventGrid.removeColumn(GridCol.PROMOEVENT_OFFERING);
 		
-		eventGrid.setColumnOrder(GridCol.PROMOEVENT_ID, GridCol.PROMOEVENT_OFFERING_ID, 
+		eventGrid.setColumnOrder(GridCol.PROMOEVENT_IS_TRIGGERED, GridCol.PROMOEVENT_ID, GridCol.PROMOEVENT_OFFERING_ID, 
 				GridCol.PROMOEVENT_CUSTOM_MESSAGE, GridCol.PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER,
 				GridCol.PROMOEVENT_PROMO_CODE, GridCol.PROMOEVENT_PROMO_CODE_USES_LEFT, 
 				GridCol.PROMOEVENT_DISCOUNT, GridCol.PROMOEVENT_TRIGGER_DATE_STRING);
@@ -164,12 +163,14 @@ public class PromoEventEditor extends VerticalLayout {
 		this.addComponent(eventGrid);
 
 		createEventButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(getSubwindow(new PromoEvent()));
+			getUI();
+			UI.getCurrent().addWindow(getSubwindow(new PromoEvent()));
 		});
 
 		editEventButton.addClickListener(event -> {
 			if (canEditEvent(selectedEvent)) {
-				getUI().getCurrent().addWindow(getSubwindow(selectedEvent));
+				getUI();
+				UI.getCurrent().addWindow(getSubwindow(selectedEvent));
 			}
 		});
 	}
@@ -186,7 +187,7 @@ public class PromoEventEditor extends VerticalLayout {
 		if (today.after(triggerDate)) {
 			NotificationFactory
 					.getTopBarWarningNotification(
-							"It's too late to edit this event, it the promotional event triggered on" + triggerDate, 5)
+							"It's too late to edit this promotion, it triggered on: " + triggerDate, 5)
 					.show(Page.getCurrent());
 			return false;
 		}
@@ -277,7 +278,7 @@ public class PromoEventEditor extends VerticalLayout {
 
 		binder.forField(maxReservationsPerCustomer).asRequired(Utils.generateRequiredError())
 				.withConverter(ConverterFactory.getStringToIntegerConverter())
-				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(1))
 				.bind(PromoEvent::getMaxReservationsPerCustomer, PromoEvent::setMaxReservationsPerCustomer);
 
 		//For old promo event, the code cannot be changed to make our life easier
@@ -287,7 +288,7 @@ public class PromoEventEditor extends VerticalLayout {
 
 		binder.forField(promoCodeUses).asRequired(Utils.generateRequiredError())
 				.withConverter(ConverterFactory.getStringToIntegerConverter())
-				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))
+				.withValidator(ValidatorFactory.getIntegerRangeValidator(1))
 				.bind(PromoEvent::getPromoCodeUsesLeft, PromoEvent::setPromoCodeUsesLeft);
 
 		binder.forField(customMessage).asRequired(Utils.generateRequiredError())

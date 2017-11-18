@@ -12,7 +12,6 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Page;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.annotation.UIScope;
@@ -23,6 +22,7 @@ import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
@@ -31,7 +31,6 @@ import com.vaadin.ui.components.grid.HeaderRow;
 import comp3111.Utils;
 import comp3111.data.GridCol;
 import comp3111.data.model.Customer;
-import comp3111.data.model.Tour;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.input.converters.ConverterFactory;
 import comp3111.input.field.HKIDEntryField;
@@ -153,10 +152,12 @@ public class CustomerEditor extends VerticalLayout {
 		this.addComponent(customersGrid);
 
 		createNewCustomerButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(getSubwindow(customerRepo, customerCollectionCached, new Customer()));
+			getUI();
+			UI.getCurrent().addWindow(getSubwindow(customerRepo, customerCollectionCached, new Customer()));
 		});
 		editCustomerButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(getSubwindow(customerRepo, customerCollectionCached, selectedCustomer));
+			getUI();
+			UI.getCurrent().addWindow(getSubwindow(customerRepo, customerCollectionCached, selectedCustomer));
 		});
 	}
 

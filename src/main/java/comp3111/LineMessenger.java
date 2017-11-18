@@ -22,7 +22,6 @@ import comp3111.data.model.Tour;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
-import comp3111.data.repo.TourRepository;
 import comp3111.view.CustomerEngagementView;
 
 @Component

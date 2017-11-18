@@ -2,15 +2,11 @@ package comp3111.input.editors;
 
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
-import com.vaadin.data.BindingValidationStatus;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Page;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.components.grid.HeaderCell;
@@ -23,7 +19,6 @@ import comp3111.data.repo.TourGuideRepository;
 import comp3111.input.validators.ValidatorFactory;
 import comp3111.view.GuidedByManagmentView;
 import comp3111.view.NotificationFactory;
-import comp3111.view.OfferingManagementView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,12 +138,14 @@ public class TourGuidesEditor extends VerticalLayout {
 		this.addComponent(tourGuideGrid);
 
 		createTourGuideButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, new TourGuide()));
+			getUI();
+			UI.getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, new TourGuide()));
 
 		});
 
 		editTourGuideButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, selectedTourGuide));
+			getUI();
+			UI.getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, selectedTourGuide));
 
 		});
 

@@ -1,19 +1,24 @@
 package comp3111.data;
 
 /**
- * Each constant represents the column ID of a grid in vaadin. They MUST match
- * the getter/setter name.
- * 
- * e.g. Tour's getChildDiscount() ---> TOUR_CHILD_DISCOUNT = "childDiscount"
- * 
- * NB: for booleans, the convention for variable "situation" is different.
- * getters look like "isSituation" and setters like "setSituation". Therefore
- * for the grid id, it should just be "situation"
+ * Represents the grid column IDs in our Vaadin grids
  * 
  * @author Forsythe
  *
  */
 public class GridCol {
+	/*
+	 * Each constant represents the column ID of a grid in vaadin. They MUST match
+	 * the getter/setter name.
+	 * 
+	 * e.g. Tour's getChildDiscount() becomes TOUR_CHILD_DISCOUNT = "childDiscount"
+	 * 
+	 * 
+	 * NB: for booleans, the convention for variable "situation" is different.
+	 * getters look like "isSituation" and setters like "setSituation". Therefore
+	 * for the grid ID, it should just be "situation"
+	 */
+
 	// Tour
 	/* shown in grid */
 	public static final String TOUR_ID = "id";
@@ -82,7 +87,6 @@ public class GridCol {
 	public static final String BOOKING_TOTAL_NUMBER_OF_PEOPLE = "totalNumberOfPeople";
 	public static final String BOOKING_PROMO_CODE_USED = "promoCodeUsed";
 
-	
 	// TourGuide
 	/* shown in grid */
 	public static final String TOURGUIDE_ID = "id";
@@ -95,11 +99,11 @@ public class GridCol {
 	public static final String NONFAQQUERY_ANSWER = "answer";
 	public static final String NONFAQQUERY_CUSTOMER = "customer";
 	public static final String NONFAQQUERY_ID = "id";
-	/*hidden in grid*/
+	/* hidden in grid */
 	public static final String NONFAQQUERY_CUSTOMER_NAME = "customerName";
-	
-	//PromotionEvent
-	/*show in grid*/
+
+	// PromotionEvent
+	/* show in grid */
 	public static final String PROMOEVENT_ID = "id";
 	public static final String PROMOEVENT_PROMO_CODE = "promoCode";
 	public static final String PROMOEVENT_PROMO_CODE_USES_LEFT = "promoCodeUsesLeft";
@@ -108,7 +112,8 @@ public class GridCol {
 	public static final String PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER = "maxReservationsPerCustomer";
 	public static final String PROMOEVENT_OFFERING_ID = "offeringId";
 	public static final String PROMOEVENT_TRIGGER_DATE_STRING = "triggerDateString";
-	/* hidden in grid*/
+	public static final String PROMOEVENT_IS_TRIGGERED = "triggered";
+	/* hidden in grid */
 	public static final String PROMOEVENT_TRIGGER_DATE = "triggerDate";
 	public static final String PROMOEVENT_OFFERING = "offering";
 }
