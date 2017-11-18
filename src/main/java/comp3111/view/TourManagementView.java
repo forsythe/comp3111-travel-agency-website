@@ -13,6 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * Generates the UI elements for the front-end side of the Tour Management page. 
+ * 
+ * @author kristiansuhartono
+ *
+ */
 @SpringView(name = TourManagementView.VIEW_NAME)
 public class TourManagementView extends VerticalLayout implements View {
 	public static final String VIEW_NAME = "tourManagement";
@@ -35,6 +41,11 @@ public class TourManagementView extends VerticalLayout implements View {
 		this.addComponent(layout);
 	}
 
+	/** 
+	 * Function is called when the view is loaded up in the browser, refreshes the data so that the tables
+	 * are updated to the newest data contents.
+	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
+	 */
 	@Override
 	// called AFTER init()
 	public void enter(ViewChangeEvent event) {
