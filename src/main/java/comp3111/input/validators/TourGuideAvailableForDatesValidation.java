@@ -14,8 +14,7 @@ import java.util.Date;
 import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
 
 /**
- * A validator which checks whether a tour guide is available between a certain
- * date range.
+ * Validates whether a tour guide is available between a certain date range.
  * 
  * 
  * 
@@ -51,14 +50,17 @@ public class TourGuideAvailableForDatesValidation implements Validator<TourGuide
 		this.ignoredOffering = ignoredOffering;
 	}
 
-	
-	/** 
-	 * Overrides the apply method in vaadin validators, checks whether said tourguide is available on the 
-	 * dates that the validator was constructed with.
+	/**
+	 * Overrides the apply method in vaadin validators, checks whether said
+	 * tourguide is available on the dates that the validator was constructed with.
 	 * 
-	 * @param value The TourGuide object whose availability shall be checked
-	 * @param context A value context for converters. Contains relevant information for converting values. 
-	 * @see com.vaadin.data.Validator#apply(java.lang.Object, com.vaadin.data.ValueContext)
+	 * @param value
+	 *            The TourGuide object whose availability shall be checked
+	 * @param context
+	 *            A value context for converters. Contains relevant information for
+	 *            converting values.
+	 * @see com.vaadin.data.Validator#apply(java.lang.Object,
+	 *      com.vaadin.data.ValueContext)
 	 */
 	@Override
 	public ValidationResult apply(TourGuide value, ValueContext context) {

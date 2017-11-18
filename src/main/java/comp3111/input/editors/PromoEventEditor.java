@@ -43,6 +43,11 @@ import comp3111.input.converters.ConverterFactory;
 import comp3111.input.validators.ValidatorFactory;
 import comp3111.view.NotificationFactory;
 
+/**
+ * Represents the promo event editor in PromoEventManagementView
+ * @author Forsythe
+ *
+ */
 @SuppressWarnings("serial")
 @SpringComponent
 @UIScope
@@ -66,6 +71,9 @@ public class PromoEventEditor extends VerticalLayout {
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 
+	/**
+	 * @param per Autowired, constructor injection
+	 */
 	@Autowired
 	public PromoEventEditor(PromoEventRepository per) {
 		this.promoEventRepo = per;
@@ -332,6 +340,9 @@ public class PromoEventEditor extends VerticalLayout {
 		return subwindow;
 	}
 
+	/**
+	 * Refreshes the data in the vaadin grid
+	 */
 	public void refreshData() {
 
 		ListDataProvider<PromoEvent> provider = new ListDataProvider<>(

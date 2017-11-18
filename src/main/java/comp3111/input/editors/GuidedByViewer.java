@@ -22,6 +22,12 @@ import comp3111.data.model.TourGuide;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.view.TourGuideManagementView;
 
+/**
+ * Represents the view which shows all the offerings assigned to a tour guide
+ * 
+ * @author Forsythe
+ *
+ */
 @SpringComponent
 @UIScope
 public class GuidedByViewer extends VerticalLayout {
@@ -37,6 +43,10 @@ public class GuidedByViewer extends VerticalLayout {
 
 	private final Grid<Offering> offeringGrid = new Grid<Offering>(Offering.class);
 
+	/**
+	 * @param or
+	 *            Autowired, construct injection
+	 */
 	@Autowired
 	public GuidedByViewer(OfferingRepository or) {
 		offeringRepo = or;
@@ -68,6 +78,7 @@ public class GuidedByViewer extends VerticalLayout {
 
 		offeringGrid.setColumnOrder(GridCol.OFFERING_ID, GridCol.OFFERING_START_DATE, GridCol.OFFERING_TOUR_NAME,
 				GridCol.OFFERING_HOTEL_NAME);
+		offeringGrid.getColumn(GridCol.OFFERING_START_DATE).setCaption("Start Date");
 
 		for (Column<Offering, ?> col : offeringGrid.getColumns()) {
 			col.setMinimumWidth(120);
@@ -84,10 +95,6 @@ public class GuidedByViewer extends VerticalLayout {
 
 	}
 
-	public interface ChangeHandler {
-		void onChange();
-	}
-
 	public void refreshData() {
 
 		ListDataProvider<Offering> provider = new ListDataProvider<>(
@@ -95,15 +102,27 @@ public class GuidedByViewer extends VerticalLayout {
 		offeringGrid.setDataProvider(provider);
 	}
 
-	// Helpers for accessing stuff from tourGuidesEditor
+	/**
+	 * Sets the selected tour guide (to show all their offerings)
+	 * 
+	 * @param selectedTourGuide
+	 *            The selected tour guide
+	 */
 	void setSelectedTourGuide(TourGuide selectedTourGuide) {
 		this.selectedTourGuide = selectedTourGuide;
 	}
 
+	/**
+	 * @return The selected tour guide
+	 */
 	public TourGuide getSelectedTourGuide() {
 		return this.selectedTourGuide;
 	}
 
+	/**
+	 * @param te
+	 *            Sets the tour guide editor (the parent view)
+	 */
 	void setTourGuidesEditor(TourGuidesEditor te) {
 		this.tourGuidesEditor = te;
 	}

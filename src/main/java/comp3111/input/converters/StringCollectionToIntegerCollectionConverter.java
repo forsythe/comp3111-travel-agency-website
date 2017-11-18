@@ -8,8 +8,15 @@ import comp3111.Utils;
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * Converts between a collection of strings representing days of the week and
+ * a collection of integers
+ * 
+ * @author Forsythe
+ *
+ */
 public class StringCollectionToIntegerCollectionConverter implements Converter<Set<String>, Collection<Integer>> {
-	
+
 	@Override
 	public Result<Collection<Integer>> convertToModel(Set<String> value, ValueContext context) {
 		try {
@@ -24,13 +31,12 @@ public class StringCollectionToIntegerCollectionConverter implements Converter<S
 		return Utils.integerSetToStringDayNameSet(value);
 	}
 
-//	public Class<Collection> getModelType() {
-//	    return Collection.class;
-//	  }
-//
-//	  public Class<Set> getPresentationType() {
-//	    return Set.class;
-//	  }
+	public Class<Collection> getModelType() {
+		return Collection.class;
+	}
 
+	public Class<Set> getPresentationType() {
+		return Set.class;
+	}
 
 }
