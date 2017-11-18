@@ -77,7 +77,6 @@ public class TourEditor extends VerticalLayout {
 	private TextArea descrip;
 	private RadioButtonGroup<String> isChildFriendly;
 	private BinderValidationStatus<Tour> validationStatus;
-	private Binder<Tour> binder;
 
 	/* Action buttons */
 	private HorizontalLayout rowOfButtons = new HorizontalLayout();
@@ -370,7 +369,7 @@ public class TourEditor extends VerticalLayout {
 		});
 
 		// Binding method according to docs
-		binder = new Binder<>(Tour.class);
+		Binder<Tour> binder = new Binder<>(Tour.class);
 
 		binder.forField(tourName).withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.asRequired(Utils.generateRequiredError()).bind(Tour::getTourName, Tour::setTourName);
