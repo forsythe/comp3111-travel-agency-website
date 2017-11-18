@@ -29,6 +29,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
@@ -226,7 +227,8 @@ public class TourEditor extends VerticalLayout {
 		createTourButton.addClickListener(new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
-				getUI().getCurrent().addWindow(getSubwindow(tourRepo, tourCollectionCached, new Tour()));
+				getUI();
+				UI.getCurrent().addWindow(getSubwindow(tourRepo, tourCollectionCached, new Tour()));
 			}
 
 		});
@@ -234,7 +236,8 @@ public class TourEditor extends VerticalLayout {
 		editTourButton.addClickListener(new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
-				getUI().getCurrent().addWindow(getSubwindow(tourRepo, tourCollectionCached, selectedTour));
+				getUI();
+				UI.getCurrent().addWindow(getSubwindow(tourRepo, tourCollectionCached, selectedTour));
 			}
 
 		});

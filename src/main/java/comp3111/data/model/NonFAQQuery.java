@@ -5,11 +5,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 /**
- * An entity representing a non-FAQ query sent by a LINE customer
+ * Represents a non-FAQ query sent by a LINE customer. These questions are
+ * forwarded to the web interface for an employee to answer manually.
  * 
  * @author Forsythe
  *
@@ -33,6 +33,12 @@ public class NonFAQQuery {
 		answer = "";
 	}
 
+	/**
+	 * @param query
+	 *            The custom query that wasn't in the FAQ database.
+	 * @param customer
+	 *            The customer who asked the question.
+	 */
 	public NonFAQQuery(String query, Customer customer) {
 		this.query = query;
 		this.answer = "";
@@ -66,7 +72,7 @@ public class NonFAQQuery {
 	public Customer getCustomer() {
 		return customer;
 	}
-	
+
 	public String getCustomerName() {
 		return customer.getName();
 	}

@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -42,15 +41,15 @@ public class LoginTests extends TestBenchTestCase {
 		getDriver().get(TestConstants.HOME_URL);
 
 		WebDriverWait wait1 = new WebDriverWait(getDriver(), 10);
-		wait1.until(ExpectedConditions.presenceOfElementLocated(By.id("tf_username")));
+		wait1.until(ExpectedConditions.presenceOfElementLocated(org.openqa.selenium.By.id("tf_username")));
 
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_username").setValue("admin");
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_password").setValue("Q1w2e3r4");
 		$(ButtonElement.class).id("btn_submit").click();
 
 		WebDriverWait wait2 = new WebDriverWait(getDriver(), 10);
-		wait2.until(ExpectedConditions.presenceOfElementLocated(By.id("lbl_title")));
-		assertNotNull(findElement(By.id("lbl_title")));
+		wait2.until(ExpectedConditions.presenceOfElementLocated(org.openqa.selenium.By.id("lbl_title")));
+		assertNotNull(findElement(org.openqa.selenium.By.id("lbl_title")));
 
 	}
 
@@ -59,7 +58,7 @@ public class LoginTests extends TestBenchTestCase {
 		getDriver().get(TestConstants.HOME_URL);
 
 		WebDriverWait wait1 = new WebDriverWait(getDriver(), 10);
-		wait1.until(ExpectedConditions.presenceOfElementLocated(By.id("tf_username")));
+		wait1.until(ExpectedConditions.presenceOfElementLocated(org.openqa.selenium.By.id("tf_username")));
 
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_username").setValue("asdf");
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_password").setValue("Q1w2e3r4");

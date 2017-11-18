@@ -9,8 +9,8 @@ import java.util.Date;
 /**
  * Represents an offering entity in the database. One tour may have multiple
  * offerings. Offerings can be limited or repeating, depending on their
- * constraints {@link Tour#getAllowedDaysOfWeek()} and
- * {@link Tour#getAllowedDates()})
+ * constraints: {@link Tour#getAllowedDaysOfWeek()} and
+ * {@link Tour#getAllowedDates()}.
  * 
  * @author Forsythe
  *
@@ -40,6 +40,30 @@ public class Offering {
 	public Offering() {
 	}
 
+	/**
+	 * Construct a transient offering object.
+	 * 
+	 * @param tour
+	 *            The parent tour
+	 * @param tourGuide
+	 *            The tour guide who will lead this tour
+	 * @param startDate
+	 *            The start date of the offering
+	 * @param hotelName
+	 *            The hotel name
+	 * @param minCustomers
+	 *            The minimum number of customers required for this offering to be
+	 *            considered as {@link Offering#STATUS_CONFIRMED}
+	 * @param maxCustomers
+	 *            The maximum number of spots available for this offering
+	 * @param status
+	 *            The status of this offering. Can be
+	 *            {@link Offering#STATUS_CONFIRMED} (reached
+	 *            {@link Offering#minCustomers} at t=-3 days before start),
+	 *            {@link Offering#STATUS_CANCELLED} (underfull at t=-3 days before
+	 *            start, or manually cancelled), or {@link Offering#STATUS_PENDING}
+	 *            (by default)
+	 */
 	public Offering(Tour tour, TourGuide tourGuide, Date startDate, String hotelName, int minCustomers,
 			int maxCustomers, String status) {
 		this.tour = tour;
@@ -108,20 +132,31 @@ public class Offering {
 	}
 
 	/**
-	 * @return the status of the offering, i.e. {@link Offering#STATUS_CANCELLED},
-	 *         {@link Offering#STATUS_PENDING}, or {@link Offering#STATUS_CONFIRMED}
+	 * @return the status of the offering.
+	 * @see Offering#STATUS_PENDING
+	 * @see Offering#STATUS_CANCELLED
+	 * @see Offering#STATUS_CONFIRMED
 	 */
 	public String getStatus() {
 		return status;
 	}
 
+	/**
+	 * @param status
+	 *            the status of the offering
+	 * 
+	 * @see Offering#STATUS_PENDING
+	 * @see Offering#STATUS_CANCELLED
+	 * @see Offering#STATUS_CONFIRMED
+	 */
 	public void setStatus(String status) {
 		this.status = status;
 	}
 
 	/**
-	 * @return the last date on which the offering may be edited. When the offering
-	 *         is about to happen within 3 days, the offering is no longer editable.
+	 * @return the last date on which the offering may be edited. When we reach t=-3
+	 *         days before offering start, the offering may no longer be edited
+	 *         (since it will have been confirmed or cancelled).
 	 */
 	public Date getLastEditableDate() {
 		Calendar cal = Calendar.getInstance();
@@ -132,7 +167,8 @@ public class Offering {
 
 	@Override
 	public String toString() {
-		return String.format("Offering[id=%d, %s, tour=%s]", id, Utils.simpleDateFormat(startDate), this.tour.getTourName());
+		return String.format("Offering[id=%d, %s, tour=%s]", id, Utils.simpleDateFormat(startDate),
+				this.tour.getTourName());
 	}
 
 	@Override
@@ -147,6 +183,9 @@ public class Offering {
 		return this.tourGuide.getName();
 	}
 
+	/**
+	 * @return The human readable LINE username of the tour guide
+	 */
 	public String getTourGuideLineId() {
 		return this.tourGuide.getLineUsername();
 	}
@@ -155,6 +194,9 @@ public class Offering {
 		return this.tour.getTourName();
 	}
 
+	/**
+	 * @return A nicely formatted string of the start date of the offering
+	 */
 	public String getStartDateString() {
 		return Utils.simpleDateFormat(this.getStartDate());
 	}

@@ -6,10 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.transaction.Transactional;
 
 /**
- * Represents a user which can log in to the system
+ * Represents a user which can log in to the system.
  * 
  * @author Forsythe
  *
@@ -48,6 +47,11 @@ public class LoginUser {
 		this.username = username;
 	}
 
+	/**
+	 * @return The salted and bcrypt hashed output. Do not directly compare it with
+	 *         the output of a hash to verify a login. Instead, use
+	 *         {@link comp3111.input.auth.Authentication#authenticate(String, String)}.
+	 */
 	public String getHashedSaltedPassword() {
 		return hashedSaltedPassword;
 	}
@@ -55,7 +59,8 @@ public class LoginUser {
 	/**
 	 * @param rawPassword
 	 *            a raw password string. Will be hashed and salted using bcrypt,
-	 *            before storing into db. By default, uses 10 rounds of hashing.
+	 *            before storing into the database. By default, uses 10 rounds of
+	 *            hashing.
 	 */
 	public void setHashedSaltedPassword(String rawPassword) {
 		BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();

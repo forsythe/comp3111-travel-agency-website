@@ -53,25 +53,25 @@ public class CustomerEditorTests extends TestBenchTestCase {
 		getDriver().get(TestConstants.HOME_URL);
 
 		WebDriverWait wait1 = new WebDriverWait(getDriver(), 10);
-		wait1.until(ExpectedConditions.presenceOfElementLocated(By.id("tf_username")));
+		wait1.until(ExpectedConditions.presenceOfElementLocated(org.openqa.selenium.By.id("tf_username")));
 
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_username").setValue("admin");
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_password").setValue("Q1w2e3r4");
 		$(ButtonElement.class).id("btn_submit").click();
 
 		WebDriverWait wait2 = new WebDriverWait(getDriver(), 10);
-		wait2.until(ExpectedConditions.presenceOfElementLocated(By.id("lbl_title")));
+		wait2.until(ExpectedConditions.presenceOfElementLocated(org.openqa.selenium.By.id("lbl_title")));
 
 		WebDriverWait wait3 = new WebDriverWait(getDriver(), 10);
-		wait3.until(ExpectedConditions.presenceOfElementLocated(By.id("Customers")));
+		wait3.until(ExpectedConditions.presenceOfElementLocated(org.openqa.selenium.By.id("Customers")));
 		$(VerticalLayoutElement.class).$(ButtonElement.class).id("Customers").click();
 
 		WebDriverWait wait4 = new WebDriverWait(getDriver(), 10);
-		wait4.until(ExpectedConditions.presenceOfElementLocated(By.id("btn_create_customer")));
+		wait4.until(ExpectedConditions.presenceOfElementLocated(org.openqa.selenium.By.id("btn_create_customer")));
 		$(ButtonElement.class).id("btn_create_customer").click();
 
 		WebDriverWait wait5 = new WebDriverWait(getDriver(), 10);
-		wait5.until(ExpectedConditions.presenceOfElementLocated(By.id("tf_customer_name")));
+		wait5.until(ExpectedConditions.presenceOfElementLocated(org.openqa.selenium.By.id("tf_customer_name")));
 
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_name").setValue(TEST_CUSTOMER_NAME);
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_line_id").setValue("123452334");
