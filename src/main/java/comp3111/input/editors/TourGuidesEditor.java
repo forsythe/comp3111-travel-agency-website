@@ -27,6 +27,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
+/**
+ * Represents the tour guide editor in the TourGuideManagementView
+ * 
+ * @author Forsythe
+ * 
+ */
 @SuppressWarnings("serial")
 @SpringComponent
 @UIScope
@@ -55,7 +61,10 @@ public class TourGuidesEditor extends VerticalLayout {
 
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
-
+	/**
+	 * @param tgr
+	 *            Autowired, constructor injection
+	 */
 	@Autowired
 	public TourGuidesEditor(TourGuideRepository tgr) {
 		this.tourGuideRepo = tgr;
@@ -110,7 +119,8 @@ public class TourGuidesEditor extends VerticalLayout {
 				String colId = col.getId();
 
 				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
-				ListDataProvider<TourGuide> dataProvider = (ListDataProvider<TourGuide>) tourGuideGrid.getDataProvider();
+				ListDataProvider<TourGuide> dataProvider = (ListDataProvider<TourGuide>) tourGuideGrid
+						.getDataProvider();
 
 				if (!filterField.isEmpty()) {
 					try {
@@ -228,10 +238,9 @@ public class TourGuidesEditor extends VerticalLayout {
 		return subwindow;
 	}
 
-	public interface ChangeHandler {
-		void onChange();
-	}
-
+	/**
+	 * Refreshes the data in the vaadin grid
+	 */
 	public void refreshData() {
 		Iterable<TourGuide> tourGuides = tourGuideRepo.findAll();
 		tourGuideCollectionCached.clear();

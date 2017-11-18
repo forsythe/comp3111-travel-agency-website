@@ -43,7 +43,7 @@ public class GuidedByView extends VerticalLayout implements View {
 		// everytime we enter this page, we want to update the data in the grid
 		this.guidedByViewer.refreshData();
 		this.titleLabel.setCaption(
-				"<h1>All offerings led by: <b>" + guidedByViewer.getSelectedTourGuide().getName()+ "</b></h1>");
+				"<h1>All offerings led by: <b>" + guidedByViewer.getSelectedTourGuide().getName() + "</b></h1>");
 		this.titleLabel.setCaptionAsHtml(true);
 	}
 

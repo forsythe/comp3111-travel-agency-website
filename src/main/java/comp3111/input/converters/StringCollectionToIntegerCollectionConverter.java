@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * A converter between a collection of strings representing days of the week and
+ * Converts between a collection of strings representing days of the week and
  * a collection of integers
  * 
  * @author Forsythe

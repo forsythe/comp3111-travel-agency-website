@@ -39,7 +39,7 @@ import comp3111.input.validators.ValidatorFactory;
 import comp3111.view.NotificationFactory;
 
 /**
- * Represents the customer editor in the customer management view
+ * Represents the customer editor in the CustomerManagementView
  * 
  * @author Forsythe
  *

@@ -1,7 +1,7 @@
 package comp3111.data;
 
 /**
- * Represents the grid column IDs in our Vaadin grids
+ * Holds the grid column IDs of our Vaadin grids
  * 
  * @author Forsythe
  *

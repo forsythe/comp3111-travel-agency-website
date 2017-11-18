@@ -16,6 +16,13 @@ import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.PromoEventRepository;
 
+/**
+ * A class which handles running schedule functions, i.e. sending out Offering
+ * status updates and Promo event broadcasts
+ * 
+ * @author Forsythe
+ *
+ */
 @Component
 public class ScheduledTasks {
 
@@ -36,6 +43,11 @@ public class ScheduledTasks {
 	public static final String EVERYDAY_8_AM = "0 0 8 * * *";
 	public static final String EVERY_10_SECONDS = "*/10 * * * * *";
 
+	/**
+	 * Checks if there are any pending offerings which have reached t=-3 days before
+	 * start. If checks if the offerings have reached the minimum required capacity
+	 * to start or not. Will also send out messages to all associated customers
+	 */
 	@Scheduled(cron = EVERYDAY_8_AM)
 	public void updatePendingOfferingStatusIfNecessary() {
 		LineMessenger.resetCounter();
@@ -68,6 +80,11 @@ public class ScheduledTasks {
 		log.info("[{}] people were notified", LineMessenger.getCounter());
 	}
 
+	/**
+	 * Checks if there are any promotional events which need to be triggered (i.e.
+	 * we have reached their triggerDate). If so, broadcasts the custom message to
+	 * everyone, and sets the PromoEvent's isTriggered to be true.
+	 */
 	@Scheduled(cron = EVERY_10_SECONDS)
 	public void updatePendingPromotionalBroadcasts() {
 		LineMessenger.resetCounter();

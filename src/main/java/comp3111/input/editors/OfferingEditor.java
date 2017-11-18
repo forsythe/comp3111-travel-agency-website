@@ -47,6 +47,11 @@ import comp3111.input.validators.ValidatorFactory;
 import comp3111.view.NotificationFactory;
 import comp3111.view.TourManagementView;
 
+/**
+ * Represents the offering editor in the OfferingManagementView
+ * @author Forsythe
+ *
+ */
 @SpringComponent
 @UIScope
 public class OfferingEditor extends VerticalLayout {
@@ -76,6 +81,10 @@ public class OfferingEditor extends VerticalLayout {
 
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
+	/**
+	 * @param or
+	 *            Autowired, constructor injection
+	 */
 	@Autowired
 	public OfferingEditor(OfferingRepository or) {
 
@@ -237,7 +246,7 @@ public class OfferingEditor extends VerticalLayout {
 
 	}
 
-	Window getSubWindow(Tour hostTour, final Offering offeringToSave, TourEditor tourEditor) {
+	private Window getSubWindow(Tour hostTour, final Offering offeringToSave, TourEditor tourEditor) {
 		boolean isCreatingNewOffering = offeringToSave.getId() == null;
 
 		// Creating the confirm button
@@ -387,10 +396,9 @@ public class OfferingEditor extends VerticalLayout {
 		return subWindow;
 	}
 
-	public interface ChangeHandler {
-		void onChange();
-	}
-
+	/**
+	 * Refreshes the data in the vaadin grid
+	 */
 	public void refreshData() {
 
 		ListDataProvider<Offering> provider = new ListDataProvider<>(
@@ -399,14 +407,25 @@ public class OfferingEditor extends VerticalLayout {
 	}
 
 	// Helpers for accessing stuff from tourEditor
+	/**
+	 * @param selectedTour
+	 *            Set the selected tour
+	 */
 	public void setSelectedTour(Tour selectedTour) {
 		this.selectedTour = selectedTour;
 	}
 
+	/**
+	 * @return get the selected tour object
+	 */
 	public Tour getSelectedTour() {
 		return this.selectedTour;
 	}
 
+	/**
+	 * @param te
+	 *            Set the parent TourEditor object
+	 */
 	public void setTourEditor(TourEditor te) {
 		this.tourEditor = te;
 	}

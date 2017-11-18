@@ -5,7 +5,9 @@ import com.vaadin.data.converter.StringToDoubleConverter;
 import com.vaadin.data.converter.StringToIntegerConverter;
 
 /**
- * @author Forsythe A factory which generates converters
+ * A factory which generates converters
+ * 
+ * @author Forsythe
  */
 public class ConverterFactory {
 	/**

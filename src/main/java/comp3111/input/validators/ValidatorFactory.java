@@ -63,12 +63,15 @@ public class ValidatorFactory {
 	public static DateNotEarlierThanValidator getDateNotEarlierThanValidator(Date notEarlierThanThis) {
 		return new DateNotEarlierThanValidator(notEarlierThanThis);
 	}
-	
+
 	/**
-	 * @param offering need to pass in the offering combobox because the value could change
-	 * @return 
+	 * @param offering
+	 *            need to pass in the offering combobox because the value could
+	 *            change
+	 * @return a DateIsEarlierThanOfferingLastEditableDateValidator object
 	 */
-	public static DateIsEarlierThanOfferingLastEditableDateValidator getDateIsEarlierThanOfferingLastEditableDateValidator(ComboBox<Offering> offering) {
+	public static DateIsEarlierThanOfferingLastEditableDateValidator getDateIsEarlierThanOfferingLastEditableDateValidator(
+			ComboBox<Offering> offering) {
 		return new DateIsEarlierThanOfferingLastEditableDateValidator(offering);
 	}
 
@@ -86,6 +89,7 @@ public class ValidatorFactory {
 	 * @param duration
 	 *            the length of the interval to check (in days)
 	 * @param dbManager
+	 *            A DBManager object
 	 * @param ignoredOffering
 	 *            the offering to ignore (can be null)
 	 * @return whether or not the tour guide is available from time startDateField
@@ -103,6 +107,7 @@ public class ValidatorFactory {
 	 * @param validationStatus
 	 *            the validationStatus object after we fill in a vaadin form that's
 	 *            binded to a bean
+	 * 
 	 * @return a string that we can display as an error notification
 	 */
 	public static <T> String getValidatorErrorsString(BinderValidationStatus<T> validationStatus) {

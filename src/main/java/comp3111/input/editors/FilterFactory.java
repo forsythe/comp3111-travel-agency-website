@@ -180,8 +180,7 @@ public class FilterFactory {
 
 		if (colId.equals(GridCol.BOOKING_PROMO_DISCOUNT_MULTIPLIER_MASKED)) {
 			if (Utils.containsIgnoreCase("none", searchVal)) {
-				return new ProviderAndPredicate<>(Booking::getPromoDiscountMultiplier,
-						t -> Utils.compareDoubleAsIs(t, 1.0));
+				return new ProviderAndPredicate<>(Booking::getPromoDiscountMultiplier, t -> t == 1);
 			} else {
 				return new ProviderAndPredicate<>(Booking::getPromoDiscountMultiplier,
 						t -> Utils.safeParseDoubleEquals(t, searchVal));

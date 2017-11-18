@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import javax.annotation.PostConstruct;
 
 /**
- * A class responsible for authentication login username and passwords
+ * A class responsible for authenticating login username and passwords
  * 
  * @author Forsythe
  *

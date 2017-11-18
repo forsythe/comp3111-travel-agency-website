@@ -18,20 +18,39 @@ import com.vaadin.shared.ui.datefield.DateTimeResolution;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.DateTimeField;
 
+/**
+ * A class holding common utility functions
+ * 
+ * @author Forsythe
+ *
+ */
 public class Utils {
 
 	public static final String DATE_LOCALE = "dd/MM/yyyy";
 	public static final String DATE_TIME_LOCALE = DATE_LOCALE + " HH:mm:ss Z";
 
+	/**
+	 * @return The error to show when a required field is left empty
+	 */
 	public static String generateRequiredError() {
 		return "cannot be empty";
 	}
 
+	/**
+	 * @return The error to show when no tour guides are available
+	 */
 	public static String generateNoTourGuideAvailableError() {
 		return "no tour guides are free for this date";
 	}
 
-	public static Set<Date> stringToDateSet(String listOfDates) {
+	/**
+	 * Converts a string to a set of dates
+	 * 
+	 * @param listOfDates
+	 *            A string containing comma separated values of dates
+	 * @return A collection of Date objects
+	 */
+	public static Collection<Date> stringToDateSet(String listOfDates) {
 		Set<Date> dates = new HashSet<Date>();
 		if (listOfDates == null || listOfDates.isEmpty())
 			return dates;
@@ -51,6 +70,14 @@ public class Utils {
 		return dates;
 	}
 
+	/**
+	 * Converts a collection of integers to a collection of strings representing
+	 * days of the week
+	 * 
+	 * @param integers
+	 *            The collection of integers
+	 * @return A set of strings representing the weekday names
+	 */
 	public static Set<String> integerSetToStringDayNameSet(Collection<Integer> integers) {
 		Set<String> strings = new HashSet<String>();
 		for (Integer i : integers) {
@@ -59,7 +86,15 @@ public class Utils {
 		return strings;
 	}
 
-	public static Set<Integer> stringDayNameSetToIntegerSet(Collection<String> strings) {
+	/**
+	 * Converts a collection of strings representing days of the week to a
+	 * collection of integers
+	 * 
+	 * @param strings
+	 *            A collection of strings representing the weekday names
+	 * @return The collection of integers representing the days of the week
+	 */
+	public static Collection<Integer> stringDayNameSetToIntegerSet(Collection<String> strings) {
 		Set<Integer> ints = new HashSet<Integer>();
 		for (String s : strings) {
 			ints.add(stringToDay(s));
@@ -67,6 +102,14 @@ public class Utils {
 		return ints;
 	}
 
+	/**
+	 * Converts an integer representing a day of the week to the string
+	 * representation
+	 * 
+	 * @param day
+	 *            The integer representing the day of the week
+	 * @return The string representation of the day of the week
+	 */
 	public static String dayToString(int day) {
 		switch (day) {
 		case Calendar.MONDAY:
@@ -88,6 +131,13 @@ public class Utils {
 		}
 	}
 
+	/**
+	 * Converts a string representation of a day of the week to an integer
+	 * 
+	 * @param s
+	 *            The day of the week, (Mon, Tue, Wed, Thu, Fri, Sat, Sun)
+	 * @return The integer representation
+	 */
 	public static Integer stringToDay(String s) {
 		if (s.equals("Mon"))
 			return Calendar.MONDAY;
@@ -107,14 +157,40 @@ public class Utils {
 			return -1;
 	}
 
+	/**
+	 * Returns a collection of all days of the week
+	 * 
+	 * @return A collection of strings containing all the days of the week
+	 */
 	public static Collection<String> getDaysOfWeek() {
 		return Arrays.asList("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
 	}
 
+	/**
+	 * Checks if a string contains a substring, ignoring case
+	 * 
+	 * @param fullString
+	 *            The full string
+	 * @param search
+	 *            The substring to search for
+	 * @return Whether or not the substring was found
+	 */
 	public static Boolean containsIgnoreCase(String fullString, String search) {
 		return fullString.toLowerCase().contains(search.toLowerCase());
 	}
 
+	/**
+	 * For each element of a collection, checks if the string representation of each
+	 * element contains a specified substring
+	 * 
+	 * @param arr
+	 *            The collection of elements
+	 * @param search
+	 *            The substring to search for per each element's string
+	 *            representation
+	 * @return whether any of the elements' string representations contained the
+	 *         provided substring
+	 */
 	public static <T> Boolean collectionContainsIgnoreCase(Collection<T> arr, String search) {
 		for (Object s : arr) {
 			if (containsIgnoreCase(s.toString(), search)) {
@@ -124,17 +200,42 @@ public class Utils {
 		return false;
 	}
 
+	/**
+	 * Converts a Date object to a nicely formatted string
+	 * 
+	 * @param d
+	 *            The Date object
+	 * @return A nicely formatted string following {@link #DATE_LOCALE}
+	 */
 	public static String simpleDateFormat(Date d) {
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_LOCALE);
 		return sdf.format(d);
 	}
 
+	/**
+	 * Parses a string into a Date object
+	 * 
+	 * @param s
+	 *            The string
+	 * @return A Date object
+	 * @throws ParseException
+	 *             If the parse was unsuccessful
+	 */
 	public static Date parseSimpleDateFormat(String s) throws ParseException {
 		SimpleDateFormat parser = new SimpleDateFormat(DATE_LOCALE);
 		parser.setLenient(false);
 		return parser.parse(s);
 	}
 
+	/**
+	 * Safely parses an integer, and check if it equals a value
+	 * 
+	 * @param val
+	 *            The expected value
+	 * @param s
+	 *            The string to parse
+	 * @return Whether the parsed value matches the expected value
+	 */
 	public static Boolean safeParseIntEquals(int val, String s) {
 		try {
 			if (Integer.parseInt(s) == val) {
@@ -146,6 +247,15 @@ public class Utils {
 		return false;
 	}
 
+	/**
+	 * Safely parses a long, and check if it equals a value
+	 * 
+	 * @param val
+	 *            The expected value
+	 * @param s
+	 *            The string to parse
+	 * @return Whether the parsed value matches the expected value
+	 */
 	public static Boolean safeParseLongEquals(Long val, String s) {
 		try {
 			if (Long.parseLong(s) == val) {
@@ -157,6 +267,15 @@ public class Utils {
 		return false;
 	}
 
+	/**
+	 * Safely parses a double, and check if it equals a value
+	 * 
+	 * @param val
+	 *            The expected value
+	 * @param s
+	 *            The string to parse
+	 * @return Whether the parsed value matches the expected value
+	 */
 	public static Boolean safeParseDoubleEquals(Double val, String s) {
 		try {
 			if (Double.parseDouble(s) == val) {
@@ -168,11 +287,9 @@ public class Utils {
 		return false;
 	}
 
-	public static Boolean compareDoubleAsIs(Double val, Double t){
-		return val.equals(t);
-	}
-
 	/**
+	 * Converts a collection of dates into a single formatted string
+	 * 
 	 * @param dates
 	 *            A collection of dates
 	 * @return A nicely formatted string of the dates, with commas in between
@@ -186,6 +303,9 @@ public class Utils {
 	}
 
 	/**
+	 * Converts a collection of integers (representing days of the week) to a single
+	 * formatted string
+	 * 
 	 * @param integerCollection
 	 *            A collection of integers representing days of the week
 	 * @return A nicely formatted string of the days, with commas in between; (e.g.
@@ -200,6 +320,15 @@ public class Utils {
 		return String.join(", ", integerList);
 	}
 
+	/**
+	 * Adds days to a date, to get a new Date object
+	 * 
+	 * @param d
+	 *            The original date
+	 * @param days
+	 *            How many days to add
+	 * @return The new Date object
+	 */
 	public static Date addDate(Date d, int days) {
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(d);
@@ -207,18 +336,48 @@ public class Utils {
 		return cal.getTime();
 	}
 
+	/**
+	 * Converts LocalDate objects to Date objects
+	 * 
+	 * @param local
+	 *            The LocalDate object
+	 * @return The corresponding Date object
+	 */
 	public static Date localDateToDate(LocalDate local) {
 		return java.sql.Date.valueOf(local);
 	}
 
+	/**
+	 * Converts LocalDateTime objects to Date objects
+	 * 
+	 * @param local
+	 *            The LocalDateTime object
+	 * @return The corresponding Date object
+	 */
 	public static Date localDateTimeToDate(LocalDateTime local) {
 		return Date.from(local.atZone(ZoneId.systemDefault()).toInstant());
 	}
 
+	/**
+	 * Adds days to a LocalDate object
+	 * 
+	 * @param value
+	 *            The LocalDate object
+	 * @param days
+	 *            The number of days to add
+	 * @return The corresponding Date object
+	 */
 	public static Date addDate(LocalDate value, int days) {
 		return addDate(localDateToDate(value), days);
 	}
 
+	/**
+	 * Converts an iterable to a collection
+	 * 
+	 * @param iterable
+	 *            The iterable
+	 * @return A collection containing all the elements in the Iterable
+	 */
 	public static <T> Collection<T> iterableToCollection(Iterable<T> iterable) {
 		Collection<T> c = new ArrayList<T>();
 		for (T o : iterable) {
@@ -227,12 +386,26 @@ public class Utils {
 		return c;
 	}
 
+	/**
+	 * Returns a Vaadin DateField which follows our {@link #DATE_LOCALE}
+	 * 
+	 * @param caption
+	 *            The caption of the input box
+	 * @return The DateField object
+	 */
 	public static DateField getDateFieldWithOurLocale(String caption) {
 		DateField d = new DateField(caption);
 		d.setDateFormat(DATE_LOCALE);
 		return d;
 	}
 
+	/**
+	 * Returns a Vaadin DateTimeField which follows our {@link #DATE_TIME_LOCALE}
+	 * 
+	 * @param caption
+	 *            The caption of the input box
+	 * @return The DateTimeField object
+	 */
 	public static DateTimeField getDateTimeFieldWithOurLocale(String caption) {
 		DateTimeField d = new DateTimeField(caption);
 		d.setDateFormat(DATE_TIME_LOCALE);
