@@ -42,6 +42,11 @@ import comp3111.data.repo.TourRepository;
 import comp3111.input.editors.FilterFactory;
 import comp3111.input.editors.ProviderAndPredicate;
 
+/**
+ * Generates the UI elements for the front-end side of the Customer Engagement page. 
+ * @author kristiansuhartono
+ *
+ */
 @SpringView(name = CustomerEngagementView.VIEW_NAME)
 public class CustomerEngagementView extends VerticalLayout implements View {
 	private static final String BY_ALL_LINE_CUSTOMERS = "All LINE Customers";
@@ -301,6 +306,11 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 
 	}
 
+	/** 
+	 * Function is called when the view is loaded up in the browser, refreshes the data so that the tables
+	 * are updated to the newest data contents.
+	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
+	 */
 	@Override
 	// called AFTER init()
 	public void enter(ViewChangeEvent event) {

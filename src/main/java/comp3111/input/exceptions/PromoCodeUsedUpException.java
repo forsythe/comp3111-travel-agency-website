@@ -12,16 +12,22 @@ public class PromoCodeUsedUpException extends Exception {
 		super();
 	}
 
-	public PromoCodeUsedUpException(String message) {
-		super(message);
-	}
+// --Commented out by Inspection START (18/11/17 14:45):
+//	public PromoCodeUsedUpException(String message) {
+//		super(message);
+//	}
+// --Commented out by Inspection STOP (18/11/17 14:45)
 
-	public PromoCodeUsedUpException(String message, Throwable cause) {
-		super(message, cause);
-	}
+// --Commented out by Inspection START (18/11/17 14:45):
+//	public PromoCodeUsedUpException(String message, Throwable cause) {
+//		super(message, cause);
+//	}
+// --Commented out by Inspection STOP (18/11/17 14:45)
 
-	public PromoCodeUsedUpException(Throwable cause) {
-		super(cause);
-	}
+// --Commented out by Inspection START (18/11/17 14:45):
+//	public PromoCodeUsedUpException(Throwable cause) {
+//		super(cause);
+//	}
+// --Commented out by Inspection STOP (18/11/17 14:45)
 
 }

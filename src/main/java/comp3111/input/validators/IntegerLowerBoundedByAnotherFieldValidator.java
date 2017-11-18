@@ -21,7 +21,7 @@ public class IntegerLowerBoundedByAnotherFieldValidator implements Validator<Int
 	 * The constructor of the validator
 	 * @param field The textfield that has the lower bound value
 	 */
-	public IntegerLowerBoundedByAnotherFieldValidator(AbstractTextField field) {
+	IntegerLowerBoundedByAnotherFieldValidator(AbstractTextField field) {
 		this.field = field;
 	}
 

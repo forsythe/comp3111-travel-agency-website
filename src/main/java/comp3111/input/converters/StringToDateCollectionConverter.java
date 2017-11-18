@@ -39,4 +39,5 @@ public class StringToDateCollectionConverter implements Converter<String, Collec
 	public Class<String> getPresentationType() {
 		return String.class;
 	}
+
 }

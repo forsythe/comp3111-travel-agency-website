@@ -15,6 +15,11 @@ import com.vaadin.ui.VerticalLayout;
 
 import comp3111.input.editors.PromoEventEditor;
 
+/**
+ * Generates the UI elements for the front-end side of the Promotion Management page.
+ * @author kristiansuhartono
+ *
+ */
 @SpringView(name = PromoEventManagementView.VIEW_NAME)
 public class PromoEventManagementView extends VerticalLayout implements View {
 	public static final String VIEW_NAME = "promoEventManagement";
@@ -35,6 +40,11 @@ public class PromoEventManagementView extends VerticalLayout implements View {
 		this.addComponent(layout);
 	}
 
+	/** 
+	 * Function is called when the view is loaded up in the browser, refreshes the data so that the tables
+	 * are updated to the newest data contents.
+	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
+	 */
 	@Override
 	public void enter(ViewChangeEvent event) {
 		// This view is constructed in the init() method()
