@@ -49,13 +49,10 @@ import comp3111.view.NotificationFactory;
 import comp3111.view.OfferingManagementView;
 
 /**
- * A simple example to introduce building forms. As your real application is
- * probably much more complicated than this example, you could re-use this form
- * in multiple places. This example component is only used in VaadinUI.
- * <p>
- * In a real world application you'll most likely using a common super class for
- * all your forms - less code, better UX. See e.g. AbstractForm in Viritin
- * (https://vaadin.com/addon/viritin).
+ * Represents the tour editor in TourManagementView
+ * 
+ * @author Forsythe
+ *
  */
 @SuppressWarnings("serial")
 @SpringComponent
@@ -88,7 +85,7 @@ public class TourEditor extends VerticalLayout {
 	private RadioButtonGroup<String> isChildFriendly;
 
 	/* Action buttons */
-	HorizontalLayout rowOfButtons = new HorizontalLayout();
+	private HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createTourButton = new Button("Create new tour");
 	private Button editTourButton = new Button("Edit tour");
 	private Button manageOfferingButton = new Button("Manage offerings for selected tour");
@@ -110,6 +107,10 @@ public class TourEditor extends VerticalLayout {
 	// the set of filters to apply on our table
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
+	/**
+	 * @param tr
+	 *            Autowired, constructor injection
+	 */
 	@SuppressWarnings("unchecked")
 	@Autowired
 	public TourEditor(TourRepository tr) {
@@ -443,10 +444,9 @@ public class TourEditor extends VerticalLayout {
 		return subwindow;
 	}
 
-	public interface ChangeHandler {
-		void onChange();
-	}
-
+	/**
+	 * Refreshes the data in the vaadin grid
+	 */
 	public void refreshData() {
 		Iterable<Tour> tours = tourRepo.findAll();
 		tourCollectionCached.clear();

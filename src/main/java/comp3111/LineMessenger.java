@@ -24,6 +24,12 @@ import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.view.CustomerEngagementView;
 
+/**
+ * A class which handles sending messages to customers via the LINE push API
+ * 
+ * @author Forsythe
+ *
+ */
 @Component
 public class LineMessenger {
 	private static final String HENG_BOT_AUTH_TOKEN_LINE = "Bearer H5M2+yupl+owBVJunHjV6z3NVMWJ51vRa2j8NcVgpQ0NwSoR2xGvMlGq+mD4NwZ8JHDOAUbM8ss+BKUPMQIXLYXazbSLZvH5qzqmOEi3Khvg/71Ye90O4DIGsnOJ0JJVSewSzBNMS3VYAQARZUE39QdB04t89/1O/w1cDnyilFU=";
@@ -49,6 +55,9 @@ public class LineMessenger {
 	}
 
 	/**
+	 * Counts how many messages have been sent since the last call to
+	 * {@link #resetCounter()}
+	 * 
 	 * @return how many recipients have received a message since we called
 	 *         {@link LineMessenger#resetCounter()}}
 	 */
@@ -57,6 +66,8 @@ public class LineMessenger {
 	}
 
 	/**
+	 * Send a message to a customer
+	 * 
 	 * @param custLineId
 	 *            The customer's line ID (not the human readable one, but the one
 	 *            used internally by LINE's push API)
@@ -135,6 +146,8 @@ public class LineMessenger {
 	}
 
 	/**
+	 * Send a message to everyone in an offering
+	 * 
 	 * @param o
 	 *            The offering whose customers you would like to notify
 	 * @param text
@@ -161,6 +174,8 @@ public class LineMessenger {
 	}
 
 	/**
+	 * Send a message to everyone in a tour
+	 * 
 	 * @param t
 	 *            The tour whos participants (which span many offerings potentially)
 	 *            you want to reach
@@ -183,6 +198,8 @@ public class LineMessenger {
 	}
 
 	/**
+	 * Send a message to everyone
+	 * 
 	 * @param text
 	 *            Content to send to every known customers with a line ID
 	 * @return true or false, depending on whether every message was sent
@@ -201,6 +218,8 @@ public class LineMessenger {
 	}
 
 	/**
+	 * Respond to a NonFAQQuery
+	 * 
 	 * @param custLineId
 	 *            the target recipient customer's line ID
 	 * @param query

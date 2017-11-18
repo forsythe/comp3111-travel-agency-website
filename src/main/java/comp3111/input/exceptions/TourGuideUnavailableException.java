@@ -2,7 +2,7 @@ package comp3111.input.exceptions;
 
 /**
  * An exception that is thrown when the offering is trying to be created with a TourGuide that is 
- * already guiding a different Tour at that specific time period.
+ * already guiding a different offering at that specific time period.
  * @author kristiansuhartono
  *
  */

@@ -9,6 +9,11 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+/**
+ * Converts between LocalDate objects and Date objects
+ * @author Forsythe
+ *
+ */
 public class LocalDateToUtilDateConverter implements Converter<LocalDate, Date> {
 
 	@Override

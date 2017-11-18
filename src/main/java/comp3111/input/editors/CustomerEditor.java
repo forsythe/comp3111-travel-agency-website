@@ -38,6 +38,12 @@ import comp3111.input.field.PhoneNumberEntryField;
 import comp3111.input.validators.ValidatorFactory;
 import comp3111.view.NotificationFactory;
 
+/**
+ * Represents the customer editor in the CustomerManagementView
+ * 
+ * @author Forsythe
+ *
+ */
 @SuppressWarnings("serial")
 @SpringComponent
 @UIScope
@@ -59,7 +65,11 @@ public class CustomerEditor extends VerticalLayout {
 	private final HashSet<Customer> customerCollectionCached = new HashSet<Customer>();
 
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
-	
+
+	/**
+	 * @param cr
+	 *            Autowired, constructor injection
+	 */
 	@Autowired
 	public CustomerEditor(CustomerRepository cr) {
 		this.customerRepo = cr;
@@ -96,8 +106,8 @@ public class CustomerEditor extends VerticalLayout {
 			}
 		});
 
-		customersGrid.setColumnOrder(GridCol.CUSTOMER_ID, GridCol.CUSTOMER_NAME, GridCol.CUSTOMER_LINE_ID, GridCol.CUSTOMER_HKID,
-				GridCol.CUSTOMER_PHONE, GridCol.CUSTOMER_AGE);
+		customersGrid.setColumnOrder(GridCol.CUSTOMER_ID, GridCol.CUSTOMER_NAME, GridCol.CUSTOMER_LINE_ID,
+				GridCol.CUSTOMER_HKID, GridCol.CUSTOMER_PHONE, GridCol.CUSTOMER_AGE);
 
 		HeaderRow filterRow = customersGrid.appendHeaderRow();
 
@@ -261,10 +271,9 @@ public class CustomerEditor extends VerticalLayout {
 		return subwindow;
 	}
 
-	public interface ChangeHandler {
-		void onChange();
-	}
-
+	/**
+	 * Refreshes the data in the vaadin grid
+	 */
 	public void refreshData() {
 
 		ListDataProvider<Customer> provider = new ListDataProvider<Customer>(

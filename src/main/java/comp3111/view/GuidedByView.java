@@ -12,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 
-@SpringView(name = GuidedByManagmentView.VIEW_NAME)
-public class GuidedByManagmentView extends VerticalLayout implements View {
-	public static final String VIEW_NAME = "guidedByManagement";
-	private static final Logger log = LoggerFactory.getLogger(GuidedByManagmentView.class);
+@SpringView(name = GuidedByView.VIEW_NAME)
+public class GuidedByView extends VerticalLayout implements View {
+	public static final String VIEW_NAME = "guidedByView";
+	private static final Logger log = LoggerFactory.getLogger(GuidedByView.class);
 
 	@Autowired
 	private GuidedByViewer guidedByViewer;
@@ -43,7 +43,7 @@ public class GuidedByManagmentView extends VerticalLayout implements View {
 		// everytime we enter this page, we want to update the data in the grid
 		this.guidedByViewer.refreshData();
 		this.titleLabel.setCaption(
-				"<h1>All tours assigned to: <b>" + guidedByViewer.getSelectedTourGuide().getName()+ "</b></h1>");
+				"<h1>All offerings led by: <b>" + guidedByViewer.getSelectedTourGuide().getName() + "</b></h1>");
 		this.titleLabel.setCaptionAsHtml(true);
 	}
 

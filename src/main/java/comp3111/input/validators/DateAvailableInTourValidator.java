@@ -13,7 +13,7 @@ import java.util.Date;
 import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
 
 /**
- * A validator to check whether a date is available for use in a tour.
+ * Validates whether a date is available for use in a tour.
  * As in whether the date is legal for a certain to
  * 
  * @author Kristian Suhartono

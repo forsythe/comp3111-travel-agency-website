@@ -28,8 +28,10 @@ public class ValidatorFactory {
 	private static final Logger log = LoggerFactory.getLogger(ValidatorFactory.class);
 
 	/**
-	 * @param minInclusive The lower integer bound, inclusive
-	 * @param maxExclusive The upper integer bound, inclusive
+	 * @param minInclusive
+	 *            The lower integer bound, inclusive
+	 * @param maxExclusive
+	 *            The upper integer bound, inclusive
 	 * @return An IntegerRangeValidator object
 	 */
 	public static IntegerRangeValidator getIntegerRangeValidator(int minInclusive, int maxExclusive) {
@@ -37,7 +39,8 @@ public class ValidatorFactory {
 	}
 
 	/**
-	 * @param minInclusive The lower integer bound, inclusive
+	 * @param minInclusive
+	 *            The lower integer bound, inclusive
 	 * @return An IntegerLowerBoundValidator object
 	 */
 	public static IntegerLowerBoundValidator getIntegerRangeValidator(int minInclusive) {
@@ -45,7 +48,8 @@ public class ValidatorFactory {
 	}
 
 	/**
-	 * @param field The textfield that has the lower bound value
+	 * @param field
+	 *            The textfield that has the lower bound value
 	 * @return An IntegerLowerBoundedByAnotherFieldValidator object
 	 */
 	public static IntegerLowerBoundedByAnotherFieldValidator getIntegerLowerBoundedByAnotherFieldValidator(
@@ -54,8 +58,10 @@ public class ValidatorFactory {
 	}
 
 	/**
-	 * @param minInclusive The lower bound, inclusive
-	 * @param maxInclusive The upper bound, inclusive
+	 * @param minInclusive
+	 *            The lower bound, inclusive
+	 * @param maxInclusive
+	 *            The upper bound, inclusive
 	 * @return A DoubleRangeValidator object
 	 */
 	public static DoubleRangeValidator getDoubleRangeValidator(double minInclusive, double maxInclusive) {
@@ -63,7 +69,8 @@ public class ValidatorFactory {
 	}
 
 	/**
-	 * @param minInclusive The lower bound, inclusive.
+	 * @param minInclusive
+	 *            The lower bound, inclusive.
 	 * @return A DoubleLowerBoundValidator object
 	 */
 	public static DoubleLowerBoundValidator getDoubleRangeValidator(double minInclusive) {
@@ -78,7 +85,8 @@ public class ValidatorFactory {
 	}
 
 	/**
-	 * @param maxLength The maximum length of the string
+	 * @param maxLength
+	 *            The maximum length of the string
 	 * @return A StringLengthValidator object
 	 */
 	public static StringLengthValidator getStringLengthValidator(int maxLength) {
@@ -86,14 +94,14 @@ public class ValidatorFactory {
 	}
 
 	/**
-	 * @param maxLength The maximum length of the string
+	 * @param maxLength
+	 *            The maximum length of the string
 	 * @return A StringLengthCanNullValidator object
 	 */
 	public static StringLengthCanNullValidator getStringLengthCanNullValidator(int maxLength) {
 		return new StringLengthCanNullValidator(maxLength);
 	}
 
-	
 	/**
 	 * @return A PhoneNumberValidator object
 	 */
@@ -111,12 +119,17 @@ public class ValidatorFactory {
 	public static DateNotEarlierThanValidator getDateNotEarlierThanValidator(Date notEarlierThanThis) {
 		return new DateNotEarlierThanValidator(notEarlierThanThis);
 	}
-	
+
 	/**
-	 * @param offering need to pass in the offering combobox because the value could change
-	 * @return A DateIsEarlierThanOfferingLastEditableDateValidator object
+	 * 
+	 * @param offering
+	 *            need to pass in the offering combobox because the value could
+	 *            change
+	 * @return a DateIsEarlierThanOfferingLastEditableDateValidator object
+	 * 
 	 */
-	public static DateIsEarlierThanOfferingLastEditableDateValidator getDateIsEarlierThanOfferingLastEditableDateValidator(ComboBox<Offering> offering) {
+	public static DateIsEarlierThanOfferingLastEditableDateValidator getDateIsEarlierThanOfferingLastEditableDateValidator(
+			ComboBox<Offering> offering) {
 		return new DateIsEarlierThanOfferingLastEditableDateValidator(offering);
 	}
 
@@ -128,7 +141,8 @@ public class ValidatorFactory {
 	}
 
 	/**
-	 * @param tour This is the tour object that is going to use for validation
+	 * @param tour
+	 *            This is the tour object that is going to use for validation
 	 * @return A DateAvailableInTourValidator object
 	 */
 	public static DateAvailableInTourValidator getDateAvailableInTourValidator(Tour tour) {
@@ -141,6 +155,7 @@ public class ValidatorFactory {
 	 * @param duration
 	 *            the length of the interval to check (in days)
 	 * @param dbManager
+	 *            A DBManager object
 	 * @param ignoredOffering
 	 *            the offering to ignore (can be null)
 	 * @return whether or not the tour guide is available from time startDateField
@@ -158,6 +173,7 @@ public class ValidatorFactory {
 	 * @param validationStatus
 	 *            the validationStatus object after we fill in a vaadin form that's
 	 *            binded to a bean
+	 * 
 	 * @return a string that we can display as an error notification
 	 */
 	public static <T> String getValidatorErrorsString(BinderValidationStatus<T> validationStatus) {
