@@ -54,7 +54,7 @@ public abstract class Person {
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof Person)
-			return other != null && this.getId() != null && ((Person) other).getId().equals(this.getId());
+			return ((Person) other).getId().equals(this.getId());
 		return false;
 	}
 

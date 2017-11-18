@@ -169,26 +169,27 @@ public class DBManager {
 	 * 
 	 * @param tg
 	 *            The tour guide
-	 * @param proposedStart
+	 * @param testStart
 	 *            The beginning date
-	 * @param proposedEnd
+	 * @param testEnd
 	 *            The ending date
 	 * @return Whether or not the tour guide is free (to lead more offerings)
 	 *         between this date interval
 	 */
-	public boolean isTourGuideAvailableBetweenDate(TourGuide tg, Date proposedStart, Date proposedEnd) {
-		for (Offering existingOffering : findPastAndUpcomingGuidedOfferingsByTourGuide(tg)) {
+	public boolean isTourGuideAvailableBetweenDate(TourGuide tg, Date testStart, Date testEnd) {
+		for (Offering existingOffering : findOfferingsByTourGuide(tg)) {
 			if (existingOffering.getStatus().equals(Offering.STATUS_CANCELLED)) {
 				continue;
 			}
 			Date takenStart = existingOffering.getStartDate();
 			Date takenEnd = Utils.addDate(takenStart, existingOffering.getTour().getDays());
 
-			if (proposedStart.after(takenStart) && proposedEnd.before(takenEnd)
-					|| proposedStart.before(takenStart) && proposedEnd.after(takenEnd)
-					|| proposedStart.before(takenEnd) && proposedEnd.after(takenEnd) || proposedStart.equals(takenStart)
-					|| proposedEnd.equals(takenEnd)) {
-				log.info("Offering timerange [{}]-[{}] is occupied for tourguide [{}]", proposedStart, proposedEnd,
+			if (testStart.after(takenStart) && testEnd.before(takenEnd)
+					|| testStart.before(takenStart) && testEnd.after(takenEnd)
+					|| testStart.before(takenEnd) && testEnd.after(takenEnd)
+					|| testStart.before(takenStart) && testEnd.after(takenStart)
+					|| testStart.equals(takenStart) || testEnd.equals(takenEnd)) {
+				log.info("Offering timerange [{}]-[{}] is occupied for tourguide [{}]", testStart, testEnd,
 						tg.getName());
 
 				return false;
@@ -217,7 +218,7 @@ public class DBManager {
 	 */
 	public boolean isTourGuideAvailableBetweenDateExcludeOffering(TourGuide tg, Date proposedStart, Date proposedEnd,
 			Offering ignoredOffering) {
-		Collection<Offering> relevantOfferings = findPastAndUpcomingGuidedOfferingsByTourGuide(tg);
+		Collection<Offering> relevantOfferings = findOfferingsByTourGuide(tg);
 		int size = relevantOfferings.size();
 		log.info("size before removing: [{}]", size);
 		relevantOfferings.removeIf(offer -> offer.equals(ignoredOffering));
@@ -450,15 +451,18 @@ public class DBManager {
 	 *         cancelled) led by this tour guide in the past and assigned in the
 	 *         future
 	 */
-	public Collection<Offering> findPastAndUpcomingGuidedOfferingsByTourGuide(TourGuide tg) {
+	public Collection<Offering> findOfferingsByTourGuide(TourGuide tg) {
 		Collection<Offering> guidedOfferingsByTourGuide = new HashSet<Offering>();
 		log.info("Finding offerings for tour guide [{}]", tg.getName());
+		int found = 0;
 		for (Offering o : offeringRepo.findAll()) {
 			if (o.getTourGuide().equals(tg)) {
 				guidedOfferingsByTourGuide.add(o);
 				log.info("\t[{}]", o.toString());
 			}
+			found++;
 		}
+		log.info("\tfound [{}]", found);
 		return guidedOfferingsByTourGuide;
 	}
 

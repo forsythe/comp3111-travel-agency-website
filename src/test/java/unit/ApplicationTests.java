@@ -8,6 +8,7 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.junit.Assert.*;
 
 import comp3111.data.model.*;
 import comp3111.data.repo.*;
@@ -21,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import comp3111.Application;
+import comp3111.Utils;
 import comp3111.data.DBManager;
 
 @RunWith(SpringRunner.class)
@@ -339,6 +341,29 @@ public class ApplicationTests {
 
 		Booking bk2 = new Booking(c2, shimenOffering, numAdults, numChildren, numToddlers, 0, "", "");
 		actionManager.createBookingForOfferingWithPromoCode(bk2, pe.getPromoCode());
+	}
+
+	@Test
+	public void testIsTourGuideAvailableBetweenDate()
+			throws OfferingDateUnsupportedException, TourGuideUnavailableException {
+		int tourDurationDays = 2;
+		Tour t = new Tour("Shimen Forest", "Color ponds...", tourDurationDays, 0.8, 0, 499, 599);
+		t.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7)));
+
+		Date now = new Date();
+		Date yesterday = Utils.addDate(now, -1);
+		Date tomorrow = Utils.addDate(now, 1);
+
+		Date twoDaysAgo = Utils.addDate(now, -2);
+		Date twoDaysLater = Utils.addDate(now, 2);
+
+		Offering x = actionManager.createOfferingForTour(t, tg1, now, "Hotel chep", 4, 20);
+
+		assertFalse(actionManager.isTourGuideAvailableBetweenDate(tg1, twoDaysAgo, twoDaysLater));
+		assertFalse(actionManager.isTourGuideAvailableBetweenDate(tg1, twoDaysAgo, tomorrow));
+		assertFalse(actionManager.isTourGuideAvailableBetweenDate(tg1, yesterday, twoDaysLater));
+		assertFalse(actionManager.isTourGuideAvailableBetweenDate(tg1, yesterday, tomorrow));
+
 	}
 
 }
