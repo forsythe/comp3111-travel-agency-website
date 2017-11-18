@@ -60,15 +60,8 @@ import comp3111.view.OfferingManagementView;
 public class TourEditor extends VerticalLayout {
 	private static final Logger log = LoggerFactory.getLogger(TourEditor.class);
 
-	/* the popup "Create tour" window */
-	// private Window createTourSubwindow;
-	// private Window editTourSubwindow;
 	private Window subwindow;
-
-	@Autowired
 	private DBManager dbManager;
-
-	@Autowired
 	private OfferingEditor offeringEditor;
 
 	/* Fields to edit properties in Tour entity */
@@ -83,14 +76,16 @@ public class TourEditor extends VerticalLayout {
 	private TextField weekendPrice;
 	private TextArea descrip;
 	private RadioButtonGroup<String> isChildFriendly;
+	private BinderValidationStatus<Tour> validationStatus;
 
 	/* Action buttons */
 	private HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createTourButton = new Button("Create new tour");
+
 	private Button editTourButton = new Button("Edit tour");
 	private Button manageOfferingButton = new Button("Manage offerings for selected tour");
 	/* subwindow action buttons */
-	private Button subwindowConfirm;
+	private Button subwindowConfirmButton;
 
 	// this is FINAL so we can access it inside our filtering callback function
 	private final Grid<Tour> tourGrid = new Grid<Tour>(Tour.class);
@@ -98,23 +93,31 @@ public class TourEditor extends VerticalLayout {
 	/* The currently edited tour */
 	Tour selectedTour;
 
-	private TourRepository tourRepo;
+	TourRepository tourRepo;
 
 	// final just means we cant rebind the var name. we can still add/remove
 	// IMPORTANT: this is FINAL so we can access it inside the filtering callback
 	// function
 	private final HashSet<Tour> tourCollectionCached = new HashSet<Tour>();
+
+	public HashSet<Tour> getTourCollectionCached() {
+		return tourCollectionCached;
+	}
+
 	// the set of filters to apply on our table
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	/**
-	 * @param tr
-	 *            Autowired, constructor injection
+	 * Autowired fields. No need to call manually
 	 */
 	@SuppressWarnings("unchecked")
 	@Autowired
-	public TourEditor(TourRepository tr) {
+	public TourEditor(TourRepository tr, DBManager dbm, OfferingEditor ofe) {
+
 		this.tourRepo = tr;
+		this.dbManager = dbm;
+		this.offeringEditor = ofe;
+
 		// adding components
 		rowOfButtons.addComponent(createTourButton);
 		rowOfButtons.addComponent(editTourButton);
@@ -251,10 +254,10 @@ public class TourEditor extends VerticalLayout {
 		});
 	}
 
-	private Window getSubwindow(TourRepository tourRepo, Collection<Tour> tourCollectionCached, Tour tourToSave) {
+	public Window getSubwindow(TourRepository tourRepo, Collection<Tour> tourCollectionCached, Tour tourToSave) {
 		// Creating the confirm button
-		subwindowConfirm = new Button("Confirm");
-		subwindowConfirm.setId("btn_confirm_tour");
+		subwindowConfirmButton = new Button("Confirm");
+		getSubwindowConfirmButton().setId("btn_confirm_tour");
 
 		// Creating the fields
 		tourName = new TextField("Tour Name");
@@ -336,7 +339,7 @@ public class TourEditor extends VerticalLayout {
 		subContent.addComponent(descrip);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
-		buttonActions.addComponent(subwindowConfirm);
+		buttonActions.addComponent(getSubwindowConfirmButton());
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
 		subContent.addComponent(buttonActions);
 
@@ -409,8 +412,8 @@ public class TourEditor extends VerticalLayout {
 		// Do set bean to assign value to fields
 		binder.setBean(tourToSave);
 
-		subwindowConfirm.addClickListener(event -> {
-			BinderValidationStatus<Tour> validationStatus = binder.validate();
+		getSubwindowConfirmButton().addClickListener(event -> {
+			validationStatus = binder.validate();
 
 			// Special case for tours only to ensure that this field must be filled
 			if (validationStatus.isOk() && !(allowedDates.isEmpty() && allowedDaysOfWeek.isEmpty())) {
@@ -422,7 +425,8 @@ public class TourEditor extends VerticalLayout {
 				this.refreshData();
 				subwindow.close();
 				log.info("created/edited tour [{}] successfully", tourName.getValue());
-				NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
+				if (Page.getCurrent() != null) // can be null in mockito testing
+					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
 
 				binder.removeBean();
 			} else {
@@ -436,7 +440,8 @@ public class TourEditor extends VerticalLayout {
 						allowedDaysOfWeek.setComponentError(new UserError(Utils.generateRequiredError()));
 					}
 				}
-				NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
+				if (Page.getCurrent() != null) // may be null during mockito testing
+					NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 
 			}
 		});
@@ -448,13 +453,104 @@ public class TourEditor extends VerticalLayout {
 	 * Refreshes the data in the vaadin grid
 	 */
 	public void refreshData() {
+
 		Iterable<Tour> tours = tourRepo.findAll();
-		tourCollectionCached.clear();
-		tours.forEach(tourCollectionCached::add);
-		ListDataProvider<Tour> provider = new ListDataProvider<Tour>(tourCollectionCached);
-		tourGrid.setDataProvider(provider);
+
+		if (tours != null) {
+			tourCollectionCached.clear();
+			tours.forEach(tourCollectionCached::add);
+			ListDataProvider<Tour> provider = new ListDataProvider<Tour>(tourCollectionCached);
+			tourGrid.setDataProvider(provider);
+		}
 
 		// tourGrid.setItems(tourCollectionCached);
 	}
 
+	public Button getSubwindowConfirmButton() {
+		return subwindowConfirmButton;
+	}
+
+	/**
+	 * @return the tourName field
+	 */
+	public TextField getTourName() {
+		return tourName;
+	}
+
+	/**
+	 * @return the days field
+	 */
+	public TextField getDays() {
+		return days;
+	}
+
+	/**
+	 * @return the tourType field
+	 */
+	public RadioButtonGroup<String> getTourType() {
+		return tourType;
+	}
+
+	/**
+	 * @return the allowedDaysOfWeek field
+	 */
+	public CheckBoxGroup<String> getAllowedDaysOfWeek() {
+		return allowedDaysOfWeek;
+	}
+
+	/**
+	 * @return the allowedDates field
+	 */
+	public TextField getAllowedDates() {
+		return allowedDates;
+	}
+
+	/**
+	 * @return the childDiscount field
+	 */
+	public TextField getChildDiscount() {
+		return childDiscount;
+	}
+
+	/**
+	 * @return the toddlerDiscount field
+	 */
+	public TextField getToddlerDiscount() {
+		return toddlerDiscount;
+	}
+
+	/**
+	 * @return the weekdayPrice field
+	 */
+	public TextField getWeekdayPrice() {
+		return weekdayPrice;
+	}
+
+	/**
+	 * @return the weekendPrice field
+	 */
+	public TextField getWeekendPrice() {
+		return weekendPrice;
+	}
+
+	/**
+	 * @return the descrip field
+	 */
+	public TextArea getDescrip() {
+		return descrip;
+	}
+
+	/**
+	 * @return the isChildFriendly field
+	 */
+	public RadioButtonGroup<String> getIsChildFriendly() {
+		return isChildFriendly;
+	}
+
+	/**
+	 * @return the validationStatus
+	 */
+	public BinderValidationStatus<Tour> getValidationStatus() {
+		return validationStatus;
+	}
 }

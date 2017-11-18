@@ -27,6 +27,11 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import comp3111.input.auth.Authentication;
 
+/**
+ * Generates the UI elements for the front-end side of the Login page which is also the landing page. 
+ * @author kristiansuhartono
+ *
+ */
 @Theme("valo")
 @SpringUI
 @SpringViewDisplay
@@ -52,7 +57,6 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 		springViewDisplay.setVisible(false);
 
 		drawLoginForm();
-
 		getUI().getNavigator().setErrorView(HomeView.class);
 
 		getUI().getNavigator().addViewChangeListener(new ViewChangeListener() {
@@ -192,6 +196,10 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 
 	}
 
+	/** 
+	 * Sets the UI to display an the passed view element
+	 * @see com.vaadin.navigator.ViewDisplay#showView(com.vaadin.navigator.View)
+	 */
 	@Override
 	public void showView(View view) {
 		springViewDisplay.setContent((Component) view);

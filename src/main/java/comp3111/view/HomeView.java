@@ -22,6 +22,11 @@ import comp3111.data.repo.NonFAQQueryRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.TourRepository;
 
+/**
+ * Generates the UI elements for the front-end side of the Home page
+ * @author kristiansuhartono
+ *
+ */
 @SpringView(name = HomeView.VIEW_NAME)
 // @UIScope
 @Scope("prototype") // needed to make this an error view (default fallback view)
@@ -83,6 +88,11 @@ public class HomeView extends VerticalLayout implements View {
 				+ " pending querie(s) waiting to be resolved"));
 	}
 
+	/** 
+	 * Function is called when the view is loaded up in the browser, refreshes the data so that the tables
+	 * are updated to the newest data contents.
+	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
+	 */
 	@Override
 	public void enter(ViewChangeEvent event) {
 		// This view is constructed in the init() method()

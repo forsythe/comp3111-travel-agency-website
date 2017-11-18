@@ -1,12 +1,8 @@
 package integration;
 
-import com.vaadin.testbench.By;
-import com.vaadin.testbench.TestBenchTestCase;
-import com.vaadin.testbench.elements.*;
-import comp3111.Application;
-import comp3111.data.DBManager;
-import comp3111.data.model.Customer;
-import comp3111.data.repo.CustomerRepository;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Collection;
 
 import org.junit.After;
 import org.junit.Before;
@@ -20,14 +16,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Collection;
+import com.vaadin.testbench.TestBenchTestCase;
+import com.vaadin.testbench.elements.ButtonElement;
+import com.vaadin.testbench.elements.CustomFieldElement;
+import com.vaadin.testbench.elements.FormLayoutElement;
+import com.vaadin.testbench.elements.TextFieldElement;
+import com.vaadin.testbench.elements.VerticalLayoutElement;
 
-import static integration.TestConstants.TEST_CUSTOMER_NAME;
-import static org.assertj.core.api.Assertions.assertThat;
+import comp3111.Application;
+import comp3111.data.DBManager;
+import comp3111.data.model.Customer;
+import comp3111.data.repo.CustomerRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class CustomerEditorTests extends TestBenchTestCase {
+public class CustomerEditorUITests extends TestBenchTestCase {
+
+	private static final String TEST_CUSTOMER_NAME = "Peter The Great Tester";
 
 	@Autowired
 	private CustomerRepository customerRepo;
@@ -76,17 +81,17 @@ public class CustomerEditorTests extends TestBenchTestCase {
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_name").setValue(TEST_CUSTOMER_NAME);
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_line_id").setValue("123452334");
 
-		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_hkid")
-				.$(TextFieldElement.class).get(0).setValue("G123456");
+		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_hkid").$(TextFieldElement.class).get(0)
+				.setValue("G123456");
 
-		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_hkid")
-				.$(TextFieldElement.class).get(1).setValue("A");
+		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_hkid").$(TextFieldElement.class).get(1)
+				.setValue("A");
 
-		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_phone")
-				.$(TextFieldElement.class).get(0).setValue("852");
+		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_phone").$(TextFieldElement.class).get(0)
+				.setValue("852");
 
-		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_phone")
-				.$(TextFieldElement.class).get(1).setValue("12345678");
+		$(FormLayoutElement.class).$(CustomFieldElement.class).id("tf_customer_phone").$(TextFieldElement.class).get(1)
+				.setValue("12345678");
 
 		$(FormLayoutElement.class).$(TextFieldElement.class).id("tf_customer_age").setValue("23");
 
@@ -95,15 +100,15 @@ public class CustomerEditorTests extends TestBenchTestCase {
 		Collection<Customer> afterAddingCustomers = customerRepo.findByName(TEST_CUSTOMER_NAME);
 
 		int count = 0;
-		for (Customer customer : afterAddingCustomers){
-			if (!originalCustomers.contains(customer)){
-				assertThat (customer.getName().equals(TEST_CUSTOMER_NAME));
-				assertThat (customer.getHkid().equals("G123456(A)"));
-				assertThat (customer.getPhone().equals("(852)1234567"));
-				assertThat (customer.getAge() == 23);
+		for (Customer customer : afterAddingCustomers) {
+			if (!originalCustomers.contains(customer)) {
+				assertThat(customer.getName().equals(TEST_CUSTOMER_NAME));
+				assertThat(customer.getHkid().equals("G123456(A)"));
+				assertThat(customer.getPhone().equals("(852)1234567"));
+				assertThat(customer.getAge() == 23);
 
 				count++;
-				//customerRepo.delete(customer.getId());
+				// customerRepo.delete(customer.getId());
 			}
 		}
 
