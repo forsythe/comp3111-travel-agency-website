@@ -68,21 +68,19 @@ public class GridCol {
 	public static final String BOOKING_NUM_CHILDREN = "numChildren";
 	public static final String BOOKING_NUM_ADULTS = "numAdults";
 	public static final String BOOKING_NUM_TODDLERS = "numToddlers";
-	public static final String BOOKING_CUSTOMER = "customer";
 	public static final String BOOKING_OFFERING = "offering";
-	public static final String BOOKING_ID = "id";
 	public static final String BOOKING_CUSTOMER_HKID = "customerHkid";
 	public static final String BOOKING_CUSTOMER_NAME = "customerName";
-	public static final String BOOKING_OFFERING_ID = "offeringId";
 	public static final String BOOKING_TOUR_ID = "tourId";
 	public static final String BOOKING_TOUR_NAME = "tourName";
-	public static final String BOOKING_PEOPLE = "people";
 	public static final String BOOKING_AMOUNT_PAID = "amountPaid";
 	public static final String BOOKING_TOTAL_COST = "totalCost";
 	public static final String BOOKING_SPECIAL_REQUEST = "specialRequests";
 	public static final String BOOKING_PAYMENT_STATUS = "paymentStatus";
 	public static final String BOOKING_PROMO_DISCOUNT_MULTIPLIER_MASKED = "paymentStatusMasked";
 	/* hidden */
+	public static final String BOOKING_ID = "id";
+	public static final String BOOKING_CUSTOMER = "customer";
 	public static final String BOOKING_PROMO_DISCOUNT_MULTIPLIER = "promoDiscountMultiplier";
 	public static final String BOOKING_TOTAL_NUMBER_OF_PEOPLE = "totalNumberOfPeople";
 	public static final String BOOKING_PROMO_CODE_USED = "promoCodeUsed";

@@ -116,21 +116,17 @@ public class BookingEditor extends VerticalLayout {
 			}
 		});
 
-		bookingGrid.removeColumn(GridCol.BOOKING_NUM_CHILDREN);
-		bookingGrid.removeColumn(GridCol.BOOKING_NUM_ADULTS);
-		bookingGrid.removeColumn(GridCol.BOOKING_NUM_TODDLERS);
 		bookingGrid.removeColumn(GridCol.BOOKING_CUSTOMER);
-		bookingGrid.removeColumn(GridCol.BOOKING_OFFERING);
 		bookingGrid.removeColumn(GridCol.BOOKING_ID);
 		bookingGrid.removeColumn(GridCol.BOOKING_PROMO_DISCOUNT_MULTIPLIER);
 		bookingGrid.removeColumn(GridCol.BOOKING_TOTAL_NUMBER_OF_PEOPLE);
 		bookingGrid.removeColumn(GridCol.BOOKING_PROMO_CODE_USED);
 
 		bookingGrid.setColumnOrder(GridCol.BOOKING_CUSTOMER_HKID, GridCol.BOOKING_CUSTOMER_NAME,
-				GridCol.BOOKING_OFFERING_ID, GridCol.BOOKING_TOUR_ID, GridCol.BOOKING_TOUR_NAME, GridCol.BOOKING_PEOPLE,
+				GridCol.BOOKING_OFFERING, GridCol.BOOKING_NUM_ADULTS, GridCol.BOOKING_NUM_CHILDREN,
+				GridCol.BOOKING_NUM_TODDLERS, GridCol.BOOKING_TOUR_ID, GridCol.BOOKING_TOUR_NAME,
 				GridCol.BOOKING_AMOUNT_PAID, GridCol.BOOKING_TOTAL_COST, GridCol.BOOKING_SPECIAL_REQUEST,
 				GridCol.BOOKING_PAYMENT_STATUS);
-		bookingGrid.getColumn(GridCol.BOOKING_PEOPLE).setCaption("Number of Adults, Children, Toddlers");
 
 		bookingGrid.addColumn(b -> {
 			if (b.getPromoDiscountMultiplier() != 1) {

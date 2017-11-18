@@ -145,9 +145,6 @@ public class Booking {
 		this.customer = customer;
 	}
 
-	public Long getOfferingId() {
-		return getOffering() != null ? getOffering().getId() : null;
-	}
 
 	/**
 	 * @return Gets the Id of the tour that this offering belongs to.
@@ -179,14 +176,6 @@ public class Booking {
 
 	public void setOffering(Offering offering) {
 		this.offering = offering;
-	}
-
-	/**
-	 * @return A formatted string showing the number of adults, children, and
-	 *         toddlers. Used for the vaadin grid column values.
-	 */
-	public String getPeople() {
-		return (this.getNumAdults() + ", " + this.getNumChildren() + ", " + this.getNumToddlers());
 	}
 
 	public int getNumAdults() {
