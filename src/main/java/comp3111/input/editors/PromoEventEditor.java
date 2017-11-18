@@ -174,8 +174,8 @@ public class PromoEventEditor extends VerticalLayout {
 		});
 	}
 
-	// Check whether a customer offering is editable or not based on start date and
-	// current date
+	// Check whether a promo event is editable or not based on offering start date
+	// and current date
 	private boolean canEditEvent(PromoEvent event) {
 		if (event == null)
 			return true;
@@ -284,7 +284,6 @@ public class PromoEventEditor extends VerticalLayout {
 		binder.forField(promoCode).asRequired(Utils.generateRequiredError())
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.bind(PromoEvent::getPromoCode, PromoEvent::setPromoCode);
-
 
 		binder.forField(promoCodeUses).asRequired(Utils.generateRequiredError())
 				.withConverter(ConverterFactory.getStringToIntegerConverter())
