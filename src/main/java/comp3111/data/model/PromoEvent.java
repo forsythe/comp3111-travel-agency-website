@@ -148,6 +148,10 @@ public class PromoEvent {
 	public boolean isTriggered() {
 		return isTriggered;
 	}
+	
+	public boolean getTriggered() {
+		return isTriggered;
+	}
 
 	public void setTriggered(boolean hasTriggered) {
 		this.isTriggered = hasTriggered;
