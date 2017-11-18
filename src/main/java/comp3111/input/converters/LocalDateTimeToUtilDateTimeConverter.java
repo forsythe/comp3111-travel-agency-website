@@ -10,6 +10,11 @@ import com.vaadin.data.ValueContext;
 
 import comp3111.Utils;
 
+/**
+ * Converts between LocalDateTime objects and DateTime objects
+ * @author Forsythe
+ *
+ */
 public class LocalDateTimeToUtilDateTimeConverter implements Converter<LocalDateTime, Date> {
 
 	@Override

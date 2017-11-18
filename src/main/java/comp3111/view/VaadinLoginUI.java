@@ -84,9 +84,9 @@ public class VaadinLoginUI extends UI implements ViewDisplay {
 			public boolean beforeViewChange(ViewChangeEvent event) {
 				View newView = event.getNewView();
 				String newViewName = event.getViewName();
-				if (newViewName.equals(GuidedByManagmentView.VIEW_NAME)) {
+				if (newViewName.equals(GuidedByView.VIEW_NAME)) {
 					// prevent a user from directly accessing
-					return ((GuidedByManagmentView) newView).userHasSelectedTourGuide();
+					return ((GuidedByView) newView).userHasSelectedTourGuide();
 				}
 				return true;
 			}

@@ -44,7 +44,6 @@ import comp3111.data.repo.PromoEventRepository;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.data.repo.TourRepository;
 import comp3111.input.exceptions.OfferingDateUnsupportedException;
-import comp3111.input.exceptions.OfferingDayOfWeekUnsupportedException;
 import comp3111.input.exceptions.OfferingOutOfRoomException;
 import comp3111.input.exceptions.TourGuideUnavailableException;
 
@@ -120,7 +119,7 @@ public class LineInteractionTests {
 
 	@Test
 	public void testSuccessSendMessageToOfferingParticipants() throws OfferingDateUnsupportedException,
-			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
+			TourGuideUnavailableException, OfferingOutOfRoomException {
 
 		Tour comp3111Tour = new Tour("comp3111h", "learn about design patterns", 3, 0.8, 0.0, 599, 699);
 		comp3111Tour.setAllowedDates(

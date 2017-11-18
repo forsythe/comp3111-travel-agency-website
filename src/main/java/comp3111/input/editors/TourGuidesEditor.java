@@ -17,7 +17,7 @@ import comp3111.data.GridCol;
 import comp3111.data.model.TourGuide;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.input.validators.ValidatorFactory;
-import comp3111.view.GuidedByManagmentView;
+import comp3111.view.GuidedByView;
 import comp3111.view.NotificationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +27,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
+/**
+ * Represents the tour guide editor in the TourGuideManagementView
+ * 
+ * @author Forsythe
+ * 
+ */
 @SuppressWarnings("serial")
 @SpringComponent
 @UIScope
@@ -41,7 +47,7 @@ public class TourGuidesEditor extends VerticalLayout {
 	private HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createTourGuideButton = new Button("Create new tour guide");
 	private Button editTourGuideButton = new Button("Edit tour guide");
-	private Button viewGuidedToursButton = new Button("View guided tours");
+	private Button viewGuidedToursButton = new Button("View guided offerings");
 
 	/* subwindow action buttons */
 	private Button subwindowConfirm;
@@ -55,7 +61,10 @@ public class TourGuidesEditor extends VerticalLayout {
 
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
-
+	/**
+	 * @param tgr
+	 *            Autowired, constructor injection
+	 */
 	@Autowired
 	public TourGuidesEditor(TourGuideRepository tgr) {
 		this.tourGuideRepo = tgr;
@@ -110,7 +119,8 @@ public class TourGuidesEditor extends VerticalLayout {
 				String colId = col.getId();
 
 				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
-				ListDataProvider<TourGuide> dataProvider = (ListDataProvider<TourGuide>) tourGuideGrid.getDataProvider();
+				ListDataProvider<TourGuide> dataProvider = (ListDataProvider<TourGuide>) tourGuideGrid
+						.getDataProvider();
 
 				if (!filterField.isEmpty()) {
 					try {
@@ -152,7 +162,7 @@ public class TourGuidesEditor extends VerticalLayout {
 		viewGuidedToursButton.addClickListener(event -> {
 			guidedByViewer.setSelectedTourGuide(selectedTourGuide);
 			guidedByViewer.setTourGuidesEditor(this);
-			getUI().getNavigator().navigateTo(GuidedByManagmentView.VIEW_NAME);
+			getUI().getNavigator().navigateTo(GuidedByView.VIEW_NAME);
 			refreshData();
 		});
 	}
@@ -228,10 +238,9 @@ public class TourGuidesEditor extends VerticalLayout {
 		return subwindow;
 	}
 
-	public interface ChangeHandler {
-		void onChange();
-	}
-
+	/**
+	 * Refreshes the data in the vaadin grid
+	 */
 	public void refreshData() {
 		Iterable<TourGuide> tourGuides = tourGuideRepo.findAll();
 		tourGuideCollectionCached.clear();

@@ -42,7 +42,7 @@ public class DateIsEarlierThanOfferingLastEditableDateValidator implements Valid
 	 */
 	@Override
 	public ValidationResult apply(Date value, ValueContext context) {
-		if (o.isEmpty() || o.getValue() == null) {
+		if (o.getValue() == null) {
 			return getValidationErrorLogged("there is no associated offering yet");
 		}
 		if (value != null) {

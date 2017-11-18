@@ -2,6 +2,11 @@ package comp3111.input.field;
 
 import com.vaadin.ui.*;
 
+/**
+ * A custom Vaadin entry field for HKID
+ * @author Forsythe
+ *
+ */
 public class HKIDEntryField extends CustomField<String> {
 	private final TextField mainPart = new TextField();
 	private final TextField checkDigit = new TextField();
@@ -10,10 +15,17 @@ public class HKIDEntryField extends CustomField<String> {
 	}
 
 
+	/**
+	 * Constructor with caption
+	 * @param caption The caption to display beside the input box
+	 */
 	public HKIDEntryField(String caption){
 		this.setCaption(caption);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.vaadin.ui.CustomField#initContent()
+	 */
 	@Override
 	protected Component initContent(){
 		HorizontalLayout layout = new HorizontalLayout();
@@ -28,16 +40,25 @@ public class HKIDEntryField extends CustomField<String> {
 		return layout;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.vaadin.data.HasValue#isEmpty()
+	 */
 	@Override
 	public boolean isEmpty(){
 		return mainPart.isEmpty() || checkDigit.isEmpty();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.vaadin.data.HasValue#getValue()
+	 */
 	@Override
 	public String getValue(){
 		return mainPart.getValue() + "(" + checkDigit.getValue() + ")";
 	}
 
+	/* (non-Javadoc)
+	 * @see com.vaadin.ui.AbstractField#doSetValue(java.lang.Object)
+	 */
 	@Override
     protected void doSetValue(String value) {
 		if (value != null) {
@@ -52,6 +73,9 @@ public class HKIDEntryField extends CustomField<String> {
 		checkDigit.setValue("");
     }
 
+	/* (non-Javadoc)
+	 * @see com.vaadin.ui.AbstractField#setValue(java.lang.Object)
+	 */
 	@Override
 	public void setValue(String value) {
 		doSetValue(value);

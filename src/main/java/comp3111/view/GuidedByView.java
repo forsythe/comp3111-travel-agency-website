@@ -13,15 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 
 /**
- * Generates the UI elements for the front-end side of the Tours Guided By a certain TourGuide Management page. 
+ * Generates the UI elements for the front-end side of the Tours Guided By a certain TourGuide Management page.
  * @author kristiansuhartono
  *
  */
-@SpringView(name = GuidedByManagmentView.VIEW_NAME)
-public class GuidedByManagmentView extends VerticalLayout implements View {
-	public static final String VIEW_NAME = "guidedByManagement";
-	private static final Logger log = LoggerFactory.getLogger(GuidedByManagmentView.class);
 
+@SpringView(name = GuidedByView.VIEW_NAME)
+public class GuidedByView extends VerticalLayout implements View {
+	public static final String VIEW_NAME = "guidedByView";
+	private static final Logger log = LoggerFactory.getLogger(GuidedByView.class);
+	
 	@Autowired
 	private GuidedByViewer guidedByViewer;
 
@@ -41,7 +42,7 @@ public class GuidedByManagmentView extends VerticalLayout implements View {
 		this.addComponent(layout);
 	}
 
-	/** 
+	/**
 	 * Function is called when the view is loaded up in the browser, refreshes the data so that the tables
 	 * are updated to the newest data contents.
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
@@ -53,7 +54,7 @@ public class GuidedByManagmentView extends VerticalLayout implements View {
 		// everytime we enter this page, we want to update the data in the grid
 		this.guidedByViewer.refreshData();
 		this.titleLabel.setCaption(
-				"<h1>All tours assigned to: <b>" + guidedByViewer.getSelectedTourGuide().getName()+ "</b></h1>");
+				"<h1>All offerings led by: <b>" + guidedByViewer.getSelectedTourGuide().getName() + "</b></h1>");
 		this.titleLabel.setCaptionAsHtml(true);
 	}
 

@@ -117,8 +117,10 @@ public class DBManager {
 	}
 
 	/**
+	 * Persists an edited detached or transient Offering object
+	 * 
 	 * @param o
-	 *            The updated transient Offering object
+	 *            The Offering object to persist
 	 * @return The persisted Offering object
 	 * @throws TourGuideUnavailableException
 	 *             If you try to assign a tour guide who has a time conflict with
@@ -148,6 +150,8 @@ public class DBManager {
 	}
 
 	/**
+	 * Checks if a tour guide is free to lead an offering
+	 * 
 	 * @param tg
 	 *            The tour guide
 	 * @param proposedOffering
@@ -161,6 +165,8 @@ public class DBManager {
 	}
 
 	/**
+	 * Checks if a tour guide is available during a time interval
+	 * 
 	 * @param tg
 	 *            The tour guide
 	 * @param proposedStart
@@ -193,6 +199,9 @@ public class DBManager {
 	}
 
 	/**
+	 * Checks if a tour guide is free between a time interval, but ignoring the
+	 * potential time conflict of a single offering
+	 * 
 	 * @param tg
 	 *            The tour guide
 	 * @param proposedStart
@@ -254,6 +263,8 @@ public class DBManager {
 	}
 
 	/**
+	 * Creates a booking for an offering with a promo code
+	 * 
 	 * @param o
 	 *            An offering to make a booking in
 	 * @param c
@@ -310,6 +321,8 @@ public class DBManager {
 	}
 
 	/**
+	 * Creates a normal (non-promo event) booking for an offering
+	 * 
 	 * @param o
 	 *            An offering to make a booking in
 	 * @param c
@@ -361,6 +374,8 @@ public class DBManager {
 	}
 
 	/**
+	 * Validates promo codes
+	 * 
 	 * @param promoCode
 	 *            The promo code
 	 * @return Whether this promo code is valid
@@ -380,15 +395,23 @@ public class DBManager {
 	}
 
 	/**
+	 * Creates a booking a promo code, given a booking object and promo code
+	 * 
 	 * @param booking
 	 *            The booking to make an offering for
 	 * @param promocode
 	 *            The promo code
 	 * @throws OfferingOutOfRoomException
+	 *             If the offering is out of room
 	 * @throws PromoCodeUsedUpException
+	 *             If the promo code has been used up
 	 * @throws NoSuchPromoCodeException
+	 *             If no such promo code exists
 	 * @throws PromoForCustomerExceededException
+	 *             If the customer exceeded the maximum number of reservations
+	 *             allowed per promotional booking
 	 * @throws PromoCodeNotForOfferingException
+	 *             If the wrong promo code was used
 	 */
 	public void createBookingForOfferingWithPromoCode(Booking booking, String promocode)
 			throws OfferingOutOfRoomException, PromoCodeUsedUpException, NoSuchPromoCodeException,
@@ -400,13 +423,13 @@ public class DBManager {
 			throw new PromoCodeNotForOfferingException();
 		}
 
-		int totalPromoUsed = booking.getTotalNumberOfPeople();
+		int promoReservations = booking.getTotalNumberOfPeople();
 		for (Booking b : bookingRepo.findByCustomer(booking.getCustomer())) {
 			if (b.getPromoCodeUsed() != null && b.getPromoCodeUsed().equals(promocode)) {
-				totalPromoUsed += b.getTotalNumberOfPeople();
+				promoReservations += b.getTotalNumberOfPeople();
 			}
 		}
-		if (totalPromoUsed > pe.getMaxReservationsPerCustomer()) {
+		if (promoReservations > pe.getMaxReservationsPerCustomer()) {
 			throw new PromoForCustomerExceededException();
 		}
 
@@ -419,6 +442,8 @@ public class DBManager {
 	}
 
 	/**
+	 * Finds all the offerings associated with a tour guide
+	 * 
 	 * @param tg
 	 *            A tour guide
 	 * @return A collection of offerings (of ALL statuses; pending, confirmed,
@@ -438,6 +463,8 @@ public class DBManager {
 	}
 
 	/**
+	 * Finds all the bookings for an offering
+	 * 
 	 * @param offering
 	 *            An offering
 	 * @return All bookings made for this offering
@@ -488,6 +515,8 @@ public class DBManager {
 	}
 
 	/**
+	 * Counts how many offerings have been made for this tour
+	 * 
 	 * @param t
 	 *            A tour
 	 * @return How many offerings have been made for this tour
@@ -502,6 +531,8 @@ public class DBManager {
 	}
 
 	/**
+	 * Counts how many paying customers are associated with the offering
+	 * 
 	 * @param offering
 	 *            An offering
 	 * @return How many paid customers (adults, children, toddlers) are registered
