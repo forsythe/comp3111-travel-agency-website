@@ -1,5 +1,11 @@
 package comp3111.input.exceptions;
 
+/**
+ * An exception class that should be used when the column name is not found when it is being searched for. 
+ * 
+ * @author kristiansuhartono
+ *
+ */
 public class ColumnNameNotFoundException extends Exception {
 
 	public ColumnNameNotFoundException() {

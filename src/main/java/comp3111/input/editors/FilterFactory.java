@@ -230,7 +230,7 @@ public class FilterFactory {
 			return new ProviderAndPredicate<PromoEvent, String>(PromoEvent::getTriggerDateString,
 					t -> Utils.containsIgnoreCase(t, searchVal));
 		if (colId.equals(GridCol.PROMOEVENT_IS_TRIGGERED))
-			return new ProviderAndPredicate<PromoEvent, Boolean>(PromoEvent::getTriggered,
+			return new ProviderAndPredicate<PromoEvent, Boolean>(PromoEvent::isTriggered,
 					t -> Utils.safeParseBoolEquals(t, searchVal));
 
 		throw new ColumnNameNotFoundException("[" + colId + "] isn't a valid column id for [Offering]");
