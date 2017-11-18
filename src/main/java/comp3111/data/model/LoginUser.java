@@ -67,4 +67,12 @@ public class LoginUser {
 		this.hashedSaltedPassword = bcpe.encode(rawPassword);
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof LoginUser) {
+			return ((LoginUser) other).getId().equals(this.getId());
+		}
+		return false;
+	}
+
 }

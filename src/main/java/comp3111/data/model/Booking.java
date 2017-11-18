@@ -19,7 +19,7 @@ public class Booking {
 	public static final String PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED = "Offering cancelled";
 	@Id
 	@GeneratedValue
-	private long id;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Customer customer;
@@ -38,7 +38,7 @@ public class Booking {
 	private String promoCodeUsed;
 
 	public Booking() {
-
+		promoDiscountMultiplier = 1;
 	}
 
 	/**
@@ -145,32 +145,18 @@ public class Booking {
 		this.customer = customer;
 	}
 
-	public Long getOfferingId() {
-		return getOffering() != null ? getOffering().getId() : null;
-	}
-
 	/**
 	 * @return Gets the Id of the tour that this offering belongs to.
 	 */
 	public Long getTourId() {
-		if (getOffering() != null) {
-			if (getOffering().getTour() != null) {
-				return getOffering().getTour().getId();
-			}
-		}
-		return null;
+		return getOffering().getTour().getId();
 	}
 
 	/**
 	 * @return The name of the tour that this offering belongs to.
 	 */
 	public String getTourName() {
-		if (getOffering() != null) {
-			if (getOffering().getTour() != null) {
-				return getOffering().getTour().getTourName();
-			}
-		}
-		return null;
+		return getOffering().getTour().getTourName();
 	}
 
 	public Offering getOffering() {
@@ -179,14 +165,6 @@ public class Booking {
 
 	public void setOffering(Offering offering) {
 		this.offering = offering;
-	}
-
-	/**
-	 * @return A formatted string showing the number of adults, children, and
-	 *         toddlers. Used for the vaadin grid column values.
-	 */
-	public String getPeople() {
-		return (this.getNumAdults() + ", " + this.getNumChildren() + ", " + this.getNumToddlers());
 	}
 
 	public int getNumAdults() {
@@ -274,8 +252,8 @@ public class Booking {
 	}
 
 	/**
-	 * @return Returns a double [0, 1.0] indicating the discount multiplier. E.g. 0.7 means
-	 * a 30% discount.
+	 * @return Returns a double [0, 1.0] indicating the discount multiplier. E.g.
+	 *         0.7 means a 30% discount.
 	 */
 	public double getPromoDiscountMultiplier() {
 		return promoDiscountMultiplier;
@@ -298,7 +276,7 @@ public class Booking {
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof Booking)
-			return other != null && this.getId() != null && ((Booking) other).getId().equals(this.getId());
+			return ((Booking) other).getId().equals(this.getId());
 		return false;
 	}
 

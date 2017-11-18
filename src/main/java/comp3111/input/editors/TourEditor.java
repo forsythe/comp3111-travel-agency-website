@@ -254,6 +254,17 @@ public class TourEditor extends VerticalLayout {
 		});
 	}
 
+	/**
+	 * Creates the popup window for creating/editing tours
+	 * 
+	 * @param tourRepo
+	 *            The tour repository
+	 * @param tourCollectionCached
+	 *            A local cached version of the tours
+	 * @param tourToSave
+	 *            The transient or detached tour to save
+	 * @return The window
+	 */
 	public Window getSubwindow(TourRepository tourRepo, Collection<Tour> tourCollectionCached, Tour tourToSave) {
 		// Creating the confirm button
 		subwindowConfirmButton = new Button("Confirm");

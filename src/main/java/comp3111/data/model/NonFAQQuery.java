@@ -89,7 +89,7 @@ public class NonFAQQuery {
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof NonFAQQuery)
-			return other != null && this.getId() != null && ((NonFAQQuery) other).getId().equals(this.getId());
+			return ((NonFAQQuery) other).getId().equals(this.getId());
 		return false;
 	}
 

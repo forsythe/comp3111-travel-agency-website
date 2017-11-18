@@ -169,26 +169,27 @@ public class DBManager {
 	 * 
 	 * @param tg
 	 *            The tour guide
-	 * @param proposedStart
+	 * @param testStart
 	 *            The beginning date
-	 * @param proposedEnd
+	 * @param testEnd
 	 *            The ending date
 	 * @return Whether or not the tour guide is free (to lead more offerings)
 	 *         between this date interval
 	 */
-	public boolean isTourGuideAvailableBetweenDate(TourGuide tg, Date proposedStart, Date proposedEnd) {
-		for (Offering existingOffering : findPastAndUpcomingGuidedOfferingsByTourGuide(tg)) {
+	public boolean isTourGuideAvailableBetweenDate(TourGuide tg, Date testStart, Date testEnd) {
+		for (Offering existingOffering : findOfferingsByTourGuide(tg)) {
 			if (existingOffering.getStatus().equals(Offering.STATUS_CANCELLED)) {
 				continue;
 			}
 			Date takenStart = existingOffering.getStartDate();
 			Date takenEnd = Utils.addDate(takenStart, existingOffering.getTour().getDays());
 
-			if (proposedStart.after(takenStart) && proposedEnd.before(takenEnd)
-					|| proposedStart.before(takenStart) && proposedEnd.after(takenEnd)
-					|| proposedStart.before(takenEnd) && proposedEnd.after(takenEnd) || proposedStart.equals(takenStart)
-					|| proposedEnd.equals(takenEnd)) {
-				log.info("Offering timerange [{}]-[{}] is occupied for tourguide [{}]", proposedStart, proposedEnd,
+			if (testStart.after(takenStart) && testEnd.before(takenEnd)
+					|| testStart.before(takenStart) && testEnd.after(takenEnd)
+					|| testStart.before(takenEnd) && testEnd.after(takenEnd)
+					|| testStart.before(takenStart) && testEnd.after(takenStart) || testStart.equals(takenStart)
+					|| testEnd.equals(takenEnd)) {
+				log.info("Offering timerange [{}]-[{}] is occupied for tourguide [{}]", testStart, testEnd,
 						tg.getName());
 
 				return false;
@@ -204,10 +205,10 @@ public class DBManager {
 	 * 
 	 * @param tg
 	 *            The tour guide
-	 * @param proposedStart
+	 * @param testStart
 	 *            The start date interval to check if the tour guide is free
-	 * @param proposedEnd
-	 *            The end date
+	 * @param testEnd
+	 *            The end date of the interval to check
 	 * @param ignoredOffering
 	 *            The offering to ignore.
 	 * @return Whether the tour guide is available between the specified range. It
@@ -215,9 +216,9 @@ public class DBManager {
 	 *         there are any time collisions with the provided date range. We also
 	 *         ignore the timerange used by the offering "ignoredOffering"
 	 */
-	public boolean isTourGuideAvailableBetweenDateExcludeOffering(TourGuide tg, Date proposedStart, Date proposedEnd,
+	public boolean isTourGuideAvailableBetweenDateExcludeOffering(TourGuide tg, Date testStart, Date testEnd,
 			Offering ignoredOffering) {
-		Collection<Offering> relevantOfferings = findPastAndUpcomingGuidedOfferingsByTourGuide(tg);
+		Collection<Offering> relevantOfferings = findOfferingsByTourGuide(tg);
 		int size = relevantOfferings.size();
 		log.info("size before removing: [{}]", size);
 		relevantOfferings.removeIf(offer -> offer.equals(ignoredOffering));
@@ -231,11 +232,12 @@ public class DBManager {
 			Date takenStart = existingOffering.getStartDate();
 			Date takenEnd = Utils.addDate(takenStart, existingOffering.getTour().getDays());
 
-			if (proposedStart.after(takenStart) && proposedEnd.before(takenEnd)
-					|| proposedStart.before(takenStart) && proposedEnd.after(takenEnd)
-					|| proposedStart.before(takenEnd) && proposedEnd.after(takenEnd) || proposedStart.equals(takenStart)
-					|| proposedEnd.equals(takenEnd)) {
-				log.info("Offering timerange [{}]-[{}] is occupied for tourguide [{}]", proposedStart, proposedEnd,
+			if (testStart.after(takenStart) && testEnd.before(takenEnd)
+					|| testStart.before(takenStart) && testEnd.after(takenEnd)
+					|| testStart.before(takenEnd) && testEnd.after(takenEnd)
+					|| testStart.before(takenStart) && testEnd.after(takenStart) || testStart.equals(takenStart)
+					|| testEnd.equals(takenEnd)) {
+				log.info("Offering timerange [{}]-[{}] is occupied for tourguide [{}]", testStart, testEnd,
 						tg.getName());
 				return false;
 			}
@@ -384,9 +386,9 @@ public class DBManager {
 	 * @throws NoSuchPromoCodeException
 	 *             If the promo code doesn't exist
 	 */
-	private boolean validatePromoCode(String promoCode) throws PromoCodeUsedUpException, NoSuchPromoCodeException {
+	public boolean validatePromoCode(String promoCode) throws PromoCodeUsedUpException, NoSuchPromoCodeException {
 		PromoEvent pe = promoEventRepo.findOneByPromoCode(promoCode);
-
+		System.out.println("called");
 		if (pe == null)
 			throw new NoSuchPromoCodeException();
 		if (pe.getPromoCodeUsesLeft() == 0)
@@ -450,15 +452,18 @@ public class DBManager {
 	 *         cancelled) led by this tour guide in the past and assigned in the
 	 *         future
 	 */
-	public Collection<Offering> findPastAndUpcomingGuidedOfferingsByTourGuide(TourGuide tg) {
+	public Collection<Offering> findOfferingsByTourGuide(TourGuide tg) {
 		Collection<Offering> guidedOfferingsByTourGuide = new HashSet<Offering>();
 		log.info("Finding offerings for tour guide [{}]", tg.getName());
+		int found = 0;
 		for (Offering o : offeringRepo.findAll()) {
 			if (o.getTourGuide().equals(tg)) {
 				guidedOfferingsByTourGuide.add(o);
 				log.info("\t[{}]", o.toString());
 			}
+			found++;
 		}
+		log.info("\tfound [{}]", found);
 		return guidedOfferingsByTourGuide;
 	}
 
@@ -503,15 +508,17 @@ public class DBManager {
 	 *            The username
 	 * @param rawPassword
 	 *            The raw password
+	 * @return The LoginUser
 	 * @throws UsernameTakenException
 	 *             If the username is taken
 	 */
-	public void createNewLogin(String username, String rawPassword) throws UsernameTakenException {
+	public LoginUser createNewLogin(String username, String rawPassword) throws UsernameTakenException {
 		if (loginUserRepo.findByUsername(username) != null) {
 			throw new UsernameTakenException();
 		}
-		loginUserRepo.save(new LoginUser(username, rawPassword));
 		log.info("successfully created a new user login, username [{}]", username);
+
+		return loginUserRepo.save(new LoginUser(username, rawPassword));
 	}
 
 	/**
