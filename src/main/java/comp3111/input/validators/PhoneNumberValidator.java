@@ -8,7 +8,7 @@ import static comp3111.input.validators.ReturnValidationErrorWithLogging.getVali
 
 public class PhoneNumberValidator implements Validator<String> {
 
-	public PhoneNumberValidator() {
+	PhoneNumberValidator() {
 	}
 
 	@Override

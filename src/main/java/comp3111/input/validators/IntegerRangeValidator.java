@@ -10,19 +10,16 @@ public class IntegerRangeValidator implements Validator<Integer> {
 	private int min;
 	private int max;
 
-	public IntegerRangeValidator(int minInclusive, int maxExclusive) {
+	IntegerRangeValidator(int minInclusive, int maxExclusive) {
 		this.min = minInclusive;
 		this.max = maxExclusive;
 	}
 
 	@Override
 	public ValidationResult apply(Integer value, ValueContext context) {
-		try {
-			if (value >= min && value < max)
-				return ValidationResult.ok();
-		} catch (NumberFormatException e) {
-			return getValidationErrorLogged("must be an integer");
-		}
+		if (value >= min && value < max)
+			return ValidationResult.ok();
+
 		return getValidationErrorLogged("the integer must be [" + min + ", " + max + ")");
 
 	}

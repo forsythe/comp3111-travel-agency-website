@@ -9,18 +9,14 @@ import static comp3111.input.validators.ReturnValidationErrorWithLogging.getVali
 public class IntegerLowerBoundValidator implements Validator<Integer> {
 	private int min;
 
-	public IntegerLowerBoundValidator(int minInclusive) {
+	IntegerLowerBoundValidator(int minInclusive) {
 		this.min = minInclusive;
 	}
 
 	@Override
 	public ValidationResult apply(Integer value, ValueContext context) {
-		try {
-			if (value >= min)
-				return ValidationResult.ok();
-		} catch (NumberFormatException e) {
-			return getValidationErrorLogged("must be an integer");
-		}
+		if (value >= min)
+			return ValidationResult.ok();
 		return getValidationErrorLogged("the integer must be >= " + min);
 
 	}

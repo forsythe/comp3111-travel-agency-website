@@ -13,7 +13,7 @@ import comp3111.Utils;
 
 public class ListOfDatesValidator implements Validator<String> {
 
-	public ListOfDatesValidator() {
+	ListOfDatesValidator() {
 	}
 
 	@Override

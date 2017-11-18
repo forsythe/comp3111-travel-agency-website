@@ -1,14 +1,7 @@
 package unit;
 
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-
-import static org.assertj.core.api.BDDAssertions.then;
-
+import comp3111.Application;
+import comp3111.data.DBManager;
 import comp3111.data.model.*;
 import comp3111.data.repo.*;
 import comp3111.input.exceptions.*;
@@ -20,8 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import comp3111.Application;
-import comp3111.data.DBManager;
+import java.util.*;
+
+import static org.assertj.core.api.BDDAssertions.then;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)

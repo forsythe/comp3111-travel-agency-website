@@ -10,18 +10,15 @@ public class DoubleRangeValidator implements Validator<Double> {
 	private double min;
 	private double max;
 
-	public DoubleRangeValidator(double minInclusive, double maxInclusive) {
+	DoubleRangeValidator(double minInclusive, double maxInclusive) {
 		this.min = minInclusive;
 		this.max = maxInclusive;
 	}
 
 	@Override
 	public ValidationResult apply(Double value, ValueContext context) {
-		try {
-			if (value >= min && value <= max)
-				return ValidationResult.ok();
-		} catch (NumberFormatException e) {
-			return getValidationErrorLogged("must be a number");
+		if (value >= min && value <= max){
+			return ValidationResult.ok();
 		}
 		return getValidationErrorLogged("the number must be [" + min + ", " + max + "]");
 

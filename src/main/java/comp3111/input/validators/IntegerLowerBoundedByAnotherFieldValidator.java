@@ -10,7 +10,7 @@ import static comp3111.input.validators.ReturnValidationErrorWithLogging.getVali
 public class IntegerLowerBoundedByAnotherFieldValidator implements Validator<Integer> {
 	private AbstractTextField field;
 
-	public IntegerLowerBoundedByAnotherFieldValidator(AbstractTextField field) {
+	IntegerLowerBoundedByAnotherFieldValidator(AbstractTextField field) {
 		this.field = field;
 	}
 

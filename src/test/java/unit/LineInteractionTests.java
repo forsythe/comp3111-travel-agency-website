@@ -1,15 +1,15 @@
 package unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-
+import comp3111.Application;
+import comp3111.LineMessenger;
+import comp3111.ScheduledTasks;
+import comp3111.Utils;
+import comp3111.data.DBManager;
+import comp3111.data.model.*;
+import comp3111.data.repo.*;
+import comp3111.input.exceptions.OfferingDateUnsupportedException;
+import comp3111.input.exceptions.OfferingOutOfRoomException;
+import comp3111.input.exceptions.TourGuideUnavailableException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,27 +20,10 @@ import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import comp3111.Application;
-import comp3111.LineMessenger;
-import comp3111.ScheduledTasks;
-import comp3111.Utils;
-import comp3111.data.DBManager;
-import comp3111.data.model.Booking;
-import comp3111.data.model.Customer;
-import comp3111.data.model.NonFAQQuery;
-import comp3111.data.model.Offering;
-import comp3111.data.model.Tour;
-import comp3111.data.model.TourGuide;
-import comp3111.data.repo.BookingRepository;
-import comp3111.data.repo.CustomerRepository;
-import comp3111.data.repo.NonFAQQueryRepository;
-import comp3111.data.repo.OfferingRepository;
-import comp3111.data.repo.TourGuideRepository;
-import comp3111.data.repo.TourRepository;
-import comp3111.input.exceptions.OfferingDateUnsupportedException;
-import comp3111.input.exceptions.OfferingDayOfWeekUnsupportedException;
-import comp3111.input.exceptions.OfferingOutOfRoomException;
-import comp3111.input.exceptions.TourGuideUnavailableException;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -104,7 +87,7 @@ public class LineInteractionTests {
 
 	@Test
 	public void testSuccessSendMessageToOfferingParticipants() throws OfferingDateUnsupportedException,
-			OfferingDayOfWeekUnsupportedException, TourGuideUnavailableException, OfferingOutOfRoomException {
+			TourGuideUnavailableException, OfferingOutOfRoomException {
 
 		Tour comp3111Tour = new Tour("comp3111h", "learn about design patterns", 3, 0.8, 0.0, 599, 699);
 		comp3111Tour.setAllowedDates(
