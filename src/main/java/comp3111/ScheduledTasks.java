@@ -17,8 +17,8 @@ import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.PromoEventRepository;
 
 /**
- * A class which handles running schedule functions, i.e. sending out Offering
- * status updates and Promo event broadcasts
+ * A class which handles running schedule functions, for example sending out
+ * Offering status updates and Promo event broadcasts
  * 
  * @author Forsythe
  *
@@ -81,9 +81,9 @@ public class ScheduledTasks {
 	}
 
 	/**
-	 * Checks if there are any promotional events which need to be triggered (i.e.
-	 * we have reached their triggerDate). If so, broadcasts the custom message to
-	 * everyone, and sets the PromoEvent's isTriggered to be true.
+	 * Checks if there are any promotional events which need to be triggered (that
+	 * is to say, we have reached their triggerDate). If so, broadcasts the custom
+	 * message to everyone, and sets the PromoEvent's isTriggered to be true.
 	 */
 	@Scheduled(cron = EVERY_10_SECONDS)
 

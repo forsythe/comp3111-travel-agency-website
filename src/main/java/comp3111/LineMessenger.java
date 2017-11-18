@@ -55,6 +55,9 @@ public class LineMessenger {
 	}
 
 	/**
+	 * Counts how many messages have been sent since the last call to
+	 * {@link #resetCounter()}
+	 * 
 	 * @return how many recipients have received a message since we called
 	 *         {@link LineMessenger#resetCounter()}}
 	 */

@@ -30,6 +30,8 @@ public class Utils {
 	public static final String DATE_TIME_LOCALE = DATE_LOCALE + " HH:mm:ss Z";
 
 	/**
+	 * Returns the error to show when a required field is left empty
+	 * 
 	 * @return The error to show when a required field is left empty
 	 */
 	public static String generateRequiredError() {
@@ -37,6 +39,8 @@ public class Utils {
 	}
 
 	/**
+	 * Returns the error to show when no tour guides are available
+	 * 
 	 * @return The error to show when no tour guides are available
 	 */
 	public static String generateNoTourGuideAvailableError() {
@@ -246,7 +250,16 @@ public class Utils {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Safely parses a boolean, and check if it equals a value
+	 * 
+	 * @param val
+	 *            The expected value
+	 * @param s
+	 *            The string to parse
+	 * @return Whether the parsed value matches the expected value
+	 */
 	public static Boolean safeParseBoolEquals(boolean val, String s) {
 		try {
 			if (Boolean.parseBoolean(s) == val) {
