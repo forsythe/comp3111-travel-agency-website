@@ -28,6 +28,7 @@ import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
@@ -178,12 +179,14 @@ public class BookingEditor extends VerticalLayout {
 		this.addComponent(bookingGrid);
 
 		createBookingButton.addClickListener(event -> {
-			getUI().getCurrent().addWindow(getSubwindow(new Booking()));
+			getUI();
+			UI.getCurrent().addWindow(getSubwindow(new Booking()));
 		});
 
 		editBookingButton.addClickListener(event -> {
 			if (canEditBooking(selectedBookingRecord)) {
-				getUI().getCurrent().addWindow(getSubwindow(selectedBookingRecord));
+				getUI();
+				UI.getCurrent().addWindow(getSubwindow(selectedBookingRecord));
 			}
 		});
 	}

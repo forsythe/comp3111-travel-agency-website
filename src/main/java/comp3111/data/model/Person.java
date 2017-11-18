@@ -6,8 +6,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 
 /**
- * An abstract entity either representing a customer or a tour guide in the
- * database
+ * An abstract class representing either a customer or a tour guide in the
+ * database.
  * 
  * @author Forsythe
  *
@@ -21,7 +21,6 @@ public abstract class Person {
 	private Long id;
 
 	private String name;
-
 
 	public Person() {
 	}
@@ -46,7 +45,6 @@ public abstract class Person {
 	public void setName(String name) {
 		this.name = name;
 	}
-
 
 	@Override
 	public String toString() {

@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.vaadin.data.ValidationResult;
 import com.vaadin.data.ValueContext;
 
-import comp3111.input.field.HKIDEntryField;
 import comp3111.input.validators.HKIDValidator;
 import comp3111.input.validators.PhoneNumberValidator;
 import comp3111.input.validators.ValidatorFactory;

@@ -1,9 +1,6 @@
 package comp3111.view;
 
-import com.vaadin.data.BinderValidationStatus;
-import com.vaadin.data.BindingValidationStatus;
 import com.vaadin.shared.Position;
-import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 
