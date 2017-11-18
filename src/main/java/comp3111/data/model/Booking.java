@@ -38,7 +38,7 @@ public class Booking {
 	private String promoCodeUsed;
 
 	public Booking() {
-
+		promoDiscountMultiplier = 1;
 	}
 
 	/**
