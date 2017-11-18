@@ -23,14 +23,14 @@ public class StringCollectionToIntegerCollectionConverter implements Converter<S
 	public Set<String> convertToPresentation(Collection<Integer> value, ValueContext context) {
 		return Utils.integerSetToStringDayNameSet(value);
 	}
-	
-	public Class<Collection> getModelType() {
-	    return Collection.class;
-	  }
 
-	  public Class<Set> getPresentationType() {
-	    return Set.class;
-	  }
+//	public Class<Collection> getModelType() {
+//	    return Collection.class;
+//	  }
+//
+//	  public Class<Set> getPresentationType() {
+//	    return Set.class;
+//	  }
 
 
 }

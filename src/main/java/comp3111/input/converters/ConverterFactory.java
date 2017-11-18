@@ -20,4 +20,8 @@ public class ConverterFactory {
 	public static LocalDateTimeToUtilDateTimeConverter getLocalDateTimeToUtilDateTimeConverter() {
 		return new LocalDateTimeToUtilDateTimeConverter();
 	}
+
+	public static LocalDateToUtilDateConverter getLocalDateToUtilDateConverter(){
+		return new LocalDateToUtilDateConverter();
+	}
 }

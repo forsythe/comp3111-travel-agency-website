@@ -24,12 +24,12 @@ public class StringToDateCollectionConverter implements Converter<String, Collec
 	public String convertToPresentation(Collection<Date> value, ValueContext context) {
 		return Utils.dateCollectionToString(value);
 	}
-	
-	public Class<Collection> getModelType() {
-	    return Collection.class;
-	  }
-
-	  public Class<String> getPresentationType() {
-	    return String.class;
-	  }
+//
+//	public Class<Collection> getModelType() {
+//	    return Collection.class;
+//	  }
+//
+//	  public Class<String> getPresentationType() {
+//	    return String.class;
+//	  }
 }
