@@ -153,17 +153,11 @@ public class FilterFactory {
 		if (colId.equals(GridCol.BOOKING_CUSTOMER_HKID))
 			return new ProviderAndPredicate<Booking, String>(Booking::getCustomerHkid,
 					t -> Utils.containsIgnoreCase(t, searchVal));
-		if (colId.equals(GridCol.BOOKING_OFFERING_ID))
-			return new ProviderAndPredicate<Booking, Long>(Booking::getOfferingId,
-					t -> Utils.safeParseLongEquals(t, searchVal));
 		if (colId.equals(GridCol.BOOKING_TOUR_ID))
 			return new ProviderAndPredicate<Booking, Long>(Booking::getTourId,
 					t -> Utils.safeParseLongEquals(t, searchVal));
 		if (colId.equals(GridCol.BOOKING_TOUR_NAME))
 			return new ProviderAndPredicate<Booking, String>(Booking::getTourName,
-					t -> Utils.containsIgnoreCase(t, searchVal));
-		if (colId.equals(GridCol.BOOKING_PEOPLE))
-			return new ProviderAndPredicate<Booking, String>(Booking::getPeople,
 					t -> Utils.containsIgnoreCase(t, searchVal));
 		if (colId.equals(GridCol.BOOKING_AMOUNT_PAID))
 			return new ProviderAndPredicate<Booking, Double>(Booking::getAmountPaid,
@@ -177,6 +171,9 @@ public class FilterFactory {
 		if (colId.equals(GridCol.BOOKING_PAYMENT_STATUS))
 			return new ProviderAndPredicate<Booking, String>(Booking::getPaymentStatus,
 					t -> Utils.containsIgnoreCase(t, searchVal));
+		if (colId.equals(GridCol.BOOKING_OFFERING))
+			return new ProviderAndPredicate<Booking, Offering>(Booking::getOffering,
+					t -> Utils.containsIgnoreCase(t.toString(), searchVal));
 
 		if (colId.equals(GridCol.BOOKING_PROMO_DISCOUNT_MULTIPLIER_MASKED)) {
 			if (Utils.containsIgnoreCase("none", searchVal)) {
@@ -210,7 +207,6 @@ public class FilterFactory {
 		if (colId.equals(GridCol.NONFAQQUERY_QUERY))
 			return new ProviderAndPredicate<NonFAQQuery, String>(NonFAQQuery::getQuery,
 					t -> Utils.containsIgnoreCase(t, searchVal));
-		// TODO finish this part of the factory
 		if (colId.equals(GridCol.NONFAQQUERY_CUSTOMER))
 			return new ProviderAndPredicate<NonFAQQuery, String>(NonFAQQuery::getCustomerName,
 					t -> Utils.containsIgnoreCase(t, searchVal));

@@ -324,7 +324,7 @@ public class Tour {
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof Tour)
-			return other != null && this.getId() != null && ((Tour) other).getId().equals(this.getId());
+			return ((Tour) other).getId().equals(this.getId());
 		return false;
 	}
 
