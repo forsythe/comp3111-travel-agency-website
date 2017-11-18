@@ -17,7 +17,7 @@ import comp3111.data.GridCol;
 import comp3111.data.model.TourGuide;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.input.validators.ValidatorFactory;
-import comp3111.view.GuidedByManagmentView;
+import comp3111.view.GuidedByView;
 import comp3111.view.NotificationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,7 @@ public class TourGuidesEditor extends VerticalLayout {
 	private HorizontalLayout rowOfButtons = new HorizontalLayout();
 	private Button createTourGuideButton = new Button("Create new tour guide");
 	private Button editTourGuideButton = new Button("Edit tour guide");
-	private Button viewGuidedToursButton = new Button("View guided tours");
+	private Button viewGuidedToursButton = new Button("View guided offerings");
 
 	/* subwindow action buttons */
 	private Button subwindowConfirm;
@@ -152,7 +152,7 @@ public class TourGuidesEditor extends VerticalLayout {
 		viewGuidedToursButton.addClickListener(event -> {
 			guidedByViewer.setSelectedTourGuide(selectedTourGuide);
 			guidedByViewer.setTourGuidesEditor(this);
-			getUI().getNavigator().navigateTo(GuidedByManagmentView.VIEW_NAME);
+			getUI().getNavigator().navigateTo(GuidedByView.VIEW_NAME);
 			refreshData();
 		});
 	}

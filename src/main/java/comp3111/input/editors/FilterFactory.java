@@ -11,11 +11,23 @@ import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
 import comp3111.input.exceptions.ColumnNameNotFoundException;
 
-/*
- * a class for getting filters, based on a vaadin grid column
+/**
+ * A factory for generating filters for vaadin grid columns
+ * 
+ * @author Forsythe
+ *
  */
 public class FilterFactory {
 
+	/**
+	 * @param colId
+	 *            The id of the column
+	 * @param searchVal
+	 *            The value to search for
+	 * @return A filter for the tour grid
+	 * @throws ColumnNameNotFoundException
+	 *             If the column id doesn't exist
+	 */
 	public static ProviderAndPredicate<Tour, ?> getFilterForTour(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		/*
@@ -58,6 +70,15 @@ public class FilterFactory {
 		throw new ColumnNameNotFoundException("[" + colId + "] isn't a valid column id for [Tour]");
 	}
 
+	/**
+	 * @param colId
+	 *            The id of the column
+	 * @param searchVal
+	 *            The value to search for
+	 * @return A filter for the tour guide grid
+	 * @throws ColumnNameNotFoundException
+	 *             If the column id doesn't exist
+	 */
 	public static ProviderAndPredicate<TourGuide, ?> getFilterForTourGuide(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.TOURGUIDE_ID))
@@ -73,6 +94,15 @@ public class FilterFactory {
 		throw new ColumnNameNotFoundException("[" + colId + "] isn't a valid column id for [TourGuide]");
 	}
 
+	/**
+	 * @param colId
+	 *            The id of the column
+	 * @param searchVal
+	 *            The value to search for
+	 * @return A filter for the tour customer
+	 * @throws ColumnNameNotFoundException
+	 *             If the column id doesn't exist
+	 */
 	public static ProviderAndPredicate<Customer, ?> getFilterForCustomer(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.CUSTOMER_ID))
@@ -97,6 +127,15 @@ public class FilterFactory {
 		throw new ColumnNameNotFoundException("[" + colId + "] isn't a valid column id for [Customer]");
 	}
 
+	/**
+	 * @param colId
+	 *            The id of the column
+	 * @param searchVal
+	 *            The value to search for
+	 * @return A filter for the booking grid
+	 * @throws ColumnNameNotFoundException
+	 *             If the column id doesn't exist
+	 */
 	public static ProviderAndPredicate<Booking, ?> getFilterForBooking(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.BOOKING_NUM_CHILDREN))
@@ -143,7 +182,7 @@ public class FilterFactory {
 			if (Utils.containsIgnoreCase("none", searchVal)) {
 				return new ProviderAndPredicate<>(Booking::getPromoDiscountMultiplier,
 						t -> Utils.compareDoubleAsIs(t, 1.0));
-			}else{
+			} else {
 				return new ProviderAndPredicate<>(Booking::getPromoDiscountMultiplier,
 						t -> Utils.safeParseDoubleEquals(t, searchVal));
 			}
@@ -152,6 +191,15 @@ public class FilterFactory {
 		throw new ColumnNameNotFoundException("[" + colId + "] isn't a valid column id for [Booking]");
 	}
 
+	/**
+	 * @param colId
+	 *            The id of the column
+	 * @param searchVal
+	 *            The value to search for
+	 * @return A filter for the NonFAQQuery grid
+	 * @throws ColumnNameNotFoundException
+	 *             If the column id doesn't exist
+	 */
 	public static ProviderAndPredicate<NonFAQQuery, ?> getFilterForNonFAQQuery(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.NONFAQQUERY_ID))
@@ -171,6 +219,15 @@ public class FilterFactory {
 		throw new ColumnNameNotFoundException("[" + colId + "] isn't a valid column id for [NonFAQQuery]");
 	}
 
+	/**
+	 * @param colId
+	 *            The id of the column
+	 * @param searchVal
+	 *            The value to search for
+	 * @return A filter for the offering grid
+	 * @throws ColumnNameNotFoundException
+	 *             If the column id doesn't exist
+	 */
 	public static ProviderAndPredicate<Offering, ?> getFilterForOffering(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.OFFERING_ID))
@@ -203,6 +260,16 @@ public class FilterFactory {
 
 		throw new ColumnNameNotFoundException("[" + colId + "] isn't a valid column id for [Offering]");
 	}
+
+	/**
+	 * @param colId
+	 *            The id of the column
+	 * @param searchVal
+	 *            The value to search for
+	 * @return A filter for the PromoEvent grid
+	 * @throws ColumnNameNotFoundException
+	 *             If the column id doesn't exist
+	 */
 	public static ProviderAndPredicate<PromoEvent, ?> getFilterForPromoEvent(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.PROMOEVENT_ID))

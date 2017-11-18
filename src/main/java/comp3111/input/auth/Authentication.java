@@ -10,6 +10,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * A class responsible for authentication login username and passwords
+ * 
+ * @author Forsythe
+ *
+ */
 @SpringComponent
 public class Authentication {
 	private static final Logger log = LoggerFactory.getLogger(Authentication.class);
@@ -17,12 +23,22 @@ public class Authentication {
 	// note: you cannot autowire static fields.
 	private LoginUserRepository loginUserRepository;
 
-	// constructor injection
+	/**
+	 * @param loginUserRepository
+	 *            Autowired, constructor injection
+	 */
 	@Autowired
 	public Authentication(LoginUserRepository loginUserRepository) {
 		this.loginUserRepository = loginUserRepository;
 	}
 
+	/**
+	 * @param username
+	 *            The username
+	 * @param rawPassword
+	 *            The raw password
+	 * @return Whether the login is correct
+	 */
 	public boolean authenticate(String username, String rawPassword) {
 		log.info("Tried to log in user:{}", username);
 		LoginUser user = loginUserRepository.findByUsername(username);
