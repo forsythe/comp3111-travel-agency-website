@@ -108,10 +108,7 @@ public class TourEditor extends VerticalLayout {
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	/**
-	 * Autowired fields. No need to call manually.
-	 * 
-	 * @param trMocked
-	 * @param dbmMocked
+	 * Autowired fields. No need to call manually
 	 */
 	@SuppressWarnings("unchecked")
 	@Autowired
