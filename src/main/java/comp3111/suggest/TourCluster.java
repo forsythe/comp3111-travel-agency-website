@@ -113,11 +113,8 @@ public class TourCluster {
             Iterable<Tour> tourIterable = tourRepo.findAll();
             tourIterable.forEach(tour -> {
                 float customerVector[] = getCustomerVector(tour);
-//            System.out.print(tour.getTourName());
-//            System.out.println(Arrays.toString(customerVector));
                 INDArray vector = Nd4j.create(customerVector);
                 Point pt = new Point(tour.getTourName(), vector);
-//            System.out.println(pt.getArray());
                 pointsLst.add(pt);
             });
         }
@@ -143,6 +140,20 @@ public class TourCluster {
                         clusterIDToTour.get(getClusterForTour(tempList.get(index)).getId()).add(tempList.get(index));
                     });
         }
+
+        //Put all the labels into a string
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Cluster c : clusterList){
+            ArrayList<Tour> list = clusterIDToTour.get(c.getId());
+            for (Tour tour : list) {
+                stringBuilder.append(c.getId());
+                stringBuilder.append("\t");
+                stringBuilder.append(tour.getDescription());
+                stringBuilder.append("\t");
+            }
+        }
+        String resultString = stringBuilder.toString();
+        LabelAwareListSentenceIterator 
     }
 
     ArrayList<Tour> getToursInCluster(Cluster c){
