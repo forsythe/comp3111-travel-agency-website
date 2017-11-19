@@ -210,9 +210,15 @@ public class BookingEditor extends VerticalLayout {
 		});
 	}
 
-	// Check whether a customer offering is editable or not based on start date and
-	// current date
-	private boolean canEditBooking(Booking booking) {
+	/**
+	 * Check whether a customer offering is editable or not based on start date and
+	 * current date
+	 * 
+	 * @param booking
+	 *            The booking to check
+	 * @return Whether the booking is editable
+	 */
+	public boolean canEditBooking(Booking booking) {
 		if (booking == null)
 			return true;
 
