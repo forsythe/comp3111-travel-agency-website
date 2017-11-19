@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
@@ -12,14 +14,23 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *
  */
 @SpringBootApplication
-@EnableScheduling
-<span class="fc" id="L16">public class Application {</span>
+<span class="fc" id="L17">public class Application {</span>
 
-<span class="fc" id="L18">	private static final Logger log = LoggerFactory.getLogger(Application.class);</span>
+<span class="fc" id="L19">	private static final Logger log = LoggerFactory.getLogger(Application.class);</span>
 
 	public static void main(String[] args) {
-<span class="nc" id="L21">		SpringApplication.run(Application.class);</span>
-<span class="nc" id="L22">	}</span>
+<span class="nc" id="L22">		SpringApplication.run(Application.class);</span>
+<span class="nc" id="L23">	}</span>
+	
+	//Don't want scheduling on test cases, or else it causes race conditions!
+	//Annotate all SPRING test classes with @SpringBootTest(properties = &quot;scheduling.enabled=false&quot;)
+	//Non-spring tests don't need this annotation.	
+	@Configuration
+    @ConditionalOnProperty(value = &quot;scheduling.enabled&quot;, havingValue = &quot;true&quot;, matchIfMissing = true)
+    @EnableScheduling
+<span class="nc" id="L31">    static class SchedulingConfiguration {</span>
+
+    }
 
 	// @Bean
 	// public CommandLineRunner loadData(CustomerRepository repository) {
