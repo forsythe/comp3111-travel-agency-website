@@ -14,6 +14,7 @@ import com.vaadin.ui.components.grid.HeaderRow;
 
 import comp3111.Utils;
 import comp3111.data.GridCol;
+import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
 import comp3111.data.repo.TourGuideRepository;
 import comp3111.input.validators.ValidatorFactory;
@@ -39,8 +40,12 @@ import java.util.HashSet;
 public class TourGuidesEditor extends VerticalLayout {
 	private static final Logger log = LoggerFactory.getLogger(TourGuidesEditor.class);
 
-	@Autowired
 	GuidedByViewer guidedByViewer;
+	
+	TextField tourGuideName;
+	TextField tourGuideLineUsername;
+	
+	BinderValidationStatus<TourGuide> validationStatus;
 
 	private Window subwindow;
 
@@ -49,6 +54,7 @@ public class TourGuidesEditor extends VerticalLayout {
 	private Button editTourGuideButton = new Button("Edit tour guide");
 	private Button viewGuidedToursButton = new Button("View guided offerings");
 
+	
 	/* subwindow action buttons */
 	private Button subwindowConfirm;
 
@@ -56,8 +62,12 @@ public class TourGuidesEditor extends VerticalLayout {
 
 	private TourGuide selectedTourGuide;
 
-	private TourGuideRepository tourGuideRepo;
+	TourGuideRepository tourGuideRepo;
 	private final HashSet<TourGuide> tourGuideCollectionCached = new HashSet<TourGuide>();
+	
+	public HashSet<TourGuide> getTourGuideCollectionCached() {
+		return tourGuideCollectionCached;
+	}
 
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
@@ -66,8 +76,10 @@ public class TourGuidesEditor extends VerticalLayout {
 	 *            Autowired, constructor injection
 	 */
 	@Autowired
-	public TourGuidesEditor(TourGuideRepository tgr) {
+	public TourGuidesEditor(TourGuideRepository tgr, GuidedByViewer gbv) {
 		this.tourGuideRepo = tgr;
+		this.guidedByViewer = gbv;
+		
 		// adding components
 		rowOfButtons.addComponent(createTourGuideButton);
 		rowOfButtons.addComponent(editTourGuideButton);
@@ -167,15 +179,15 @@ public class TourGuidesEditor extends VerticalLayout {
 		});
 	}
 
-	private Window getSubwindow(TourGuideRepository tourGuideRepo, Collection<TourGuide> tourGuideCollectionCached,
+	public Window getSubwindow(TourGuideRepository tourGuideRepo, Collection<TourGuide> tourGuideCollectionCached,
 			TourGuide tourGuideToSave) {
 		// Creating the confirm button
 		subwindowConfirm = new Button("Confirm");
-		subwindowConfirm.setId("btn_confirm_tour_guide");
+		getSubwindowConfirmButton().setId("btn_confirm_tour_guide");
 
-		TextField tourGuideName = new TextField("Name");
+		tourGuideName = new TextField("Name");
 		tourGuideName.setId("tf_tour_guide_name");
-		TextField tourGuideLineUsername = new TextField("LINE Username");
+		tourGuideLineUsername = new TextField("LINE Username");
 		tourGuideLineUsername.setId("tf_tour_guide_line_id");
 
 		if (tourGuideToSave.getId() == null) { // passed in an unsaved object
@@ -200,7 +212,7 @@ public class TourGuidesEditor extends VerticalLayout {
 		form.addComponent(tourGuideLineUsername);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
-		buttonActions.addComponent(subwindowConfirm);
+		buttonActions.addComponent(getSubwindowConfirmButton());
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
 		form.addComponent(buttonActions);
 
@@ -213,8 +225,8 @@ public class TourGuidesEditor extends VerticalLayout {
 
 		binder.setBean(tourGuideToSave);
 
-		subwindowConfirm.addClickListener(event -> {
-			BinderValidationStatus<TourGuide> validationStatus = binder.validate();
+		getSubwindowConfirmButton().addClickListener(event -> {
+			validationStatus = binder.validate();
 
 			if (validationStatus.isOk()) {
 				binder.writeBeanIfValid(tourGuideToSave);
@@ -227,11 +239,13 @@ public class TourGuidesEditor extends VerticalLayout {
 				log.info("Saved a new/edited tour guide [{}] successfully", tourGuideName.getValue());
 
 				binder.removeBean();
-				NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
+				if (Page.getCurrent() != null)
+					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
 
 			} else {
 				String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);
-				NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
+				if (Page.getCurrent() != null)
+					NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 			}
 		});
 
@@ -243,12 +257,33 @@ public class TourGuidesEditor extends VerticalLayout {
 	 */
 	public void refreshData() {
 		Iterable<TourGuide> tourGuides = tourGuideRepo.findAll();
-		tourGuideCollectionCached.clear();
-		tourGuides.forEach(tourGuideCollectionCached::add);
-		ListDataProvider<TourGuide> provider = new ListDataProvider<TourGuide>(tourGuideCollectionCached);
-		tourGuideGrid.setDataProvider(provider);
+		if(tourGuides != null) {
+			tourGuideCollectionCached.clear();
+			tourGuides.forEach(tourGuideCollectionCached::add);
+			ListDataProvider<TourGuide> provider = new ListDataProvider<TourGuide>(tourGuideCollectionCached);
+			tourGuideGrid.setDataProvider(provider);
+		}
 		// tourGrid.setItems(tourCollectionCached);
-
+	
 	}
 
+	public Button getSubwindowConfirmButton() {
+		return subwindowConfirm;
+	}
+
+	public TextField getTourGuideName() {
+		return tourGuideName;
+	}
+
+	public TextField getTourGuideLineUsername() {
+		return tourGuideLineUsername;
+	}
+
+	public BinderValidationStatus<TourGuide> getValidationStatus() {
+		return validationStatus;
+	}
+	
+	
+
+	
 }
