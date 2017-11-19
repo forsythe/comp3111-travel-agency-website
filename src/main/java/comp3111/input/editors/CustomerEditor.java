@@ -60,9 +60,9 @@ public class CustomerEditor extends VerticalLayout {
 	HKIDEntryField customerHKID;
 	PhoneNumberEntryField customerPhone;
 	TextField customerAge;
-	
+
 	BinderValidationStatus<Customer> validationStatus;
-	
+
 	/* action buttons */
 	private Button createNewCustomerButton = new Button("Create new customer");
 	private Button editCustomerButton = new Button("Edit customer");
@@ -77,8 +77,10 @@ public class CustomerEditor extends VerticalLayout {
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	/**
+	 * Constructs the editor for creating/editing Customers
+	 * 
 	 * @param cr
-	 *            Autowired, constructor injection
+	 *            The CustomerRepository
 	 */
 	@Autowired
 	public CustomerEditor(CustomerRepository cr) {
@@ -288,7 +290,7 @@ public class CustomerEditor extends VerticalLayout {
 	 */
 	public void refreshData() {
 		Iterable<Customer> customers = customerRepo.findAll();
-		if(customers != null) {
+		if (customers != null) {
 			customerCollectionCached.clear();
 			customers.forEach(customerCollectionCached::add);
 			ListDataProvider<Customer> provider = new ListDataProvider<Customer>(customerCollectionCached);
@@ -329,8 +331,4 @@ public class CustomerEditor extends VerticalLayout {
 		return validationStatus;
 	}
 
-	
-	
-	
-	
 }

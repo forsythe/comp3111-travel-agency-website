@@ -80,7 +80,18 @@ public class PromoEventEditor extends VerticalLayout {
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	/**
-	 * Autowired constructor injection. Don't call it manually.
+	 * Constructs the editor for creating/editing PromoEvents
+	 * 
+	 * @param br
+	 *            The BookingRepository
+	 * @param cr
+	 *            The CustomerRepository
+	 * @param or
+	 *            The OfferingRepository
+	 * @param per
+	 *            The PromoEventRepository
+	 * @param dbm
+	 *            The DBManager
 	 */
 	@Autowired
 	public PromoEventEditor(BookingRepository br, CustomerRepository cr, OfferingRepository or,

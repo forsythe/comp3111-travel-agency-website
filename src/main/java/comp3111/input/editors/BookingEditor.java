@@ -85,8 +85,18 @@ public class BookingEditor extends VerticalLayout {
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	/**
-	 * Creates a new Booking editor. All fields autowired.
+	 * Constructs the booking editor for creating/editing Bookings
 	 * 
+	 * @param br
+	 *            The BookingRepository
+	 * @param cr
+	 *            The CustomerRepository
+	 * @param or
+	 *            The OfferingRepository
+	 * @param per
+	 *            The PromoEventRepository
+	 * @param dbm
+	 *            The DBManager
 	 */
 	@Autowired
 	public BookingEditor(BookingRepository br, CustomerRepository cr, OfferingRepository or, PromoEventRepository per,

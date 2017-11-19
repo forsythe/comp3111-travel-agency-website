@@ -173,7 +173,8 @@ public class ValidatorFactory {
 	 * @param validationStatus
 	 *            the validationStatus object after we fill in a vaadin form that's
 	 *            binded to a bean
-	 * 
+	 * @param <T>
+	 *            The bean class for which the bound fields are being validated
 	 * @return a string that we can display as an error notification
 	 */
 	public static <T> String getValidatorErrorsString(BinderValidationStatus<T> validationStatus) {

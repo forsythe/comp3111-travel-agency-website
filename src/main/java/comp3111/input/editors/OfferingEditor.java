@@ -95,8 +95,14 @@ public class OfferingEditor extends VerticalLayout {
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	/**
+	 * Constructs the editor for creating/editing Offerings
+	 * 
 	 * @param or
-	 *            Autowired, constructor injection
+	 *            The OfferingRepository
+	 * @param tgr
+	 *            The TourGuideRepository
+	 * @param dbm
+	 *            The DBManager
 	 */
 	@Autowired
 	public OfferingEditor(OfferingRepository or, TourGuideRepository tgr, DBManager dbm) {

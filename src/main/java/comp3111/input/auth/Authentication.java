@@ -24,8 +24,10 @@ public class Authentication {
 	private LoginUserRepository loginUserRepository;
 
 	/**
+	 * Constructs an Authentication object
+	 * 
 	 * @param loginUserRepository
-	 *            Autowired, constructor injection
+	 *            The LoginUserRepository
 	 */
 	@Autowired
 	public Authentication(LoginUserRepository loginUserRepository) {
@@ -33,6 +35,8 @@ public class Authentication {
 	}
 
 	/**
+	 * Authenticates a user
+	 * 
 	 * @param username
 	 *            The username
 	 * @param rawPassword
