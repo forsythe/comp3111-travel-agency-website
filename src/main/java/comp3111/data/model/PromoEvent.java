@@ -109,15 +109,6 @@ public class PromoEvent {
 		this.triggerDate = triggerDate;
 	}
 
-	/**
-	 * @return A nicely formatted string representing the date at which the
-	 *         promotional event will trigger, and the custom message will be sent
-	 *         to everyone.
-	 */
-	public String getTriggerDateString() {
-		return Utils.simpleDateFormat(triggerDate);
-	}
-
 	public String getCustomMessage() {
 		return customMessage;
 	}
@@ -169,8 +160,8 @@ public class PromoEvent {
 
 	/**
 	 * @return The maximum number of spots each customer may reserve when making a
-	 *         booking using this promo code (i.e. {@link Booking#getTotalNumberOfPeople()} can be at most
-	 *         this value)
+	 *         booking using this promo code (i.e.
+	 *         {@link Booking#getTotalNumberOfPeople()} can be at most this value)
 	 */
 	public int getMaxReservationsPerCustomer() {
 		return maxReservationsPerCustomer;
@@ -179,8 +170,9 @@ public class PromoEvent {
 	/**
 	 * @param maxReservationsPerCustomer
 	 *            The maximum number of spots each customer may reserve when making
-	 *            a booking using this promo code (i.e. {@link Booking#getTotalNumberOfPeople()} can be at
-	 *            most this value)
+	 *            a booking using this promo code (i.e.
+	 *            {@link Booking#getTotalNumberOfPeople()} can be at most this
+	 *            value)
 	 */
 	public void setMaxReservationsPerCustomer(int maxReservationsPerCustomer) {
 		this.maxReservationsPerCustomer = maxReservationsPerCustomer;
@@ -188,10 +180,6 @@ public class PromoEvent {
 
 	public Offering getOffering() {
 		return offering;
-	}
-
-	public long getOfferingId() {
-		return offering.getId();
 	}
 
 	public void setOffering(Offering offering) {
@@ -205,7 +193,6 @@ public class PromoEvent {
 	public boolean isTriggered() {
 		return isTriggered;
 	}
-	
 
 	/**
 	 * @param hasTriggered
@@ -220,11 +207,11 @@ public class PromoEvent {
 	public String toString() {
 		return String.format("PromoEvent[id=%d, offeringId=%d, date=%s]", id, offering.getId(), triggerDate);
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof PromoEvent)
-			return ((PromoEvent)other).getId().equals(this.getId());
+			return ((PromoEvent) other).getId().equals(this.getId());
 		return false;
 	}
 

@@ -227,10 +227,10 @@ public class BookingEditor extends VerticalLayout {
 
 		if (today.after(threeDayBeforeStart)) {
 			if (Page.getCurrent() != null) // can be null if using mockito
-				NotificationFactory
-						.getTopBarWarningNotification("It's too late to edit this offering. It can't be editied after "
-								+ Utils.simpleDateFormat(threeDayBeforeStart), 5)
-						.show(Page.getCurrent());
+				NotificationFactory.getTopBarWarningNotification(
+						"It's too late to edit this booking. The offering status was finalized on "
+								+ Utils.simpleDateFormat(threeDayBeforeStart),
+						5).show(Page.getCurrent());
 
 			return false;
 		}

@@ -117,8 +117,8 @@ public class FilterFactoryTest {
 	public void testSuccessMakeFiltersForPromoEventTable() throws ColumnNameNotFoundException {
 		String[] colIds = new String[] { GridCol.PROMOEVENT_ID, GridCol.PROMOEVENT_PROMO_CODE,
 				GridCol.PROMOEVENT_PROMO_CODE_USES_LEFT, GridCol.PROMOEVENT_DISCOUNT, GridCol.PROMOEVENT_CUSTOM_MESSAGE,
-				GridCol.PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER, GridCol.PROMOEVENT_OFFERING_ID,
-				GridCol.PROMOEVENT_TRIGGER_DATE_STRING, GridCol.PROMOEVENT_IS_TRIGGERED };
+				GridCol.PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER, GridCol.PROMOEVENT_OFFERING,
+				GridCol.PROMOEVENT_TRIGGER_DATE, GridCol.PROMOEVENT_IS_TRIGGERED };
 
 		for (String colId : colIds) {
 			assertNotNull(FilterFactory.getFilterForPromoEvent(colId, "search"));
