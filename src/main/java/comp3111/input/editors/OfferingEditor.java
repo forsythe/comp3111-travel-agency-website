@@ -295,8 +295,11 @@ public class OfferingEditor extends VerticalLayout {
 
 		tourGuide.setPopupWidth(null);
 
-		tourGuide.setItems(Utils.iterableToCollection(tourGuideRepo.findAll()).stream()
-				.sorted((tg1, tg2) -> tg1.getId().compareTo(tg2.getId())));
+		Iterable<TourGuide> tourGuidesIterable = tourGuideRepo.findAll();
+		if(tourGuidesIterable != null) {
+			tourGuide.setItems(Utils.iterableToCollection(tourGuidesIterable).stream()
+					.sorted((tg1, tg2) -> tg1.getId().compareTo(tg2.getId())));
+		}
 
 		FormLayout form = new FormLayout();
 		VerticalLayout formContainer = new VerticalLayout();

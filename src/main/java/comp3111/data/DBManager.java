@@ -177,6 +177,7 @@ public class DBManager {
 	 *         between this date interval
 	 */
 	public boolean isTourGuideAvailableBetweenDate(TourGuide tg, Date testStart, Date testEnd) {
+		System.out.println("ASDASFASD");
 		for (Offering existingOffering : findOfferingsByTourGuide(tg)) {
 			if (existingOffering.getStatus().equals(Offering.STATUS_CANCELLED)) {
 				continue;
