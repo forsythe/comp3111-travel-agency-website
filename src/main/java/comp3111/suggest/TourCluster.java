@@ -157,6 +157,9 @@ public class TourCluster {
         secondCluster();
     }
 
+    /**
+     * Create the second cluster together with Doc2Vec information
+     */
     private void secondCluster(){
         KMeansClustering kmc = KMeansClustering.setup(clusterCount, maxIterationCount, distanceMeasure);
 
@@ -168,7 +171,7 @@ public class TourCluster {
             tourIterable.forEach(tour -> {
                 float customerVector[] = getCustomerVector(tour);
                 INDArray desVec = paragraphVectors.inferVector(tour.getDescription());
-                INDArray vector = Nd4j.hstack(Nd4j.create(customerVector), desVec.div(10));
+                INDArray vector = Nd4j.hstack(Nd4j.create(customerVector), desVec.div(200));
                 Point pt = new Point(tour.getTourName(), vector);
                 pointsLst.add(pt);
             });
@@ -195,7 +198,6 @@ public class TourCluster {
                         clusterIDToTour.get(getClusterForTour(tempList.get(index)).getId()).add(tempList.get(index));
                     });
         }
-        loadDoc2VecModel();
     }
 
     /**
