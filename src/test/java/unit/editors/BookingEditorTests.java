@@ -42,7 +42,8 @@ import comp3111.input.exceptions.TourGuideUnavailableException;
  * Otherwise, this is way faster.
  */
 // @RunWith(SpringRunner.class)
-// @SpringBootTest(classes = Application.class)
+// @SpringBootTest(classes = Application.class, properties =
+// "scheduling.enabled=false")
 public class BookingEditorTests {
 
 	// @Autowired

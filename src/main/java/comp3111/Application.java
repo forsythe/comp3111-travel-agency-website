@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
@@ -12,7 +14,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *
  */
 @SpringBootApplication
-@EnableScheduling
 public class Application {
 
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
@@ -20,6 +21,16 @@ public class Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class);
 	}
+	
+	//Don't want scheduling on test cases, or else it causes race conditions!
+	//Annotate all SPRING test classes with @SpringBootTest(properties = "scheduling.enabled=false")
+	//Non-spring tests don't need this annotation.	
+	@Configuration
+    @ConditionalOnProperty(value = "scheduling.enabled", havingValue = "true", matchIfMissing = true)
+    @EnableScheduling
+    static class SchedulingConfiguration {
+
+    }
 
 	// @Bean
 	// public CommandLineRunner loadData(CustomerRepository repository) {
