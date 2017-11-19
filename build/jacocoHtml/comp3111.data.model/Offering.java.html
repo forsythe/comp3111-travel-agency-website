@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Offering.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.data.model</a> &gt; <span class="el_source">Offering.java</span></div><h1>Offering.java</h1><pre class="source lang-java linenums">package comp3111.data.model;
+
+import comp3111.Utils;
+
+import javax.persistence.*;
+import java.util.Calendar;
+import java.util.Date;
+
+/**
+ * Represents an offering entity in the database. One tour may have multiple
+ * offerings. Offerings can be limited or repeating, depending on their
+ * constraints: {@link Tour#getAllowedDaysOfWeek()} and
+ * {@link Tour#getAllowedDates()}.
+ * 
+ * @author Forsythe
+ *
+ */
+@Entity
+public class Offering {
+
+	public static final String STATUS_PENDING = &quot;Pending&quot;;
+	public static final String STATUS_CANCELLED = &quot;Cancelled&quot;;
+	public static final String STATUS_CONFIRMED = &quot;Confirmed&quot;;
+
+	@Id
+	@GeneratedValue
+	private Long id;
+	@ManyToOne(fetch = FetchType.EAGER) // many offerings to 1 tour
+	private Tour tour;
+	@ManyToOne(fetch = FetchType.EAGER) // many offerings to 1 tour guide
+	private TourGuide tourGuide;
+
+	private Date startDate;
+	private String hotelName;
+	private int minCustomers;
+	private int maxCustomers;
+
+	private String status;
+
+<span class="fc" id="L40">	public Offering() {</span>
+<span class="fc" id="L41">	}</span>
+
+	/**
+	 * Construct a transient offering object.
+	 * 
+	 * @param tour
+	 *            The parent tour
+	 * @param tourGuide
+	 *            The tour guide who will lead this tour
+	 * @param startDate
+	 *            The start date of the offering
+	 * @param hotelName
+	 *            The hotel name
+	 * @param minCustomers
+	 *            The minimum number of customers required for this offering to be
+	 *            considered as {@link Offering#STATUS_CONFIRMED}
+	 * @param maxCustomers
+	 *            The maximum number of spots available for this offering
+	 * @param status
+	 *            The status of this offering. Can be
+	 *            {@link Offering#STATUS_CONFIRMED} (reached
+	 *            {@link Offering#minCustomers} at t=-3 days before start),
+	 *            {@link Offering#STATUS_CANCELLED} (underfull at t=-3 days before
+	 *            start, or manually cancelled), or {@link Offering#STATUS_PENDING}
+	 *            (by default)
+	 */
+	public Offering(Tour tour, TourGuide tourGuide, Date startDate, String hotelName, int minCustomers,
+<span class="fc" id="L68">			int maxCustomers, String status) {</span>
+<span class="fc" id="L69">		this.tour = tour;</span>
+<span class="fc" id="L70">		this.tourGuide = tourGuide;</span>
+<span class="fc" id="L71">		this.startDate = startDate;</span>
+<span class="fc" id="L72">		this.hotelName = hotelName;</span>
+<span class="fc" id="L73">		this.minCustomers = minCustomers;</span>
+<span class="fc" id="L74">		this.maxCustomers = maxCustomers;</span>
+<span class="fc" id="L75">		this.status = status;</span>
+<span class="fc" id="L76">	}</span>
+
+	public Long getId() {
+<span class="fc" id="L79">		return id;</span>
+	}
+
+	public void setId(Long id) {
+<span class="nc" id="L83">		this.id = id;</span>
+<span class="nc" id="L84">	}</span>
+
+	public Tour getTour() {
+<span class="fc" id="L87">		return tour;</span>
+	}
+
+	public void setTour(Tour tour) {
+<span class="fc" id="L91">		this.tour = tour;</span>
+<span class="fc" id="L92">	}</span>
+
+	public TourGuide getTourGuide() {
+<span class="fc" id="L95">		return tourGuide;</span>
+	}
+
+	public void setTourGuide(TourGuide tourGuide) {
+<span class="fc" id="L99">		this.tourGuide = tourGuide;</span>
+<span class="fc" id="L100">	}</span>
+
+	public Date getStartDate() {
+<span class="fc" id="L103">		return startDate;</span>
+	}
+
+	public void setStartDate(Date startDate) {
+<span class="fc" id="L107">		this.startDate = startDate;</span>
+<span class="fc" id="L108">	}</span>
+
+	public String getHotelName() {
+<span class="fc" id="L111">		return hotelName;</span>
+	}
+
+	public void setHotelName(String hotelName) {
+<span class="nc" id="L115">		this.hotelName = hotelName;</span>
+<span class="nc" id="L116">	}</span>
+
+	public int getMinCustomers() {
+<span class="fc" id="L119">		return minCustomers;</span>
+	}
+
+	public void setMinCustomers(int minCustomers) {
+<span class="nc" id="L123">		this.minCustomers = minCustomers;</span>
+<span class="nc" id="L124">	}</span>
+
+	public int getMaxCustomers() {
+<span class="fc" id="L127">		return maxCustomers;</span>
+	}
+
+	public void setMaxCustomers(int maxCustomers) {
+<span class="nc" id="L131">		this.maxCustomers = maxCustomers;</span>
+<span class="nc" id="L132">	}</span>
+
+	/**
+	 * @return the status of the offering.
+	 * @see Offering#STATUS_PENDING
+	 * @see Offering#STATUS_CANCELLED
+	 * @see Offering#STATUS_CONFIRMED
+	 */
+	public String getStatus() {
+<span class="fc" id="L141">		return status;</span>
+	}
+
+	/**
+	 * @param status
+	 *            the status of the offering
+	 * 
+	 * @see Offering#STATUS_PENDING
+	 * @see Offering#STATUS_CANCELLED
+	 * @see Offering#STATUS_CONFIRMED
+	 */
+	public void setStatus(String status) {
+<span class="fc" id="L153">		this.status = status;</span>
+<span class="fc" id="L154">	}</span>
+
+	/**
+	 * @return the last date on which the offering may be edited. When we reach t=-3
+	 *         days before offering start, the offering may no longer be edited
+	 *         (since it will have been confirmed or cancelled).
+	 */
+	public Date getLastEditableDate() {
+<span class="fc" id="L162">		Calendar cal = Calendar.getInstance();</span>
+<span class="fc" id="L163">		cal.setTime(getStartDate());</span>
+<span class="fc" id="L164">		cal.add(Calendar.DATE, -3);</span>
+<span class="fc" id="L165">		return cal.getTime();</span>
+	}
+
+	// Helper functions for vaadin columns
+	public String getTourGuideName() {
+<span class="nc" id="L170">		return this.tourGuide.getName();</span>
+	}
+
+	/**
+	 * @return The human readable LINE username of the tour guide
+	 */
+	public String getTourGuideLineId() {
+<span class="nc" id="L177">		return this.tourGuide.getLineUsername();</span>
+	}
+
+	public String getTourName() {
+<span class="nc" id="L181">		return this.tour.getTourName();</span>
+	}
+
+	/**
+	 * @return A nicely formatted string of the start date of the offering
+	 */
+	public String getStartDateString() {
+<span class="nc" id="L188">		return Utils.simpleDateFormat(this.getStartDate());</span>
+	}
+
+	@Override
+	public String toString() {
+		try {
+<span class="fc" id="L194">			return String.format(&quot;Offering[id=%d, %s, tour=%s]&quot;, id, Utils.simpleDateFormat(startDate),</span>
+<span class="fc" id="L195">					this.tour.getTourName());</span>
+<span class="fc" id="L196">		} catch (NullPointerException e) {</span>
+<span class="fc" id="L197">			return &quot;null&quot;;</span>
+		}
+	}
+
+	@Override
+	public boolean equals(Object other) {
+<span class="fc bfc" id="L203" title="All 2 branches covered.">		if (other instanceof Offering)</span>
+<span class="pc bpc" id="L204" title="1 of 6 branches missed.">			return other != null &amp;&amp; this.getId() != null &amp;&amp; ((Offering) other).getId().equals(this.getId());</span>
+<span class="fc" id="L205">		return false;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

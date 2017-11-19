@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GridCol.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.data</a> &gt; <span class="el_source">GridCol.java</span></div><h1>GridCol.java</h1><pre class="source lang-java linenums">package comp3111.data;
+
+/**
+ * Holds the grid column IDs of our Vaadin grids
+ * 
+ * @author Forsythe
+ *
+ */
+<span class="nc" id="L9">public class GridCol {</span>
+	/*
+	 * Each constant represents the column ID of a grid in vaadin. They MUST match
+	 * the getter/setter name.
+	 * 
+	 * e.g. Tour's getChildDiscount() becomes TOUR_CHILD_DISCOUNT = &quot;childDiscount&quot;
+	 * 
+	 * 
+	 * NB: for booleans, the convention for variable &quot;situation&quot; is different.
+	 * getters look like &quot;isSituation&quot; and setters like &quot;setSituation&quot;. Therefore
+	 * for the grid ID, it should just be &quot;situation&quot;
+	 */
+
+	// Tour
+	/* shown in grid */
+	public static final String TOUR_ID = &quot;id&quot;;
+	public static final String TOUR_TOUR_NAME = &quot;tourName&quot;;
+	public static final String TOUR_DAYS = &quot;days&quot;;
+	public static final String TOUR_DESCRIPTION = &quot;description&quot;;
+	public static final String TOUR_CHILD_DISCOUNT = &quot;childDiscount&quot;;
+	public static final String TOUR_TODDLER_DISCOUNT = &quot;toddlerDiscount&quot;;
+	public static final String TOUR_WEEKDAY_PRICE = &quot;weekdayPrice&quot;;
+	public static final String TOUR_WEEKEND_PRICE = &quot;weekendPrice&quot;;
+	public static final String TOUR_OFFERING_AVAILABILITY = &quot;offeringAvailability&quot;;
+	public static final String TOUR_IS_CHILD_FRIENDLY = &quot;childFriendly&quot;;
+	/* hidden from grid */
+	public static final String TOUR_ALLOWED_DAYS_OF_WEEK = &quot;allowedDaysOfWeek&quot;;
+	public static final String TOUR_ALLOWED_DATES = &quot;allowedDates&quot;;
+
+	// Offering
+	/* shown in grid */
+	public static final String OFFERING_ID = &quot;id&quot;;
+	public static final String OFFERING_HOTEL_NAME = &quot;hotelName&quot;;
+	public static final String OFFERING_START_DATE = &quot;startDateString&quot;;
+	public static final String OFFERING_TOUR_GUIDE_NAME = &quot;tourGuideName&quot;;
+	public static final String OFFERING_TOUR_GUIDE_LINE_ID = &quot;tourGuideLineId&quot;;
+	public static final String OFFERING_TOUR_NAME = &quot;tourName&quot;;
+	public static final String OFFERING_MIN_CAPACITY = &quot;minCustomers&quot;;
+	public static final String OFFERING_MAX_CAPACITY = &quot;maxCustomers&quot;;
+	public static final String OFFERING_STATUS = &quot;status&quot;;
+	/* hidden from grid */
+	public static final String OFFERING_TOUR = &quot;tour&quot;;
+	public static final String OFFERING_TOUR_GUIDE = &quot;tourGuide&quot;;
+	public static final String OFFERING_DATE = &quot;startDate&quot;;
+	public static final String OFFERING_LAST_EDITABLE_DATE = &quot;lastEditableDate&quot;;
+	/* custom generated */
+	public static final String OFFERING_NUM_CONFIRMED_CUSTOMERS = &quot;confirmedCustomers&quot;;
+
+	// Customer
+	/* shown in grid */
+	public static final String CUSTOMER_ID = &quot;id&quot;;
+	public static final String CUSTOMER_NAME = &quot;name&quot;;
+	public static final String CUSTOMER_LINE_ID = &quot;lineId&quot;;
+	public static final String CUSTOMER_HKID = &quot;hkid&quot;;
+	public static final String CUSTOMER_PHONE = &quot;phone&quot;;
+	public static final String CUSTOMER_AGE = &quot;age&quot;;
+
+	// Booking
+	/* shown in grid */
+	public static final String BOOKING_NUM_CHILDREN = &quot;numChildren&quot;;
+	public static final String BOOKING_NUM_ADULTS = &quot;numAdults&quot;;
+	public static final String BOOKING_NUM_TODDLERS = &quot;numToddlers&quot;;
+	public static final String BOOKING_OFFERING = &quot;offering&quot;;
+	public static final String BOOKING_CUSTOMER_HKID = &quot;customerHkid&quot;;
+	public static final String BOOKING_CUSTOMER_NAME = &quot;customerName&quot;;
+	public static final String BOOKING_TOUR_ID = &quot;tourId&quot;;
+	public static final String BOOKING_TOUR_NAME = &quot;tourName&quot;;
+	public static final String BOOKING_AMOUNT_PAID = &quot;amountPaid&quot;;
+	public static final String BOOKING_TOTAL_COST = &quot;totalCost&quot;;
+	public static final String BOOKING_SPECIAL_REQUEST = &quot;specialRequests&quot;;
+	public static final String BOOKING_PAYMENT_STATUS = &quot;paymentStatus&quot;;
+	public static final String BOOKING_PROMO_DISCOUNT_MULTIPLIER_MASKED = &quot;paymentStatusMasked&quot;;
+	/* hidden */
+	public static final String BOOKING_ID = &quot;id&quot;;
+	public static final String BOOKING_CUSTOMER = &quot;customer&quot;;
+	public static final String BOOKING_PROMO_DISCOUNT_MULTIPLIER = &quot;promoDiscountMultiplier&quot;;
+	public static final String BOOKING_TOTAL_NUMBER_OF_PEOPLE = &quot;totalNumberOfPeople&quot;;
+	public static final String BOOKING_PROMO_CODE_USED = &quot;promoCodeUsed&quot;;
+
+	// TourGuide
+	/* shown in grid */
+	public static final String TOURGUIDE_ID = &quot;id&quot;;
+	public static final String TOURGUIDE_NAME = &quot;name&quot;;
+	public static final String TOURGUIDE_LINE_USERNAME = &quot;lineUsername&quot;;
+
+	// NonFAQQuery
+	/* show in grd */
+	public static final String NONFAQQUERY_QUERY = &quot;query&quot;;
+	public static final String NONFAQQUERY_ANSWER = &quot;answer&quot;;
+	public static final String NONFAQQUERY_CUSTOMER = &quot;customer&quot;;
+	public static final String NONFAQQUERY_ID = &quot;id&quot;;
+	/* hidden in grid */
+	public static final String NONFAQQUERY_CUSTOMER_NAME = &quot;customerName&quot;;
+
+	// PromotionEvent
+	/* show in grid */
+	public static final String PROMOEVENT_ID = &quot;id&quot;;
+	public static final String PROMOEVENT_PROMO_CODE = &quot;promoCode&quot;;
+	public static final String PROMOEVENT_PROMO_CODE_USES_LEFT = &quot;promoCodeUsesLeft&quot;;
+	public static final String PROMOEVENT_DISCOUNT = &quot;discount&quot;;
+	public static final String PROMOEVENT_CUSTOM_MESSAGE = &quot;customMessage&quot;;
+	public static final String PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER = &quot;maxReservationsPerCustomer&quot;;
+	public static final String PROMOEVENT_OFFERING_ID = &quot;offeringId&quot;;
+	public static final String PROMOEVENT_TRIGGER_DATE_STRING = &quot;triggerDateString&quot;;
+	public static final String PROMOEVENT_IS_TRIGGERED = &quot;triggered&quot;;
+	/* hidden in grid */
+	public static final String PROMOEVENT_TRIGGER_DATE = &quot;triggerDate&quot;;
+	public static final String PROMOEVENT_OFFERING = &quot;offering&quot;;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OfferingEditor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.input.editors</a> &gt; <span class="el_source">OfferingEditor.java</span></div><h1>OfferingEditor.java</h1><pre class="source lang-java linenums">package comp3111.input.editors;
+
+import java.time.Instant;
+import java.util.Date;
+import java.util.HashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.vaadin.data.Binder;
+import com.vaadin.data.BinderValidationStatus;
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.Page;
+import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.DateField;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+
+import comp3111.LineMessenger;
+import comp3111.Utils;
+import comp3111.data.DBManager;
+import comp3111.data.GridCol;
+import comp3111.data.model.Offering;
+import comp3111.data.model.Tour;
+import comp3111.data.model.TourGuide;
+import comp3111.data.repo.OfferingRepository;
+import comp3111.data.repo.TourGuideRepository;
+import comp3111.input.converters.ConverterFactory;
+import comp3111.input.converters.LocalDateToUtilDateConverter;
+import comp3111.input.exceptions.OfferingDateUnsupportedException;
+import comp3111.input.exceptions.TourGuideUnavailableException;
+import comp3111.input.validators.ValidatorFactory;
+import comp3111.view.NotificationFactory;
+import comp3111.view.TourManagementView;
+
+/**
+ * Represents the offering editor in the OfferingManagementView
+ * @author Forsythe
+ *
+ */
+@SpringComponent
+@UIScope
+public class OfferingEditor extends VerticalLayout {
+<span class="fc" id="L58">	private static final Logger log = LoggerFactory.getLogger(OfferingEditor.class);</span>
+
+	private OfferingRepository offeringRepo;
+
+	private TourGuideRepository tourGuideRepo;
+
+	private TourEditor tourEditor;
+
+	private DBManager dbManager;
+	
+	private Window subWindow;
+
+	private Tour selectedTour;
+<span class="nc" id="L71">	private final Grid&lt;Offering&gt; offeringGrid = new Grid&lt;Offering&gt;(Offering.class);</span>
+
+	private Offering selectedOffering;
+
+	/* Action buttons */
+<span class="nc" id="L76">	private HorizontalLayout rowOfButtons = new HorizontalLayout();</span>
+<span class="nc" id="L77">	private Button createNewOfferingButton = new Button(&quot;Create New Offering&quot;);</span>
+<span class="nc" id="L78">	private Button editOfferingButton = new Button(&quot;Edit Offering&quot;);</span>
+<span class="nc" id="L79">	private Button cancelOfferingButton = new Button(&quot;Manually Cancel Offering&quot;);</span>
+<span class="nc" id="L80">	private Button returnButton = new Button(&quot;Return&quot;);</span>
+	
+	private Button subwindowConfirmButton;
+	
+	private TextField tourName;
+	private ComboBox&lt;TourGuide&gt; tourGuide;
+	private DateField startDate;
+	private TextField hotelName;
+	private TextField minCustomer;
+	private TextField maxCustomer;
+
+	BinderValidationStatus&lt;Offering&gt; validationStatus;
+	
+<span class="nc" id="L93">	private final HashMap&lt;String, ProviderAndPredicate&lt;?, ?&gt;&gt; gridFilters = new HashMap&lt;String, ProviderAndPredicate&lt;?, ?&gt;&gt;();</span>
+
+	/**
+	 * @param or
+	 *            Autowired, constructor injection
+	 */
+	@Autowired
+<span class="nc" id="L100">	public OfferingEditor(OfferingRepository or, TourGuideRepository tgr, DBManager dbm) {</span>
+
+<span class="nc" id="L102">		this.offeringRepo = or;</span>
+<span class="nc" id="L103">		this.tourGuideRepo = tgr;</span>
+<span class="nc" id="L104">		this.dbManager = dbm;</span>
+
+<span class="nc" id="L106">		rowOfButtons.addComponent(createNewOfferingButton);</span>
+<span class="nc" id="L107">		rowOfButtons.addComponent(editOfferingButton);</span>
+<span class="nc" id="L108">		rowOfButtons.addComponent(cancelOfferingButton);</span>
+<span class="nc" id="L109">		rowOfButtons.addComponent(returnButton);</span>
+
+<span class="nc" id="L111">		createNewOfferingButton.setId(&quot;btn_create_new_offering&quot;);</span>
+<span class="nc" id="L112">		editOfferingButton.setId(&quot;btn_edit_offering&quot;);</span>
+<span class="nc" id="L113">		cancelOfferingButton.setId(&quot;btn_cancel_offering&quot;);</span>
+<span class="nc" id="L114">		returnButton.setId(&quot;btn_return_offering&quot;);</span>
+
+<span class="nc" id="L116">		editOfferingButton.setEnabled(false);</span>
+<span class="nc" id="L117">		cancelOfferingButton.setEnabled(false);</span>
+
+<span class="nc" id="L119">		this.addComponent(rowOfButtons);</span>
+
+<span class="nc" id="L121">		this.refreshData();</span>
+
+<span class="nc" id="L123">		offeringGrid.setWidth(&quot;100%&quot;);</span>
+<span class="nc" id="L124">		offeringGrid.setSelectionMode(SelectionMode.SINGLE);</span>
+
+<span class="nc" id="L126">		offeringGrid.addSelectionListener(event -&gt; {</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">			if (event.getFirstSelectedItem().isPresent()) {</span>
+<span class="nc" id="L128">				selectedOffering = event.getFirstSelectedItem().get();</span>
+<span class="nc" id="L129">				createNewOfferingButton.setEnabled(false);</span>
+<span class="nc" id="L130">				editOfferingButton.setEnabled(true);</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">				if (selectedOffering.getStatus().equals(Offering.STATUS_PENDING))</span>
+<span class="nc" id="L132">					cancelOfferingButton.setEnabled(true);</span>
+			} else {
+<span class="nc" id="L134">				selectedOffering = null;</span>
+<span class="nc" id="L135">				createNewOfferingButton.setEnabled(true);</span>
+<span class="nc" id="L136">				editOfferingButton.setEnabled(false);</span>
+<span class="nc" id="L137">				cancelOfferingButton.setEnabled(false);</span>
+			}
+<span class="nc" id="L139">		});</span>
+
+<span class="nc" id="L141">		offeringGrid.removeColumn(GridCol.OFFERING_TOUR); // we'll combine days of week and dates</span>
+<span class="nc" id="L142">		offeringGrid.removeColumn(GridCol.OFFERING_TOUR_GUIDE);</span>
+<span class="nc" id="L143">		offeringGrid.removeColumn(GridCol.OFFERING_DATE);</span>
+<span class="nc" id="L144">		offeringGrid.removeColumn(GridCol.OFFERING_LAST_EDITABLE_DATE);</span>
+
+<span class="nc" id="L146">		offeringGrid.getColumn(GridCol.OFFERING_START_DATE).setCaption(&quot;Start Date&quot;);</span>
+
+<span class="nc" id="L148">		offeringGrid.addColumn(offering -&gt; {</span>
+<span class="nc" id="L149">			return dbManager.countNumberOfPaidPeopleInOffering(offering);</span>
+<span class="nc" id="L150">		}).setId(GridCol.OFFERING_NUM_CONFIRMED_CUSTOMERS).setCaption(&quot;Confirmed Participants&quot;);</span>
+
+<span class="nc" id="L152">		offeringGrid.setColumnOrder(GridCol.OFFERING_ID, GridCol.OFFERING_STATUS, GridCol.OFFERING_START_DATE,</span>
+				GridCol.OFFERING_TOUR_GUIDE_NAME, GridCol.OFFERING_TOUR_GUIDE_LINE_ID, GridCol.OFFERING_TOUR_NAME,
+				GridCol.OFFERING_NUM_CONFIRMED_CUSTOMERS, GridCol.OFFERING_MIN_CAPACITY, GridCol.OFFERING_MAX_CAPACITY);
+
+<span class="nc" id="L156">		HeaderRow filterRow = offeringGrid.appendHeaderRow();</span>
+
+<span class="nc bnc" id="L158" title="All 2 branches missed.">		for (Column&lt;Offering, ?&gt; col : offeringGrid.getColumns()) {</span>
+<span class="nc" id="L159">			col.setMinimumWidth(120);</span>
+<span class="nc" id="L160">			col.setHidable(true);</span>
+<span class="nc" id="L161">			col.setHidingToggleCaption(col.getCaption());</span>
+<span class="nc" id="L162">			col.setExpandRatio(1);</span>
+<span class="nc" id="L163">			HeaderCell cell = filterRow.getCell(col.getId());</span>
+
+			// Have an input field to use for filter
+<span class="nc" id="L166">			TextField filterField = new TextField();</span>
+<span class="nc" id="L167">			filterField.setWidth(130, Unit.PIXELS);</span>
+<span class="nc" id="L168">			filterField.setHeight(30, Unit.PIXELS);</span>
+
+<span class="nc" id="L170">			filterField.addValueChangeListener(change -&gt; {</span>
+<span class="nc" id="L171">				String searchVal = change.getValue();</span>
+<span class="nc" id="L172">				String colId = col.getId();</span>
+
+<span class="nc" id="L174">				log.info(&quot;Value change in col [{}], val=[{}]&quot;, colId, searchVal);</span>
+<span class="nc" id="L175">				ListDataProvider&lt;Offering&gt; dataProvider = (ListDataProvider&lt;Offering&gt;) offeringGrid.getDataProvider();</span>
+
+<span class="nc bnc" id="L177" title="All 2 branches missed.">				if (!filterField.isEmpty()) {</span>
+					try {
+						// note: if we keep typing into same textfield, we will overwrite the old filter
+						// for this column, which is desirable (rather than having filters for &quot;h&quot;,
+						// &quot;he&quot;, &quot;hel&quot;, etc
+<span class="nc" id="L182">						gridFilters.put(colId, FilterFactory.getFilterForOffering(colId, searchVal));</span>
+<span class="nc" id="L183">						log.info(&quot;updated filter on attribute [{}]&quot;, colId);</span>
+
+<span class="nc" id="L185">					} catch (Exception e) {</span>
+<span class="nc" id="L186">						log.info(&quot;ignoring val=[{}], col=[{}] is invalid&quot;, searchVal, colId);</span>
+<span class="nc" id="L187">					}</span>
+				} else {
+					// the filter field was empty, so try
+					// removing the filter associated with this col
+<span class="nc" id="L191">					gridFilters.remove(colId);</span>
+<span class="nc" id="L192">					log.info(&quot;removed filter on attribute [{}]&quot;, colId);</span>
+
+				}
+<span class="nc" id="L195">				dataProvider.clearFilters();</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">				for (String colFilter : gridFilters.keySet()) {</span>
+<span class="nc" id="L197">					ProviderAndPredicate paf = gridFilters.get(colFilter);</span>
+<span class="nc" id="L198">					dataProvider.addFilter(paf.provider, paf.predicate);</span>
+<span class="nc" id="L199">				}</span>
+<span class="nc" id="L200">				dataProvider.refreshAll();</span>
+<span class="nc" id="L201">			});</span>
+<span class="nc" id="L202">			cell.setComponent(filterField);</span>
+<span class="nc" id="L203">		}</span>
+
+<span class="nc" id="L205">		this.addComponent(offeringGrid);</span>
+
+<span class="nc" id="L207">		createNewOfferingButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L208">			UI.getCurrent().addWindow(getSubWindow(selectedTour, new Offering(), tourEditor));</span>
+<span class="nc" id="L209">		});</span>
+
+<span class="nc" id="L211">		editOfferingButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L212">			UI.getCurrent().addWindow(getSubWindow(selectedTour, selectedOffering, tourEditor));</span>
+<span class="nc" id="L213">		});</span>
+
+<span class="nc" id="L215">		returnButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L216">			getUI().getNavigator().navigateTo(TourManagementView.VIEW_NAME);</span>
+<span class="nc" id="L217">		});</span>
+
+<span class="nc" id="L219">		cancelOfferingButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L220">			final Window confirmWindow = new Window(&quot;Are you sure?&quot;);</span>
+<span class="nc" id="L221">			confirmWindow.center();</span>
+<span class="nc" id="L222">			confirmWindow.setClosable(false);</span>
+<span class="nc" id="L223">			confirmWindow.setModal(true);</span>
+<span class="nc" id="L224">			confirmWindow.setResizable(false);</span>
+<span class="nc" id="L225">			confirmWindow.setDraggable(false);</span>
+<span class="nc" id="L226">			confirmWindow.setWidth(&quot;500px&quot;);</span>
+
+<span class="nc" id="L228">			VerticalLayout vLayout = new VerticalLayout();</span>
+<span class="nc" id="L229">			confirmWindow.setContent(vLayout);</span>
+<span class="nc" id="L230">			Label msg = new Label(&quot;All associated customer bookings will be cancelled, &quot;</span>
+					+ &quot;and the customers will be notified via LINE.&quot;);
+<span class="nc" id="L232">			msg.setWidth(&quot;100%&quot;);</span>
+<span class="nc" id="L233">			vLayout.addComponent(msg);</span>
+
+<span class="nc" id="L235">			HorizontalLayout buttonRow = new HorizontalLayout();</span>
+<span class="nc" id="L236">			Button confirm = new Button(&quot;Yes&quot;);</span>
+<span class="nc" id="L237">			Button cancel = new Button(&quot;Cancel&quot;);</span>
+
+<span class="nc" id="L239">			buttonRow.addComponent(confirm);</span>
+<span class="nc" id="L240">			buttonRow.addComponent(cancel);</span>
+<span class="nc" id="L241">			vLayout.addComponent(buttonRow);</span>
+
+<span class="nc" id="L243">			confirm.addClickListener(e -&gt; {</span>
+<span class="nc" id="L244">				LineMessenger.resetCounter();</span>
+<span class="nc" id="L245">				dbManager.notifyOfferingStatus(selectedOffering, false);</span>
+<span class="nc" id="L246">				this.refreshData();</span>
+<span class="nc" id="L247">				NotificationFactory</span>
+<span class="nc" id="L248">						.getTopBarSuccessNotification(&quot;Notified &quot; + LineMessenger.getCounter() + &quot; customer(s)&quot;)</span>
+<span class="nc" id="L249">						.show(Page.getCurrent());</span>
+<span class="nc" id="L250">				confirmWindow.close();</span>
+<span class="nc" id="L251">			});</span>
+
+<span class="nc" id="L253">			cancel.addClickListener(e -&gt; {</span>
+<span class="nc" id="L254">				confirmWindow.close();</span>
+<span class="nc" id="L255">			});</span>
+
+<span class="nc" id="L257">			UI.getCurrent().addWindow(confirmWindow);</span>
+<span class="nc" id="L258">		});</span>
+
+<span class="nc" id="L260">	}</span>
+
+	public Window getSubWindow(Tour hostTour, final Offering offeringToSave, TourEditor tourEditor) {
+<span class="nc bnc" id="L263" title="All 2 branches missed.">		boolean isCreatingNewOffering = offeringToSave.getId() == null;</span>
+
+		// Creating the confirm button
+<span class="nc" id="L266">		subwindowConfirmButton = new Button(&quot;Confirm&quot;);</span>
+<span class="nc" id="L267">		getSubwindowConfirmButton().setId(&quot;btn_confirm_offering&quot;);</span>
+
+		// Creating the fields
+<span class="nc" id="L270">		tourName = new TextField(&quot;Tour&quot;);</span>
+<span class="nc" id="L271">		tourName.setId(&quot;tf_offering_name&quot;);</span>
+<span class="nc" id="L272">		tourName.setValue(hostTour.getTourName());</span>
+<span class="nc" id="L273">		tourName.setEnabled(false);</span>
+
+<span class="nc" id="L275">		tourGuide = new ComboBox&lt;TourGuide&gt;(&quot;Tour Guide&quot;);</span>
+<span class="nc" id="L276">		tourGuide.setId(&quot;cb_offering_tour_guide&quot;);</span>
+<span class="nc" id="L277">		startDate = Utils.getDateFieldWithOurLocale(&quot;Start Date&quot;);</span>
+<span class="nc" id="L278">		startDate.setId(&quot;tf_offering_start_date&quot;);</span>
+<span class="nc" id="L279">		Label availabilityHint = new Label(&quot;Can be offered on &quot; + hostTour.getOfferingAvailability());</span>
+
+<span class="nc" id="L281">		hotelName = new TextField(&quot;Hotel Name&quot;);</span>
+<span class="nc" id="L282">		hotelName.setId(&quot;tf_offering_hotel_name&quot;);</span>
+<span class="nc" id="L283">		minCustomer = new TextField(&quot;Min number of customer&quot;);</span>
+<span class="nc" id="L284">		minCustomer.setId(&quot;tf_offering_min_customer&quot;);</span>
+<span class="nc" id="L285">		maxCustomer = new TextField(&quot;Max number of customer&quot;);</span>
+<span class="nc" id="L286">		maxCustomer.setId(&quot;tf_offering_max_customer&quot;);</span>
+<span class="nc" id="L287">		Label statusHint = new Label();</span>
+<span class="nc" id="L288">		statusHint.setWidth(&quot;100%&quot;);</span>
+
+<span class="nc bnc" id="L290" title="All 2 branches missed.">		if (isCreatingNewOffering) {</span>
+<span class="nc" id="L291">			subWindow = new Window(&quot;Create new offering&quot;);</span>
+		} else {
+<span class="nc" id="L293">			subWindow = new Window(&quot;Edit an offering&quot;);</span>
+		}
+
+<span class="nc" id="L296">		tourGuide.setPopupWidth(null);</span>
+
+<span class="nc" id="L298">		tourGuide.setItems(Utils.iterableToCollection(tourGuideRepo.findAll()).stream()</span>
+<span class="nc" id="L299">				.sorted((tg1, tg2) -&gt; tg1.getId().compareTo(tg2.getId())));</span>
+
+<span class="nc" id="L301">		FormLayout form = new FormLayout();</span>
+<span class="nc" id="L302">		VerticalLayout formContainer = new VerticalLayout();</span>
+<span class="nc" id="L303">		formContainer.addComponent(form);</span>
+
+<span class="nc" id="L305">		subWindow.setWidth(&quot;800px&quot;);</span>
+<span class="nc" id="L306">		subWindow.setContent(formContainer);</span>
+
+<span class="nc" id="L308">		subWindow.center();</span>
+<span class="nc" id="L309">		subWindow.setClosable(false);</span>
+<span class="nc" id="L310">		subWindow.setModal(true);</span>
+<span class="nc" id="L311">		subWindow.setResizable(false);</span>
+<span class="nc" id="L312">		subWindow.setDraggable(false);</span>
+
+<span class="nc" id="L314">		form.addComponent(tourName);</span>
+<span class="nc" id="L315">		form.addComponent(availabilityHint);</span>
+
+<span class="nc" id="L317">		form.addComponent(startDate);</span>
+<span class="nc" id="L318">		form.addComponent(tourGuide);</span>
+<span class="nc" id="L319">		form.addComponent(hotelName);</span>
+<span class="nc" id="L320">		form.addComponent(minCustomer);</span>
+<span class="nc" id="L321">		form.addComponent(maxCustomer);</span>
+<span class="nc" id="L322">		form.addComponent(statusHint);</span>
+
+<span class="nc" id="L324">		HorizontalLayout buttonActions = new HorizontalLayout();</span>
+<span class="nc" id="L325">		buttonActions.addComponent(getSubwindowConfirmButton());</span>
+<span class="nc" id="L326">		buttonActions.addComponent(new Button(&quot;Cancel&quot;, event -&gt; subWindow.close()));</span>
+<span class="nc" id="L327">		form.addComponent(buttonActions);</span>
+
+		// Binding method according to docs
+<span class="nc" id="L330">		Binder&lt;Offering&gt; binder = new Binder&lt;&gt;(Offering.class);</span>
+
+<span class="nc" id="L332">		binder.forField(tourGuide).asRequired(Utils.generateRequiredError())</span>
+<span class="nc" id="L333">				.withValidator(ValidatorFactory.getTourGuideAvailableForDatesValidationIgnoreOneOffering(startDate,</span>
+<span class="nc bnc" id="L334" title="All 2 branches missed.">						hostTour.getDays(), dbManager, isCreatingNewOffering ? null : offeringToSave))</span>
+<span class="nc" id="L335">				.bind(Offering::getTourGuide, Offering::setTourGuide);</span>
+
+<span class="nc" id="L337">		binder.forField(startDate).asRequired(Utils.generateRequiredError())</span>
+<span class="nc" id="L338">				.withConverter(new LocalDateToUtilDateConverter())</span>
+<span class="nc" id="L339">				.withValidator(ValidatorFactory.getDateNotEarlierThanValidator(Date.from(Instant.now())))</span>
+<span class="nc" id="L340">				.withValidator(ValidatorFactory.getDateAvailableInTourValidator(hostTour))</span>
+<span class="nc" id="L341">				.bind(Offering::getStartDate, Offering::setStartDate);</span>
+
+<span class="nc" id="L343">		binder.forField(hotelName).asRequired(Utils.generateRequiredError())</span>
+<span class="nc" id="L344">				.withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
+<span class="nc" id="L345">				.bind(Offering::getHotelName, Offering::setHotelName);</span>
+
+<span class="nc" id="L347">		binder.forField(minCustomer).asRequired(Utils.generateRequiredError())</span>
+<span class="nc" id="L348">				.withConverter(ConverterFactory.getStringToIntegerConverter())</span>
+<span class="nc" id="L349">				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))</span>
+<span class="nc" id="L350">				.bind(Offering::getMinCustomers, Offering::setMinCustomers);</span>
+
+<span class="nc" id="L352">		binder.forField(maxCustomer).asRequired(Utils.generateRequiredError())</span>
+<span class="nc" id="L353">				.withConverter(ConverterFactory.getStringToIntegerConverter())</span>
+<span class="nc" id="L354">				.withValidator(ValidatorFactory.getIntegerLowerBoundedByAnotherFieldValidator(minCustomer))</span>
+<span class="nc" id="L355">				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))</span>
+<span class="nc" id="L356">				.bind(Offering::getMaxCustomers, Offering::setMaxCustomers);</span>
+
+		// Do set bean to assign value to fields
+<span class="nc" id="L359">		binder.setBean(offeringToSave);</span>
+
+<span class="nc" id="L361">		startDate.addValueChangeListener(event -&gt; {</span>
+<span class="nc bnc" id="L362" title="All 2 branches missed.">			if (!startDate.isEmpty()) {</span>
+<span class="nc" id="L363">				Date threeDaysBeforeStart = Utils.addDate(Utils.localDateToDate(startDate.getValue()), -3);</span>
+<span class="nc" id="L364">				statusHint.setValue(</span>
+						&quot;All participating customers will automatically be notified whether this offering is confirmed or cancelled on &quot;
+<span class="nc" id="L366">								+ Utils.simpleDateFormat(threeDaysBeforeStart));</span>
+			}
+<span class="nc" id="L368">		});</span>
+
+<span class="nc" id="L370">		getSubwindowConfirmButton().addClickListener(event -&gt; {</span>
+<span class="nc" id="L371">			validationStatus = binder.validate();</span>
+
+<span class="nc" id="L373">			String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);</span>
+<span class="nc bnc" id="L374" title="All 2 branches missed.">			if (validationStatus.isOk()) {</span>
+
+<span class="nc" id="L376">				binder.writeBeanIfValid(offeringToSave);</span>
+
+<span class="nc bnc" id="L378" title="All 2 branches missed.">				if (isCreatingNewOffering) {</span>
+<span class="nc" id="L379">					offeringToSave.setTour(hostTour);</span>
+<span class="nc" id="L380">					offeringToSave.setStatus(Offering.STATUS_PENDING);</span>
+				}
+
+				try {
+<span class="nc bnc" id="L384" title="All 2 branches missed.">					if (isCreatingNewOffering) {</span>
+<span class="nc" id="L385">						log.info(&quot;About to save offering [{}]&quot;, tourName.getValue());</span>
+<span class="nc" id="L386">						dbManager.createOfferingForTour(offeringToSave);</span>
+<span class="nc" id="L387">						log.info(&quot;created offering [{}] successfully&quot;, tourName.getValue());</span>
+
+					} else {
+<span class="nc" id="L390">						log.info(&quot;About to edit offering [{}]&quot;, tourName.getValue());</span>
+<span class="nc" id="L391">						dbManager.editOfferingTorTour(offeringToSave);</span>
+<span class="nc" id="L392">						log.info(&quot;edited offering [{}] successfully&quot;, tourName.getValue());</span>
+					}
+
+<span class="nc" id="L395">					tourEditor.refreshData();</span>
+<span class="nc" id="L396">					this.refreshData();</span>
+<span class="nc" id="L397">					subWindow.close();</span>
+<span class="nc bnc" id="L398" title="All 2 branches missed.">					if (Page.getCurrent() != null) </span>
+<span class="nc" id="L399">						NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());</span>
+
+<span class="nc" id="L401">					binder.removeBean();</span>
+<span class="nc" id="L402">					return; // This return skip the error reporting procedure below</span>
+<span class="nc" id="L403">				} catch (OfferingDateUnsupportedException e) {</span>
+<span class="nc" id="L404">					errors += &quot;This tour may only be offered on &quot; + hostTour.getOfferingAvailability() + &quot;\n&quot;;</span>
+
+<span class="nc" id="L406">				} catch (TourGuideUnavailableException e) {</span>
+<span class="nc" id="L407">					errors += &quot;The tour guide is occupied\n&quot;;</span>
+<span class="nc" id="L408">				}</span>
+			}
+<span class="nc bnc" id="L410" title="All 2 branches missed.">			if (Page.getCurrent() != null)</span>
+<span class="nc" id="L411">				NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());</span>
+
+<span class="nc" id="L413">		});</span>
+
+<span class="nc" id="L415">		return subWindow;</span>
+	}
+
+	/**
+	 * Refreshes the data in the vaadin grid
+	 */
+	public void refreshData() {
+
+<span class="nc" id="L423">		ListDataProvider&lt;Offering&gt; provider = new ListDataProvider&lt;&gt;(</span>
+<span class="nc" id="L424">				Utils.iterableToCollection(offeringRepo.findByTour(this.selectedTour)));</span>
+<span class="nc" id="L425">		offeringGrid.setDataProvider(provider);</span>
+<span class="nc" id="L426">	}</span>
+	
+	
+
+	public Button getSubwindowConfirmButton() {
+<span class="nc" id="L431">		return subwindowConfirmButton;</span>
+	}
+
+	
+
+	public TextField getTourName() {
+<span class="nc" id="L437">		return tourName;</span>
+	}
+
+	public ComboBox&lt;TourGuide&gt; getTourGuide() {
+<span class="nc" id="L441">		return tourGuide;</span>
+	}
+
+	public DateField getStartDate() {
+<span class="nc" id="L445">		return startDate;</span>
+	}
+
+	public TextField getHotelName() {
+<span class="nc" id="L449">		return hotelName;</span>
+	}
+
+	public TextField getMinCustomer() {
+<span class="nc" id="L453">		return minCustomer;</span>
+	}
+
+	public TextField getMaxCustomer() {
+<span class="nc" id="L457">		return maxCustomer;</span>
+	}
+
+	public BinderValidationStatus&lt;Offering&gt; getValidationStatus() {
+<span class="nc" id="L461">		return validationStatus;</span>
+	}
+
+	// Helpers for accessing stuff from tourEditor
+	/**
+	 * @param selectedTour
+	 *            Set the selected tour
+	 */
+	public void setSelectedTour(Tour selectedTour) {
+<span class="nc" id="L470">		this.selectedTour = selectedTour;</span>
+<span class="nc" id="L471">	}</span>
+
+	/**
+	 * @return get the selected tour object
+	 */
+	public Tour getSelectedTour() {
+<span class="nc" id="L477">		return this.selectedTour;</span>
+	}
+
+	/**
+	 * @param te
+	 *            Set the parent TourEditor object
+	 */
+	public void setTourEditor(TourEditor te) {
+<span class="nc" id="L485">		this.tourEditor = te;</span>
+<span class="nc" id="L486">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

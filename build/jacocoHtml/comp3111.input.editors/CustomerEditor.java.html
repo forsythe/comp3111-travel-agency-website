@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomerEditor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.input.editors</a> &gt; <span class="el_source">CustomerEditor.java</span></div><h1>CustomerEditor.java</h1><pre class="source lang-java linenums">package comp3111.input.editors;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.vaadin.data.Binder;
+import com.vaadin.data.BinderValidationStatus;
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.Page;
+import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.SpringUI;
+import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
+
+import comp3111.Utils;
+import comp3111.data.GridCol;
+import comp3111.data.model.Customer;
+import comp3111.data.model.TourGuide;
+import comp3111.data.repo.CustomerRepository;
+import comp3111.input.converters.ConverterFactory;
+import comp3111.input.field.HKIDEntryField;
+import comp3111.input.field.PhoneNumberEntryField;
+import comp3111.input.validators.ValidatorFactory;
+import comp3111.view.NotificationFactory;
+
+/**
+ * Represents the customer editor in the CustomerManagementView
+ * 
+ * @author Forsythe
+ *
+ */
+@SuppressWarnings(&quot;serial&quot;)
+@SpringComponent
+@UIScope
+@SpringUI
+public class CustomerEditor extends VerticalLayout {
+<span class="fc" id="L53">	private static final Logger log = LoggerFactory.getLogger(CustomerEditor.class);</span>
+
+	private Window subwindow;
+
+	Button subwindowConfirm;
+	TextField customerName;
+	TextField customerLineId;
+	HKIDEntryField customerHKID;
+	PhoneNumberEntryField customerPhone;
+	TextField customerAge;
+	
+	BinderValidationStatus&lt;Customer&gt; validationStatus;
+	
+	/* action buttons */
+<span class="fc" id="L67">	private Button createNewCustomerButton = new Button(&quot;Create new customer&quot;);</span>
+<span class="fc" id="L68">	private Button editCustomerButton = new Button(&quot;Edit customer&quot;);</span>
+
+<span class="fc" id="L70">	private Grid&lt;Customer&gt; customersGrid = new Grid&lt;Customer&gt;(Customer.class);</span>
+
+	private Customer selectedCustomer;
+
+	private CustomerRepository customerRepo;
+<span class="fc" id="L75">	private final HashSet&lt;Customer&gt; customerCollectionCached = new HashSet&lt;Customer&gt;();</span>
+
+<span class="fc" id="L77">	private final HashMap&lt;String, ProviderAndPredicate&lt;?, ?&gt;&gt; gridFilters = new HashMap&lt;String, ProviderAndPredicate&lt;?, ?&gt;&gt;();</span>
+
+	/**
+	 * @param cr
+	 *            Autowired, constructor injection
+	 */
+	@Autowired
+<span class="fc" id="L84">	public CustomerEditor(CustomerRepository cr) {</span>
+<span class="fc" id="L85">		this.customerRepo = cr;</span>
+
+		// adding components
+<span class="fc" id="L88">		HorizontalLayout rowOfButtons = new HorizontalLayout();</span>
+
+<span class="fc" id="L90">		rowOfButtons.addComponent(createNewCustomerButton);</span>
+<span class="fc" id="L91">		rowOfButtons.addComponent(editCustomerButton);</span>
+<span class="fc" id="L92">		createNewCustomerButton.setId(&quot;btn_create_customer&quot;);</span>
+<span class="fc" id="L93">		editCustomerButton.setId(&quot;btn_edit_customer&quot;);</span>
+
+		// Shouldn't be enabled unless selected
+<span class="fc" id="L96">		editCustomerButton.setEnabled(false);</span>
+
+		// Render component
+<span class="fc" id="L99">		this.addComponent(rowOfButtons);</span>
+
+		// Get from GridCol
+<span class="fc" id="L102">		refreshData();</span>
+
+<span class="fc" id="L104">		customersGrid.setWidth(&quot;100%&quot;);</span>
+<span class="fc" id="L105">		customersGrid.setSelectionMode(SelectionMode.SINGLE);</span>
+
+<span class="fc" id="L107">		customersGrid.addSelectionListener(event -&gt; {</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">			if (event.getFirstSelectedItem().isPresent()) {</span>
+<span class="nc" id="L109">				selectedCustomer = event.getFirstSelectedItem().get();</span>
+<span class="nc" id="L110">				editCustomerButton.setEnabled(true);</span>
+<span class="nc" id="L111">				createNewCustomerButton.setEnabled(false);</span>
+			} else {
+<span class="nc" id="L113">				selectedCustomer = null;</span>
+<span class="nc" id="L114">				editCustomerButton.setEnabled(false);</span>
+<span class="nc" id="L115">				createNewCustomerButton.setEnabled(true);</span>
+			}
+<span class="nc" id="L117">		});</span>
+
+<span class="fc" id="L119">		customersGrid.setColumnOrder(GridCol.CUSTOMER_ID, GridCol.CUSTOMER_NAME, GridCol.CUSTOMER_LINE_ID,</span>
+				GridCol.CUSTOMER_HKID, GridCol.CUSTOMER_PHONE, GridCol.CUSTOMER_AGE);
+
+<span class="fc" id="L122">		HeaderRow filterRow = customersGrid.appendHeaderRow();</span>
+
+<span class="fc bfc" id="L124" title="All 2 branches covered.">		for (Column&lt;Customer, ?&gt; col : customersGrid.getColumns()) {</span>
+<span class="fc" id="L125">			col.setMinimumWidth(120);</span>
+<span class="fc" id="L126">			col.setHidable(true);</span>
+<span class="fc" id="L127">			col.setHidingToggleCaption(col.getCaption());</span>
+<span class="fc" id="L128">			col.setExpandRatio(1);</span>
+<span class="fc" id="L129">			HeaderCell cell = filterRow.getCell(col.getId());</span>
+
+			// Have an input field to use for filter
+<span class="fc" id="L132">			TextField filterField = new TextField();</span>
+<span class="fc" id="L133">			filterField.setWidth(130, Unit.PIXELS);</span>
+<span class="fc" id="L134">			filterField.setHeight(30, Unit.PIXELS);</span>
+
+<span class="fc" id="L136">			filterField.addValueChangeListener(change -&gt; {</span>
+<span class="nc" id="L137">				String searchVal = change.getValue();</span>
+<span class="nc" id="L138">				String colId = col.getId();</span>
+
+<span class="nc" id="L140">				log.info(&quot;Value change in col [{}], val=[{}]&quot;, colId, searchVal);</span>
+<span class="nc" id="L141">				ListDataProvider&lt;Customer&gt; dataProvider = (ListDataProvider&lt;Customer&gt;) customersGrid.getDataProvider();</span>
+
+<span class="nc bnc" id="L143" title="All 2 branches missed.">				if (!filterField.isEmpty()) {</span>
+					try {
+						// note: if we keep typing into same textfield, we will overwrite the old filter
+						// for this column, which is desirable (rather than having filters for &quot;h&quot;,
+						// &quot;he&quot;, &quot;hel&quot;, etc
+<span class="nc" id="L148">						gridFilters.put(colId, FilterFactory.getFilterForCustomer(colId, searchVal));</span>
+<span class="nc" id="L149">						log.info(&quot;updated filter on attribute [{}]&quot;, colId);</span>
+
+<span class="nc" id="L151">					} catch (Exception e) {</span>
+<span class="nc" id="L152">						log.info(&quot;ignoring val=[{}], col=[{}] is invalid&quot;, searchVal, colId);</span>
+<span class="nc" id="L153">					}</span>
+				} else {
+					// the filter field was empty, so try
+					// removing the filter associated with this col
+<span class="nc" id="L157">					gridFilters.remove(colId);</span>
+<span class="nc" id="L158">					log.info(&quot;removed filter on attribute [{}]&quot;, colId);</span>
+
+				}
+<span class="nc" id="L161">				dataProvider.clearFilters();</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">				for (String colFilter : gridFilters.keySet()) {</span>
+<span class="nc" id="L163">					ProviderAndPredicate paf = gridFilters.get(colFilter);</span>
+<span class="nc" id="L164">					dataProvider.addFilter(paf.provider, paf.predicate);</span>
+<span class="nc" id="L165">				}</span>
+<span class="nc" id="L166">				dataProvider.refreshAll();</span>
+<span class="nc" id="L167">			});</span>
+<span class="fc" id="L168">			cell.setComponent(filterField);</span>
+
+<span class="fc" id="L170">		}</span>
+
+<span class="fc" id="L172">		this.addComponent(customersGrid);</span>
+
+<span class="fc" id="L174">		createNewCustomerButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L175">			getUI();</span>
+<span class="nc" id="L176">			UI.getCurrent().addWindow(getSubwindow(customerRepo, customerCollectionCached, new Customer()));</span>
+<span class="nc" id="L177">		});</span>
+<span class="fc" id="L178">		editCustomerButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L179">			getUI();</span>
+<span class="nc" id="L180">			UI.getCurrent().addWindow(getSubwindow(customerRepo, customerCollectionCached, selectedCustomer));</span>
+<span class="nc" id="L181">		});</span>
+<span class="fc" id="L182">	}</span>
+
+	public Window getSubwindow(CustomerRepository customerRepo, Collection&lt;Customer&gt; customerCollectionCached,
+			Customer customerToSave) {
+		// Creating the confirm button
+<span class="fc" id="L187">		subwindowConfirm = new Button(&quot;Confirm&quot;);</span>
+<span class="fc" id="L188">		getSubwindowConfirmButton().setId(&quot;btn_confirm_customer&quot;);</span>
+
+<span class="fc" id="L190">		customerName = new TextField(&quot;Name&quot;);</span>
+<span class="fc" id="L191">		customerName.setId(&quot;tf_customer_name&quot;);</span>
+
+<span class="fc" id="L193">		customerLineId = new TextField(&quot;Line Id&quot;);</span>
+<span class="fc" id="L194">		customerLineId.setId(&quot;tf_customer_line_id&quot;);</span>
+
+<span class="fc" id="L196">		customerHKID = new HKIDEntryField(&quot;HKID&quot;);</span>
+<span class="fc" id="L197">		customerHKID.setId(&quot;tf_customer_hkid&quot;);</span>
+
+<span class="fc" id="L199">		customerPhone = new PhoneNumberEntryField(&quot;Phone&quot;, &quot;852&quot;);</span>
+<span class="fc" id="L200">		customerPhone.setId(&quot;tf_customer_phone&quot;);</span>
+
+<span class="fc" id="L202">		customerAge = new TextField(&quot;Age&quot;);</span>
+<span class="fc" id="L203">		customerAge.setId(&quot;tf_customer_age&quot;);</span>
+
+<span class="fc bfc" id="L205" title="All 2 branches covered.">		if (customerToSave.getId() == null) { // passed in an unsaved object</span>
+<span class="fc" id="L206">			subwindow = new Window(&quot;Create new customer&quot;);</span>
+		} else {
+<span class="fc" id="L208">			subwindow = new Window(&quot;Edit a customer&quot;);</span>
+		}
+
+<span class="fc" id="L211">		FormLayout form = new FormLayout();</span>
+
+<span class="fc" id="L213">		subwindow.setWidth(&quot;800px&quot;);</span>
+
+<span class="fc" id="L215">		VerticalLayout formContainer = new VerticalLayout();</span>
+<span class="fc" id="L216">		formContainer.addComponent(form);</span>
+<span class="fc" id="L217">		subwindow.setContent(formContainer);</span>
+
+<span class="fc" id="L219">		subwindow.center();</span>
+<span class="fc" id="L220">		subwindow.setClosable(false);</span>
+<span class="fc" id="L221">		subwindow.setModal(true);</span>
+<span class="fc" id="L222">		subwindow.setResizable(false);</span>
+<span class="fc" id="L223">		subwindow.setDraggable(false);</span>
+
+<span class="fc" id="L225">		form.addComponent(customerName);</span>
+<span class="fc" id="L226">		form.addComponent(customerLineId);</span>
+<span class="fc" id="L227">		form.addComponent(customerHKID);</span>
+<span class="fc" id="L228">		form.addComponent(customerPhone);</span>
+<span class="fc" id="L229">		form.addComponent(customerAge);</span>
+
+<span class="fc" id="L231">		HorizontalLayout buttonActions = new HorizontalLayout();</span>
+<span class="fc" id="L232">		buttonActions.addComponent(getSubwindowConfirmButton());</span>
+<span class="pc" id="L233">		buttonActions.addComponent(new Button(&quot;Cancel&quot;, event -&gt; subwindow.close()));</span>
+<span class="fc" id="L234">		form.addComponent(buttonActions);</span>
+
+<span class="fc" id="L236">		Binder&lt;Customer&gt; binder = new Binder&lt;&gt;();</span>
+
+<span class="fc" id="L238">		binder.forField(customerName).withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
+<span class="fc" id="L239">				.asRequired(Utils.generateRequiredError()).bind(Customer::getName, Customer::setName);</span>
+
+<span class="fc" id="L241">		binder.forField(customerLineId).withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
+<span class="fc" id="L242">				.bind(Customer::getLineId, Customer::setLineId);</span>
+
+<span class="fc" id="L244">		binder.forField(customerHKID).withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
+<span class="fc" id="L245">				.withValidator(ValidatorFactory.getHKIDValidator()).asRequired(Utils.generateRequiredError())</span>
+<span class="fc" id="L246">				.bind(Customer::getHkid, Customer::setHkid);</span>
+
+<span class="fc" id="L248">		binder.forField(customerPhone).withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
+<span class="fc" id="L249">				.withValidator(ValidatorFactory.getPhoneNumberValidator()).asRequired(Utils.generateRequiredError())</span>
+<span class="fc" id="L250">				.bind(Customer::getPhone, Customer::setPhone);</span>
+
+<span class="fc" id="L252">		binder.forField(customerAge).asRequired(Utils.generateRequiredError())</span>
+<span class="fc" id="L253">				.withConverter(ConverterFactory.getStringToIntegerConverter())</span>
+<span class="fc" id="L254">				.withValidator(ValidatorFactory.getIntegerRangeValidator(0)).bind(Customer::getAge, Customer::setAge);</span>
+
+<span class="fc" id="L256">		binder.setBean(customerToSave);</span>
+
+<span class="fc" id="L258">		getSubwindowConfirmButton().addClickListener(event -&gt; {</span>
+<span class="fc" id="L259">			validationStatus = binder.validate();</span>
+<span class="fc" id="L260">			log.info(customerHKID.getValue());</span>
+
+<span class="fc bfc" id="L262" title="All 2 branches covered.">			if (validationStatus.isOk()) {</span>
+<span class="fc" id="L263">				binder.writeBeanIfValid(customerToSave);</span>
+
+<span class="fc" id="L265">				log.info(&quot;About to save customer [{}]&quot;, customerName.getValue());</span>
+
+<span class="fc" id="L267">				customerRepo.save(customerToSave);</span>
+<span class="fc" id="L268">				this.refreshData();</span>
+<span class="fc" id="L269">				subwindow.close();</span>
+
+<span class="fc" id="L271">				log.info(&quot;Saved a new/edited customer [{}] successfully&quot;, customerName.getValue());</span>
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">				if (Page.getCurrent() != null)</span>
+<span class="nc" id="L273">					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());</span>
+
+<span class="fc" id="L275">				binder.removeBean();</span>
+			} else {
+<span class="fc" id="L277">				String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);</span>
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">				if (Page.getCurrent() != null)</span>
+<span class="nc" id="L279">					NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());</span>
+			}
+<span class="fc" id="L281">		});</span>
+
+<span class="fc" id="L283">		return subwindow;</span>
+	}
+
+	/**
+	 * Refreshes the data in the vaadin grid
+	 */
+	public void refreshData() {
+<span class="fc" id="L290">		Iterable&lt;Customer&gt; customers = customerRepo.findAll();</span>
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">		if(customers != null) {</span>
+<span class="nc" id="L292">			customerCollectionCached.clear();</span>
+<span class="nc" id="L293">			customers.forEach(customerCollectionCached::add);</span>
+<span class="nc" id="L294">			ListDataProvider&lt;Customer&gt; provider = new ListDataProvider&lt;Customer&gt;(customerCollectionCached);</span>
+<span class="nc" id="L295">			customersGrid.setDataProvider(provider);</span>
+		}
+
+<span class="fc" id="L298">	}</span>
+
+	public Button getSubwindowConfirmButton() {
+<span class="fc" id="L301">		return subwindowConfirm;</span>
+	}
+
+	public TextField getCustomerName() {
+<span class="fc" id="L305">		return customerName;</span>
+	}
+
+	public TextField getCustomerLineId() {
+<span class="fc" id="L309">		return customerLineId;</span>
+	}
+
+	public HKIDEntryField getCustomerHKID() {
+<span class="fc" id="L313">		return customerHKID;</span>
+	}
+
+	public PhoneNumberEntryField getCustomerPhone() {
+<span class="fc" id="L317">		return customerPhone;</span>
+	}
+
+	public TextField getCustomerAge() {
+<span class="fc" id="L321">		return customerAge;</span>
+	}
+
+	public HashSet&lt;Customer&gt; getCustomerCollectionCached() {
+<span class="fc" id="L325">		return customerCollectionCached;</span>
+	}
+
+	public BinderValidationStatus&lt;Customer&gt; getValidationStatus() {
+<span class="fc" id="L329">		return validationStatus;</span>
+	}
+
+	
+	
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TourGuidesEditor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.input.editors</a> &gt; <span class="el_source">TourGuidesEditor.java</span></div><h1>TourGuidesEditor.java</h1><pre class="source lang-java linenums">package comp3111.input.editors;
+
+import com.vaadin.data.Binder;
+import com.vaadin.data.BinderValidationStatus;
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.Page;
+import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.*;
+import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
+
+import comp3111.Utils;
+import comp3111.data.GridCol;
+import comp3111.data.model.Tour;
+import comp3111.data.model.TourGuide;
+import comp3111.data.repo.TourGuideRepository;
+import comp3111.input.validators.ValidatorFactory;
+import comp3111.view.GuidedByView;
+import comp3111.view.NotificationFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+
+/**
+ * Represents the tour guide editor in the TourGuideManagementView
+ * 
+ * @author Forsythe
+ * 
+ */
+@SuppressWarnings(&quot;serial&quot;)
+@SpringComponent
+@UIScope
+public class TourGuidesEditor extends VerticalLayout {
+<span class="fc" id="L41">	private static final Logger log = LoggerFactory.getLogger(TourGuidesEditor.class);</span>
+
+	GuidedByViewer guidedByViewer;
+	
+	TextField tourGuideName;
+	TextField tourGuideLineUsername;
+	
+	BinderValidationStatus&lt;TourGuide&gt; validationStatus;
+
+	private Window subwindow;
+
+<span class="fc" id="L52">	private HorizontalLayout rowOfButtons = new HorizontalLayout();</span>
+<span class="fc" id="L53">	private Button createTourGuideButton = new Button(&quot;Create new tour guide&quot;);</span>
+<span class="fc" id="L54">	private Button editTourGuideButton = new Button(&quot;Edit tour guide&quot;);</span>
+<span class="fc" id="L55">	private Button viewGuidedToursButton = new Button(&quot;View guided offerings&quot;);</span>
+
+	
+	/* subwindow action buttons */
+	private Button subwindowConfirm;
+
+<span class="fc" id="L61">	private Grid&lt;TourGuide&gt; tourGuideGrid = new Grid&lt;TourGuide&gt;(TourGuide.class);</span>
+
+	private TourGuide selectedTourGuide;
+
+	TourGuideRepository tourGuideRepo;
+<span class="fc" id="L66">	private final HashSet&lt;TourGuide&gt; tourGuideCollectionCached = new HashSet&lt;TourGuide&gt;();</span>
+	
+	public HashSet&lt;TourGuide&gt; getTourGuideCollectionCached() {
+<span class="fc" id="L69">		return tourGuideCollectionCached;</span>
+	}
+
+<span class="fc" id="L72">	private final HashMap&lt;String, ProviderAndPredicate&lt;?, ?&gt;&gt; gridFilters = new HashMap&lt;String, ProviderAndPredicate&lt;?, ?&gt;&gt;();</span>
+
+	/**
+	 * @param tgr
+	 *            Autowired, constructor injection
+	 */
+	@Autowired
+<span class="fc" id="L79">	public TourGuidesEditor(TourGuideRepository tgr, GuidedByViewer gbv) {</span>
+<span class="fc" id="L80">		this.tourGuideRepo = tgr;</span>
+<span class="fc" id="L81">		this.guidedByViewer = gbv;</span>
+		
+		// adding components
+<span class="fc" id="L84">		rowOfButtons.addComponent(createTourGuideButton);</span>
+<span class="fc" id="L85">		rowOfButtons.addComponent(editTourGuideButton);</span>
+<span class="fc" id="L86">		rowOfButtons.addComponent(viewGuidedToursButton);</span>
+<span class="fc" id="L87">		createTourGuideButton.setId(&quot;btn_create_tour_guide&quot;);</span>
+<span class="fc" id="L88">		editTourGuideButton.setId(&quot;btn_edit_tour_guide&quot;);</span>
+<span class="fc" id="L89">		viewGuidedToursButton.setId(&quot;btn_view_guided_tours&quot;);</span>
+
+		// edit and manage shouldn't be enabled with no tour guide selected
+<span class="fc" id="L92">		editTourGuideButton.setEnabled(false);</span>
+<span class="fc" id="L93">		viewGuidedToursButton.setEnabled(false);</span>
+
+<span class="fc" id="L95">		this.addComponent(rowOfButtons);</span>
+
+<span class="fc" id="L97">		tourGuideGrid.setWidth(&quot;100%&quot;);</span>
+<span class="fc" id="L98">		tourGuideGrid.setSelectionMode(SelectionMode.SINGLE);</span>
+
+<span class="fc" id="L100">		tourGuideGrid.addSelectionListener(event -&gt; {</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">			if (event.getFirstSelectedItem().isPresent()) {</span>
+<span class="nc" id="L102">				selectedTourGuide = event.getFirstSelectedItem().get();</span>
+<span class="nc" id="L103">				editTourGuideButton.setEnabled(true);</span>
+<span class="nc" id="L104">				viewGuidedToursButton.setEnabled(true);</span>
+<span class="nc" id="L105">				createTourGuideButton.setEnabled(false);</span>
+			} else {
+<span class="nc" id="L107">				selectedTourGuide = null;</span>
+<span class="nc" id="L108">				editTourGuideButton.setEnabled(false);</span>
+<span class="nc" id="L109">				viewGuidedToursButton.setEnabled(false);</span>
+<span class="nc" id="L110">				createTourGuideButton.setEnabled(true);</span>
+			}
+<span class="nc" id="L112">		});</span>
+
+<span class="fc" id="L114">		tourGuideGrid.setColumnOrder(GridCol.TOURGUIDE_ID, GridCol.TOURGUIDE_NAME, GridCol.TOURGUIDE_LINE_USERNAME);</span>
+
+<span class="fc" id="L116">		HeaderRow filterRow = tourGuideGrid.appendHeaderRow();</span>
+
+<span class="fc bfc" id="L118" title="All 2 branches covered.">		for (Column&lt;TourGuide, ?&gt; col : tourGuideGrid.getColumns()) {</span>
+<span class="fc" id="L119">			col.setMinimumWidth(120);</span>
+<span class="fc" id="L120">			col.setHidable(true);</span>
+<span class="fc" id="L121">			col.setHidingToggleCaption(col.getCaption());</span>
+<span class="fc" id="L122">			col.setExpandRatio(1);</span>
+
+<span class="fc" id="L124">			HeaderCell cell = filterRow.getCell(col.getId());</span>
+<span class="fc" id="L125">			TextField filterField = new TextField();</span>
+<span class="fc" id="L126">			filterField.setWidth(130, Unit.PIXELS);</span>
+<span class="fc" id="L127">			filterField.setHeight(30, Unit.PIXELS);</span>
+
+<span class="fc" id="L129">			filterField.addValueChangeListener(change -&gt; {</span>
+<span class="nc" id="L130">				String searchVal = change.getValue();</span>
+<span class="nc" id="L131">				String colId = col.getId();</span>
+
+<span class="nc" id="L133">				log.info(&quot;Value change in col [{}], val=[{}]&quot;, colId, searchVal);</span>
+<span class="nc" id="L134">				ListDataProvider&lt;TourGuide&gt; dataProvider = (ListDataProvider&lt;TourGuide&gt;) tourGuideGrid</span>
+<span class="nc" id="L135">						.getDataProvider();</span>
+
+<span class="nc bnc" id="L137" title="All 2 branches missed.">				if (!filterField.isEmpty()) {</span>
+					try {
+<span class="nc" id="L139">						gridFilters.put(colId, FilterFactory.getFilterForTourGuide(colId, searchVal));</span>
+<span class="nc" id="L140">						log.info(&quot;updated filter on attribute [{}]&quot;, colId);</span>
+
+<span class="nc" id="L142">					} catch (Exception e) {</span>
+<span class="nc" id="L143">						log.info(&quot;ignoring val=[{}], col=[{}] is invalid&quot;, searchVal, colId);</span>
+<span class="nc" id="L144">					}</span>
+				} else {
+<span class="nc" id="L146">					gridFilters.remove(colId);</span>
+<span class="nc" id="L147">					log.info(&quot;removed filter on attribute [{}]&quot;, colId);</span>
+
+				}
+<span class="nc" id="L150">				dataProvider.clearFilters();</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">				for (String colFilter : gridFilters.keySet()) {</span>
+<span class="nc" id="L152">					ProviderAndPredicate paf = gridFilters.get(colFilter);</span>
+<span class="nc" id="L153">					dataProvider.addFilter(paf.provider, paf.predicate);</span>
+<span class="nc" id="L154">				}</span>
+<span class="nc" id="L155">				dataProvider.refreshAll();</span>
+<span class="nc" id="L156">			});</span>
+<span class="fc" id="L157">			cell.setComponent(filterField);</span>
+<span class="fc" id="L158">		}</span>
+
+<span class="fc" id="L160">		this.addComponent(tourGuideGrid);</span>
+
+<span class="fc" id="L162">		createTourGuideButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L163">			getUI();</span>
+<span class="nc" id="L164">			UI.getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, new TourGuide()));</span>
+
+<span class="nc" id="L166">		});</span>
+
+<span class="fc" id="L168">		editTourGuideButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L169">			getUI();</span>
+<span class="nc" id="L170">			UI.getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, selectedTourGuide));</span>
+
+<span class="nc" id="L172">		});</span>
+
+<span class="fc" id="L174">		viewGuidedToursButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L175">			guidedByViewer.setSelectedTourGuide(selectedTourGuide);</span>
+<span class="nc" id="L176">			guidedByViewer.setTourGuidesEditor(this);</span>
+<span class="nc" id="L177">			getUI().getNavigator().navigateTo(GuidedByView.VIEW_NAME);</span>
+<span class="nc" id="L178">			refreshData();</span>
+<span class="nc" id="L179">		});</span>
+<span class="fc" id="L180">	}</span>
+
+	public Window getSubwindow(TourGuideRepository tourGuideRepo, Collection&lt;TourGuide&gt; tourGuideCollectionCached,
+			TourGuide tourGuideToSave) {
+		// Creating the confirm button
+<span class="fc" id="L185">		subwindowConfirm = new Button(&quot;Confirm&quot;);</span>
+<span class="fc" id="L186">		getSubwindowConfirmButton().setId(&quot;btn_confirm_tour_guide&quot;);</span>
+
+<span class="fc" id="L188">		tourGuideName = new TextField(&quot;Name&quot;);</span>
+<span class="fc" id="L189">		tourGuideName.setId(&quot;tf_tour_guide_name&quot;);</span>
+<span class="fc" id="L190">		tourGuideLineUsername = new TextField(&quot;LINE Username&quot;);</span>
+<span class="fc" id="L191">		tourGuideLineUsername.setId(&quot;tf_tour_guide_line_id&quot;);</span>
+
+<span class="fc bfc" id="L193" title="All 2 branches covered.">		if (tourGuideToSave.getId() == null) { // passed in an unsaved object</span>
+<span class="fc" id="L194">			subwindow = new Window(&quot;Create new tour guide&quot;);</span>
+		} else {
+<span class="fc" id="L196">			subwindow = new Window(&quot;Edit a tour guide&quot;);</span>
+		}
+
+<span class="fc" id="L199">		FormLayout form = new FormLayout();</span>
+<span class="fc" id="L200">		VerticalLayout formContainer = new VerticalLayout();</span>
+<span class="fc" id="L201">		formContainer.addComponent(form);</span>
+
+<span class="fc" id="L203">		subwindow.setWidth(&quot;400px&quot;);</span>
+<span class="fc" id="L204">		subwindow.setContent(formContainer);</span>
+<span class="fc" id="L205">		subwindow.center();</span>
+<span class="fc" id="L206">		subwindow.setClosable(false);</span>
+<span class="fc" id="L207">		subwindow.setModal(true);</span>
+<span class="fc" id="L208">		subwindow.setResizable(false);</span>
+<span class="fc" id="L209">		subwindow.setDraggable(false);</span>
+
+<span class="fc" id="L211">		form.addComponent(tourGuideName);</span>
+<span class="fc" id="L212">		form.addComponent(tourGuideLineUsername);</span>
+
+<span class="fc" id="L214">		HorizontalLayout buttonActions = new HorizontalLayout();</span>
+<span class="fc" id="L215">		buttonActions.addComponent(getSubwindowConfirmButton());</span>
+<span class="pc" id="L216">		buttonActions.addComponent(new Button(&quot;Cancel&quot;, event -&gt; subwindow.close()));</span>
+<span class="fc" id="L217">		form.addComponent(buttonActions);</span>
+
+<span class="fc" id="L219">		Binder&lt;TourGuide&gt; binder = new Binder&lt;&gt;();</span>
+<span class="fc" id="L220">		binder.forField(tourGuideName).withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
+<span class="fc" id="L221">				.asRequired(Utils.generateRequiredError()).bind(TourGuide::getName, TourGuide::setName);</span>
+
+<span class="fc" id="L223">		binder.forField(tourGuideLineUsername).withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
+<span class="fc" id="L224">				.asRequired(Utils.generateRequiredError()).bind(TourGuide::getLineUsername, TourGuide::setLineUsername);</span>
+
+<span class="fc" id="L226">		binder.setBean(tourGuideToSave);</span>
+
+<span class="fc" id="L228">		getSubwindowConfirmButton().addClickListener(event -&gt; {</span>
+<span class="fc" id="L229">			validationStatus = binder.validate();</span>
+
+<span class="fc bfc" id="L231" title="All 2 branches covered.">			if (validationStatus.isOk()) {</span>
+<span class="fc" id="L232">				binder.writeBeanIfValid(tourGuideToSave);</span>
+
+<span class="fc" id="L234">				log.info(&quot;About to save tour guide [{}]&quot;, tourGuideName.getValue());</span>
+
+<span class="fc" id="L236">				tourGuideRepo.save(tourGuideToSave);</span>
+<span class="fc" id="L237">				this.refreshData();</span>
+<span class="fc" id="L238">				subwindow.close();</span>
+<span class="fc" id="L239">				log.info(&quot;Saved a new/edited tour guide [{}] successfully&quot;, tourGuideName.getValue());</span>
+
+<span class="fc" id="L241">				binder.removeBean();</span>
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">				if (Page.getCurrent() != null)</span>
+<span class="nc" id="L243">					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());</span>
+
+			} else {
+<span class="fc" id="L246">				String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);</span>
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">				if (Page.getCurrent() != null)</span>
+<span class="nc" id="L248">					NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());</span>
+			}
+<span class="fc" id="L250">		});</span>
+
+<span class="fc" id="L252">		return subwindow;</span>
+	}
+
+	/**
+	 * Refreshes the data in the vaadin grid
+	 */
+	public void refreshData() {
+<span class="fc" id="L259">		Iterable&lt;TourGuide&gt; tourGuides = tourGuideRepo.findAll();</span>
+<span class="pc bpc" id="L260" title="1 of 2 branches missed.">		if(tourGuides != null) {</span>
+<span class="nc" id="L261">			tourGuideCollectionCached.clear();</span>
+<span class="nc" id="L262">			tourGuides.forEach(tourGuideCollectionCached::add);</span>
+<span class="nc" id="L263">			ListDataProvider&lt;TourGuide&gt; provider = new ListDataProvider&lt;TourGuide&gt;(tourGuideCollectionCached);</span>
+<span class="nc" id="L264">			tourGuideGrid.setDataProvider(provider);</span>
+		}
+		// tourGrid.setItems(tourCollectionCached);
+	
+<span class="fc" id="L268">	}</span>
+
+	public Button getSubwindowConfirmButton() {
+<span class="fc" id="L271">		return subwindowConfirm;</span>
+	}
+
+	public TextField getTourGuideName() {
+<span class="fc" id="L275">		return tourGuideName;</span>
+	}
+
+	public TextField getTourGuideLineUsername() {
+<span class="fc" id="L279">		return tourGuideLineUsername;</span>
+	}
+
+	public BinderValidationStatus&lt;TourGuide&gt; getValidationStatus() {
+<span class="fc" id="L283">		return validationStatus;</span>
+	}
+	
+	
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

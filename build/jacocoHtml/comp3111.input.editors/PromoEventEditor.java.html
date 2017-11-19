@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PromoEventEditor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.input.editors</a> &gt; <span class="el_source">PromoEventEditor.java</span></div><h1>PromoEventEditor.java</h1><pre class="source lang-java linenums">package comp3111.input.editors;
+
+import java.time.Instant;
+import java.util.Date;
+import java.util.HashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.vaadin.data.Binder;
+import com.vaadin.data.BinderValidationStatus;
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.Page;
+import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.DateTimeField;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
+
+import comp3111.Utils;
+import comp3111.data.DBManager;
+import comp3111.data.GridCol;
+import comp3111.data.model.Offering;
+import comp3111.data.model.PromoEvent;
+import comp3111.data.repo.BookingRepository;
+import comp3111.data.repo.CustomerRepository;
+import comp3111.data.repo.OfferingRepository;
+import comp3111.data.repo.PromoEventRepository;
+import comp3111.input.converters.ConverterFactory;
+import comp3111.input.validators.ValidatorFactory;
+import comp3111.view.NotificationFactory;
+
+/**
+ * Represents the promo event editor in PromoEventManagementView
+ * @author Forsythe
+ *
+ */
+@SuppressWarnings(&quot;serial&quot;)
+@SpringComponent
+@UIScope
+public class PromoEventEditor extends VerticalLayout {
+<span class="nc" id="L55">	private static final Logger log = LoggerFactory.getLogger(PromoEventEditor.class);</span>
+
+<span class="nc" id="L57">	private Grid&lt;PromoEvent&gt; eventGrid = new Grid&lt;&gt;(PromoEvent.class);</span>
+
+	private PromoEvent selectedEvent;
+
+	@Autowired
+	private BookingRepository bookingRepo;
+	@Autowired
+	private CustomerRepository customerRepo;
+	@Autowired
+	private OfferingRepository offeringRepo;
+	@Autowired
+	private PromoEventRepository promoEventRepo;
+	@Autowired
+	private DBManager actionManager;
+<span class="nc" id="L71">	private final HashMap&lt;String, ProviderAndPredicate&lt;?, ?&gt;&gt; gridFilters = new HashMap&lt;String, ProviderAndPredicate&lt;?, ?&gt;&gt;();</span>
+
+
+	/**
+	 * @param per Autowired, constructor injection
+	 */
+	@Autowired
+<span class="nc" id="L78">	public PromoEventEditor(PromoEventRepository per) {</span>
+<span class="nc" id="L79">		this.promoEventRepo = per;</span>
+
+<span class="nc" id="L81">		Button createEventButton = new Button(&quot;Create new promotional event&quot;);</span>
+<span class="nc" id="L82">		Button editEventButton = new Button(&quot;Edit promotional event&quot;);</span>
+
+<span class="nc" id="L84">		HorizontalLayout rowOfButtons = new HorizontalLayout();</span>
+<span class="nc" id="L85">		rowOfButtons.addComponent(createEventButton);</span>
+<span class="nc" id="L86">		rowOfButtons.addComponent(editEventButton);</span>
+
+		// disable edit
+<span class="nc" id="L89">		editEventButton.setEnabled(false);</span>
+
+		// add component to view
+<span class="nc" id="L92">		this.addComponent(rowOfButtons);</span>
+
+		// get from GridCol
+<span class="nc" id="L95">		eventGrid.setItems(Utils.iterableToCollection(promoEventRepo.findAll()).stream()</span>
+<span class="nc" id="L96">				.sorted((b1, b2) -&gt; b1.getId().compareTo(b2.getId())));</span>
+
+<span class="nc" id="L98">		eventGrid.setWidth(&quot;100%&quot;);</span>
+<span class="nc" id="L99">		eventGrid.setSelectionMode(SelectionMode.SINGLE);</span>
+
+<span class="nc" id="L101">		eventGrid.addSelectionListener(event -&gt; {</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">			if (event.getFirstSelectedItem().isPresent()) {</span>
+<span class="nc" id="L103">				selectedEvent = event.getFirstSelectedItem().get();</span>
+<span class="nc" id="L104">				editEventButton.setEnabled(true);</span>
+<span class="nc" id="L105">				createEventButton.setEnabled(false);</span>
+			} else {
+<span class="nc" id="L107">				selectedEvent = null;</span>
+<span class="nc" id="L108">				editEventButton.setEnabled(false);</span>
+<span class="nc" id="L109">				createEventButton.setEnabled(true);</span>
+			}
+<span class="nc" id="L111">		});</span>
+		
+<span class="nc" id="L113">		eventGrid.removeColumn(GridCol.PROMOEVENT_TRIGGER_DATE); </span>
+<span class="nc" id="L114">		eventGrid.removeColumn(GridCol.PROMOEVENT_OFFERING);</span>
+		
+<span class="nc" id="L116">		eventGrid.setColumnOrder(GridCol.PROMOEVENT_IS_TRIGGERED, GridCol.PROMOEVENT_ID, GridCol.PROMOEVENT_OFFERING_ID, </span>
+				GridCol.PROMOEVENT_CUSTOM_MESSAGE, GridCol.PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER,
+				GridCol.PROMOEVENT_PROMO_CODE, GridCol.PROMOEVENT_PROMO_CODE_USES_LEFT, 
+				GridCol.PROMOEVENT_DISCOUNT, GridCol.PROMOEVENT_TRIGGER_DATE_STRING, GridCol.PROMOEVENT_IS_TRIGGERED);
+
+<span class="nc" id="L121">		HeaderRow filterRow = eventGrid.appendHeaderRow();</span>
+		
+<span class="nc bnc" id="L123" title="All 2 branches missed.">		for (Column&lt;PromoEvent, ?&gt; col : eventGrid.getColumns()) {</span>
+<span class="nc" id="L124">			col.setMinimumWidth(160);</span>
+<span class="nc" id="L125">			col.setHidable(true);</span>
+<span class="nc" id="L126">			col.setExpandRatio(1);</span>
+<span class="nc" id="L127">			col.setHidingToggleCaption(col.getCaption());</span>
+<span class="nc" id="L128">			HeaderCell cell = filterRow.getCell(col.getId());</span>
+
+			// Have an input field to use for filter
+<span class="nc" id="L131">			TextField filterField = new TextField();</span>
+<span class="nc" id="L132">			filterField.setWidth(130, Unit.PIXELS);</span>
+<span class="nc" id="L133">			filterField.setHeight(30, Unit.PIXELS);</span>
+
+<span class="nc" id="L135">			filterField.addValueChangeListener(change -&gt; {</span>
+<span class="nc" id="L136">				String searchVal = change.getValue();</span>
+<span class="nc" id="L137">				String colId = col.getId();</span>
+
+<span class="nc" id="L139">				log.info(&quot;Value change in col [{}], val=[{}]&quot;, colId, searchVal);</span>
+<span class="nc" id="L140">				ListDataProvider&lt;PromoEvent&gt; dataProvider = (ListDataProvider&lt;PromoEvent&gt;) eventGrid.getDataProvider();</span>
+
+<span class="nc bnc" id="L142" title="All 2 branches missed.">				if (!filterField.isEmpty()) {</span>
+					try {
+						// note: if we keep typing into same textfield, we will overwrite the old filter
+						// for this column, which is desirable (rather than having filters for &quot;h&quot;,
+						// &quot;he&quot;, &quot;hel&quot;, etc
+<span class="nc" id="L147">						gridFilters.put(colId, FilterFactory.getFilterForPromoEvent(colId, searchVal));</span>
+<span class="nc" id="L148">						log.info(&quot;updated filter on attribute [{}]&quot;, colId);</span>
+
+<span class="nc" id="L150">					} catch (Exception e) {</span>
+<span class="nc" id="L151">						log.info(&quot;ignoring val=[{}], col=[{}] is invalid&quot;, searchVal, colId);</span>
+<span class="nc" id="L152">					}</span>
+				} else {
+					// the filter field was empty, so try
+					// removing the filter associated with this col
+<span class="nc" id="L156">					gridFilters.remove(colId);</span>
+<span class="nc" id="L157">					log.info(&quot;removed filter on attribute [{}]&quot;, colId);</span>
+
+				}
+<span class="nc" id="L160">				dataProvider.clearFilters();</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">				for (String colFilter : gridFilters.keySet()) {</span>
+<span class="nc" id="L162">					ProviderAndPredicate paf = gridFilters.get(colFilter);</span>
+<span class="nc" id="L163">					dataProvider.addFilter(paf.provider, paf.predicate);</span>
+<span class="nc" id="L164">				}</span>
+<span class="nc" id="L165">				dataProvider.refreshAll();</span>
+<span class="nc" id="L166">			});</span>
+<span class="nc" id="L167">			cell.setComponent(filterField);</span>
+
+<span class="nc" id="L169">		}</span>
+
+<span class="nc" id="L171">		this.addComponent(eventGrid);</span>
+
+<span class="nc" id="L173">		createEventButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L174">			getUI();</span>
+<span class="nc" id="L175">			UI.getCurrent().addWindow(getSubwindow(new PromoEvent()));</span>
+<span class="nc" id="L176">		});</span>
+
+<span class="nc" id="L178">		editEventButton.addClickListener(event -&gt; {</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">			if (canEditEvent(selectedEvent)) {</span>
+<span class="nc" id="L180">				getUI();</span>
+<span class="nc" id="L181">				UI.getCurrent().addWindow(getSubwindow(selectedEvent));</span>
+			}
+<span class="nc" id="L183">		});</span>
+<span class="nc" id="L184">	}</span>
+
+	// Check whether a promo event is editable or not based on offering start date
+	// and current date
+	private boolean canEditEvent(PromoEvent event) {
+<span class="nc bnc" id="L189" title="All 2 branches missed.">		if (event == null)</span>
+<span class="nc" id="L190">			return true;</span>
+
+<span class="nc" id="L192">		Date today = Date.from(Instant.now());</span>
+<span class="nc" id="L193">		Date triggerDate = event.getTriggerDate();</span>
+
+<span class="nc bnc" id="L195" title="All 2 branches missed.">		if (today.after(triggerDate)) {</span>
+<span class="nc" id="L196">			NotificationFactory</span>
+<span class="nc" id="L197">					.getTopBarWarningNotification(</span>
+							&quot;It's too late to edit this promotion, it triggered on: &quot; + triggerDate, 5)
+<span class="nc" id="L199">					.show(Page.getCurrent());</span>
+<span class="nc" id="L200">			return false;</span>
+		}
+<span class="nc" id="L202">		return true;</span>
+	}
+
+	private Window getSubwindow(PromoEvent promoEvent) {
+		Window subwindow;
+
+		// Creating the confirm button
+<span class="nc" id="L209">		Button confirmButton = new Button(&quot;Confirm&quot;);</span>
+<span class="nc" id="L210">		confirmButton.setId(&quot;confirm_event&quot;);</span>
+
+<span class="nc" id="L212">		final ComboBox&lt;Offering&gt; offering = new ComboBox&lt;Offering&gt;(&quot;Offering&quot;);</span>
+<span class="nc" id="L213">		DateTimeField triggerDate = Utils.getDateTimeFieldWithOurLocale(&quot;Trigger Date&quot;);</span>
+<span class="nc" id="L214">		TextField discountMultiplier = new TextField(&quot;Discount Multiplier&quot;);</span>
+<span class="nc" id="L215">		TextField maxReservationsPerCustomer = new TextField(&quot;Max Reservations/Customer&quot;);</span>
+<span class="nc" id="L216">		TextField promoCode = new TextField(&quot;Promo Code&quot;);</span>
+<span class="nc" id="L217">		TextField promoCodeUses = new TextField(&quot;Promo Code Max Use Count&quot;);</span>
+<span class="nc" id="L218">		TextArea customMessage = new TextArea(&quot;Message&quot;);</span>
+
+		// customer.setId(&quot;cb_customer&quot;);
+		// offering.setId(&quot;cb_offering&quot;);
+		// numberAdults.setId(&quot;tf_number_of_adults&quot;);
+		// numberChildren.setId(&quot;tf_number_of_children&quot;);
+		// numberToddlers.setId(&quot;tf_number_of_toddlers&quot;);
+		// amountPaid.setId(&quot;tf_amount_paid&quot;);
+		// specialRequest.setId(&quot;tf_special_request&quot;);
+		// paymentStatus.setId(&quot;cb_payment_status&quot;);
+
+<span class="nc" id="L229">		offering.setPopupWidth(null);</span>
+
+<span class="nc bnc" id="L231" title="All 2 branches missed.">		if (promoEvent.getId() == null) { // passed in an unsaved object</span>
+<span class="nc" id="L232">			subwindow = new Window(&quot;Create new promotional event&quot;);</span>
+		} else {
+<span class="nc" id="L234">			subwindow = new Window(&quot;Edit a promotional event&quot;);</span>
+		}
+
+<span class="nc" id="L237">		FormLayout form = new FormLayout();</span>
+<span class="nc" id="L238">		VerticalLayout formContainer = new VerticalLayout();</span>
+<span class="nc" id="L239">		formContainer.addComponent(form);</span>
+
+<span class="nc" id="L241">		subwindow.setWidth(&quot;800px&quot;);</span>
+<span class="nc" id="L242">		subwindow.setContent(formContainer);</span>
+<span class="nc" id="L243">		subwindow.center();</span>
+<span class="nc" id="L244">		subwindow.setClosable(false);</span>
+<span class="nc" id="L245">		subwindow.setModal(true);</span>
+<span class="nc" id="L246">		subwindow.setResizable(false);</span>
+<span class="nc" id="L247">		subwindow.setDraggable(false);</span>
+
+<span class="nc" id="L249">		form.addComponent(offering);</span>
+<span class="nc" id="L250">		form.addComponent(triggerDate);</span>
+<span class="nc" id="L251">		form.addComponent(discountMultiplier);</span>
+<span class="nc" id="L252">		form.addComponent(maxReservationsPerCustomer);</span>
+<span class="nc" id="L253">		form.addComponent(promoCode);</span>
+<span class="nc" id="L254">		form.addComponent(promoCodeUses);</span>
+<span class="nc" id="L255">		form.addComponent(customMessage);</span>
+
+<span class="nc bnc" id="L257" title="All 2 branches missed.">		if (promoEvent.getId() != null) {</span>
+			//Old promo code cannot be changed to make our life easier
+<span class="nc" id="L259">			promoCode.setReadOnly(true);</span>
+		}
+
+<span class="nc" id="L262">		HorizontalLayout buttonActions = new HorizontalLayout();</span>
+<span class="nc" id="L263">		buttonActions.addComponent(confirmButton);</span>
+<span class="nc" id="L264">		buttonActions.addComponent(new Button(&quot;Cancel&quot;, event -&gt; subwindow.close()));</span>
+<span class="nc" id="L265">		form.addComponent(buttonActions);</span>
+
+<span class="nc" id="L267">		offering.setItems(Utils.iterableToCollection(offeringRepo.findAll()).stream()</span>
+<span class="nc" id="L268">				.sorted((c1, c2) -&gt; c1.getId().compareTo(c2.getId())));</span>
+
+<span class="nc" id="L270">		Binder&lt;PromoEvent&gt; binder = new Binder&lt;PromoEvent&gt;();</span>
+
+<span class="nc" id="L272">		binder.forField(offering).asRequired(Utils.generateRequiredError())</span>
+<span class="nc" id="L273">				.withValidator(ValidatorFactory.getOfferingStillOpenValidator())</span>
+<span class="nc" id="L274">				.bind(PromoEvent::getOffering, PromoEvent::setOffering);</span>
+
+<span class="nc" id="L276">		binder.forField(triggerDate).asRequired(Utils.generateRequiredError())</span>
+<span class="nc" id="L277">				.withConverter(ConverterFactory.getLocalDateTimeToUtilDateTimeConverter())</span>
+<span class="nc" id="L278">				.withValidator(ValidatorFactory.getDateIsEarlierThanOfferingLastEditableDateValidator(offering))</span>
+<span class="nc" id="L279">				.withValidator(ValidatorFactory.getDateNotEarlierThanValidator(Date.from(Instant.now())))</span>
+<span class="nc" id="L280">				.bind(PromoEvent::getTriggerDate, PromoEvent::setTriggerDate);</span>
+
+<span class="nc" id="L282">		binder.forField(discountMultiplier).asRequired(Utils.generateRequiredError())</span>
+<span class="nc" id="L283">				.withConverter(ConverterFactory.getStringToDoubleConverter())</span>
+<span class="nc" id="L284">				.withValidator(ValidatorFactory.getDoubleRangeValidator(0, 1))</span>
+<span class="nc" id="L285">				.bind(PromoEvent::getDiscount, PromoEvent::setDiscount);</span>
+
+<span class="nc" id="L287">		binder.forField(maxReservationsPerCustomer).asRequired(Utils.generateRequiredError())</span>
+<span class="nc" id="L288">				.withConverter(ConverterFactory.getStringToIntegerConverter())</span>
+<span class="nc" id="L289">				.withValidator(ValidatorFactory.getIntegerRangeValidator(1))</span>
+<span class="nc" id="L290">				.bind(PromoEvent::getMaxReservationsPerCustomer, PromoEvent::setMaxReservationsPerCustomer);</span>
+
+		//For old promo event, the code cannot be changed to make our life easier
+<span class="nc" id="L293">		binder.forField(promoCode).asRequired(Utils.generateRequiredError())</span>
+<span class="nc" id="L294">				.withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
+<span class="nc" id="L295">				.bind(PromoEvent::getPromoCode, PromoEvent::setPromoCode);</span>
+
+<span class="nc" id="L297">		binder.forField(promoCodeUses).asRequired(Utils.generateRequiredError())</span>
+<span class="nc" id="L298">				.withConverter(ConverterFactory.getStringToIntegerConverter())</span>
+<span class="nc" id="L299">				.withValidator(ValidatorFactory.getIntegerRangeValidator(1))</span>
+<span class="nc" id="L300">				.bind(PromoEvent::getPromoCodeUsesLeft, PromoEvent::setPromoCodeUsesLeft);</span>
+
+<span class="nc" id="L302">		binder.forField(customMessage).asRequired(Utils.generateRequiredError())</span>
+<span class="nc" id="L303">				.withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
+<span class="nc" id="L304">				.bind(PromoEvent::getCustomMessage, PromoEvent::setCustomMessage);</span>
+
+<span class="nc" id="L306">		binder.setBean(promoEvent);</span>
+
+<span class="nc" id="L308">		confirmButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L309">			BinderValidationStatus&lt;PromoEvent&gt; validationStatus = binder.validate();</span>
+
+<span class="nc" id="L311">			String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);</span>
+
+<span class="nc bnc" id="L313" title="All 2 branches missed.">			if (validationStatus.isOk()) {</span>
+<span class="nc" id="L314">				binder.writeBeanIfValid(promoEvent);</span>
+<span class="nc" id="L315">				log.info(&quot;About to save promo event [{}]&quot;, promoEvent);</span>
+
+<span class="nc bnc" id="L317" title="All 4 branches missed.">				if (promoEvent.getId() == null &amp;&amp; promoEventRepo.findOneByPromoCode(promoEvent.getPromoCode()) != null) {</span>
+<span class="nc" id="L318">					errors += &quot;Promo code already used!\n&quot;;</span>
+				}else{
+<span class="nc" id="L320">					promoEventRepo.save(promoEvent);</span>
+<span class="nc bnc" id="L321" title="All 2 branches missed.">					if (promoEvent.getId() == null) {</span>
+<span class="nc" id="L322">						log.info(&quot;Saved a new promo event [{}] successfully&quot;, promoEvent);</span>
+					} else {
+<span class="nc" id="L324">						log.info(&quot;Saved an edited booking [{}] successfully&quot;, promoEvent);</span>
+					}
+
+
+<span class="nc" id="L328">					binder.removeBean();</span>
+<span class="nc" id="L329">					this.refreshData();</span>
+<span class="nc" id="L330">					subwindow.close();</span>
+<span class="nc" id="L331">					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());</span>
+
+<span class="nc" id="L333">					return; // This return skip the error reporting procedure below</span>
+				}
+			}
+<span class="nc" id="L336">			NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());</span>
+
+<span class="nc" id="L338">		});</span>
+
+<span class="nc" id="L340">		return subwindow;</span>
+	}
+
+	/**
+	 * Refreshes the data in the vaadin grid
+	 */
+	public void refreshData() {
+
+<span class="nc" id="L348">		ListDataProvider&lt;PromoEvent&gt; provider = new ListDataProvider&lt;&gt;(</span>
+<span class="nc" id="L349">				Utils.iterableToCollection(promoEventRepo.findAll()));</span>
+<span class="nc" id="L350">		eventGrid.setDataProvider(provider);</span>
+<span class="nc" id="L351">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BookingEditor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.input.editors</a> &gt; <span class="el_source">BookingEditor.java</span></div><h1>BookingEditor.java</h1><pre class="source lang-java linenums">package comp3111.input.editors;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+
+import comp3111.data.model.PromoEvent;
+import comp3111.data.repo.PromoEventRepository;
+import comp3111.input.exceptions.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.vaadin.data.Binder;
+import com.vaadin.data.BinderValidationStatus;
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.Page;
+import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
+
+import comp3111.Utils;
+import comp3111.data.DBManager;
+import comp3111.data.GridCol;
+import comp3111.data.model.Booking;
+import comp3111.data.model.Customer;
+import comp3111.data.model.Offering;
+import comp3111.data.repo.BookingRepository;
+import comp3111.data.repo.CustomerRepository;
+import comp3111.data.repo.OfferingRepository;
+import comp3111.input.converters.ConverterFactory;
+import comp3111.input.validators.ValidatorFactory;
+import comp3111.view.NotificationFactory;
+
+/**
+ * Represents the booking editor in the Booking management view
+ * 
+ * @author Forsythe
+ *
+ */
+@SuppressWarnings(&quot;serial&quot;)
+@SpringComponent
+@UIScope
+public class BookingEditor extends VerticalLayout {
+<span class="fc" id="L60">	private static final Logger log = LoggerFactory.getLogger(BookingEditor.class);</span>
+
+<span class="fc" id="L62">	private Grid&lt;Booking&gt; bookingGrid = new Grid&lt;&gt;(Booking.class);</span>
+
+	private Booking selectedBookingRecord;
+
+	private BookingRepository bookingRepo;
+	private CustomerRepository customerRepo;
+	private OfferingRepository offeringRepo;
+	private PromoEventRepository promoRepo;
+	private DBManager dbManager;
+
+	// the fields in the subwindow
+	private ComboBox&lt;Customer&gt; customer;
+	private ComboBox&lt;Offering&gt; offering;
+	private TextField numberAdults;
+	private TextField numberChildren;
+	private TextField numberToddlers;
+	private TextField amountPaid;
+	private TextField specialRequest;
+	private ComboBox&lt;String&gt; paymentStatus;
+	private ComboBox&lt;String&gt; promoCode;
+	private Button confirmButton;
+	private BinderValidationStatus&lt;Booking&gt; validationStatus;
+
+<span class="fc" id="L85">	private final HashMap&lt;String, ProviderAndPredicate&lt;?, ?&gt;&gt; gridFilters = new HashMap&lt;String, ProviderAndPredicate&lt;?, ?&gt;&gt;();</span>
+
+	/**
+	 * Creates a new Booking editor. All fields autowired.
+	 * 
+	 */
+	@Autowired
+	public BookingEditor(BookingRepository br, CustomerRepository cr, OfferingRepository or, PromoEventRepository per,
+<span class="fc" id="L93">			DBManager dbm) {</span>
+<span class="fc" id="L94">		this.bookingRepo = br;</span>
+<span class="fc" id="L95">		this.customerRepo = cr;</span>
+<span class="fc" id="L96">		this.offeringRepo = or;</span>
+<span class="fc" id="L97">		this.promoRepo = per;</span>
+<span class="fc" id="L98">		this.dbManager = dbm;</span>
+
+<span class="fc" id="L100">		Button createBookingButton = new Button(&quot;Create new booking&quot;);</span>
+<span class="fc" id="L101">		Button editBookingButton = new Button(&quot;Edit booking&quot;);</span>
+
+<span class="fc" id="L103">		HorizontalLayout rowOfButtons = new HorizontalLayout();</span>
+<span class="fc" id="L104">		rowOfButtons.addComponent(createBookingButton);</span>
+<span class="fc" id="L105">		rowOfButtons.addComponent(editBookingButton);</span>
+
+		// disable edit
+<span class="fc" id="L108">		editBookingButton.setEnabled(false);</span>
+
+		// add component to view
+<span class="fc" id="L111">		this.addComponent(rowOfButtons);</span>
+
+		// get from GridCol
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">		if (bookingRepo.findAll() != null) // can be null if mockito</span>
+<span class="nc" id="L115">			bookingGrid.setItems(Utils.iterableToCollection(bookingRepo.findAll()).stream()</span>
+<span class="nc" id="L116">					.sorted((b1, b2) -&gt; b1.getId().compareTo(b2.getId())));</span>
+
+<span class="fc" id="L118">		bookingGrid.setWidth(&quot;100%&quot;);</span>
+<span class="fc" id="L119">		bookingGrid.setSelectionMode(SelectionMode.SINGLE);</span>
+
+<span class="fc" id="L121">		bookingGrid.addSelectionListener(event -&gt; {</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">			if (event.getFirstSelectedItem().isPresent()) {</span>
+<span class="nc" id="L123">				selectedBookingRecord = event.getFirstSelectedItem().get();</span>
+<span class="nc" id="L124">				editBookingButton.setEnabled(true);</span>
+<span class="nc" id="L125">				createBookingButton.setEnabled(false);</span>
+			} else {
+<span class="nc" id="L127">				selectedBookingRecord = null;</span>
+<span class="nc" id="L128">				editBookingButton.setEnabled(false);</span>
+<span class="nc" id="L129">				createBookingButton.setEnabled(true);</span>
+			}
+<span class="nc" id="L131">		});</span>
+
+<span class="fc" id="L133">		bookingGrid.removeColumn(GridCol.BOOKING_CUSTOMER);</span>
+<span class="fc" id="L134">		bookingGrid.removeColumn(GridCol.BOOKING_ID);</span>
+<span class="fc" id="L135">		bookingGrid.removeColumn(GridCol.BOOKING_PROMO_DISCOUNT_MULTIPLIER);</span>
+<span class="fc" id="L136">		bookingGrid.removeColumn(GridCol.BOOKING_TOTAL_NUMBER_OF_PEOPLE);</span>
+<span class="fc" id="L137">		bookingGrid.removeColumn(GridCol.BOOKING_PROMO_CODE_USED);</span>
+
+<span class="fc" id="L139">		bookingGrid.setColumnOrder(GridCol.BOOKING_CUSTOMER_HKID, GridCol.BOOKING_CUSTOMER_NAME,</span>
+				GridCol.BOOKING_OFFERING, GridCol.BOOKING_NUM_ADULTS, GridCol.BOOKING_NUM_CHILDREN,
+				GridCol.BOOKING_NUM_TODDLERS, GridCol.BOOKING_TOUR_ID, GridCol.BOOKING_TOUR_NAME,
+				GridCol.BOOKING_AMOUNT_PAID, GridCol.BOOKING_TOTAL_COST, GridCol.BOOKING_SPECIAL_REQUEST,
+				GridCol.BOOKING_PAYMENT_STATUS);
+
+<span class="fc" id="L145">		bookingGrid.addColumn(b -&gt; {</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">			if (b.getPromoDiscountMultiplier() != 1) {</span>
+<span class="nc" id="L147">				return String.valueOf(b.getPromoDiscountMultiplier());</span>
+			} else {
+<span class="nc" id="L149">				return &quot;none&quot;;</span>
+			}
+<span class="fc" id="L151">		}).setId(GridCol.BOOKING_PROMO_DISCOUNT_MULTIPLIER_MASKED).setCaption(&quot;Promotional Discount&quot;);</span>
+
+<span class="fc" id="L153">		HeaderRow filterRow = bookingGrid.appendHeaderRow();</span>
+
+<span class="fc bfc" id="L155" title="All 2 branches covered.">		for (Column&lt;Booking, ?&gt; col : bookingGrid.getColumns()) {</span>
+<span class="fc" id="L156">			col.setMinimumWidth(120);</span>
+<span class="fc" id="L157">			col.setHidable(true);</span>
+<span class="fc" id="L158">			col.setHidingToggleCaption(col.getCaption());</span>
+<span class="fc" id="L159">			col.setExpandRatio(1);</span>
+<span class="fc" id="L160">			HeaderCell cell = filterRow.getCell(col.getId());</span>
+
+			// Have an input field to use for filter
+<span class="fc" id="L163">			TextField filterField = new TextField();</span>
+<span class="fc" id="L164">			filterField.setWidth(130, Unit.PIXELS);</span>
+<span class="fc" id="L165">			filterField.setHeight(30, Unit.PIXELS);</span>
+
+<span class="fc" id="L167">			filterField.addValueChangeListener(change -&gt; {</span>
+<span class="nc" id="L168">				String searchVal = change.getValue();</span>
+<span class="nc" id="L169">				String colId = col.getId();</span>
+
+<span class="nc" id="L171">				log.info(&quot;Value change in col [{}], val=[{}]&quot;, colId, searchVal);</span>
+<span class="nc" id="L172">				ListDataProvider&lt;Booking&gt; dataProvider = (ListDataProvider&lt;Booking&gt;) bookingGrid.getDataProvider();</span>
+
+<span class="nc bnc" id="L174" title="All 2 branches missed.">				if (!filterField.isEmpty()) {</span>
+					try {
+<span class="nc" id="L176">						gridFilters.put(colId, FilterFactory.getFilterForBooking(colId, searchVal));</span>
+<span class="nc" id="L177">						log.info(&quot;updated filter on attribute [{}]&quot;, colId);</span>
+
+<span class="nc" id="L179">					} catch (Exception e) {</span>
+<span class="nc" id="L180">						log.info(&quot;ignoring val=[{}], col=[{}] is invalid&quot;, searchVal, colId);</span>
+<span class="nc" id="L181">					}</span>
+				} else {
+<span class="nc" id="L183">					gridFilters.remove(colId);</span>
+<span class="nc" id="L184">					log.info(&quot;removed filter on attribute [{}]&quot;, colId);</span>
+
+				}
+<span class="nc" id="L187">				dataProvider.clearFilters();</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">				for (String colFilter : gridFilters.keySet()) {</span>
+<span class="nc" id="L189">					ProviderAndPredicate paf = gridFilters.get(colFilter);</span>
+<span class="nc" id="L190">					dataProvider.addFilter(paf.provider, paf.predicate);</span>
+<span class="nc" id="L191">				}</span>
+<span class="nc" id="L192">				dataProvider.refreshAll();</span>
+<span class="nc" id="L193">			});</span>
+<span class="fc" id="L194">			cell.setComponent(filterField);</span>
+
+<span class="fc" id="L196">		}</span>
+
+<span class="fc" id="L198">		this.addComponent(bookingGrid);</span>
+
+<span class="fc" id="L200">		createBookingButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L201">			getUI();</span>
+<span class="nc" id="L202">			UI.getCurrent().addWindow(getSubwindow(new Booking()));</span>
+<span class="nc" id="L203">		});</span>
+
+<span class="fc" id="L205">		editBookingButton.addClickListener(event -&gt; {</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">			if (canEditBooking(selectedBookingRecord)) {</span>
+<span class="nc" id="L207">				getUI();</span>
+<span class="nc" id="L208">				UI.getCurrent().addWindow(getSubwindow(selectedBookingRecord));</span>
+			}
+<span class="nc" id="L210">		});</span>
+<span class="fc" id="L211">	}</span>
+
+	// Check whether a customer offering is editable or not based on start date and
+	// current date
+	private boolean canEditBooking(Booking booking) {
+<span class="nc bnc" id="L216" title="All 2 branches missed.">		if (booking == null)</span>
+<span class="nc" id="L217">			return true;</span>
+
+<span class="nc" id="L219">		Date today = Date.from(Instant.now());</span>
+<span class="nc" id="L220">		Date threeDayBeforeStart = booking.getOffering().getLastEditableDate();</span>
+
+<span class="nc bnc" id="L222" title="All 2 branches missed.">		if (today.after(threeDayBeforeStart)) {</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">			if (Page.getCurrent() != null) // can be null if using mockito</span>
+<span class="nc" id="L224">				NotificationFactory</span>
+<span class="nc" id="L225">						.getTopBarWarningNotification(&quot;It's too late to edit this offering. It can't be editied after &quot;</span>
+<span class="nc" id="L226">								+ Utils.simpleDateFormat(threeDayBeforeStart), 5)</span>
+<span class="nc" id="L227">						.show(Page.getCurrent());</span>
+
+<span class="nc" id="L229">			return false;</span>
+		}
+<span class="nc" id="L231">		return true;</span>
+	}
+
+	/**
+	 * Creates the popup window for creating/editing bookings
+	 * 
+	 * @param bookingToSave
+	 *            The transient or detached booking record to save
+	 * @return The window
+	 */
+	public Window getSubwindow(Booking bookingToSave) {
+		Window subwindow;
+
+		// Creating the confirm button
+<span class="fc" id="L245">		confirmButton = new Button(&quot;Confirm&quot;);</span>
+<span class="fc" id="L246">		confirmButton.setId(&quot;confirm_booking&quot;);</span>
+
+<span class="fc" id="L248">		customer = new ComboBox&lt;Customer&gt;(&quot;Customer&quot;);</span>
+<span class="fc" id="L249">		offering = new ComboBox&lt;Offering&gt;(&quot;Offering&quot;);</span>
+<span class="fc" id="L250">		numberAdults = new TextField(&quot;Number of adults&quot;);</span>
+<span class="fc" id="L251">		numberChildren = new TextField(&quot;Number of children&quot;);</span>
+<span class="fc" id="L252">		numberToddlers = new TextField(&quot;Number of toddlers&quot;);</span>
+<span class="fc" id="L253">		amountPaid = new TextField(&quot;Amount Paid&quot;);</span>
+<span class="fc" id="L254">		specialRequest = new TextField(&quot;Special Request&quot;);</span>
+<span class="fc" id="L255">		paymentStatus = new ComboBox&lt;&gt;(&quot;Payment Status&quot;);</span>
+<span class="fc" id="L256">		promoCode = new ComboBox&lt;&gt;(&quot;Promotion Code&quot;);</span>
+
+<span class="fc" id="L258">		customer.setId(&quot;cb_customer&quot;);</span>
+<span class="fc" id="L259">		offering.setId(&quot;cb_offering&quot;);</span>
+<span class="fc" id="L260">		numberAdults.setId(&quot;tf_number_of_adults&quot;);</span>
+<span class="fc" id="L261">		numberChildren.setId(&quot;tf_number_of_children&quot;);</span>
+<span class="fc" id="L262">		numberToddlers.setId(&quot;tf_number_of_toddlers&quot;);</span>
+<span class="fc" id="L263">		amountPaid.setId(&quot;tf_amount_paid&quot;);</span>
+<span class="fc" id="L264">		specialRequest.setId(&quot;tf_special_request&quot;);</span>
+<span class="fc" id="L265">		paymentStatus.setId(&quot;cb_payment_status&quot;);</span>
+<span class="fc" id="L266">		promoCode.setId(&quot;cb_promotion_code&quot;);</span>
+
+<span class="fc" id="L268">		customer.setPopupWidth(null); // so that the entire text row can be seen</span>
+<span class="fc" id="L269">		offering.setPopupWidth(null);</span>
+<span class="fc" id="L270">		paymentStatus.setPopupWidth(null);</span>
+<span class="fc" id="L271">		promoCode.setPopupWidth(null);</span>
+
+<span class="fc bfc" id="L273" title="All 2 branches covered.">		if (bookingToSave.getId() == null) { // passed in an unsaved object</span>
+<span class="fc" id="L274">			subwindow = new Window(&quot;Create new boooking&quot;);</span>
+		} else {
+<span class="fc" id="L276">			subwindow = new Window(&quot;Edit a booking&quot;);</span>
+		}
+
+<span class="fc" id="L279">		FormLayout form = new FormLayout();</span>
+<span class="fc" id="L280">		VerticalLayout formContainer = new VerticalLayout();</span>
+<span class="fc" id="L281">		formContainer.addComponent(form);</span>
+
+<span class="fc" id="L283">		subwindow.setWidth(&quot;800px&quot;);</span>
+<span class="fc" id="L284">		subwindow.setContent(formContainer);</span>
+<span class="fc" id="L285">		subwindow.center();</span>
+<span class="fc" id="L286">		subwindow.setClosable(false);</span>
+<span class="fc" id="L287">		subwindow.setModal(true);</span>
+<span class="fc" id="L288">		subwindow.setResizable(false);</span>
+<span class="fc" id="L289">		subwindow.setDraggable(false);</span>
+
+<span class="fc" id="L291">		form.addComponent(customer);</span>
+<span class="fc" id="L292">		form.addComponent(offering);</span>
+<span class="fc" id="L293">		form.addComponent(numberAdults);</span>
+<span class="fc" id="L294">		form.addComponent(numberChildren);</span>
+<span class="fc" id="L295">		form.addComponent(numberToddlers);</span>
+<span class="fc" id="L296">		form.addComponent(amountPaid);</span>
+<span class="fc" id="L297">		form.addComponent(specialRequest);</span>
+<span class="fc" id="L298">		form.addComponent(paymentStatus);</span>
+<span class="fc" id="L299">		form.addComponent(promoCode);</span>
+
+<span class="fc" id="L301">		offering.addValueChangeListener(event -&gt; {</span>
+<span class="fc" id="L302">			Offering o = offering.getValue();</span>
+<span class="fc bfc" id="L303" title="All 2 branches covered.">			if (o != null) {</span>
+<span class="fc" id="L304">				promoCode.setItems(Utils.iterableToCollection(promoRepo.findByOffering(o)).stream()</span>
+<span class="pc" id="L305">						.sorted((c1, c2) -&gt; c1.getId().compareTo(c2.getId())).map(PromoEvent::getPromoCode));</span>
+<span class="fc" id="L306">				promoCode.setEnabled(true);</span>
+			} else {
+<span class="fc" id="L308">				promoCode.setEnabled(false);</span>
+			}
+<span class="fc" id="L310">		});</span>
+<span class="fc" id="L311">		promoCode.setEnabled(false);</span>
+
+<span class="fc" id="L313">		HorizontalLayout buttonActions = new HorizontalLayout();</span>
+<span class="fc" id="L314">		buttonActions.addComponent(confirmButton);</span>
+<span class="pc" id="L315">		buttonActions.addComponent(new Button(&quot;Cancel&quot;, event -&gt; subwindow.close()));</span>
+<span class="fc" id="L316">		form.addComponent(buttonActions);</span>
+
+<span class="pc bpc" id="L318" title="1 of 2 branches missed.">		if (customerRepo.findAll() != null) // can be null if mockito</span>
+<span class="nc" id="L319">			customer.setItems(Utils.iterableToCollection(customerRepo.findAll()).stream()</span>
+<span class="nc" id="L320">					.sorted((c1, c2) -&gt; c1.getId().compareTo(c2.getId())));</span>
+
+<span class="pc bpc" id="L322" title="1 of 2 branches missed.">		if (offeringRepo.findAll() != null) // mockito</span>
+<span class="nc" id="L323">			offering.setItems(Utils.iterableToCollection(offeringRepo.findAll()).stream()</span>
+<span class="nc" id="L324">					.sorted((o1, o2) -&gt; o1.getId().compareTo(o2.getId())));</span>
+
+<span class="fc" id="L326">		Collection&lt;String&gt; potentialPaymentStatus = new ArrayList&lt;&gt;(</span>
+<span class="fc" id="L327">				Arrays.asList(Booking.PAYMENT_PENDING, Booking.PAYMENT_CONFIRMED));</span>
+<span class="fc" id="L328">		paymentStatus.setItems(potentialPaymentStatus);</span>
+<span class="fc" id="L329">		paymentStatus.setSelectedItem(Booking.PAYMENT_PENDING);</span>
+
+<span class="fc" id="L331">		Binder&lt;Booking&gt; binder = new Binder&lt;Booking&gt;();</span>
+
+<span class="fc" id="L333">		binder.forField(customer).asRequired(Utils.generateRequiredError()).bind(Booking::getCustomer,</span>
+				Booking::setCustomer);
+
+<span class="fc" id="L336">		binder.forField(offering).asRequired(Utils.generateRequiredError())</span>
+<span class="fc" id="L337">				.withValidator(ValidatorFactory.getOfferingStillOpenValidator())</span>
+<span class="fc" id="L338">				.bind(Booking::getOffering, Booking::setOffering);</span>
+
+<span class="fc" id="L340">		binder.forField(numberAdults).asRequired(Utils.generateRequiredError())</span>
+<span class="fc" id="L341">				.withConverter(ConverterFactory.getStringToIntegerConverter())</span>
+<span class="fc" id="L342">				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))</span>
+<span class="fc" id="L343">				.bind(Booking::getNumAdults, Booking::setNumAdults);</span>
+
+<span class="fc" id="L345">		binder.forField(numberChildren).asRequired(Utils.generateRequiredError())</span>
+<span class="fc" id="L346">				.withConverter(ConverterFactory.getStringToIntegerConverter())</span>
+<span class="fc" id="L347">				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))</span>
+<span class="fc" id="L348">				.bind(Booking::getNumChildren, Booking::setNumChildren);</span>
+
+<span class="fc" id="L350">		binder.forField(numberToddlers).asRequired(Utils.generateRequiredError())</span>
+<span class="fc" id="L351">				.withConverter(ConverterFactory.getStringToIntegerConverter())</span>
+<span class="fc" id="L352">				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))</span>
+<span class="fc" id="L353">				.bind(Booking::getNumToddlers, Booking::setNumToddlers);</span>
+
+<span class="fc" id="L355">		binder.forField(amountPaid).asRequired(Utils.generateRequiredError())</span>
+<span class="fc" id="L356">				.withConverter(ConverterFactory.getStringToDoubleConverter())</span>
+<span class="fc" id="L357">				.withValidator(ValidatorFactory.getDoubleRangeValidator(0))</span>
+<span class="fc" id="L358">				.bind(Booking::getAmountPaid, Booking::setAmountPaid);</span>
+
+<span class="fc" id="L360">		binder.forField(specialRequest).withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
+<span class="fc" id="L361">				.bind(Booking::getSpecialRequests, Booking::setSpecialRequests);</span>
+
+<span class="fc" id="L363">		binder.forField(paymentStatus).asRequired(Utils.generateRequiredError())</span>
+<span class="fc" id="L364">				.withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
+<span class="fc" id="L365">				.bind(Booking::getPaymentStatus, Booking::setPaymentStatus);</span>
+
+<span class="fc" id="L367">		binder.forField(promoCode).withValidator(ValidatorFactory.getStringLengthCanNullValidator(255))</span>
+<span class="fc" id="L368">				.bind(Booking::getPromoCodeUsed, Booking::setPromoCodeUsed);</span>
+
+<span class="fc" id="L370">		binder.setBean(bookingToSave);</span>
+
+<span class="fc" id="L372">		confirmButton.addClickListener(event -&gt; {</span>
+<span class="fc" id="L373">			validationStatus = binder.validate();</span>
+
+<span class="fc" id="L375">			String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);</span>
+
+<span class="fc bfc" id="L377" title="All 2 branches covered.">			if (validationStatus.isOk()) {</span>
+<span class="fc" id="L378">				binder.writeBeanIfValid(bookingToSave);</span>
+
+<span class="fc" id="L380">				log.info(&quot;About to save booking [{}]&quot;, bookingToSave);</span>
+
+				try {
+<span class="pc bpc" id="L383" title="3 of 4 branches missed.">					if (promoCode.getValue() != null &amp;&amp; !promoCode.isEmpty()) {</span>
+						// With promo code
+<span class="nc" id="L385">						dbManager.createBookingForOfferingWithPromoCode(bookingToSave, promoCode.getValue());</span>
+<span class="nc" id="L386">						log.info(&quot;Saved a new booking [{}] with promo code [{}] successfully&quot;, bookingToSave,</span>
+<span class="nc" id="L387">								promoCode.getValue());</span>
+					} else {
+						// Without promo code
+<span class="fc" id="L390">						dbManager.createNormalBookingForOffering(bookingToSave);</span>
+<span class="fc" id="L391">						log.info(&quot;Saved a new booking [{}] successfully&quot;, bookingToSave);</span>
+					}
+<span class="pc bpc" id="L393" title="1 of 2 branches missed.">					if (bookingToSave.getId() == null) {</span>
+<span class="nc" id="L394">						bookingRepo.delete(bookingToSave);</span>
+					}
+<span class="fc" id="L396">					binder.removeBean();</span>
+<span class="fc" id="L397">					this.refreshData();</span>
+<span class="fc" id="L398">					subwindow.close();</span>
+<span class="pc bpc" id="L399" title="1 of 2 branches missed.">					if (Page.getCurrent() != null) // can be null if using mockito</span>
+<span class="nc" id="L400">						NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());</span>
+<span class="nc" id="L401">				} catch (PromoForCustomerExceededException e) {</span>
+<span class="nc" id="L402">					errors += &quot;The customer has exceeded the maximum number of reserations allowed.\n&quot;;</span>
+<span class="nc" id="L403">				} catch (PromoCodeUsedUpException e) {</span>
+<span class="nc" id="L404">					errors += &quot;The promo code has been used up.\n&quot;;</span>
+<span class="nc" id="L405">				} catch (NoSuchPromoCodeException e) {</span>
+<span class="nc" id="L406">					errors += &quot;The promo code does not exist.\n&quot;;</span>
+<span class="nc" id="L407">				} catch (OfferingOutOfRoomException e) {</span>
+<span class="nc" id="L408">					errors += &quot;Not enough room in offering&quot;;</span>
+<span class="nc" id="L409">				} catch (PromoCodeNotForOfferingException e) {</span>
+<span class="nc" id="L410">					errors += &quot;The promo code is not for this offering.\n&quot;;</span>
+<span class="pc" id="L411">				}</span>
+			}
+
+<span class="pc bpc" id="L414" title="1 of 4 branches missed.">			if (!errors.isEmpty() &amp;&amp; Page.getCurrent() != null) {</span>
+<span class="nc" id="L415">				NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());</span>
+			}
+<span class="fc" id="L417">		});</span>
+
+<span class="fc" id="L419">		return subwindow;</span>
+	}
+
+	/**
+	 * Refreshes the data in the vaadin grid
+	 */
+	public void refreshData() {
+<span class="pc bpc" id="L426" title="1 of 2 branches missed.">		if (bookingRepo.findAll() != null) { // mockito</span>
+<span class="nc" id="L427">			ListDataProvider&lt;Booking&gt; provider = new ListDataProvider&lt;&gt;(</span>
+<span class="nc" id="L428">					Utils.iterableToCollection(bookingRepo.findAll()));</span>
+<span class="nc" id="L429">			bookingGrid.setDataProvider(provider);</span>
+		}
+<span class="fc" id="L431">	}</span>
+
+	/**
+	 * @return the customer field
+	 */
+	public ComboBox&lt;Customer&gt; getCustomer() {
+<span class="fc" id="L437">		return customer;</span>
+	}
+
+	/**
+	 * @return the offering field
+	 */
+	public ComboBox&lt;Offering&gt; getOffering() {
+<span class="fc" id="L444">		return offering;</span>
+	}
+
+	/**
+	 * @return the numberAdults field
+	 */
+	public TextField getNumberAdults() {
+<span class="fc" id="L451">		return numberAdults;</span>
+	}
+
+	/**
+	 * @return the numberChildren field
+	 */
+	public TextField getNumberChildren() {
+<span class="fc" id="L458">		return numberChildren;</span>
+	}
+
+	/**
+	 * @return the numberToddlers field
+	 */
+	public TextField getNumberToddlers() {
+<span class="fc" id="L465">		return numberToddlers;</span>
+	}
+
+	/**
+	 * @return the amountPaid field
+	 */
+	public TextField getAmountPaid() {
+<span class="fc" id="L472">		return amountPaid;</span>
+	}
+
+	/**
+	 * @return the specialRequest field
+	 */
+	public TextField getSpecialRequest() {
+<span class="fc" id="L479">		return specialRequest;</span>
+	}
+
+	/**
+	 * @return the paymentStatus field
+	 */
+	public ComboBox&lt;String&gt; getPaymentStatus() {
+<span class="fc" id="L486">		return paymentStatus;</span>
+	}
+
+	/**
+	 * @return the promoCode field
+	 */
+	public ComboBox&lt;String&gt; getPromoCode() {
+<span class="fc" id="L493">		return promoCode;</span>
+	}
+
+	/**
+	 * @return the confirmButton
+	 */
+	public Button getConfirmButton() {
+<span class="fc" id="L500">		return confirmButton;</span>
+	}
+
+	/**
+	 * @return the validationStatus object
+	 */
+	public BinderValidationStatus&lt;Booking&gt; getValidationStatus() {
+<span class="fc" id="L507">		return validationStatus;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

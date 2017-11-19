@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomerEngagementView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.view</a> &gt; <span class="el_source">CustomerEngagementView.java</span></div><h1>CustomerEngagementView.java</h1><pre class="source lang-java linenums">package comp3111.view;
+
+import java.util.HashMap;
+
+import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.Page;
+import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.RadioButtonGroup;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
+
+import comp3111.LineMessenger;
+import comp3111.Utils;
+import comp3111.data.GridCol;
+import comp3111.data.model.Customer;
+import comp3111.data.model.NonFAQQuery;
+import comp3111.data.model.Offering;
+import comp3111.data.model.Tour;
+import comp3111.data.repo.CustomerRepository;
+import comp3111.data.repo.NonFAQQueryRepository;
+import comp3111.data.repo.OfferingRepository;
+import comp3111.data.repo.TourRepository;
+import comp3111.input.editors.FilterFactory;
+import comp3111.input.editors.ProviderAndPredicate;
+
+/**
+ * Generates the UI elements for the front-end side of the Customer Engagement page. 
+ * @author kristiansuhartono
+ *
+ */
+@SpringView(name = CustomerEngagementView.VIEW_NAME)
+<span class="nc" id="L51">public class CustomerEngagementView extends VerticalLayout implements View {</span>
+	private static final String BY_ALL_LINE_CUSTOMERS = &quot;All LINE Customers&quot;;
+	private static final String BY_TOUR = &quot;Tour&quot;;
+	private static final String BY_OFFERING = &quot;Offering&quot;;
+	private static final String BY_SINGLE_LINE_CUSTOMER = &quot;Single LINE Customer&quot;;
+
+	public static final String VIEW_NAME = &quot;customerEngagement&quot;;
+<span class="nc" id="L58">	private static final Logger log = LoggerFactory.getLogger(CustomerEngagementView.class);</span>
+
+	@Autowired
+	private LineMessenger lineMessenger;
+
+	@Autowired
+	private CustomerRepository cRepo;
+	@Autowired
+	private OfferingRepository oRepo;
+	@Autowired
+	private TourRepository tRepo;
+	@Autowired
+	private NonFAQQueryRepository qRepo;
+
+	private NonFAQQuery selectedQuery;
+
+<span class="nc" id="L74">	private final HashMap&lt;String, ProviderAndPredicate&lt;?, ?&gt;&gt; gridFilters = new HashMap&lt;String, ProviderAndPredicate&lt;?, ?&gt;&gt;();</span>
+
+	@PostConstruct
+	void init() {
+<span class="nc" id="L78">		Label titleLabel = new Label(&quot;&lt;h1&gt;Customer Engagement&lt;/h1&gt;&quot;, ContentMode.HTML);</span>
+
+		// A container that is 100% wide by default
+<span class="nc" id="L81">		VerticalLayout layout = new VerticalLayout();</span>
+<span class="nc" id="L82">		layout.setSizeFull();</span>
+
+		// label will only take the space it needs
+<span class="nc" id="L85">		layout.addComponent(titleLabel);</span>
+
+<span class="nc" id="L87">		TabSheet tabsheet = new TabSheet();</span>
+<span class="nc" id="L88">		VerticalLayout tab1 = getAdvertisingTab();</span>
+<span class="nc" id="L89">		VerticalLayout tab2 = getQueryTab();</span>
+
+<span class="nc" id="L91">		tabsheet.addTab(tab1, &quot;Broadcast a message&quot;);</span>
+<span class="nc" id="L92">		tabsheet.addTab(tab2, &quot;Reply to queries&quot;);</span>
+
+<span class="nc" id="L94">		layout.addComponent(tabsheet);</span>
+<span class="nc" id="L95">		this.addComponent(layout);</span>
+<span class="nc" id="L96">	}</span>
+
+	private VerticalLayout getAdvertisingTab() {
+<span class="nc" id="L99">		FormLayout layout = new FormLayout();</span>
+<span class="nc" id="L100">		final RadioButtonGroup&lt;String&gt; broadcastTarget = new RadioButtonGroup&lt;String&gt;(&quot;Recipient&quot;);</span>
+<span class="nc" id="L101">		ComboBox&lt;Customer&gt; customerBox = new ComboBox&lt;Customer&gt;();</span>
+<span class="nc" id="L102">		ComboBox&lt;Offering&gt; offeringBox = new ComboBox&lt;Offering&gt;();</span>
+<span class="nc" id="L103">		ComboBox&lt;Tour&gt; tourBox = new ComboBox&lt;Tour&gt;();</span>
+<span class="nc" id="L104">		TextArea message = new TextArea(&quot;Message&quot;);</span>
+<span class="nc" id="L105">		Button send = new Button(&quot;Send&quot;);</span>
+
+<span class="nc" id="L107">		layout.addComponent(broadcastTarget);</span>
+<span class="nc" id="L108">		layout.addComponent(customerBox);</span>
+<span class="nc" id="L109">		layout.addComponent(offeringBox);</span>
+<span class="nc" id="L110">		layout.addComponent(tourBox);</span>
+<span class="nc" id="L111">		layout.addComponent(message);</span>
+<span class="nc" id="L112">		layout.addComponent(send);</span>
+
+<span class="nc" id="L114">		broadcastTarget.setItems(BY_SINGLE_LINE_CUSTOMER, BY_OFFERING, BY_TOUR, BY_ALL_LINE_CUSTOMERS);</span>
+<span class="nc" id="L115">		broadcastTarget.setSelectedItem(BY_SINGLE_LINE_CUSTOMER);</span>
+
+<span class="nc" id="L117">		customerBox.setVisible(true);</span>
+<span class="nc" id="L118">		offeringBox.setVisible(false);</span>
+<span class="nc" id="L119">		tourBox.setVisible(false);</span>
+
+<span class="nc" id="L121">		customerBox.setItems(Utils.iterableToCollection(//</span>
+<span class="nc" id="L122">				cRepo.findAll()).stream().//</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">				filter(c -&gt; !c.getLineId().isEmpty()).//</span>
+<span class="nc" id="L124">				sorted((c1, c2) -&gt; c1.getId().compareTo(c2.getId())));//</span>
+		// only want LINE id enabled customers
+
+<span class="nc" id="L127">		offeringBox.setItems(Utils.iterableToCollection(oRepo.findAll()).stream()</span>
+<span class="nc" id="L128">				.sorted((o1, o2) -&gt; o1.getId().compareTo(o2.getId())));</span>
+<span class="nc" id="L129">		tourBox.setItems(Utils.iterableToCollection(tRepo.findAll()).stream()</span>
+<span class="nc" id="L130">				.sorted((t1, t2) -&gt; t1.getId().compareTo(t2.getId())));</span>
+
+<span class="nc" id="L132">		customerBox.setPopupWidth(null);</span>
+<span class="nc" id="L133">		offeringBox.setPopupWidth(null);</span>
+<span class="nc" id="L134">		tourBox.setPopupWidth(null);</span>
+
+<span class="nc" id="L136">		broadcastTarget.addValueChangeListener(event -&gt; {</span>
+<span class="nc bnc" id="L137" title="All 18 branches missed.">			switch (event.getValue()) {</span>
+			case BY_SINGLE_LINE_CUSTOMER:
+<span class="nc" id="L139">				customerBox.setVisible(true);</span>
+<span class="nc" id="L140">				offeringBox.setVisible(false);</span>
+<span class="nc" id="L141">				tourBox.setVisible(false);</span>
+<span class="nc" id="L142">				break;</span>
+			case BY_OFFERING:
+<span class="nc" id="L144">				customerBox.setVisible(false);</span>
+<span class="nc" id="L145">				offeringBox.setVisible(true);</span>
+<span class="nc" id="L146">				tourBox.setVisible(false);</span>
+<span class="nc" id="L147">				break;</span>
+			case BY_TOUR:
+<span class="nc" id="L149">				customerBox.setVisible(false);</span>
+<span class="nc" id="L150">				offeringBox.setVisible(false);</span>
+<span class="nc" id="L151">				tourBox.setVisible(true);</span>
+<span class="nc" id="L152">				break;</span>
+			case BY_ALL_LINE_CUSTOMERS:
+<span class="nc" id="L154">				customerBox.setVisible(false);</span>
+<span class="nc" id="L155">				offeringBox.setVisible(false);</span>
+<span class="nc" id="L156">				tourBox.setVisible(false);</span>
+				break;
+			}
+<span class="nc" id="L159">		});</span>
+
+<span class="nc" id="L161">		send.addClickListener(event -&gt; {</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">			if (message.isEmpty())</span>
+<span class="nc" id="L163">				return;</span>
+<span class="nc" id="L164">			boolean status = false;</span>
+<span class="nc" id="L165">			LineMessenger.resetCounter();</span>
+
+<span class="nc bnc" id="L167" title="All 18 branches missed.">			switch (broadcastTarget.getValue()) {</span>
+
+			case BY_SINGLE_LINE_CUSTOMER:
+<span class="nc bnc" id="L170" title="All 2 branches missed.">				if (customerBox.isEmpty())</span>
+<span class="nc" id="L171">					return;</span>
+<span class="nc" id="L172">				status = lineMessenger.sendToUser(customerBox.getValue().getLineId(), message.getValue(), true);</span>
+<span class="nc" id="L173">				break;</span>
+			case BY_OFFERING:
+<span class="nc bnc" id="L175" title="All 2 branches missed.">				if (offeringBox.isEmpty())</span>
+<span class="nc" id="L176">					return;</span>
+<span class="nc" id="L177">				status = lineMessenger.sendToOffering(offeringBox.getValue(), message.getValue());</span>
+<span class="nc" id="L178">				break;</span>
+			case BY_TOUR:
+<span class="nc bnc" id="L180" title="All 2 branches missed.">				if (tourBox.isEmpty())</span>
+<span class="nc" id="L181">					return;</span>
+<span class="nc" id="L182">				status = lineMessenger.sendToTour(tourBox.getValue(), message.getValue());</span>
+<span class="nc" id="L183">				break;</span>
+			case BY_ALL_LINE_CUSTOMERS:
+<span class="nc" id="L185">				status = lineMessenger.sendToAll(message.getValue());</span>
+				break;
+			}
+
+<span class="nc bnc" id="L189" title="All 2 branches missed.">			NotificationFactory.getTopBarWarningNotification(&quot;Message delivery &quot; + (status ? &quot; succeeded!&quot; : &quot; failed!&quot;),</span>
+<span class="nc" id="L190">					LineMessenger.getCounter() + &quot; recepient(s)&quot;, 5).show(Page.getCurrent());</span>
+
+<span class="nc" id="L192">		});</span>
+<span class="nc" id="L193">		VerticalLayout container = new VerticalLayout();</span>
+<span class="nc" id="L194">		container.addComponent(layout);</span>
+<span class="nc" id="L195">		return container;</span>
+	}
+
+	/**
+	 * @return
+	 */
+	private VerticalLayout getQueryTab() {
+<span class="nc" id="L202">		VerticalLayout layout = new VerticalLayout();</span>
+
+<span class="nc" id="L204">		Grid&lt;NonFAQQuery&gt; grid = new Grid&lt;NonFAQQuery&gt;(NonFAQQuery.class);</span>
+<span class="nc" id="L205">		TextArea replyBox = new TextArea(&quot;Response&quot;);</span>
+<span class="nc" id="L206">		Button submit = new Button(&quot;Send&quot;);</span>
+
+<span class="nc" id="L208">		layout.addComponent(grid);</span>
+<span class="nc" id="L209">		layout.addComponent(replyBox);</span>
+<span class="nc" id="L210">		layout.addComponent(submit);</span>
+
+<span class="nc" id="L212">		submit.setEnabled(false);</span>
+
+<span class="nc" id="L214">		grid.setDataProvider(new ListDataProvider&lt;NonFAQQuery&gt;(Utils.iterableToCollection(qRepo.findAll())));</span>
+<span class="nc" id="L215">		grid.removeColumn(GridCol.NONFAQQUERY_CUSTOMER_NAME);</span>
+<span class="nc" id="L216">		grid.setColumnOrder(GridCol.NONFAQQUERY_ID, GridCol.NONFAQQUERY_CUSTOMER, GridCol.NONFAQQUERY_QUERY,</span>
+				GridCol.NONFAQQUERY_ANSWER);
+<span class="nc" id="L218">		grid.setHeight(&quot;90%&quot;);</span>
+<span class="nc" id="L219">		log.info(&quot;there are [{}] unresolved queries&quot;,</span>
+<span class="nc" id="L220">				Utils.iterableToCollection(qRepo.findAll()).stream().filter(q -&gt; q.getAnswer().isEmpty()).count());</span>
+
+<span class="nc" id="L222">		grid.addSelectionListener(event -&gt; {</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">			if (event.getFirstSelectedItem().isPresent()) {</span>
+<span class="nc" id="L224">				selectedQuery = event.getFirstSelectedItem().get();</span>
+<span class="nc" id="L225">				submit.setEnabled(true);</span>
+			} else {
+<span class="nc" id="L227">				selectedQuery = null;</span>
+<span class="nc" id="L228">				submit.setEnabled(false);</span>
+			}
+<span class="nc" id="L230">		});</span>
+
+<span class="nc" id="L232">		HeaderRow filterRow = grid.appendHeaderRow();</span>
+
+<span class="nc bnc" id="L234" title="All 2 branches missed.">		for (Column&lt;NonFAQQuery, ?&gt; col : grid.getColumns()) {</span>
+<span class="nc" id="L235">			col.setMinimumWidth(160);</span>
+<span class="nc" id="L236">			col.setHidable(true);</span>
+<span class="nc" id="L237">			col.setExpandRatio(1);</span>
+<span class="nc" id="L238">			col.setHidingToggleCaption(col.getCaption());</span>
+<span class="nc" id="L239">			HeaderCell cell = filterRow.getCell(col.getId());</span>
+
+			// Have an input field to use for filter
+<span class="nc" id="L242">			TextField filterField = new TextField();</span>
+<span class="nc" id="L243">			filterField.setWidth(130, Unit.PIXELS);</span>
+<span class="nc" id="L244">			filterField.setHeight(30, Unit.PIXELS);</span>
+
+<span class="nc" id="L246">			filterField.addValueChangeListener(change -&gt; {</span>
+<span class="nc" id="L247">				String searchVal = change.getValue();</span>
+<span class="nc" id="L248">				String colId = col.getId();</span>
+
+<span class="nc" id="L250">				log.info(&quot;Value change in col [{}], val=[{}]&quot;, colId, searchVal);</span>
+<span class="nc" id="L251">				ListDataProvider&lt;NonFAQQuery&gt; dataProvider = (ListDataProvider&lt;NonFAQQuery&gt;) grid.getDataProvider();</span>
+
+<span class="nc bnc" id="L253" title="All 2 branches missed.">				if (!filterField.isEmpty()) {</span>
+					try {
+						// note: if we keep typing into same textfield, we will overwrite the old filter
+						// for this column, which is desirable (rather than having filters for &quot;h&quot;,
+						// &quot;he&quot;, &quot;hel&quot;, etc
+<span class="nc" id="L258">						gridFilters.put(colId, FilterFactory.getFilterForNonFAQQuery(colId, searchVal));</span>
+<span class="nc" id="L259">						log.info(&quot;updated filter on attribute [{}]&quot;, colId);</span>
+
+<span class="nc" id="L261">					} catch (Exception e) {</span>
+<span class="nc" id="L262">						log.info(&quot;ignoring val=[{}], col=[{}] is invalid&quot;, searchVal, colId);</span>
+<span class="nc" id="L263">					}</span>
+				} else {
+					// the filter field was empty, so try
+					// removing the filter associated with this col
+<span class="nc" id="L267">					gridFilters.remove(colId);</span>
+<span class="nc" id="L268">					log.info(&quot;removed filter on attribute [{}]&quot;, colId);</span>
+
+				}
+<span class="nc" id="L271">				dataProvider.clearFilters();</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">				for (String colFilter : gridFilters.keySet()) {</span>
+<span class="nc" id="L273">					ProviderAndPredicate paf = gridFilters.get(colFilter);</span>
+<span class="nc" id="L274">					dataProvider.addFilter(paf.provider, paf.predicate);</span>
+<span class="nc" id="L275">				}</span>
+<span class="nc" id="L276">				dataProvider.refreshAll();</span>
+<span class="nc" id="L277">			});</span>
+<span class="nc" id="L278">			cell.setComponent(filterField);</span>
+
+<span class="nc" id="L280">		}</span>
+
+<span class="nc" id="L282">		grid.setWidth(&quot;100%&quot;);</span>
+		// TODO: check that the lengths of query and answer are &lt;=255
+
+<span class="nc" id="L285">		submit.addClickListener(event -&gt; {</span>
+<span class="nc bnc" id="L286" title="All 2 branches missed.">			if (!replyBox.isEmpty()) {</span>
+<span class="nc" id="L287">				LineMessenger.resetCounter();</span>
+<span class="nc" id="L288">				boolean status = false;</span>
+<span class="nc bnc" id="L289" title="All 2 branches missed.">				if (selectedQuery.getCustomer() != null) {</span>
+<span class="nc" id="L290">					status = lineMessenger.respondToQuery(selectedQuery.getCustomer().getLineId(),</span>
+<span class="nc" id="L291">							selectedQuery.getQuery(), replyBox.getValue());</span>
+				}
+<span class="nc bnc" id="L293" title="All 2 branches missed.">				NotificationFactory.getTopBarWarningNotification(&quot;Message delivery &quot; + (status ? &quot; succeeded!&quot; : &quot; failed!&quot;),</span>
+<span class="nc" id="L294">						LineMessenger.getCounter() + &quot; recepient(s)&quot;, 5).show(Page.getCurrent());</span>
+
+<span class="nc bnc" id="L296" title="All 2 branches missed.">				if (status) {</span>
+<span class="nc" id="L297">					selectedQuery.setAnswer(replyBox.getValue());</span>
+<span class="nc" id="L298">					qRepo.save(selectedQuery);</span>
+<span class="nc" id="L299">					grid.setDataProvider(</span>
+<span class="nc" id="L300">							new ListDataProvider&lt;NonFAQQuery&gt;(Utils.iterableToCollection(qRepo.findAll())));</span>
+				}
+			}
+<span class="nc" id="L303">		});</span>
+
+<span class="nc" id="L305">		return layout;</span>
+
+	}
+
+	/** 
+	 * Function is called when the view is loaded up in the browser, refreshes the data so that the tables
+	 * are updated to the newest data contents.
+	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
+	 */
+	@Override
+	// called AFTER init()
+	public void enter(ViewChangeEvent event) {
+		// This view is constructed in the init() method()
+<span class="nc" id="L318">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

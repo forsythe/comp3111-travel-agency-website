@@ -2,7 +2,8 @@
 target/
 build/
 !build/jacoco/
-!build/jacoco/Html/
+!build/jacocoHtml/
+!build/docs
 out/
 
 # gradle

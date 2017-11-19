@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tour.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.data.model</a> &gt; <span class="el_source">Tour.java</span></div><h1>Tour.java</h1><pre class="source lang-java linenums">package comp3111.data.model;
+
+import comp3111.Utils;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+
+/**
+ * Represents a Tour in the database. There are two types of tours,
+ * {@link #LIMITED_TOUR_TYPE} and {@link #REPEATING_TOUR_TYPE}.
+ * {@link #LIMITED_TOUR_TYPE} type tours may only have offerings on
+ * {@link #getAllowedDates()}, whereas {@link #REPEATING_TOUR_TYPE} type tours
+ * may only have offerings on {@link #getAllowedDaysOfWeek()}.
+ * 
+ * @author Forsythe
+ *
+ */
+@Entity
+public class Tour {
+
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	private String tourName;
+	private String description;
+	private int days;
+
+<span class="pc" id="L36">	@ElementCollection(targetClass = Integer.class)</span>
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Collection&lt;Integer&gt; allowedDaysOfWeek = new HashSet&lt;Integer&gt;();
+	// for an offering of this tour, is it allowed on MONDAY, TUESDAY, etc
+
+<span class="pc" id="L41">	@ElementCollection(targetClass = Date.class)</span>
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Collection&lt;Date&gt; allowedDates = new HashSet&lt;Date&gt;();
+	// for an offering of this tour, is it only allowed on specific dates
+	// null for ANY date
+
+	private double childDiscount;
+	private double toddlerDiscount;
+	private int weekdayPrice;
+	private int weekendPrice;
+
+	private boolean isChildFriendly;
+
+	public static final String LIMITED_TOUR_TYPE = &quot;Limited&quot;;
+
+	public static final String REPEATING_TOUR_TYPE = &quot;Repeating&quot;;
+
+<span class="fc" id="L58">	public Tour() {</span>
+<span class="fc" id="L59">	}</span>
+
+	/**
+	 * Constructs a transient Tour object, which is not child-friendly.
+	 * 
+	 * @param tourName
+	 *            The name of the tour
+	 * @param description
+	 *            The user-facing description of the tour, which can at most be 255
+	 *            characters long
+	 * @param days
+	 *            The duration of every offering associated with this tour.
+	 * @param childDiscount
+	 *            A double between [0, 1.0] indicating the discount for children.
+	 *            1.0 for no discount.
+	 * @param toddlerDiscount
+	 *            A double between [0, 1.0] indicating the discount for toddlers.
+	 *            1.0 for no discount.
+	 * @param weekdayPrice
+	 *            The dollar weekday price. Offerings for this tour created on
+	 *            weekdays will use this price.
+	 * @param weekendPrice
+	 *            The dollar weekend price. Offerings for this tour created on
+	 *            weekends will use this price.
+	 */
+	public Tour(String tourName, String description, int days, double childDiscount, double toddlerDiscount,
+			int weekdayPrice, int weekendPrice) {
+<span class="fc" id="L86">		super();</span>
+<span class="fc" id="L87">		this.tourName = tourName;</span>
+<span class="fc" id="L88">		this.description = description;</span>
+<span class="fc" id="L89">		this.days = days;</span>
+<span class="fc" id="L90">		this.childDiscount = childDiscount;</span>
+<span class="fc" id="L91">		this.toddlerDiscount = toddlerDiscount;</span>
+<span class="fc" id="L92">		this.weekdayPrice = weekdayPrice;</span>
+<span class="fc" id="L93">		this.weekendPrice = weekendPrice;</span>
+<span class="fc" id="L94">		this.isChildFriendly = false;</span>
+<span class="fc" id="L95">	}</span>
+
+	/**
+	 * Constructs a transient Tour object.
+	 * 
+	 * @param tourName
+	 *            The name of the tour
+	 * @param description
+	 *            The user-facing description of the tour, which can at most be 255
+	 *            characters long
+	 * @param days
+	 *            The duration of every offering associated with this tour.
+	 * @param childDiscount
+	 *            A double between [0, 1.0] indicating the discount for children.
+	 *            1.0 for no discount.
+	 * @param toddlerDiscount
+	 *            A double between [0, 1.0] indicating the discount for toddlers.
+	 *            1.0 for no discount.
+	 * @param weekdayPrice
+	 *            The dollar weekday price. Offerings for this tour created on
+	 *            weekdays will use this price.
+	 * @param weekendPrice
+	 *            The dollar weekend price. Offeirngs for this tour created on
+	 *            weekends will use this price.
+	 * @param isChildFriendly
+	 *            Whether or not this Tour is child friendly. Not used for any
+	 *            constraints checking. Only used for making recommendations to
+	 *            customers.
+	 */
+	public Tour(String tourName, String description, int days, double childDiscount, double toddlerDiscount,
+			int weekdayPrice, int weekendPrice, boolean isChildFriendly) {
+<span class="nc" id="L126">		super();</span>
+<span class="nc" id="L127">		this.tourName = tourName;</span>
+<span class="nc" id="L128">		this.description = description;</span>
+<span class="nc" id="L129">		this.days = days;</span>
+<span class="nc" id="L130">		this.childDiscount = childDiscount;</span>
+<span class="nc" id="L131">		this.toddlerDiscount = toddlerDiscount;</span>
+<span class="nc" id="L132">		this.weekdayPrice = weekdayPrice;</span>
+<span class="nc" id="L133">		this.weekendPrice = weekendPrice;</span>
+<span class="nc" id="L134">		this.isChildFriendly = isChildFriendly;</span>
+<span class="nc" id="L135">	}</span>
+
+	public Long getId() {
+<span class="fc" id="L138">		return id;</span>
+	}
+
+	public void setId(Long id) {
+<span class="fc" id="L142">		this.id = id;</span>
+<span class="fc" id="L143">	}</span>
+
+	public String getTourName() {
+<span class="fc" id="L146">		return tourName;</span>
+	}
+
+	public void setTourName(String tourName) {
+<span class="fc" id="L150">		this.tourName = tourName;</span>
+<span class="fc" id="L151">	}</span>
+
+	public String getDescription() {
+<span class="fc" id="L154">		return description;</span>
+	}
+
+	public void setDescription(String description) {
+<span class="fc" id="L158">		this.description = description;</span>
+<span class="fc" id="L159">	}</span>
+
+	/**
+	 * @return How many days an offering of this tour will last
+	 */
+	public int getDays() {
+<span class="fc" id="L165">		return this.days;</span>
+	}
+
+	/**
+	 * @param days
+	 *            How many days an offering of this tour will last
+	 */
+	public void setDays(int days) {
+<span class="fc" id="L173">		this.days = days;</span>
+<span class="fc" id="L174">	}</span>
+
+	/**
+	 * @return A collection of integers representing on which days of the week
+	 *         offerings may be created for this tour. Follows the convention of
+	 *         java.util.Calendar.
+	 * @see Utils#dayToString(int)
+	 * @see Utils#integerSetToStringDayNameSet(Collection)
+	 */
+	public Collection&lt;Integer&gt; getAllowedDaysOfWeek() {
+<span class="fc" id="L184">		return this.allowedDaysOfWeek;</span>
+	}
+
+	/**
+	 * Sets the days of week on which this tour may have offerings. If this value is
+	 * set (with a non-empty collection), then the tour type is assumed to be
+	 * {@link #REPEATING_TOUR_TYPE}. Therefore, do not call
+	 * {@link #setAllowedDates(Collection)}, which is for {@link #LIMITED_TOUR_TYPE}
+	 * type tours.
+	 * 
+	 * @param allowedDaysOfWeek
+	 *            A collection of integers representing on which days of the week
+	 *            offerings may be created for this tour. Follows the convention of
+	 *            java.util.Calendar.
+	 */
+	public void setAllowedDaysOfWeek(Collection&lt;Integer&gt; allowedDaysOfWeek) {
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">		if (allowedDaysOfWeek != null)</span>
+<span class="fc" id="L201">			this.allowedDaysOfWeek = allowedDaysOfWeek;</span>
+<span class="fc" id="L202">	}</span>
+
+	/**
+	 * @return A collection of dates representing on which actual dates offerings
+	 *         may be created for this tour.
+	 */
+	public Collection&lt;Date&gt; getAllowedDates() {
+<span class="fc" id="L209">		return allowedDates;</span>
+	}
+
+	/**
+	 * Sets the actual dates on which this tour may have offerings. If this value is
+	 * set (with a non-empty collection), then the tour type is assumed to be
+	 * {@link #LIMITED_TOUR_TYPE}. Therefore, do not call
+	 * {@link #setAllowedDaysOfWeek(Collection)} which is for
+	 * {@link #REPEATING_TOUR_TYPE} type tours.
+	 * 
+	 * @param allowedDates
+	 *            A collection of integers representing on which days of the week
+	 *            offerings may be created for this tour. Follows the convention of
+	 *            java.util.Calendar.
+	 */
+	public void setAllowedDates(Collection&lt;Date&gt; allowedDates) {
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">		if (allowedDates == null)</span>
+<span class="nc" id="L226">			this.allowedDates = new HashSet&lt;Date&gt;();</span>
+		else
+<span class="fc" id="L228">			this.allowedDates = allowedDates;</span>
+<span class="fc" id="L229">	}</span>
+
+	/**
+	 * @return A double between [0, 1.0]. 1.0 indicates full price (no discount).
+	 */
+	public double getChildDiscount() {
+<span class="fc" id="L235">		return childDiscount;</span>
+	}
+
+	/**
+	 * @param childDiscount
+	 *            A double between [0, 1.0]. 1.0 indicates full price (no discount).
+	 */
+	public void setChildDiscount(double childDiscount) {
+<span class="fc" id="L243">		this.childDiscount = childDiscount;</span>
+<span class="fc" id="L244">	}</span>
+
+	/**
+	 * @return A double between [0, 1.0]. 1.0 indicates full price (no discount).
+	 */
+	public double getToddlerDiscount() {
+<span class="fc" id="L250">		return toddlerDiscount;</span>
+	}
+
+	/**
+	 * @param toddlerDiscount
+	 *            A double between [0, 1.0]. 1.0 indicates full price (no discount).
+	 */
+	public void setToddlerDiscount(double toddlerDiscount) {
+<span class="fc" id="L258">		this.toddlerDiscount = toddlerDiscount;</span>
+<span class="fc" id="L259">	}</span>
+
+	public int getWeekdayPrice() {
+<span class="fc" id="L262">		return weekdayPrice;</span>
+	}
+
+	public void setWeekdayPrice(int weekdayPrice) {
+<span class="fc" id="L266">		this.weekdayPrice = weekdayPrice;</span>
+<span class="fc" id="L267">	}</span>
+
+	public int getWeekendPrice() {
+<span class="fc" id="L270">		return weekendPrice;</span>
+	}
+
+	public void setWeekendPrice(int weekendPrice) {
+<span class="fc" id="L274">		this.weekendPrice = weekendPrice;</span>
+<span class="fc" id="L275">	}</span>
+
+	/**
+	 * @return Whether or not the tour is child friendly. Is not used for any strict
+	 *         enforcing, but only as suggestions to customers when they ask for
+	 *         recommendations.
+	 */
+	public boolean isChildFriendly() {
+<span class="fc" id="L283">		return isChildFriendly;</span>
+	}
+
+	/**
+	 * @param isChildFriendly
+	 *            Whether or not the tour is child friendly. Is not used for any
+	 *            strict enforcing, but only as suggestions to customers when they
+	 *            ask for recommendations.
+	 */
+	public void setChildFriendly(boolean isChildFriendly) {
+<span class="fc" id="L293">		this.isChildFriendly = isChildFriendly;</span>
+<span class="fc" id="L294">	}</span>
+
+	/**
+	 * @return A nicely formatted string representing the dates or days of the week
+	 *         on which offerings may be created for this tour. If this is a
+	 *         {@link #LIMITED_TOUR_TYPE} tour, then the function returns a
+	 *         collection of dates. Otherwise if it is a
+	 *         {@link #REPEATING_TOUR_TYPE}, it returns a collection of integers
+	 *         representing the days of the week.
+	 */
+	public String getOfferingAvailability() {
+<span class="fc bfc" id="L305" title="All 2 branches covered.">		if (!allowedDates.isEmpty())</span>
+<span class="fc" id="L306">			return this.getFormattedAllowedDates();</span>
+		else
+<span class="fc" id="L308">			return this.getFormattedAllowedDaysOfWeek();</span>
+	}
+
+	private String getFormattedAllowedDates() {
+<span class="fc" id="L312">		return Utils.dateCollectionToString(allowedDates);</span>
+	}
+
+	private String getFormattedAllowedDaysOfWeek() {
+<span class="fc" id="L316">		return Utils.integerCollectionToString(allowedDaysOfWeek);</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="nc" id="L321">		return String.format(&quot;Tour[id=%d, tourName=%s]&quot;, id, tourName);</span>
+	}
+
+	@Override
+	public boolean equals(Object other) {
+<span class="fc bfc" id="L326" title="All 2 branches covered.">		if (other instanceof Tour)</span>
+<span class="fc" id="L327">			return ((Tour) other).getId().equals(this.getId());</span>
+<span class="fc" id="L328">		return false;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

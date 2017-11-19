@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoginUser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.data.model</a> &gt; <span class="el_source">LoginUser.java</span></div><h1>LoginUser.java</h1><pre class="source lang-java linenums">package comp3111.data.model;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+/**
+ * Represents a user which can log in to the system.
+ * 
+ * @author Forsythe
+ *
+ */
+@Entity
+public class LoginUser {
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	@Column(unique = true)
+	private String username;
+	private String hashedSaltedPassword;
+
+<span class="fc" id="L26">	public LoginUser() {</span>
+<span class="fc" id="L27">	}</span>
+
+<span class="fc" id="L29">	public LoginUser(String username, String rawPassword) {</span>
+<span class="fc" id="L30">		setUsername(username);</span>
+<span class="fc" id="L31">		setHashedSaltedPassword(rawPassword);</span>
+<span class="fc" id="L32">	}</span>
+
+	public Long getId() {
+<span class="fc" id="L35">		return id;</span>
+	}
+
+	public void setId(Long id) {
+<span class="fc" id="L39">		this.id = id;</span>
+<span class="fc" id="L40">	}</span>
+
+	public String getUsername() {
+<span class="nc" id="L43">		return username;</span>
+	}
+
+	public void setUsername(String username) {
+<span class="fc" id="L47">		this.username = username;</span>
+<span class="fc" id="L48">	}</span>
+
+	/**
+	 * @return The salted and bcrypt hashed output. Do not directly compare it with
+	 *         the output of a hash to verify a login. Instead, use
+	 *         {@link comp3111.input.auth.Authentication#authenticate(String, String)}.
+	 */
+	public String getHashedSaltedPassword() {
+<span class="fc" id="L56">		return hashedSaltedPassword;</span>
+	}
+
+	/**
+	 * @param rawPassword
+	 *            a raw password string. Will be hashed and salted using bcrypt,
+	 *            before storing into the database. By default, uses 10 rounds of
+	 *            hashing.
+	 */
+	public void setHashedSaltedPassword(String rawPassword) {
+<span class="fc" id="L66">		BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();</span>
+<span class="fc" id="L67">		this.hashedSaltedPassword = bcpe.encode(rawPassword);</span>
+<span class="fc" id="L68">	}</span>
+
+	@Override
+	public boolean equals(Object other) {
+<span class="fc bfc" id="L72" title="All 2 branches covered.">		if (other instanceof LoginUser) {</span>
+<span class="fc" id="L73">			return ((LoginUser) other).getId().equals(this.getId());</span>
+		}
+<span class="fc" id="L75">		return false;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
