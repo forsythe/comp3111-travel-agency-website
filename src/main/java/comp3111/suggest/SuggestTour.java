@@ -4,16 +4,13 @@ import com.vaadin.spring.annotation.SpringComponent;
 import comp3111.Utils;
 import comp3111.data.model.Booking;
 import comp3111.data.model.Customer;
-import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.TourRepository;
 import org.deeplearning4j.clustering.cluster.Cluster;
-import org.deeplearning4j.clustering.cluster.ClusterSet;
 import org.deeplearning4j.clustering.cluster.Point;
-import org.deeplearning4j.clustering.kmeans.KMeansClustering;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.TreeMap;
-import java.util.stream.IntStream;
 
 /**
  * A Class to suggest new tours to customers who have booked before.

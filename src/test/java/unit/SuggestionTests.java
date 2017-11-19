@@ -6,22 +6,15 @@ import comp3111.data.DBManager;
 import comp3111.data.model.*;
 import comp3111.data.repo.*;
 import comp3111.suggest.SuggestTour;
-import comp3111.suggest.TourCluster;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.rmi.CORBA.Util;
-import java.awt.print.Book;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -65,9 +58,9 @@ public class SuggestionTests {
         }
     }
 
-    Offering sciOffering[] = new Offering[3];
-    Offering hisOffering[] = new Offering[3];
-    Offering shoOffering[] = new Offering[3];
+    Offering sciOffering[] = new Offering[5];
+    Offering hisOffering[] = new Offering[5];
+    Offering shoOffering[] = new Offering[5];
     private void populateDatabase(){
         //Like science
         Customer sciCustomer[] = new Customer[4];
@@ -94,7 +87,7 @@ public class SuggestionTests {
         tourGuideRepo.save(tourGuide);
 
         //Science tour
-        Tour sciTour[] = new Tour[3];
+        Tour sciTour[] = new Tour[5];
         for (int i=0; i<sciTour.length; i++){
             sciTour[i] = new Tour();
             sciTour[i].setAllowedDaysOfWeek(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
@@ -114,12 +107,23 @@ public class SuggestionTests {
                 "Join our workshop, and you will have a chance to build your own spaceship and rocket in the HK" +
                 "science museum. ");
 
+        sciTour[3].setTourName("Science museum");
+        sciTour[3].setDescription("Over 70 per cent of the Hong Kong Science Museum’s 500 exhibits" +
+                " , including" +
+                " robotics, virtual reality and transportation.  Triggers a series of displays to produce spectacular " +
+                "audio-visual effects demonstrating various forms of energy.");
+
+        sciTour[4].setTourName("Space museum");
+        sciTour[4].setDescription("The city’s popular planetarium is made up of the Stanley Ho Space Theatre, the Hall of Space " +
+                "Science, and the Hall of Astronomy. There’s plenty of action and toys for wannabe space explorers" +
+                " and closest geeks");
+
         for (Tour t : sciTour){
             tourRepo.save(t);
         }
 
         //History tour
-        Tour hisTour[] = new Tour[3];
+        Tour hisTour[] = new Tour[5];
         for (int i=0; i<hisTour.length; i++){
             hisTour[i] = new Tour();
             hisTour[i].setAllowedDaysOfWeek(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
@@ -141,12 +145,22 @@ public class SuggestionTests {
                 "Since both the British and Chinese government have no control over this place, a lot of criminals, " +
                 "drug dealers hid in this place.");
 
+        hisTour[3].setTourName("Dr Sun Yat-sen Museum");
+        hisTour[3].setDescription("The Dr Sun Yat-sen Museum relives the epoch-making accomplishments of" +
+                " this extraordinary revolutionary, offering exhibition galleries that trace his life and " +
+                "close relationship with Hong Kong.");
+
+        hisTour[4].setTourName("The Hong Kong Museum of History");
+        hisTour[4].setDescription("Countless" +
+                " objects which are related to the archaeology, history, ethnography and natural histories of Hong " +
+                "Kong and South China. Thematic exhibitions are also regularly held at different times.");
+
         for (Tour t : hisTour){
             tourRepo.save(t);
         }
 
         //Shopping tour
-        Tour shoTour[] = new Tour[3];
+        Tour shoTour[] = new Tour[5];
         for (int i=0; i<shoTour.length; i++){
             shoTour[i] = new Tour();
             shoTour[i].setAllowedDaysOfWeek(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
@@ -166,6 +180,16 @@ public class SuggestionTests {
         shoTour[2].setDescription("You might not heard of it yet... In HKUST, they have this really good shop called the" +
                 "souvenir shop. They sell things that are essential to everyone's life like pens and water bottles" +
                 "at a perfectly reasonable price!");
+
+        shoTour[3].setTourName("Causeway Bay");
+        shoTour[3].setDescription("It would still take " +
+                "at least an entire day to work your way through its endless shopping malls, department stores," +
+                " boutiques and market stalls.");
+
+        shoTour[4].setTourName("Admiralty, Central and SoHo");
+        shoTour[4].setDescription(" The shopping also" +
+                " heads upward and the city’s financial district is also a major concentration of luxury goods " +
+                "and high-fashion");
 
         for (Tour t : shoTour){
             tourRepo.save(t);
