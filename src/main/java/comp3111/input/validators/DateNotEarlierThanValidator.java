@@ -41,7 +41,7 @@ public class DateNotEarlierThanValidator implements Validator<Date> {
 		if (value != null) {
 			if (value.before(notEarlierThanThis)) {
 				return getValidationErrorLogged(
-						"date cannot be earlier than " + Utils.simpleDateFormat(notEarlierThanThis));
+						"date must be later than " + Utils.simpleDateFormat(notEarlierThanThis));
 			} else {
 				return ValidationResult.ok();
 			}

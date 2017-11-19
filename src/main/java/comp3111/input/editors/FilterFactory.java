@@ -1,5 +1,7 @@
 package comp3111.input.editors;
 
+import java.util.Date;
+
 import comp3111.Utils;
 import comp3111.data.GridCol;
 import comp3111.data.model.Booking;
@@ -285,12 +287,12 @@ public class FilterFactory {
 		if (colId.equals(GridCol.PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER))
 			return new ProviderAndPredicate<PromoEvent, Integer>(PromoEvent::getMaxReservationsPerCustomer,
 					t -> Utils.safeParseIntEquals(t, searchVal));
-		if (colId.equals(GridCol.PROMOEVENT_OFFERING_ID))
-			return new ProviderAndPredicate<PromoEvent, Long>(PromoEvent::getOfferingId,
-					t -> Utils.safeParseLongEquals(t, searchVal));
-		if (colId.equals(GridCol.PROMOEVENT_TRIGGER_DATE_STRING))
-			return new ProviderAndPredicate<PromoEvent, String>(PromoEvent::getTriggerDateString,
-					t -> Utils.containsIgnoreCase(t, searchVal));
+		if (colId.equals(GridCol.PROMOEVENT_OFFERING))
+			return new ProviderAndPredicate<PromoEvent, Offering>(PromoEvent::getOffering,
+					t -> Utils.containsIgnoreCase(t.toString(), searchVal));
+		if (colId.equals(GridCol.PROMOEVENT_TRIGGER_DATE))
+			return new ProviderAndPredicate<PromoEvent, Date>(PromoEvent::getTriggerDate,
+					t -> Utils.containsIgnoreCase(t == null ? "" : t.toString(), searchVal));
 		if (colId.equals(GridCol.PROMOEVENT_IS_TRIGGERED))
 			return new ProviderAndPredicate<PromoEvent, Boolean>(PromoEvent::isTriggered,
 					t -> Utils.safeParseBoolEquals(t, searchVal));

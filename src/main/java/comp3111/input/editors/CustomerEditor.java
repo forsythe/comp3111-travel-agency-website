@@ -31,6 +31,7 @@ import com.vaadin.ui.components.grid.HeaderRow;
 import comp3111.Utils;
 import comp3111.data.GridCol;
 import comp3111.data.model.Customer;
+import comp3111.data.model.TourGuide;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.input.converters.ConverterFactory;
 import comp3111.input.field.HKIDEntryField;
@@ -53,6 +54,15 @@ public class CustomerEditor extends VerticalLayout {
 
 	private Window subwindow;
 
+	Button subwindowConfirm;
+	TextField customerName;
+	TextField customerLineId;
+	HKIDEntryField customerHKID;
+	PhoneNumberEntryField customerPhone;
+	TextField customerAge;
+
+	BinderValidationStatus<Customer> validationStatus;
+
 	/* action buttons */
 	private Button createNewCustomerButton = new Button("Create new customer");
 	private Button editCustomerButton = new Button("Edit customer");
@@ -67,8 +77,10 @@ public class CustomerEditor extends VerticalLayout {
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	/**
+	 * Constructs the editor for creating/editing Customers
+	 * 
 	 * @param cr
-	 *            Autowired, constructor injection
+	 *            The CustomerRepository
 	 */
 	@Autowired
 	public CustomerEditor(CustomerRepository cr) {
@@ -171,25 +183,25 @@ public class CustomerEditor extends VerticalLayout {
 		});
 	}
 
-	private Window getSubwindow(CustomerRepository customerRepo, Collection<Customer> customerCollectionCached,
+	public Window getSubwindow(CustomerRepository customerRepo, Collection<Customer> customerCollectionCached,
 			Customer customerToSave) {
 		// Creating the confirm button
-		Button subwindowConfirm = new Button("Confirm");
-		subwindowConfirm.setId("btn_confirm_customer");
+		subwindowConfirm = new Button("Confirm");
+		getSubwindowConfirmButton().setId("btn_confirm_customer");
 
-		TextField customerName = new TextField("Name");
+		customerName = new TextField("Name");
 		customerName.setId("tf_customer_name");
 
-		TextField customerLineId = new TextField("Line Id");
+		customerLineId = new TextField("Line Id");
 		customerLineId.setId("tf_customer_line_id");
 
-		HKIDEntryField customerHKID = new HKIDEntryField("HKID");
+		customerHKID = new HKIDEntryField("HKID");
 		customerHKID.setId("tf_customer_hkid");
 
-		PhoneNumberEntryField customerPhone = new PhoneNumberEntryField("Phone", "852");
+		customerPhone = new PhoneNumberEntryField("Phone", "852");
 		customerPhone.setId("tf_customer_phone");
 
-		TextField customerAge = new TextField("Age");
+		customerAge = new TextField("Age");
 		customerAge.setId("tf_customer_age");
 
 		if (customerToSave.getId() == null) { // passed in an unsaved object
@@ -219,7 +231,7 @@ public class CustomerEditor extends VerticalLayout {
 		form.addComponent(customerAge);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
-		buttonActions.addComponent(subwindowConfirm);
+		buttonActions.addComponent(getSubwindowConfirmButton());
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
 		form.addComponent(buttonActions);
 
@@ -245,8 +257,8 @@ public class CustomerEditor extends VerticalLayout {
 
 		binder.setBean(customerToSave);
 
-		subwindowConfirm.addClickListener(event -> {
-			BinderValidationStatus<Customer> validationStatus = binder.validate();
+		getSubwindowConfirmButton().addClickListener(event -> {
+			validationStatus = binder.validate();
 			log.info(customerHKID.getValue());
 
 			if (validationStatus.isOk()) {
@@ -259,12 +271,14 @@ public class CustomerEditor extends VerticalLayout {
 				subwindow.close();
 
 				log.info("Saved a new/edited customer [{}] successfully", customerName.getValue());
-				NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
+				if (Page.getCurrent() != null)
+					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
 
 				binder.removeBean();
 			} else {
 				String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);
-				NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
+				if (Page.getCurrent() != null)
+					NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 			}
 		});
 
@@ -275,10 +289,46 @@ public class CustomerEditor extends VerticalLayout {
 	 * Refreshes the data in the vaadin grid
 	 */
 	public void refreshData() {
-
-		ListDataProvider<Customer> provider = new ListDataProvider<Customer>(
-				Utils.iterableToCollection(customerRepo.findAll()));
-		customersGrid.setDataProvider(provider);
+		Iterable<Customer> customers = customerRepo.findAll();
+		if (customers != null) {
+			customerCollectionCached.clear();
+			customers.forEach(customerCollectionCached::add);
+			ListDataProvider<Customer> provider = new ListDataProvider<Customer>(customerCollectionCached);
+			customersGrid.setDataProvider(provider);
+		}
 
 	}
+
+	public Button getSubwindowConfirmButton() {
+		return subwindowConfirm;
+	}
+
+	public TextField getCustomerName() {
+		return customerName;
+	}
+
+	public TextField getCustomerLineId() {
+		return customerLineId;
+	}
+
+	public HKIDEntryField getCustomerHKID() {
+		return customerHKID;
+	}
+
+	public PhoneNumberEntryField getCustomerPhone() {
+		return customerPhone;
+	}
+
+	public TextField getCustomerAge() {
+		return customerAge;
+	}
+
+	public HashSet<Customer> getCustomerCollectionCached() {
+		return customerCollectionCached;
+	}
+
+	public BinderValidationStatus<Customer> getValidationStatus() {
+		return validationStatus;
+	}
+
 }

@@ -108,7 +108,14 @@ public class TourEditor extends VerticalLayout {
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	/**
-	 * Autowired fields. No need to call manually
+	 * Constructs the editor for creating/editing tours
+	 * 
+	 * @param tr
+	 *            The TourRepository
+	 * @param dbm
+	 *            The DBManager
+	 * @param ofe
+	 *            The OfferingEditor
 	 */
 	@SuppressWarnings("unchecked")
 	@Autowired

@@ -34,6 +34,7 @@ import comp3111.LineMessenger;
 import comp3111.Utils;
 import comp3111.data.DBManager;
 import comp3111.data.GridCol;
+import comp3111.data.model.Booking;
 import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
@@ -49,6 +50,7 @@ import comp3111.view.TourManagementView;
 
 /**
  * Represents the offering editor in the OfferingManagementView
+ * 
  * @author Forsythe
  *
  */
@@ -59,13 +61,13 @@ public class OfferingEditor extends VerticalLayout {
 
 	private OfferingRepository offeringRepo;
 
-	@Autowired
 	private TourGuideRepository tourGuideRepo;
 
 	private TourEditor tourEditor;
 
-	@Autowired
 	private DBManager dbManager;
+
+	private Window subWindow;
 
 	private Tour selectedTour;
 	private final Grid<Offering> offeringGrid = new Grid<Offering>(Offering.class);
@@ -79,16 +81,35 @@ public class OfferingEditor extends VerticalLayout {
 	private Button cancelOfferingButton = new Button("Manually Cancel Offering");
 	private Button returnButton = new Button("Return");
 
+	private Button subwindowConfirmButton;
+
+	private TextField tourName;
+	private ComboBox<TourGuide> tourGuide;
+	private DateField startDate;
+	private TextField hotelName;
+	private TextField minCustomer;
+	private TextField maxCustomer;
+
+	BinderValidationStatus<Offering> validationStatus;
+
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	/**
+	 * Constructs the editor for creating/editing Offerings
+	 * 
 	 * @param or
-	 *            Autowired, constructor injection
+	 *            The OfferingRepository
+	 * @param tgr
+	 *            The TourGuideRepository
+	 * @param dbm
+	 *            The DBManager
 	 */
 	@Autowired
-	public OfferingEditor(OfferingRepository or) {
+	public OfferingEditor(OfferingRepository or, TourGuideRepository tgr, DBManager dbm) {
 
 		this.offeringRepo = or;
+		this.tourGuideRepo = tgr;
+		this.dbManager = dbm;
 
 		rowOfButtons.addComponent(createNewOfferingButton);
 		rowOfButtons.addComponent(editOfferingButton);
@@ -196,7 +217,8 @@ public class OfferingEditor extends VerticalLayout {
 		});
 
 		editOfferingButton.addClickListener(event -> {
-			UI.getCurrent().addWindow(getSubWindow(selectedTour, selectedOffering, tourEditor));
+			if (canEditOffering(selectedOffering))
+				UI.getCurrent().addWindow(getSubWindow(selectedTour, selectedOffering, tourEditor));
 		});
 
 		returnButton.addClickListener(event -> {
@@ -246,29 +268,34 @@ public class OfferingEditor extends VerticalLayout {
 
 	}
 
-	private Window getSubWindow(Tour hostTour, final Offering offeringToSave, TourEditor tourEditor) {
+	public Window getSubWindow(Tour hostTour, final Offering offeringToSave, TourEditor tourEditor) {
 		boolean isCreatingNewOffering = offeringToSave.getId() == null;
 
 		// Creating the confirm button
-		Button confirm = new Button("Confirm");
-		confirm.setId("btn_confirm_offering");
+		subwindowConfirmButton = new Button("Confirm");
+		getSubwindowConfirmButton().setId("btn_confirm_offering");
 
 		// Creating the fields
-		TextField tourName = new TextField("Tour");
+		tourName = new TextField("Tour");
+		tourName.setId("tf_offering_name");
 		tourName.setValue(hostTour.getTourName());
 		tourName.setEnabled(false);
 
-		ComboBox<TourGuide> tourGuide = new ComboBox<TourGuide>("Tour Guide");
-		DateField startDate = Utils.getDateFieldWithOurLocale("Start Date");
-		Label availablityHint = new Label("Can be offered on " + hostTour.getOfferingAvailability());
+		tourGuide = new ComboBox<TourGuide>("Tour Guide");
+		tourGuide.setId("cb_offering_tour_guide");
+		startDate = Utils.getDateFieldWithOurLocale("Start Date");
+		startDate.setId("tf_offering_start_date");
+		Label availabilityHint = new Label("Can be offered on " + hostTour.getOfferingAvailability());
 
-		TextField hotelName = new TextField("Hotel Name");
-		TextField minCustomer = new TextField("Min number of customer");
-		TextField maxCustomer = new TextField("Max number of customer");
+		hotelName = new TextField("Hotel Name");
+		hotelName.setId("tf_offering_hotel_name");
+		minCustomer = new TextField("Min number of customer");
+		minCustomer.setId("tf_offering_min_customer");
+		maxCustomer = new TextField("Max number of customer");
+		maxCustomer.setId("tf_offering_max_customer");
 		Label statusHint = new Label();
 		statusHint.setWidth("100%");
 
-		Window subWindow;
 		if (isCreatingNewOffering) {
 			subWindow = new Window("Create new offering");
 		} else {
@@ -277,8 +304,11 @@ public class OfferingEditor extends VerticalLayout {
 
 		tourGuide.setPopupWidth(null);
 
-		tourGuide.setItems(Utils.iterableToCollection(tourGuideRepo.findAll()).stream()
-				.sorted((tg1, tg2) -> tg1.getId().compareTo(tg2.getId())));
+		Iterable<TourGuide> tourGuidesIterable = tourGuideRepo.findAll();
+		if(tourGuidesIterable != null) {
+			tourGuide.setItems(Utils.iterableToCollection(tourGuidesIterable).stream()
+					.sorted((tg1, tg2) -> tg1.getId().compareTo(tg2.getId())));
+		}
 
 		FormLayout form = new FormLayout();
 		VerticalLayout formContainer = new VerticalLayout();
@@ -294,7 +324,7 @@ public class OfferingEditor extends VerticalLayout {
 		subWindow.setDraggable(false);
 
 		form.addComponent(tourName);
-		form.addComponent(availablityHint);
+		form.addComponent(availabilityHint);
 
 		form.addComponent(startDate);
 		form.addComponent(tourGuide);
@@ -304,7 +334,7 @@ public class OfferingEditor extends VerticalLayout {
 		form.addComponent(statusHint);
 
 		HorizontalLayout buttonActions = new HorizontalLayout();
-		buttonActions.addComponent(confirm);
+		buttonActions.addComponent(getSubwindowConfirmButton());
 		buttonActions.addComponent(new Button("Cancel", event -> subWindow.close()));
 		form.addComponent(buttonActions);
 
@@ -318,7 +348,8 @@ public class OfferingEditor extends VerticalLayout {
 
 		binder.forField(startDate).asRequired(Utils.generateRequiredError())
 				.withConverter(new LocalDateToUtilDateConverter())
-				.withValidator(ValidatorFactory.getDateNotEarlierThanValidator(Date.from(Instant.now())))
+				.withValidator(
+						ValidatorFactory.getDateNotEarlierThanValidator(Utils.addDate(Date.from(Instant.now()), 3)))
 				.withValidator(ValidatorFactory.getDateAvailableInTourValidator(hostTour))
 				.bind(Offering::getStartDate, Offering::setStartDate);
 
@@ -349,8 +380,8 @@ public class OfferingEditor extends VerticalLayout {
 			}
 		});
 
-		confirm.addClickListener(event -> {
-			BinderValidationStatus<Offering> validationStatus = binder.validate();
+		subwindowConfirmButton.addClickListener(event -> {
+			validationStatus = binder.validate();
 
 			String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);
 			if (validationStatus.isOk()) {
@@ -377,7 +408,8 @@ public class OfferingEditor extends VerticalLayout {
 					tourEditor.refreshData();
 					this.refreshData();
 					subWindow.close();
-					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
+					if (Page.getCurrent() != null)
+						NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
 
 					binder.removeBean();
 					return; // This return skip the error reporting procedure below
@@ -388,12 +420,39 @@ public class OfferingEditor extends VerticalLayout {
 					errors += "The tour guide is occupied\n";
 				}
 			}
-
-			NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
+			if (Page.getCurrent() != null)
+				NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 
 		});
 
 		return subWindow;
+	}
+
+	/**
+	 * Check whether an offering is editable or not based on start date and current
+	 * date
+	 * 
+	 * @param offering
+	 *            The offering to check
+	 * @return Whether the offering is editable
+	 */
+	public boolean canEditOffering(Offering offering) {
+		if (offering == null)
+			return false;
+
+		Date today = Date.from(Instant.now());
+		Date threeDayBeforeStart = offering.getLastEditableDate();
+
+		if (today.after(threeDayBeforeStart)) {
+			if (Page.getCurrent() != null) // can be null if using mockito
+				NotificationFactory.getTopBarWarningNotification(
+						"It's too late to edit this offering. Its status was finalized on "
+								+ Utils.simpleDateFormat(threeDayBeforeStart),
+						5).show(Page.getCurrent());
+
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -404,6 +463,38 @@ public class OfferingEditor extends VerticalLayout {
 		ListDataProvider<Offering> provider = new ListDataProvider<>(
 				Utils.iterableToCollection(offeringRepo.findByTour(this.selectedTour)));
 		offeringGrid.setDataProvider(provider);
+	}
+
+	public Button getSubwindowConfirmButton() {
+		return subwindowConfirmButton;
+	}
+
+	public TextField getTourName() {
+		return tourName;
+	}
+
+	public ComboBox<TourGuide> getTourGuide() {
+		return tourGuide;
+	}
+
+	public DateField getStartDate() {
+		return startDate;
+	}
+
+	public TextField getHotelName() {
+		return hotelName;
+	}
+
+	public TextField getMinCustomer() {
+		return minCustomer;
+	}
+
+	public TextField getMaxCustomer() {
+		return maxCustomer;
+	}
+
+	public BinderValidationStatus<Offering> getValidationStatus() {
+		return validationStatus;
 	}
 
 	// Helpers for accessing stuff from tourEditor

@@ -14,7 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 
 /**
- * Generates the UI elements for the front-end side of the Customer Management page. 
+ * Generates the UI elements for the front-end side of the Customer Management
+ * page.
  * 
  * @author kristiansuhartono
  *
@@ -41,9 +42,10 @@ public class CustomerManagementView extends VerticalLayout implements View {
 		this.addComponent(layout);
 	}
 
-	/** 
-	 * Function is called when the view is loaded up in the browser, refreshes the data so that the tables
-	 * are updated to the newest data contents.
+	/**
+	 * Function is called when the view is loaded up in the browser, refreshes the
+	 * data so that the tables are updated to the newest data contents.
+	 * 
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override

@@ -48,7 +48,7 @@ public class ScheduledTasks {
 	 * start. If checks if the offerings have reached the minimum required capacity
 	 * to start or not. Will also send out messages to all associated customers
 	 */
-	@Scheduled(cron = EVERYDAY_8_AM)
+	@Scheduled(cron = EVERY_10_SECONDS)
 	public void updatePendingOfferingStatusIfNecessary() {
 		LineMessenger.resetCounter();
 		Date now = new Date();
@@ -86,7 +86,6 @@ public class ScheduledTasks {
 	 * message to everyone, and sets the PromoEvent's isTriggered to be true.
 	 */
 	@Scheduled(cron = EVERY_10_SECONDS)
-
 	public void updatePendingPromotionalBroadcasts() {
 		LineMessenger.resetCounter();
 		Date now = Utils.localDateTimeToDate(LocalDateTime.now());

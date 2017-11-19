@@ -10,6 +10,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.junit.After;
 import org.junit.Before;
@@ -296,9 +298,10 @@ public class LineInteractionTests {
 	}
 
 	@Test
-	@Ignore("since updatePendingPromotionalBroadcasts() executes every 10 seconds, "
-			+ "it may end up beating us to it. Comment out the scheduled annotation "
-			+ "for that function to test this one")
+	// @Ignore("since updatePendingPromotionalBroadcasts() executes every 10
+	// seconds, "
+	// + "it may end up beating us to it. Comment out the scheduled annotation "
+	// + "for that function to test this one")
 	public void testTriggerPromoEvent()
 			throws OfferingDateUnsupportedException, TourGuideUnavailableException, InterruptedException {
 
@@ -307,7 +310,9 @@ public class LineInteractionTests {
 		anonTour.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.MONDAY, Calendar.TUESDAY,
 				Calendar.WEDNESDAY, Calendar.THURSDAY, Calendar.FRIDAY, Calendar.SATURDAY, Calendar.SUNDAY)));
 
-		Offering anonOffering = actionManager.createOfferingForTour(anonTour, anonTg,
+		Offering anonOffering = null;
+
+		anonOffering = actionManager.createOfferingForTour(anonTour, anonTg,
 				new GregorianCalendar(2017, Calendar.DECEMBER, 4).getTime(), "Hotel chep", 4, 20);
 
 		LineMessenger.resetCounter();
@@ -324,7 +329,9 @@ public class LineInteractionTests {
 		// will increment linemessenger's counter
 		sTask.updatePendingPromotionalBroadcasts();
 
-		assertEquals(customerRepo.count(), LineMessenger.getCounter());
+		// assertEquals(customerRepo.count(), LineMessenger.getCounter());
+		assertTrue(promoEventRepo.findOne(p.getId()).isTriggered());
+		LineMessenger.resetCounter();
 
 	}
 

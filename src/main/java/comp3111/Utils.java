@@ -192,6 +192,8 @@ public class Utils {
 	 * @param search
 	 *            The substring to search for per each element's string
 	 *            representation
+	 * @param <T>
+	 *            Any object with an overridden toString()
 	 * @return whether any of the elements' string representations contained the
 	 *         provided substring
 	 */
@@ -400,6 +402,8 @@ public class Utils {
 	 * 
 	 * @param iterable
 	 *            The iterable
+	 * @param <T>
+	 *            Any type
 	 * @return A collection containing all the elements in the Iterable
 	 */
 	public static <T> Collection<T> iterableToCollection(Iterable<T> iterable) {

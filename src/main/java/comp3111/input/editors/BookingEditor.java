@@ -85,8 +85,18 @@ public class BookingEditor extends VerticalLayout {
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	/**
-	 * Creates a new Booking editor. All fields autowired.
+	 * Constructs the booking editor for creating/editing Bookings
 	 * 
+	 * @param br
+	 *            The BookingRepository
+	 * @param cr
+	 *            The CustomerRepository
+	 * @param or
+	 *            The OfferingRepository
+	 * @param per
+	 *            The PromoEventRepository
+	 * @param dbm
+	 *            The DBManager
 	 */
 	@Autowired
 	public BookingEditor(BookingRepository br, CustomerRepository cr, OfferingRepository or, PromoEventRepository per,
@@ -210,21 +220,27 @@ public class BookingEditor extends VerticalLayout {
 		});
 	}
 
-	// Check whether a customer offering is editable or not based on start date and
-	// current date
-	private boolean canEditBooking(Booking booking) {
+	/**
+	 * Check whether a customer offering is editable or not based on start date and
+	 * current date
+	 * 
+	 * @param booking
+	 *            The booking to check
+	 * @return Whether the booking is editable
+	 */
+	public boolean canEditBooking(Booking booking) {
 		if (booking == null)
-			return true;
+			return false;
 
 		Date today = Date.from(Instant.now());
 		Date threeDayBeforeStart = booking.getOffering().getLastEditableDate();
 
 		if (today.after(threeDayBeforeStart)) {
 			if (Page.getCurrent() != null) // can be null if using mockito
-				NotificationFactory
-						.getTopBarWarningNotification("It's too late to edit this offering. It can't be editied after "
-								+ Utils.simpleDateFormat(threeDayBeforeStart), 5)
-						.show(Page.getCurrent());
+				NotificationFactory.getTopBarWarningNotification(
+						"It's too late to edit this booking. The offering status was finalized on "
+								+ Utils.simpleDateFormat(threeDayBeforeStart),
+						5).show(Page.getCurrent());
 
 			return false;
 		}
