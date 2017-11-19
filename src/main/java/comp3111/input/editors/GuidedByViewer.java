@@ -44,8 +44,10 @@ public class GuidedByViewer extends VerticalLayout {
 	private final Grid<Offering> offeringGrid = new Grid<Offering>(Offering.class);
 
 	/**
+	 * Constructs the View which displays all offerings guided by a tour guide
+	 * 
 	 * @param or
-	 *            Autowired, construct injection
+	 *            The OfferingRepository
 	 */
 	@Autowired
 	public GuidedByViewer(OfferingRepository or) {

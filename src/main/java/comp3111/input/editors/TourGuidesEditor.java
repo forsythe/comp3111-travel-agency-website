@@ -41,10 +41,10 @@ public class TourGuidesEditor extends VerticalLayout {
 	private static final Logger log = LoggerFactory.getLogger(TourGuidesEditor.class);
 
 	GuidedByViewer guidedByViewer;
-	
+
 	TextField tourGuideName;
 	TextField tourGuideLineUsername;
-	
+
 	BinderValidationStatus<TourGuide> validationStatus;
 
 	private Window subwindow;
@@ -54,7 +54,6 @@ public class TourGuidesEditor extends VerticalLayout {
 	private Button editTourGuideButton = new Button("Edit tour guide");
 	private Button viewGuidedToursButton = new Button("View guided offerings");
 
-	
 	/* subwindow action buttons */
 	private Button subwindowConfirm;
 
@@ -64,7 +63,7 @@ public class TourGuidesEditor extends VerticalLayout {
 
 	TourGuideRepository tourGuideRepo;
 	private final HashSet<TourGuide> tourGuideCollectionCached = new HashSet<TourGuide>();
-	
+
 	public HashSet<TourGuide> getTourGuideCollectionCached() {
 		return tourGuideCollectionCached;
 	}
@@ -72,14 +71,18 @@ public class TourGuidesEditor extends VerticalLayout {
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
 	/**
+	 * Constructs the editor for creating/editing Tour Guides
+	 * 
 	 * @param tgr
-	 *            Autowired, constructor injection
+	 *            The TourGuideRepository
+	 * @param gbv
+	 *            The GuidedByViewer
 	 */
 	@Autowired
 	public TourGuidesEditor(TourGuideRepository tgr, GuidedByViewer gbv) {
 		this.tourGuideRepo = tgr;
 		this.guidedByViewer = gbv;
-		
+
 		// adding components
 		rowOfButtons.addComponent(createTourGuideButton);
 		rowOfButtons.addComponent(editTourGuideButton);
@@ -257,14 +260,14 @@ public class TourGuidesEditor extends VerticalLayout {
 	 */
 	public void refreshData() {
 		Iterable<TourGuide> tourGuides = tourGuideRepo.findAll();
-		if(tourGuides != null) {
+		if (tourGuides != null) {
 			tourGuideCollectionCached.clear();
 			tourGuides.forEach(tourGuideCollectionCached::add);
 			ListDataProvider<TourGuide> provider = new ListDataProvider<TourGuide>(tourGuideCollectionCached);
 			tourGuideGrid.setDataProvider(provider);
 		}
 		// tourGrid.setItems(tourCollectionCached);
-	
+
 	}
 
 	public Button getSubwindowConfirmButton() {
@@ -282,8 +285,5 @@ public class TourGuidesEditor extends VerticalLayout {
 	public BinderValidationStatus<TourGuide> getValidationStatus() {
 		return validationStatus;
 	}
-	
-	
 
-	
 }

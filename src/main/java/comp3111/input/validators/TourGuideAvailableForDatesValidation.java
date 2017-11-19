@@ -66,7 +66,7 @@ public class TourGuideAvailableForDatesValidation implements Validator<TourGuide
 	public ValidationResult apply(TourGuide value, ValueContext context) {
 		try {
 			Date startDate = Utils.localDateToDate(startDateField.getValue());
-			
+
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(startDate);
 			cal.add(Calendar.DATE, duration);

@@ -80,17 +80,8 @@ public class LineMessenger {
 	 *         (200 OK)
 	 */
 	public boolean sendToUser(String custLineId, String text, boolean keepTrackOfSent) {
-		// for testing only. in reality, can assume lineId is unique, so use
-		// findOneByLineId instead
-		Collection<Customer> col = cRepo.findByLineId(custLineId);
-		log.info("for line id [{}], there were [{}] results", custLineId, col.size());
-		Customer first = null;
-		for (Customer c : col) {
-			first = c;
-			break;
-		}
 
-		log.info("\tsending [{}] to line id: [{}], [{}]", text, custLineId, first);
+		log.info("\tsending [{}] to line id: [{}]", text, custLineId);
 		JSONObject body = null;
 		try {
 			body = new JSONObject();
@@ -113,6 +104,7 @@ public class LineMessenger {
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			log.info(e1.getMessage());
+
 			return false;
 		}
 
@@ -129,7 +121,6 @@ public class LineMessenger {
 			HttpResponse response = client.execute(postRequest);
 			log.info("send message status: " + response.getStatusLine().getStatusCode() + " "
 					+ response.getStatusLine().getReasonPhrase() + "\n" + response.getEntity().toString());
-
 			if (response.getStatusLine().getStatusCode() == 200) {
 				if (keepTrackOfSent)
 					count++;
@@ -157,6 +148,11 @@ public class LineMessenger {
 	 *         line ID (i.e. walk in customers), we ignore them
 	 */
 	public boolean sendToOffering(Offering o, String text) {
+		if (o.getId() == null) {
+			log.info("Could not send to a transient offering");
+			return false;
+		}
+
 		log.info("\tBroadcasting to all users who booked for offering [{}]", o);
 		log.info("there are [{}] booked customers", bRepo.findByOffering(o).size());
 		boolean oneFailed = false;
@@ -185,6 +181,11 @@ public class LineMessenger {
 	 *         recieved the message
 	 */
 	public boolean sendToTour(Tour t, String text) {
+		if (t.getId() == null) {
+			log.info("Could not send to a transient tour");
+			return false;
+		}
+
 		log.info("Broadcasting to all users who booked for offerings in the tour [{}]", t);
 
 		oRepo.findByTour(t);
@@ -207,6 +208,11 @@ public class LineMessenger {
 	 */
 	public boolean sendToAll(String text) {
 		log.info("Broadcasting to all known customers");
+
+		if (cRepo == null) { // mockito
+			log.info("The customer repo was null");
+			return false;
+		}
 
 		for (Customer c : cRepo.findAll()) {
 			if (!c.getLineId().isEmpty())

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -76,7 +77,6 @@ public class BookingEditorTests {
 	private Date now;
 
 	@Before
-
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		now = new Date();
@@ -136,6 +136,23 @@ public class BookingEditorTests {
 
 		assertFalse(bookingEditor.getValidationStatus().isOk());
 		assertEquals(6, bookingEditor.getValidationStatus().getFieldValidationErrors().size());
+	}
+
+	@Test
+	public void testCanEditBooking() {
+		assertFalse(bookingEditor.canEditBooking(null));
+
+		Booking tooLate = new Booking();
+		Offering tooLateOffering = new Offering();
+		tooLateOffering.setStartDate(Utils.addDate(new Date(), -10));
+		tooLate.setOffering(tooLateOffering);
+		assertFalse(bookingEditor.canEditBooking(tooLate));
+
+		Booking editable = new Booking();
+		Offering futureOffering = new Offering();
+		futureOffering.setStartDate(Utils.addDate(new Date(), 10));
+		editable.setOffering(futureOffering);
+		assertTrue(bookingEditor.canEditBooking(editable));
 	}
 
 	private void setEditorFormValues(Customer c, Offering o, String numberAdults, String numberChilden,

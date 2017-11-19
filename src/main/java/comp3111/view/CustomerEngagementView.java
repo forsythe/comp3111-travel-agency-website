@@ -43,23 +43,24 @@ import comp3111.input.editors.FilterFactory;
 import comp3111.input.editors.ProviderAndPredicate;
 
 /**
- * Generates the UI elements for the front-end side of the Customer Engagement page. 
+ * Generates the UI elements for the front-end side of the Customer Engagement
+ * page.
+ * 
  * @author kristiansuhartono
  *
  */
 @SpringView(name = CustomerEngagementView.VIEW_NAME)
 public class CustomerEngagementView extends VerticalLayout implements View {
-	private static final String BY_ALL_LINE_CUSTOMERS = "All LINE Customers";
-	private static final String BY_TOUR = "Tour";
-	private static final String BY_OFFERING = "Offering";
-	private static final String BY_SINGLE_LINE_CUSTOMER = "Single LINE Customer";
+	public static final String BY_ALL_LINE_CUSTOMERS = "All LINE Customers";
+	public static final String BY_TOUR = "Tour";
+	public static final String BY_OFFERING = "Offering";
+	public static final String BY_SINGLE_LINE_CUSTOMER = "Single LINE Customer";
 
 	public static final String VIEW_NAME = "customerEngagement";
 	private static final Logger log = LoggerFactory.getLogger(CustomerEngagementView.class);
 
 	@Autowired
 	private LineMessenger lineMessenger;
-
 	@Autowired
 	private CustomerRepository cRepo;
 	@Autowired
@@ -72,6 +73,19 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 	private NonFAQQuery selectedQuery;
 
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
+
+	// the advertising tab fields
+	private RadioButtonGroup<String> broadcastTarget;
+	private ComboBox<Customer> customerBox;
+	private ComboBox<Offering> offeringBox;
+	private ComboBox<Tour> tourBox;
+	private TextArea message;
+	private Button sendButton;
+
+	// the query tab fields
+	private Grid<NonFAQQuery> grid;
+	private TextArea replyBox;
+	private Button submitAnswerButton;
 
 	@PostConstruct
 	void init() {
@@ -95,21 +109,26 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		this.addComponent(layout);
 	}
 
-	private VerticalLayout getAdvertisingTab() {
+	/**
+	 * @return The advertising tab in the CustomerEngagementView
+	 */
+	public VerticalLayout getAdvertisingTab() {
 		FormLayout layout = new FormLayout();
-		final RadioButtonGroup<String> broadcastTarget = new RadioButtonGroup<String>("Recipient");
-		ComboBox<Customer> customerBox = new ComboBox<Customer>();
-		ComboBox<Offering> offeringBox = new ComboBox<Offering>();
-		ComboBox<Tour> tourBox = new ComboBox<Tour>();
-		TextArea message = new TextArea("Message");
-		Button send = new Button("Send");
+
+		broadcastTarget = new RadioButtonGroup<String>("Recipient");
+		customerBox = new ComboBox<Customer>();
+		offeringBox = new ComboBox<Offering>();
+		tourBox = new ComboBox<Tour>();
+
+		message = new TextArea("Message");
+		sendButton = new Button("Send");
 
 		layout.addComponent(broadcastTarget);
 		layout.addComponent(customerBox);
 		layout.addComponent(offeringBox);
 		layout.addComponent(tourBox);
 		layout.addComponent(message);
-		layout.addComponent(send);
+		layout.addComponent(sendButton);
 
 		broadcastTarget.setItems(BY_SINGLE_LINE_CUSTOMER, BY_OFFERING, BY_TOUR, BY_ALL_LINE_CUSTOMERS);
 		broadcastTarget.setSelectedItem(BY_SINGLE_LINE_CUSTOMER);
@@ -118,16 +137,20 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		offeringBox.setVisible(false);
 		tourBox.setVisible(false);
 
-		customerBox.setItems(Utils.iterableToCollection(//
-				cRepo.findAll()).stream().//
-				filter(c -> !c.getLineId().isEmpty()).//
-				sorted((c1, c2) -> c1.getId().compareTo(c2.getId())));//
+		if (cRepo.findAll() != null)// mockito
+			customerBox.setItems(Utils.iterableToCollection(//
+					cRepo.findAll()).stream().//
+					filter(c -> !c.getLineId().isEmpty()).//
+					sorted((c1, c2) -> c1.getId().compareTo(c2.getId())));//
 		// only want LINE id enabled customers
 
-		offeringBox.setItems(Utils.iterableToCollection(oRepo.findAll()).stream()
-				.sorted((o1, o2) -> o1.getId().compareTo(o2.getId())));
-		tourBox.setItems(Utils.iterableToCollection(tRepo.findAll()).stream()
-				.sorted((t1, t2) -> t1.getId().compareTo(t2.getId())));
+		if (oRepo.findAll() != null)// mockito
+			offeringBox.setItems(Utils.iterableToCollection(oRepo.findAll()).stream()
+					.sorted((o1, o2) -> o1.getId().compareTo(o2.getId())));
+
+		if (tRepo.findAll() != null)// mockito
+			tourBox.setItems(Utils.iterableToCollection(tRepo.findAll()).stream()
+					.sorted((t1, t2) -> t1.getId().compareTo(t2.getId())));
 
 		customerBox.setPopupWidth(null);
 		offeringBox.setPopupWidth(null);
@@ -158,7 +181,8 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 			}
 		});
 
-		send.addClickListener(event -> {
+		sendButton.addClickListener(event -> {
+
 			if (message.isEmpty())
 				return;
 			boolean status = false;
@@ -186,8 +210,11 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 				break;
 			}
 
-			NotificationFactory.getTopBarWarningNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
-					LineMessenger.getCounter() + " recepient(s)", 5).show(Page.getCurrent());
+			if (Page.getCurrent() != null)// mockito
+				NotificationFactory
+						.getTopBarWarningNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
+								LineMessenger.getCounter() + " recepient(s)", 5)
+						.show(Page.getCurrent());
 
 		});
 		VerticalLayout container = new VerticalLayout();
@@ -196,36 +223,80 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 	}
 
 	/**
-	 * @return
+	 * @return the broadcastTarget field
 	 */
-	private VerticalLayout getQueryTab() {
+	public RadioButtonGroup<String> getBroadcastTarget() {
+		return broadcastTarget;
+	}
+
+	/**
+	 * @return the customerBox field
+	 */
+	public ComboBox<Customer> getCustomerBox() {
+		return customerBox;
+	}
+
+	/**
+	 * @return the offeringBox field
+	 */
+	public ComboBox<Offering> getOfferingBox() {
+		return offeringBox;
+	}
+
+	/**
+	 * @return the tourBox field
+	 */
+	public ComboBox<Tour> getTourBox() {
+		return tourBox;
+	}
+
+	/**
+	 * @return the sendButton field
+	 */
+	public Button getSendButton() {
+		return sendButton;
+	}
+
+	/**
+	 * @return the message
+	 */
+	public TextArea getMessage() {
+		return message;
+	}
+
+	/**
+	 * @return The query tab, holding the nonfaqqueries
+	 */
+	public VerticalLayout getQueryTab() {
 		VerticalLayout layout = new VerticalLayout();
 
-		Grid<NonFAQQuery> grid = new Grid<NonFAQQuery>(NonFAQQuery.class);
-		TextArea replyBox = new TextArea("Response");
-		Button submit = new Button("Send");
+		grid = new Grid<NonFAQQuery>(NonFAQQuery.class);
+		replyBox = new TextArea("Response");
+		submitAnswerButton = new Button("Send");
 
 		layout.addComponent(grid);
 		layout.addComponent(replyBox);
-		layout.addComponent(submit);
+		layout.addComponent(submitAnswerButton);
 
-		submit.setEnabled(false);
+		submitAnswerButton.setEnabled(false);
 
-		grid.setDataProvider(new ListDataProvider<NonFAQQuery>(Utils.iterableToCollection(qRepo.findAll())));
+		if (qRepo.findAll() != null)// mockito
+			grid.setDataProvider(new ListDataProvider<NonFAQQuery>(Utils.iterableToCollection(qRepo.findAll())));
 		grid.removeColumn(GridCol.NONFAQQUERY_CUSTOMER_NAME);
 		grid.setColumnOrder(GridCol.NONFAQQUERY_ID, GridCol.NONFAQQUERY_CUSTOMER, GridCol.NONFAQQUERY_QUERY,
 				GridCol.NONFAQQUERY_ANSWER);
 		grid.setHeight("90%");
-		log.info("there are [{}] unresolved queries",
-				Utils.iterableToCollection(qRepo.findAll()).stream().filter(q -> q.getAnswer().isEmpty()).count());
+		if (qRepo.findAll() != null)// mockito
+			log.info("there are [{}] unresolved queries",
+					Utils.iterableToCollection(qRepo.findAll()).stream().filter(q -> q.getAnswer().isEmpty()).count());
 
 		grid.addSelectionListener(event -> {
 			if (event.getFirstSelectedItem().isPresent()) {
 				selectedQuery = event.getFirstSelectedItem().get();
-				submit.setEnabled(true);
+				submitAnswerButton.setEnabled(true);
 			} else {
 				selectedQuery = null;
-				submit.setEnabled(false);
+				submitAnswerButton.setEnabled(false);
 			}
 		});
 
@@ -282,7 +353,7 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 		grid.setWidth("100%");
 		// TODO: check that the lengths of query and answer are <=255
 
-		submit.addClickListener(event -> {
+		submitAnswerButton.addClickListener(event -> {
 			if (!replyBox.isEmpty()) {
 				LineMessenger.resetCounter();
 				boolean status = false;
@@ -290,14 +361,18 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 					status = lineMessenger.respondToQuery(selectedQuery.getCustomer().getLineId(),
 							selectedQuery.getQuery(), replyBox.getValue());
 				}
-				NotificationFactory.getTopBarWarningNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
-						LineMessenger.getCounter() + " recepient(s)", 5).show(Page.getCurrent());
+				if (Page.getCurrent() != null)// mockito
+					NotificationFactory
+							.getTopBarWarningNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
+									LineMessenger.getCounter() + " recepient(s)", 5)
+							.show(Page.getCurrent());
 
 				if (status) {
 					selectedQuery.setAnswer(replyBox.getValue());
 					qRepo.save(selectedQuery);
-					grid.setDataProvider(
-							new ListDataProvider<NonFAQQuery>(Utils.iterableToCollection(qRepo.findAll())));
+					if (qRepo.findAll() != null) // mockito
+						grid.setDataProvider(
+								new ListDataProvider<NonFAQQuery>(Utils.iterableToCollection(qRepo.findAll())));
 				}
 			}
 		});
@@ -306,9 +381,31 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 
 	}
 
-	/** 
-	 * Function is called when the view is loaded up in the browser, refreshes the data so that the tables
-	 * are updated to the newest data contents.
+	/**
+	 * @return the NonFAQQuery grid
+	 */
+	public Grid<NonFAQQuery> getGrid() {
+		return grid;
+	}
+
+	/**
+	 * @return the replyBox field
+	 */
+	public TextArea getReplyBox() {
+		return replyBox;
+	}
+
+	/**
+	 * @return the submitAnswerButton button
+	 */
+	public Button getSubmitAnswerButton() {
+		return submitAnswerButton;
+	}
+
+	/**
+	 * Function is called when the view is loaded up in the browser, refreshes the
+	 * data so that the tables are updated to the newest data contents.
+	 * 
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
