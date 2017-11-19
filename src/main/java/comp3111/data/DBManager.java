@@ -89,7 +89,7 @@ public class DBManager {
 	public Offering createOfferingForTour(Tour tour, TourGuide tg, Date startDate, String hotelName, int minCustomers,
 			int maxCustomers) throws OfferingDateUnsupportedException, TourGuideUnavailableException {
 
-		// Make sure both the tour and the tour guide are concrete entity in the
+		// Make sure both the tour and the tour guide are persistent entities in the
 		// database
 		tour = tourRepo.save(tour);
 		tg = tourGuideRepo.save(tg);
@@ -107,10 +107,10 @@ public class DBManager {
 		Offering o = offeringRepo.save(
 				new Offering(tour, tg, startDate, hotelName, minCustomers, maxCustomers, Offering.STATUS_PENDING));
 
-		o.setTour(tour);
-		o.setTourGuide(tg);
-
-		offeringRepo.save(o);
+//		o.setTour(tour);
+//		o.setTourGuide(tg);
+//
+//		offeringRepo.save(o);
 
 		log.info("successfully created offering on [{}] for tour [{}]", startDate, tour.getTourName());
 		return o;
