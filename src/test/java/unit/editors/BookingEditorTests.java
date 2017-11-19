@@ -77,7 +77,6 @@ public class BookingEditorTests {
 	private Date now;
 
 	@Before
-
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		now = new Date();
