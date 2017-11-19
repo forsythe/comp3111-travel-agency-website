@@ -186,7 +186,7 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 				break;
 			}
 
-			NotificationFactory.getTopBarNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
+			NotificationFactory.getTopBarWarningNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
 					LineMessenger.getCounter() + " recepient(s)", 5).show(Page.getCurrent());
 
 		});
@@ -290,7 +290,7 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 					status = lineMessenger.respondToQuery(selectedQuery.getCustomer().getLineId(),
 							selectedQuery.getQuery(), replyBox.getValue());
 				}
-				NotificationFactory.getTopBarNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
+				NotificationFactory.getTopBarWarningNotification("Message delivery " + (status ? " succeeded!" : " failed!"),
 						LineMessenger.getCounter() + " recepient(s)", 5).show(Page.getCurrent());
 
 				if (status) {

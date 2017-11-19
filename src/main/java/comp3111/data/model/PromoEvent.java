@@ -220,5 +220,12 @@ public class PromoEvent {
 	public String toString() {
 		return String.format("PromoEvent[id=%d, offeringId=%d, date=%s]", id, offering.getId(), triggerDate);
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof PromoEvent)
+			return ((PromoEvent)other).getId().equals(this.getId());
+		return false;
+	}
 
 }
