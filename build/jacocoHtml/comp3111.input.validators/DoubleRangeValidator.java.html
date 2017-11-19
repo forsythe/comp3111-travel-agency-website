@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DoubleRangeValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.input.validators</a> &gt; <span class="el_source">DoubleRangeValidator.java</span></div><h1>DoubleRangeValidator.java</h1><pre class="source lang-java linenums">package comp3111.input.validators;
+
+import com.vaadin.data.ValidationResult;
+import com.vaadin.data.Validator;
+import com.vaadin.data.ValueContext;
+
+import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
+
+/**
+ * Validates whether a double value is within a range
+ * 
+ * @author kristiansuhartono
+ * @version 1.0
+ * @since 2017-11-18
+ *
+ */
+public class DoubleRangeValidator implements Validator&lt;Double&gt; {
+	private double min;
+	private double max;
+
+	/**
+	 * Constructor of the validator
+	 * @param minInclusive The lower bound, inclusive
+	 * @param maxInclusive The upper bound, inclusive
+	 */
+<span class="fc" id="L26">	DoubleRangeValidator(double minInclusive, double maxInclusive) {</span>
+<span class="fc" id="L27">		this.min = minInclusive;</span>
+<span class="fc" id="L28">		this.max = maxInclusive;</span>
+<span class="fc" id="L29">	}</span>
+
+	/** 
+	 * Overrides the apply method in vaadin validators, checks whether the given value is within
+	 * the range.
+	 * @param value The double value that is going to be validated.
+	 * @param context A value context for converters. Contains relevant information for converting values. 
+	 * @see com.vaadin.data.Validator#apply(java.lang.Object, com.vaadin.data.ValueContext)
+	 */
+	@Override
+	public ValidationResult apply(Double value, ValueContext context) {
+<span class="fc bfc" id="L40" title="All 4 branches covered.">		if (value &gt;= min &amp;&amp; value &lt;= max){</span>
+<span class="fc" id="L41">			return ValidationResult.ok();</span>
+		}
+<span class="fc" id="L43">		return getValidationErrorLogged(&quot;the number must be [&quot; + min + &quot;, &quot; + max + &quot;]&quot;);</span>
+
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

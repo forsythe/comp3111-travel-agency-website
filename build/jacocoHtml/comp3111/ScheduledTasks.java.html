@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScheduledTasks.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111</a> &gt; <span class="el_source">ScheduledTasks.java</span></div><h1>ScheduledTasks.java</h1><pre class="source lang-java linenums">package comp3111;
+
+import java.time.LocalDateTime;
+import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import comp3111.data.DBManager;
+import comp3111.data.model.Offering;
+import comp3111.data.model.PromoEvent;
+import comp3111.data.repo.BookingRepository;
+import comp3111.data.repo.OfferingRepository;
+import comp3111.data.repo.PromoEventRepository;
+
+/**
+ * A class which handles running schedule functions, for example sending out
+ * Offering status updates and Promo event broadcasts
+ * 
+ * @author Forsythe
+ *
+ */
+@Component
+<span class="fc" id="L27">public class ScheduledTasks {</span>
+
+<span class="fc" id="L29">	private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);</span>
+
+	@Autowired
+	private OfferingRepository offeringRepo;
+	@Autowired
+	private BookingRepository bookingRepo;
+	@Autowired
+	private PromoEventRepository promoEventRepo;
+
+	@Autowired
+	private DBManager actionManager;
+	@Autowired
+	private LineMessenger lineMessenger;
+
+	public static final String EVERYDAY_8_AM = &quot;0 0 8 * * *&quot;;
+	public static final String EVERY_10_SECONDS = &quot;*/10 * * * * *&quot;;
+
+	/**
+	 * Checks if there are any pending offerings which have reached t=-3 days before
+	 * start. If checks if the offerings have reached the minimum required capacity
+	 * to start or not. Will also send out messages to all associated customers
+	 */
+	@Scheduled(cron = EVERY_10_SECONDS)
+	public void updatePendingOfferingStatusIfNecessary() {
+<span class="fc" id="L53">		LineMessenger.resetCounter();</span>
+<span class="fc" id="L54">		Date now = new Date();</span>
+<span class="fc" id="L55">		log.info(&quot;The time is now [{}], checking if any offerings need updating (in terms of status)&quot;,</span>
+<span class="fc" id="L56">				Utils.simpleDateFormat(now));</span>
+
+<span class="fc bfc" id="L58" title="All 2 branches covered.">		for (Offering o : offeringRepo.findByStatus(Offering.STATUS_PENDING)) {</span>
+
+			// if now &gt;= start-3
+<span class="pc bpc" id="L61" title="1 of 4 branches missed.">			if (o.getStatus().equals(Offering.STATUS_PENDING) &amp;&amp; now.after(Utils.addDate(o.getStartDate(), -3))) {</span>
+<span class="fc" id="L62">				log.info(&quot;Offering [{}] has reached t=-3 days before start!&quot;, o);</span>
+
+<span class="fc" id="L64">				int totalCustomers = actionManager.countNumberOfPaidPeopleInOffering(o);</span>
+
+<span class="fc bfc" id="L66" title="All 2 branches covered.">				if (totalCustomers &gt;= o.getMinCustomers()) {</span>
+<span class="fc" id="L67">					log.info(</span>
+							&quot;Success! Offering [{}] can be offered, having [{}] of [{}] minimum confirmed payment customers&quot;,
+<span class="fc" id="L69">							o, totalCustomers, o.getMinCustomers());</span>
+<span class="fc" id="L70">					actionManager.notifyOfferingStatus(o, true);</span>
+				} else {
+<span class="fc" id="L72">					log.info(&quot;Fail! Offering [{}] cannot be offered, having only [{}] of [{}] minimum customers&quot;, o,</span>
+<span class="fc" id="L73">							totalCustomers, o.getMinCustomers());</span>
+<span class="fc" id="L74">					actionManager.notifyOfferingStatus(o, false);</span>
+				}
+<span class="fc" id="L76">			} else {</span>
+<span class="fc" id="L77">				log.info(&quot;Offering [{}] still has time left, not updating its status yet...&quot;, o);</span>
+			}
+<span class="fc" id="L79">		}</span>
+<span class="fc" id="L80">		log.info(&quot;[{}] people were notified&quot;, LineMessenger.getCounter());</span>
+<span class="fc" id="L81">	}</span>
+
+	/**
+	 * Checks if there are any promotional events which need to be triggered (that
+	 * is to say, we have reached their triggerDate). If so, broadcasts the custom
+	 * message to everyone, and sets the PromoEvent's isTriggered to be true.
+	 */
+	@Scheduled(cron = EVERY_10_SECONDS)
+	public void updatePendingPromotionalBroadcasts() {
+<span class="fc" id="L90">		LineMessenger.resetCounter();</span>
+<span class="fc" id="L91">		Date now = Utils.localDateTimeToDate(LocalDateTime.now());</span>
+<span class="fc" id="L92">		log.info(&quot;The time is now [{}], checking if any promoevents are overdue&quot;, Utils.simpleDateFormat(now));</span>
+
+<span class="fc bfc" id="L94" title="All 2 branches covered.">		for (PromoEvent p : promoEventRepo.findByIsTriggered(false)) {</span>
+
+<span class="fc bfc" id="L96" title="All 2 branches covered.">			if (now.after(p.getTriggerDate())) {</span>
+<span class="fc" id="L97">				log.info(&quot;Time to trigger promoevent [{}]&quot;, p.getId());</span>
+<span class="fc" id="L98">				lineMessenger.sendToAll(p.getCustomMessage());</span>
+			}
+<span class="fc" id="L100">			p.setTriggered(true);</span>
+<span class="fc" id="L101">			promoEventRepo.save(p);</span>
+<span class="fc" id="L102">		}</span>
+<span class="fc" id="L103">		log.info(&quot;[{}] people were notified&quot;, LineMessenger.getCounter());</span>
+
+<span class="fc" id="L105">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

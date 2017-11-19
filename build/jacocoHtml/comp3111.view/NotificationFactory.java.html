@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NotificationFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.view</a> &gt; <span class="el_source">NotificationFactory.java</span></div><h1>NotificationFactory.java</h1><pre class="source lang-java linenums">package comp3111.view;
+
+import com.vaadin.shared.Position;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
+
+/**
+ * A factory that generates the notifications
+ * 
+ * @author kristiansuhartono
+ *
+ */
+<span class="nc" id="L13">public class NotificationFactory {</span>
+
+	/**
+	 * Constructs a yellow (warning style) notification that peeks from the top
+	 * 
+	 * @param subText
+	 *            The subtitle text
+	 * @param s
+	 *            How many seconds to display
+	 * @return The notification object
+	 */
+	public static Notification getTopBarWarningNotification(String subText, int s) {
+<span class="nc" id="L25">		return getNotification(&quot;Error!&quot;, subText, s, Notification.POSITION_CENTERED_TOP,</span>
+				Notification.TYPE_WARNING_MESSAGE);
+	}
+
+	/**
+	 * Constructs a yellow (warning style) notification that peeks from the top
+	 * 
+	 * @param mainText
+	 *            The main text of the notification
+	 * @param subText
+	 *            The subtitle text
+	 * @param s
+	 *            How many seconds to display
+	 * @return The notification object
+	 */
+	public static Notification getTopBarWarningNotification(String mainText, String subText, int s) {
+<span class="nc" id="L41">		return getNotification(mainText, subText, s, Notification.POSITION_CENTERED_TOP,</span>
+				Notification.TYPE_WARNING_MESSAGE);
+	}
+
+	/**
+	 * Constructs a yellow (warning style) notification that floats in the center of
+	 * the screen
+	 * 
+	 * @param mainText
+	 *            The main text of the notification
+	 * @param subText
+	 *            The subtitle text
+	 * @param s
+	 *            How many seconds to display
+	 * @return The notification object
+	 */
+	public static Notification getCenteredWarningNotification(String mainText, String subText, int s) {
+<span class="nc" id="L58">		return getNotification(mainText, subText, s, Notification.POSITION_CENTERED, Notification.TYPE_WARNING_MESSAGE);</span>
+	}
+
+	/**
+	 * Constructs a red (error style) notification that peeks from the top
+	 * 
+	 * @param mainText
+	 *            The main text of the notification
+	 * @param subText
+	 *            The subtitle text
+	 * @param s
+	 *            How many seconds to display
+	 * @return The notification object
+	 */
+	public static Notification getTopBarErrorNotification(String mainText, String subText, int s) {
+<span class="nc" id="L73">		return getNotification(mainText, subText, s, Notification.POSITION_CENTERED_TOP,</span>
+				Notification.TYPE_ERROR_MESSAGE);
+	}
+
+	/**
+	 * Constructs a normal success notification that peeks from the top for 3
+	 * seconds
+	 * 
+	 * @return The notification object
+	 */
+	public static Notification getTopBarSuccessNotification() {
+<span class="nc" id="L84">		return getNotification(&quot;Success!&quot;, null, 3, Notification.POSITION_CENTERED_TOP,</span>
+				Notification.TYPE_HUMANIZED_MESSAGE);
+	}
+
+	/**
+	 * Constructs a normal success notification that peeks from the top for 3
+	 * seconds
+	 * 
+	 * @param caption
+	 *            A custom caption
+	 * @return The notification object
+	 */
+	public static Notification getTopBarSuccessNotification(String caption) {
+<span class="nc" id="L97">		return getNotification(&quot;Success!&quot;, caption, 3, Notification.POSITION_CENTERED_TOP,</span>
+				Notification.TYPE_HUMANIZED_MESSAGE);
+	}
+
+	/**
+	 * Constructs a notification object
+	 * 
+	 * @param mainText
+	 *            The main text
+	 * @param subText
+	 *            The subtitle text
+	 * @param s
+	 *            How many seconds to show
+	 * @param pos
+	 *            The position to place
+	 * @param type
+	 *            The style of the notification
+	 * @return The notification
+	 */
+	public static Notification getNotification(String mainText, String subText, int s, Position pos, Type type) {
+<span class="nc" id="L117">		Notification notif = new Notification(mainText, subText, type);</span>
+<span class="nc" id="L118">		notif.setDelayMsec(s * 1000);</span>
+<span class="nc" id="L119">		notif.setPosition(pos);</span>
+<span class="nc" id="L120">		return notif;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

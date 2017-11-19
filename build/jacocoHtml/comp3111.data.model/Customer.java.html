@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Customer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.data.model</a> &gt; <span class="el_source">Customer.java</span></div><h1>Customer.java</h1><pre class="source lang-java linenums">package comp3111.data.model;
+
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+
+/**
+ * Represents a customer entity in the database.
+ * 
+ * @author Forsythe
+ *
+ */
+@Entity
+@Inheritance
+public class Customer extends Person {
+
+	private String phone;
+	private int age;
+	private String hkid;
+	private String lineId;
+
+<span class="fc" id="L21">	public Customer() {</span>
+<span class="fc" id="L22">	}</span>
+
+	public Customer(String name, int age) {
+<span class="fc" id="L25">		super(name);</span>
+<span class="fc" id="L26">		this.age = age;</span>
+<span class="fc" id="L27">	}</span>
+
+	public Customer(String name, String lineId, String phone, int age, String hkid) {
+<span class="fc" id="L30">		super(name);</span>
+<span class="fc" id="L31">		this.phone = phone;</span>
+<span class="fc" id="L32">		this.age = age;</span>
+<span class="fc" id="L33">		this.hkid = hkid;</span>
+<span class="fc" id="L34">		this.lineId = lineId;</span>
+<span class="fc" id="L35">	}</span>
+
+	public String getPhone() {
+<span class="fc" id="L38">		return phone;</span>
+	}
+
+	public void setPhone(String phone) {
+<span class="fc" id="L42">		this.phone = phone;</span>
+<span class="fc" id="L43">	}</span>
+
+	public int getAge() {
+<span class="fc" id="L46">		return age;</span>
+	}
+
+	public void setAge(int age) {
+<span class="fc" id="L50">		this.age = age;</span>
+<span class="fc" id="L51">	}</span>
+
+	public String getHkid() {
+<span class="fc" id="L54">		return hkid;</span>
+	}
+
+	public void setHkid(String hkid) {
+<span class="fc" id="L58">		this.hkid = hkid;</span>
+<span class="fc" id="L59">	}</span>
+
+	/**
+	 * @return The internal LINE ID of a user (not the human-readable username, but a long
+	 *         string of digits) which can be used by {@link comp3111.LineMessenger}
+	 *         to push messages.
+	 */
+	public String getLineId() {
+<span class="fc" id="L67">		return lineId;</span>
+	}
+
+	/**
+	 * @param lineId
+	 *            The internal LINE ID of a user (not the human-readable username,
+	 *            but a long string of digits) which can be used by
+	 *            {@link comp3111.LineMessenger} to push messages.
+	 */
+	public void setLineId(String lineId) {
+<span class="fc" id="L77">		this.lineId = lineId;</span>
+<span class="fc" id="L78">	}</span>
+
+	@Override
+	public String toString() {
+<span class="fc" id="L82">		return String.format(&quot;Customer[%s, id=%d]&quot;, getName(), getId());</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

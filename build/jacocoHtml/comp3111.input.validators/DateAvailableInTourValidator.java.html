@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DateAvailableInTourValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.input.validators</a> &gt; <span class="el_source">DateAvailableInTourValidator.java</span></div><h1>DateAvailableInTourValidator.java</h1><pre class="source lang-java linenums">package comp3111.input.validators;
+
+import com.vaadin.data.ValidationResult;
+import com.vaadin.data.Validator;
+import com.vaadin.data.ValueContext;
+import comp3111.Utils;
+import comp3111.data.model.Tour;
+
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+
+import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
+
+/**
+ * Validates whether a date is available for use in a tour.
+ * As in whether the date is legal for a certain to
+ * 
+ * @author Kristian Suhartono
+ * @version 1.0
+ * @since 2017-11-18
+ */
+public class DateAvailableInTourValidator implements Validator&lt;Date&gt; {
+
+	private Tour tour;
+
+	/**
+	 * Constructor for the validator
+	 * @param tour This is the tour object that is going to use for validation
+	 */
+<span class="fc" id="L31">	DateAvailableInTourValidator(Tour tour) {</span>
+<span class="fc" id="L32">		this.tour = tour;</span>
+<span class="fc" id="L33">	}</span>
+
+
+	/** 
+	 * Overrides the apply method in vaadin validators, checks whether the given value
+	 * is valid in the tour object that the validator has.
+	 * 
+	 * @param value The value that is going to be validated
+	 * @param context A value context for converters. Contains relevant information for converting values. 
+	 * @see com.vaadin.data.Validator#apply(java.lang.Object, com.vaadin.data.ValueContext)
+	 */
+	@Override
+	public ValidationResult apply(Date value, ValueContext context) {
+
+		// check that the day of week is correct
+<span class="fc" id="L48">		Collection&lt;Integer&gt; supportedDaysOfWeek = tour.getAllowedDaysOfWeek();</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">		if (!supportedDaysOfWeek.isEmpty()) {</span>
+<span class="fc" id="L50">			Calendar cal = Calendar.getInstance();</span>
+<span class="fc" id="L51">			cal.setTime(value);</span>
+<span class="fc" id="L52">			int startDateDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);</span>
+
+			// Sunday: 1, Monday: 2, Tuesday: 3...
+<span class="fc bfc" id="L55" title="All 2 branches covered.">			if (!supportedDaysOfWeek.contains(startDateDayOfWeek)) {</span>
+<span class="fc" id="L56">				StringBuilder msgBuilder = new StringBuilder();</span>
+<span class="fc" id="L57">				msgBuilder.append(&quot;only the following days are supported: &quot;);</span>
+<span class="fc" id="L58">				msgBuilder.append(Utils.integerCollectionToString(supportedDaysOfWeek));</span>
+<span class="fc" id="L59">				return getValidationErrorLogged(msgBuilder.toString());</span>
+			}
+		}
+
+<span class="fc" id="L63">		Collection&lt;Date&gt; supportedDates = tour.getAllowedDates();</span>
+<span class="fc bfc" id="L64" title="All 4 branches covered.">		if (!supportedDates.isEmpty() &amp;&amp; !supportedDates.contains(value)) {</span>
+<span class="fc" id="L65">			StringBuilder msgBuilder = new StringBuilder();</span>
+<span class="fc" id="L66">			msgBuilder.append(&quot;only the following dates are supported: &quot;);</span>
+
+<span class="fc" id="L68">			msgBuilder.append(Utils.dateCollectionToString(supportedDates));</span>
+<span class="fc" id="L69">			return getValidationErrorLogged(msgBuilder.toString());</span>
+		}
+
+<span class="fc" id="L72">		return ValidationResult.ok();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

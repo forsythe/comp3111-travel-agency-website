@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PromoEvent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.data.model</a> &gt; <span class="el_source">PromoEvent.java</span></div><h1>PromoEvent.java</h1><pre class="source lang-java linenums">package comp3111.data.model;
+
+import java.util.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+
+import comp3111.Utils;
+
+/**
+ * Represents a promo event associated with an offering. Automatically triggers
+ * at {@link PromoEvent#getTriggerDate()}, and will send out a custom message to
+ * all known customers.
+ * 
+ * @author Forsythe
+ *
+ */
+@Entity
+public class PromoEvent {
+
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	private Date triggerDate;
+	private String customMessage;
+	private String promoCode;
+
+	/**
+	 * [0, 1.0]
+	 */
+	private double discount;
+
+	/**
+	 * One this reaches 0, the promo code can no longer be redeemed
+	 */
+	private int promoCodeUsesLeft;
+
+	/**
+	 * For each customer who tries to redeem this promo code, how many people can
+	 * they book for at most? (i.e. including adults, children, toddlers)
+	 */
+	private int maxReservationsPerCustomer;
+
+	/**
+	 * Keep track of whether we've announced the custom message yet
+	 */
+	private boolean isTriggered;
+
+	@OneToOne(fetch = FetchType.EAGER) // one promoevent to 1 offering
+	private Offering offering;
+
+<span class="fc" id="L56">	public PromoEvent() {</span>
+
+<span class="fc" id="L58">	}</span>
+
+	/**
+	 * Constructs a transient PromoEvent object.
+	 * 
+	 * @param triggerDate
+	 *            The date and time at which the promotional message will be
+	 *            broadcasted to all customers
+	 * @param customMessage
+	 *            A custom message to be sent to everyone
+	 * @param promoCode
+	 *            A promo code which can be used to make a booking at a discount
+	 *            price
+	 * @param discount
+	 *            A double between [0, 1.0] indicating the discount amount. E.g. 1.0
+	 *            for full price (no discount)
+	 * @param promoCodeUsesLeft
+	 *            How many times this promo code may be used
+	 * @param maxReservationsPerCustomer
+	 *            The maximum number of spots each customer may reserve when making
+	 *            a booking (i.e. {@link Booking#getTotalNumberOfPeople()} can be at
+	 *            most this value)
+	 * @param offering
+	 *            The offering for which this promo code can be used to make
+	 *            bookings for
+	 */
+	public PromoEvent(Date triggerDate, String customMessage, String promoCode, double discount, int promoCodeUsesLeft,
+<span class="fc" id="L85">			int maxReservationsPerCustomer, Offering offering) {</span>
+<span class="fc" id="L86">		this.triggerDate = triggerDate;</span>
+<span class="fc" id="L87">		this.customMessage = customMessage;</span>
+<span class="fc" id="L88">		this.promoCode = promoCode;</span>
+<span class="fc" id="L89">		this.discount = discount;</span>
+<span class="fc" id="L90">		this.promoCodeUsesLeft = promoCodeUsesLeft;</span>
+<span class="fc" id="L91">		this.maxReservationsPerCustomer = maxReservationsPerCustomer;</span>
+<span class="fc" id="L92">		this.offering = offering;</span>
+<span class="fc" id="L93">		isTriggered = false;</span>
+<span class="fc" id="L94">	}</span>
+
+	public Long getId() {
+<span class="fc" id="L97">		return id;</span>
+	}
+
+	public void setId(Long id) {
+<span class="fc" id="L101">		this.id = id;</span>
+<span class="fc" id="L102">	}</span>
+
+	public Date getTriggerDate() {
+<span class="fc" id="L105">		return triggerDate;</span>
+	}
+
+	public void setTriggerDate(Date triggerDate) {
+<span class="fc" id="L109">		this.triggerDate = triggerDate;</span>
+<span class="fc" id="L110">	}</span>
+
+	public String getCustomMessage() {
+<span class="fc" id="L113">		return customMessage;</span>
+	}
+
+	public void setCustomMessage(String customMessage) {
+<span class="fc" id="L117">		this.customMessage = customMessage;</span>
+<span class="fc" id="L118">	}</span>
+
+	public String getPromoCode() {
+<span class="fc" id="L121">		return promoCode;</span>
+	}
+
+	public void setPromoCode(String promoCode) {
+<span class="fc" id="L125">		this.promoCode = promoCode;</span>
+<span class="fc" id="L126">	}</span>
+
+	/**
+	 * @return A double between [0, 1.0] indicating the discount multiplier. 1.0
+	 *         indicates full price (no discount).
+	 */
+	public double getDiscount() {
+<span class="fc" id="L133">		return discount;</span>
+	}
+
+	/**
+	 * @param discount
+	 *            A double between [0, 1.0] indicating the discount multiplier. 1.0
+	 *            indicates full price (no discount).
+	 */
+	public void setDiscount(double discount) {
+<span class="fc" id="L142">		this.discount = discount;</span>
+<span class="fc" id="L143">	}</span>
+
+	/**
+	 * @return How many more times this promo code may be used. When it reaches 0,
+	 *         the promo event is considered to have ended.
+	 */
+	public int getPromoCodeUsesLeft() {
+<span class="fc" id="L150">		return promoCodeUsesLeft;</span>
+	}
+
+	/**
+	 * @param promoCodeUsesLeft
+	 *            How many times this promo code may be used.
+	 */
+	public void setPromoCodeUsesLeft(int promoCodeUsesLeft) {
+<span class="fc" id="L158">		this.promoCodeUsesLeft = promoCodeUsesLeft;</span>
+<span class="fc" id="L159">	}</span>
+
+	/**
+	 * @return The maximum number of spots each customer may reserve when making a
+	 *         booking using this promo code (i.e.
+	 *         {@link Booking#getTotalNumberOfPeople()} can be at most this value)
+	 */
+	public int getMaxReservationsPerCustomer() {
+<span class="fc" id="L167">		return maxReservationsPerCustomer;</span>
+	}
+
+	/**
+	 * @param maxReservationsPerCustomer
+	 *            The maximum number of spots each customer may reserve when making
+	 *            a booking using this promo code (i.e.
+	 *            {@link Booking#getTotalNumberOfPeople()} can be at most this
+	 *            value)
+	 */
+	public void setMaxReservationsPerCustomer(int maxReservationsPerCustomer) {
+<span class="fc" id="L178">		this.maxReservationsPerCustomer = maxReservationsPerCustomer;</span>
+<span class="fc" id="L179">	}</span>
+
+	public Offering getOffering() {
+<span class="fc" id="L182">		return offering;</span>
+	}
+
+	public void setOffering(Offering offering) {
+<span class="fc" id="L186">		this.offering = offering;</span>
+<span class="fc" id="L187">	}</span>
+
+	/**
+	 * @return Whether or not the event has already been triggered, and the custom
+	 *         message delivered to everyone.
+	 */
+	public boolean isTriggered() {
+<span class="fc" id="L194">		return isTriggered;</span>
+	}
+
+	/**
+	 * @param hasTriggered
+	 *            Whether or not the event has already been triggered, and the
+	 *            custom message delivered to everyone.
+	 */
+	public void setTriggered(boolean hasTriggered) {
+<span class="fc" id="L203">		this.isTriggered = hasTriggered;</span>
+<span class="fc" id="L204">	}</span>
+
+	@Override
+	public String toString() {
+<span class="fc" id="L208">		return String.format(&quot;PromoEvent[id=%d, offeringId=%d, date=%s]&quot;, id, offering.getId(), triggerDate);</span>
+	}
+
+	@Override
+	public boolean equals(Object other) {
+<span class="fc bfc" id="L213" title="All 2 branches covered.">		if (other instanceof PromoEvent)</span>
+<span class="fc" id="L214">			return ((PromoEvent) other).getId().equals(this.getId());</span>
+<span class="fc" id="L215">		return false;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
