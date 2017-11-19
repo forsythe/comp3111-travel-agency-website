@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(properties = "scheduling.enabled=false", classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class SuggestionTests {
     @Autowired
     SuggestTour suggestTour;
