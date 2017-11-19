@@ -506,7 +506,7 @@ public class DBManagerTests {
 
 		// now a second one
 		Tour tour2 = new Tour("Shimen Forest", "Color ponds...", 2, 0.8, 0, 499, 599);
-		tour2.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(Calendar.MONDAY, Calendar.SUNDAY)));
+		tour2.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7)));
 
 		Offering o2 = dbManager.createOfferingForTour(tour2, tg1, Utils.addDate(now, 50), "Hotel chep", 4, 20);
 
