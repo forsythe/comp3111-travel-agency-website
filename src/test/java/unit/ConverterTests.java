@@ -20,8 +20,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class ConverterTests {
 
     @Test

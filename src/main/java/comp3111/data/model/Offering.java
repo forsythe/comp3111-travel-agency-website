@@ -165,22 +165,6 @@ public class Offering {
 		return cal.getTime();
 	}
 
-	@Override
-	public String toString() {
-		try {
-			return String.format("Offering[id=%d, %s, tour=%s]", id, Utils.simpleDateFormat(startDate), this.tour.getTourName());
-		}catch (NullPointerException e){
-			return "null";
-		}
-	}
-
-	@Override
-	public boolean equals(Object other) {
-		if (other instanceof Offering)
-			return other != null && this.getId() != null && ((Offering) other).getId().equals(this.getId());
-		return false;
-	}
-
 	// Helper functions for vaadin columns
 	public String getTourGuideName() {
 		return this.tourGuide.getName();
@@ -202,6 +186,23 @@ public class Offering {
 	 */
 	public String getStartDateString() {
 		return Utils.simpleDateFormat(this.getStartDate());
+	}
+
+	@Override
+	public String toString() {
+		try {
+			return String.format("Offering[id=%d, %s, tour=%s]", id, Utils.simpleDateFormat(startDate),
+					this.tour.getTourName());
+		} catch (NullPointerException e) {
+			return "null";
+		}
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof Offering)
+			return other != null && this.getId() != null && ((Offering) other).getId().equals(this.getId());
+		return false;
 	}
 
 }
