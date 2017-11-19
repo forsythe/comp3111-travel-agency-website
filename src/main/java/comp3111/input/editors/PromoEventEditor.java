@@ -45,6 +45,7 @@ import comp3111.view.NotificationFactory;
 
 /**
  * Represents the promo event editor in PromoEventManagementView
+ * 
  * @author Forsythe
  *
  */
@@ -58,25 +59,37 @@ public class PromoEventEditor extends VerticalLayout {
 
 	private PromoEvent selectedEvent;
 
-	@Autowired
+	// subwindow fields
+	private ComboBox<Offering> offering;
+	private DateTimeField triggerDate;
+	private TextField discountMultiplier;
+	private TextField maxReservationsPerCustomer;
+	private TextField promoCode;
+	private TextField promoCodeUses;
+	private TextArea customMessage;
+
+	private Button confirmButton;
+	private BinderValidationStatus<PromoEvent> validationStatus;
+
 	private BookingRepository bookingRepo;
-	@Autowired
 	private CustomerRepository customerRepo;
-	@Autowired
 	private OfferingRepository offeringRepo;
-	@Autowired
 	private PromoEventRepository promoEventRepo;
-	@Autowired
-	private DBManager actionManager;
+	private DBManager dbManager;
+
 	private final HashMap<String, ProviderAndPredicate<?, ?>> gridFilters = new HashMap<String, ProviderAndPredicate<?, ?>>();
 
-
 	/**
-	 * @param per Autowired, constructor injection
+	 * Autowired constructor injection. Don't call it manually.
 	 */
 	@Autowired
-	public PromoEventEditor(PromoEventRepository per) {
+	public PromoEventEditor(BookingRepository br, CustomerRepository cr, OfferingRepository or,
+			PromoEventRepository per, DBManager dbm) {
+		this.bookingRepo = br;
+		this.customerRepo = cr;
+		this.offeringRepo = or;
 		this.promoEventRepo = per;
+		this.dbManager = dbm;
 
 		Button createEventButton = new Button("Create new promotional event");
 		Button editEventButton = new Button("Edit promotional event");
@@ -92,8 +105,9 @@ public class PromoEventEditor extends VerticalLayout {
 		this.addComponent(rowOfButtons);
 
 		// get from GridCol
-		eventGrid.setItems(Utils.iterableToCollection(promoEventRepo.findAll()).stream()
-				.sorted((b1, b2) -> b1.getId().compareTo(b2.getId())));
+		if (promoEventRepo.findAll() != null) // mockito
+			eventGrid.setItems(Utils.iterableToCollection(promoEventRepo.findAll()).stream()
+					.sorted((b1, b2) -> b1.getId().compareTo(b2.getId())));
 
 		eventGrid.setWidth("100%");
 		eventGrid.setSelectionMode(SelectionMode.SINGLE);
@@ -109,17 +123,17 @@ public class PromoEventEditor extends VerticalLayout {
 				createEventButton.setEnabled(true);
 			}
 		});
-		
-		eventGrid.removeColumn(GridCol.PROMOEVENT_TRIGGER_DATE); 
+
+		eventGrid.removeColumn(GridCol.PROMOEVENT_TRIGGER_DATE);
 		eventGrid.removeColumn(GridCol.PROMOEVENT_OFFERING);
-		
-		eventGrid.setColumnOrder(GridCol.PROMOEVENT_IS_TRIGGERED, GridCol.PROMOEVENT_ID, GridCol.PROMOEVENT_OFFERING_ID, 
+
+		eventGrid.setColumnOrder(GridCol.PROMOEVENT_IS_TRIGGERED, GridCol.PROMOEVENT_ID, GridCol.PROMOEVENT_OFFERING_ID,
 				GridCol.PROMOEVENT_CUSTOM_MESSAGE, GridCol.PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER,
-				GridCol.PROMOEVENT_PROMO_CODE, GridCol.PROMOEVENT_PROMO_CODE_USES_LEFT, 
-				GridCol.PROMOEVENT_DISCOUNT, GridCol.PROMOEVENT_TRIGGER_DATE_STRING, GridCol.PROMOEVENT_IS_TRIGGERED);
+				GridCol.PROMOEVENT_PROMO_CODE, GridCol.PROMOEVENT_PROMO_CODE_USES_LEFT, GridCol.PROMOEVENT_DISCOUNT,
+				GridCol.PROMOEVENT_TRIGGER_DATE_STRING, GridCol.PROMOEVENT_IS_TRIGGERED);
 
 		HeaderRow filterRow = eventGrid.appendHeaderRow();
-		
+
 		for (Column<PromoEvent, ?> col : eventGrid.getColumns()) {
 			col.setMinimumWidth(160);
 			col.setHidable(true);
@@ -183,9 +197,15 @@ public class PromoEventEditor extends VerticalLayout {
 		});
 	}
 
-	// Check whether a promo event is editable or not based on offering start date
-	// and current date
-	private boolean canEditEvent(PromoEvent event) {
+	/**
+	 * Check whether a promo event is editable or not based on offering start date
+	 * and current date
+	 * 
+	 * @param event
+	 *            The promoevent
+	 * @return Whether it is editable
+	 */
+	public boolean canEditEvent(PromoEvent event) {
 		if (event == null)
 			return true;
 
@@ -193,38 +213,37 @@ public class PromoEventEditor extends VerticalLayout {
 		Date triggerDate = event.getTriggerDate();
 
 		if (today.after(triggerDate)) {
-			NotificationFactory
-					.getTopBarWarningNotification(
-							"It's too late to edit this promotion, it triggered on: " + triggerDate, 5)
-					.show(Page.getCurrent());
+			if (Page.getCurrent() != null) // mockito
+				NotificationFactory
+						.getTopBarWarningNotification(
+								"It's too late to edit this promotion, it triggered on: " + triggerDate, 5)
+						.show(Page.getCurrent());
 			return false;
 		}
 		return true;
 	}
 
-	private Window getSubwindow(PromoEvent promoEvent) {
+	/**
+	 * Gets the popup window for creating/editing PromoEvents
+	 * 
+	 * @param promoEvent
+	 *            A transient or detached PromoEvent object
+	 * @return The window
+	 */
+	public Window getSubwindow(PromoEvent promoEvent) {
 		Window subwindow;
 
 		// Creating the confirm button
-		Button confirmButton = new Button("Confirm");
+		confirmButton = new Button("Confirm");
 		confirmButton.setId("confirm_event");
 
-		final ComboBox<Offering> offering = new ComboBox<Offering>("Offering");
-		DateTimeField triggerDate = Utils.getDateTimeFieldWithOurLocale("Trigger Date");
-		TextField discountMultiplier = new TextField("Discount Multiplier");
-		TextField maxReservationsPerCustomer = new TextField("Max Reservations/Customer");
-		TextField promoCode = new TextField("Promo Code");
-		TextField promoCodeUses = new TextField("Promo Code Max Use Count");
-		TextArea customMessage = new TextArea("Message");
-
-		// customer.setId("cb_customer");
-		// offering.setId("cb_offering");
-		// numberAdults.setId("tf_number_of_adults");
-		// numberChildren.setId("tf_number_of_children");
-		// numberToddlers.setId("tf_number_of_toddlers");
-		// amountPaid.setId("tf_amount_paid");
-		// specialRequest.setId("tf_special_request");
-		// paymentStatus.setId("cb_payment_status");
+		offering = new ComboBox<Offering>("Offering");
+		triggerDate = Utils.getDateTimeFieldWithOurLocale("Trigger Date");
+		discountMultiplier = new TextField("Discount Multiplier");
+		maxReservationsPerCustomer = new TextField("Max Reservations/Customer");
+		promoCode = new TextField("Promo Code");
+		promoCodeUses = new TextField("Promo Code Max Use Count");
+		customMessage = new TextArea("Message");
 
 		offering.setPopupWidth(null);
 
@@ -255,7 +274,7 @@ public class PromoEventEditor extends VerticalLayout {
 		form.addComponent(customMessage);
 
 		if (promoEvent.getId() != null) {
-			//Old promo code cannot be changed to make our life easier
+			// Old promo code cannot be changed to make our life easier
 			promoCode.setReadOnly(true);
 		}
 
@@ -264,8 +283,9 @@ public class PromoEventEditor extends VerticalLayout {
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
 		form.addComponent(buttonActions);
 
-		offering.setItems(Utils.iterableToCollection(offeringRepo.findAll()).stream()
-				.sorted((c1, c2) -> c1.getId().compareTo(c2.getId())));
+		if (offeringRepo.findAll() != null) // mockito
+			offering.setItems(Utils.iterableToCollection(offeringRepo.findAll()).stream()
+					.sorted((c1, c2) -> c1.getId().compareTo(c2.getId())));
 
 		Binder<PromoEvent> binder = new Binder<PromoEvent>();
 
@@ -289,7 +309,7 @@ public class PromoEventEditor extends VerticalLayout {
 				.withValidator(ValidatorFactory.getIntegerRangeValidator(1))
 				.bind(PromoEvent::getMaxReservationsPerCustomer, PromoEvent::setMaxReservationsPerCustomer);
 
-		//For old promo event, the code cannot be changed to make our life easier
+		// For old promo event, the code cannot be changed to make our life easier
 		binder.forField(promoCode).asRequired(Utils.generateRequiredError())
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.bind(PromoEvent::getPromoCode, PromoEvent::setPromoCode);
@@ -306,7 +326,7 @@ public class PromoEventEditor extends VerticalLayout {
 		binder.setBean(promoEvent);
 
 		confirmButton.addClickListener(event -> {
-			BinderValidationStatus<PromoEvent> validationStatus = binder.validate();
+			validationStatus = binder.validate();
 
 			String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);
 
@@ -314,9 +334,10 @@ public class PromoEventEditor extends VerticalLayout {
 				binder.writeBeanIfValid(promoEvent);
 				log.info("About to save promo event [{}]", promoEvent);
 
-				if (promoEvent.getId() == null && promoEventRepo.findOneByPromoCode(promoEvent.getPromoCode()) != null) {
+				if (promoEvent.getId() == null
+						&& promoEventRepo.findOneByPromoCode(promoEvent.getPromoCode()) != null) {
 					errors += "Promo code already used!\n";
-				}else{
+				} else {
 					promoEventRepo.save(promoEvent);
 					if (promoEvent.getId() == null) {
 						log.info("Saved a new promo event [{}] successfully", promoEvent);
@@ -324,16 +345,17 @@ public class PromoEventEditor extends VerticalLayout {
 						log.info("Saved an edited booking [{}] successfully", promoEvent);
 					}
 
-
 					binder.removeBean();
 					this.refreshData();
 					subwindow.close();
-					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
+					if (Page.getCurrent() != null) // mockito
+						NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());
 
 					return; // This return skip the error reporting procedure below
 				}
 			}
-			NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
+			if (Page.getCurrent() != null) // mockito
+				NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());
 
 		});
 
@@ -345,9 +367,74 @@ public class PromoEventEditor extends VerticalLayout {
 	 */
 	public void refreshData() {
 
-		ListDataProvider<PromoEvent> provider = new ListDataProvider<>(
-				Utils.iterableToCollection(promoEventRepo.findAll()));
-		eventGrid.setDataProvider(provider);
+		if (promoEventRepo.findAll() != null) {// mockito
+			ListDataProvider<PromoEvent> provider = new ListDataProvider<>(
+					Utils.iterableToCollection(promoEventRepo.findAll()));
+			eventGrid.setDataProvider(provider);
+		}
+	}
+
+	/**
+	 * @return the offering field
+	 */
+	public ComboBox<Offering> getOffering() {
+		return offering;
+	}
+
+	/**
+	 * @return the triggerDate field
+	 */
+	public DateTimeField getTriggerDate() {
+		return triggerDate;
+	}
+
+	/**
+	 * @return the discountMultiplier field
+	 */
+	public TextField getDiscountMultiplier() {
+		return discountMultiplier;
+	}
+
+	/**
+	 * @return the maxReservationsPerCustomer field
+	 */
+	public TextField getMaxReservationsPerCustomer() {
+		return maxReservationsPerCustomer;
+	}
+
+	/**
+	 * @return the promoCode field
+	 */
+	public TextField getPromoCode() {
+		return promoCode;
+	}
+
+	/**
+	 * @return the promoCodeUses field
+	 */
+	public TextField getPromoCodeUses() {
+		return promoCodeUses;
+	}
+
+	/**
+	 * @return the customMessage field
+	 */
+	public TextArea getCustomMessage() {
+		return customMessage;
+	}
+
+	/**
+	 * @return the confirmButton
+	 */
+	public Button getConfirmButton() {
+		return confirmButton;
+	}
+
+	/**
+	 * @return the validationStatus
+	 */
+	public BinderValidationStatus<PromoEvent> getValidationStatus() {
+		return validationStatus;
 	}
 
 }
