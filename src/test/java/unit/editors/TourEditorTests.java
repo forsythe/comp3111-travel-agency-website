@@ -35,7 +35,9 @@ import comp3111.input.editors.TourEditor;
  * Otherwise, this is way faster.
  */
 // @RunWith(SpringRunner.class)
-// @SpringBootTest(classes = Application.class)
+// @SpringBootTest(classes = Application.class, properties =
+// "scheduling.enabled=false")
+
 public class TourEditorTests {
 
 	// @Autowired

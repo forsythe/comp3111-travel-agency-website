@@ -51,7 +51,7 @@ import comp3111.input.exceptions.TourGuideUnavailableException;
 import comp3111.input.exceptions.UsernameTakenException;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(properties = "scheduling.enabled=false", classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 //@Ignore("all works, but temporarily pausing because my phone cant handle")
 public class DBManagerTests {
 
@@ -96,7 +96,7 @@ public class DBManagerTests {
 
 	@Before // called before each test
 	public void setUp() {
-		dbManager.deleteAll();
+		//dbManager.deleteAll();
 
 		c1 = new Customer(C1_NAME, 30);
 		c2 = new Customer(C2_NAME, 30);

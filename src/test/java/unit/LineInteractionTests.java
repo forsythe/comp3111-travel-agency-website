@@ -50,9 +50,7 @@ import comp3111.input.exceptions.OfferingOutOfRoomException;
 import comp3111.input.exceptions.TourGuideUnavailableException;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-// @Ignore("it works, but ignoring temporarily beacuse my phone cant handle the
-// spam")
+@SpringBootTest(properties = "scheduling.enabled=false", classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class LineInteractionTests {
 	private static final Logger log = LoggerFactory.getLogger(LineInteractionTests.class);
 
