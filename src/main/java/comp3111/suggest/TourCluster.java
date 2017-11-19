@@ -154,6 +154,48 @@ public class TourCluster {
                     });
         }
         loadDoc2VecModel();
+        secondCluster();
+    }
+
+    private void secondCluster(){
+        KMeansClustering kmc = KMeansClustering.setup(clusterCount, maxIterationCount, distanceMeasure);
+
+        List<Point> pointsLst = new ArrayList<>();
+        generateCustomerTreeMap();
+
+        {
+            Iterable<Tour> tourIterable = tourRepo.findAll();
+            tourIterable.forEach(tour -> {
+                float customerVector[] = getCustomerVector(tour);
+                INDArray desVec = paragraphVectors.inferVector(tour.getDescription());
+                INDArray vector = Nd4j.hstack(Nd4j.create(customerVector), desVec.div(10));
+                Point pt = new Point(tour.getTourName(), vector);
+                pointsLst.add(pt);
+            });
+        }
+
+        tourClusterSet = kmc.applyTo(pointsLst);
+        clusterIDToTour = new TreeMap<>();
+        List<Cluster> clusterList = tourClusterSet.getClusters();
+        for(Cluster c: clusterList) {
+            Point center = c.getCenter();
+            System.out.print(center.getId());
+            System.out.println(center.getArray());
+
+            clusterIDToTour.put(c.getId(), new ArrayList<>());
+        }
+
+        {
+            //Put all the tours into clusters
+            Iterable<Tour> tourIterable = tourRepo.findAll();
+            ArrayList<Tour> tempList = new ArrayList<>();
+            tourIterable.forEach(tempList::add);
+            IntStream.range(0, tempList.size())
+                    .forEach(index -> {
+                        clusterIDToTour.get(getClusterForTour(tempList.get(index)).getId()).add(tempList.get(index));
+                    });
+        }
+        loadDoc2VecModel();
     }
 
     /**
