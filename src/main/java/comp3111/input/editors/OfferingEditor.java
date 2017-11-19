@@ -380,7 +380,7 @@ public class OfferingEditor extends VerticalLayout {
 			}
 		});
 
-		getSubwindowConfirmButton().addClickListener(event -> {
+		subwindowConfirmButton.addClickListener(event -> {
 			validationStatus = binder.validate();
 
 			String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);
