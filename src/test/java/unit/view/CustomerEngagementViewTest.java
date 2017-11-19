@@ -90,6 +90,7 @@ public class CustomerEngagementViewTest {
 
 		cev.getBroadcastTarget().setValue(CustomerEngagementView.BY_OFFERING);
 		cev.getSendButton().click();
+
 		cev.getOfferingBox().setValue(new Offering());
 		cev.getSendButton().click();
 

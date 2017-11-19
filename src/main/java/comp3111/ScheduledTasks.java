@@ -86,7 +86,6 @@ public class ScheduledTasks {
 	 * message to everyone, and sets the PromoEvent's isTriggered to be true.
 	 */
 	@Scheduled(cron = EVERY_10_SECONDS)
-
 	public void updatePendingPromotionalBroadcasts() {
 		LineMessenger.resetCounter();
 		Date now = Utils.localDateTimeToDate(LocalDateTime.now());
