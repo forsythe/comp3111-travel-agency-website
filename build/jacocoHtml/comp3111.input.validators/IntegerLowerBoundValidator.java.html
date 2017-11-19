@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IntegerLowerBoundValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.input.validators</a> &gt; <span class="el_source">IntegerLowerBoundValidator.java</span></div><h1>IntegerLowerBoundValidator.java</h1><pre class="source lang-java linenums">package comp3111.input.validators;
+
+import com.vaadin.data.ValidationResult;
+import com.vaadin.data.Validator;
+import com.vaadin.data.ValueContext;
+
+import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
+
+/**
+ * Validates whether an integer value is larger than a lower bound or not
+ * 
+ * @author kristiansuhartono
+ * @version 1.0
+ * @since 2017-11-18
+ */
+public class IntegerLowerBoundValidator implements Validator&lt;Integer&gt; {
+	private int min;
+
+	/**
+	 * The constructor of the validator
+	 * 
+	 * @param minInclusive
+	 *            The lower bound integer value, inclusive
+	 */
+<span class="fc" id="L25">	IntegerLowerBoundValidator(int minInclusive) {</span>
+<span class="fc" id="L26">		this.min = minInclusive;</span>
+<span class="fc" id="L27">	}</span>
+
+	/**
+	 * Overrides the apply method in vaadin validators, checks whether the value is
+	 * larger than the lower bound
+	 * 
+	 * @param value
+	 *            The integer value that is going to be validated.
+	 * @param context
+	 *            A value context for converters. Contains relevant information for
+	 *            converting values.
+	 * @see com.vaadin.data.Validator#apply(java.lang.Object,
+	 *      com.vaadin.data.ValueContext)
+	 */
+	@Override
+	public ValidationResult apply(Integer value, ValueContext context) {
+<span class="fc bfc" id="L43" title="All 2 branches covered.">		if (value &gt;= min)</span>
+<span class="fc" id="L44">			return ValidationResult.ok();</span>
+<span class="fc" id="L45">		return getValidationErrorLogged(&quot;the integer must be &gt;= &quot; + min);</span>
+
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

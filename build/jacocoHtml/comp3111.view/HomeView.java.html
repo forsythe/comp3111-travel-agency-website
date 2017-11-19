@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HomeView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.view</a> &gt; <span class="el_source">HomeView.java</span></div><h1>HomeView.java</h1><pre class="source lang-java linenums">package comp3111.view;
+
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
+
+import comp3111.Utils;
+import comp3111.data.model.Booking;
+import comp3111.data.model.Offering;
+import comp3111.data.model.Tour;
+import comp3111.data.repo.BookingRepository;
+import comp3111.data.repo.CustomerRepository;
+import comp3111.data.repo.NonFAQQueryRepository;
+import comp3111.data.repo.OfferingRepository;
+import comp3111.data.repo.TourRepository;
+
+/**
+ * Generates the UI elements for the front-end side of the Home page
+ * @author kristiansuhartono
+ *
+ */
+@SpringView(name = HomeView.VIEW_NAME)
+// @UIScope
+@Scope(&quot;prototype&quot;) // needed to make this an error view (default fallback view)
+<span class="nc" id="L33">public class HomeView extends VerticalLayout implements View {</span>
+	public static final String VIEW_NAME = &quot;&quot;;
+
+	@Autowired
+	private CustomerRepository cRepo;
+	@Autowired
+	private BookingRepository bRepo;
+	@Autowired
+	private OfferingRepository oRepo;
+	@Autowired
+	private TourRepository tRepo;
+	@Autowired
+	private NonFAQQueryRepository qRepo;
+
+	@PostConstruct
+	void init() {
+<span class="nc" id="L49">		addComponent(new Label(&quot;This is the home view. Here you will find some nice summary information.&quot;));</span>
+
+<span class="nc" id="L51">		addComponent(new Label(&quot;There are currently &quot; + Utils.iterableToCollection(cRepo.findAll()).size()</span>
+				+ &quot; customers in our system. &quot;));
+
+<span class="nc" id="L54">		int numChildren = 0;</span>
+<span class="nc" id="L55">		int numToddlers = 0;</span>
+<span class="nc" id="L56">		int numAdults = 0;</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">		for (Booking b : bRepo.findAll()) {</span>
+<span class="nc" id="L58">			numChildren += b.getNumChildren();</span>
+<span class="nc" id="L59">			numToddlers += b.getNumToddlers();</span>
+<span class="nc" id="L60">			numAdults += b.getNumAdults();</span>
+<span class="nc" id="L61">		}</span>
+
+<span class="nc" id="L63">		addComponent(new Label(&quot;There are &quot; + numToddlers + &quot; toddlers, &quot; + numChildren + &quot; children, &quot; + numAdults</span>
+				+ &quot; adults enrolled in our system.&quot;));
+
+<span class="nc" id="L66">		addComponent(new Label(&quot;We currently offer &quot; + Utils.iterableToCollection(bRepo.findAll()).size()</span>
+<span class="nc" id="L67">				+ &quot; booking(s) for &quot; + Utils.iterableToCollection(oRepo.findAll()).size() + &quot; offering(s) across &quot;</span>
+<span class="nc" id="L68">				+ Utils.iterableToCollection(tRepo.findAll()).size() + &quot; tour(s)&quot;));</span>
+
+<span class="nc" id="L70">		int maxCustomersPerTour = 0;</span>
+<span class="nc" id="L71">		Tour mostPopTour = null;</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">		for (Tour t : tRepo.findAll()) {</span>
+<span class="nc" id="L73">			int amt = 0;</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">			for (Offering o : oRepo.findByTour(t)) {</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">				for (Booking b : bRepo.findByOffering(o)) {</span>
+<span class="nc" id="L76">					amt += b.getNumAdults() + b.getNumChildren() + b.getNumToddlers();</span>
+<span class="nc" id="L77">				}</span>
+<span class="nc" id="L78">			}</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">			if (amt &gt;= maxCustomersPerTour) {</span>
+<span class="nc" id="L80">				maxCustomersPerTour = amt;</span>
+<span class="nc" id="L81">				mostPopTour = t;</span>
+			}
+<span class="nc" id="L83">		}</span>
+<span class="nc" id="L84">		addComponent(new Label(&quot;The most popular tour is &quot; + mostPopTour));</span>
+
+<span class="nc" id="L86">		addComponent(new Label(&quot;There are currently &quot;</span>
+<span class="nc" id="L87">				+ Utils.iterableToCollection(qRepo.findAll()).stream().filter(q -&gt; q.getAnswer().isEmpty()).count()</span>
+				+ &quot; pending querie(s) waiting to be resolved&quot;));
+<span class="nc" id="L89">	}</span>
+
+	/** 
+	 * Function is called when the view is loaded up in the browser, refreshes the data so that the tables
+	 * are updated to the newest data contents.
+	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
+	 */
+	@Override
+	public void enter(ViewChangeEvent event) {
+		// This view is constructed in the init() method()
+<span class="nc" id="L99">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

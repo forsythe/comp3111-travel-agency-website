@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LineMessenger.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111</a> &gt; <span class="el_source">LineMessenger.java</span></div><h1>LineMessenger.java</h1><pre class="source lang-java linenums">package comp3111;
+
+import java.util.Collection;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import comp3111.data.model.Booking;
+import comp3111.data.model.Customer;
+import comp3111.data.model.Offering;
+import comp3111.data.model.Tour;
+import comp3111.data.repo.BookingRepository;
+import comp3111.data.repo.CustomerRepository;
+import comp3111.data.repo.OfferingRepository;
+import comp3111.view.CustomerEngagementView;
+
+/**
+ * A class which handles sending messages to customers via the LINE push API
+ * 
+ * @author Forsythe
+ *
+ */
+@Component
+<span class="fc" id="L34">public class LineMessenger {</span>
+	private static final String HENG_BOT_AUTH_TOKEN_LINE = &quot;Bearer H5M2+yupl+owBVJunHjV6z3NVMWJ51vRa2j8NcVgpQ0NwSoR2xGvMlGq+mD4NwZ8JHDOAUbM8ss+BKUPMQIXLYXazbSLZvH5qzqmOEi3Khvg/71Ye90O4DIGsnOJ0JJVSewSzBNMS3VYAQARZUE39QdB04t89/1O/w1cDnyilFU=&quot;;
+	private static final String KV_BOT_AUTH_TOKEN_LINE = &quot;Bearer JFhHaVBxYB/U/b1uBaYk1rOERP2w6tHAoBAUOBfk6iu8xu4CDhi5vFX7DCdu4+vEG4mE+fmjZQ8a1xUM+WhYZJ2FD9CC9bIoidXujGC6MQHi9OGWMAAqo/1fZyQr9ix54kzwh+uy5QZJG3arVVu0TgdB04t89/1O/w1cDnyilFU=&quot;;
+<span class="fc" id="L37">	private static final Logger log = LoggerFactory.getLogger(CustomerEngagementView.class);</span>
+
+	@Autowired
+	private CustomerRepository cRepo;
+
+	@Autowired
+	private OfferingRepository oRepo;
+
+	@Autowired
+	private BookingRepository bRepo;
+
+	private static int count;
+
+	/**
+	 * Reset the counter, which counts how many messages our LineMessenger sent
+	 */
+	public static void resetCounter() {
+<span class="fc" id="L54">		count = 0;</span>
+<span class="fc" id="L55">	}</span>
+
+	/**
+	 * Counts how many messages have been sent since the last call to
+	 * {@link #resetCounter()}
+	 * 
+	 * @return how many recipients have received a message since we called
+	 *         {@link LineMessenger#resetCounter()}}
+	 */
+	public static int getCounter() {
+<span class="fc" id="L65">		return count;</span>
+	}
+
+	/**
+	 * Send a message to a customer
+	 * 
+	 * @param custLineId
+	 *            The customer's line ID (not the human readable one, but the one
+	 *            used internally by LINE's push API)
+	 * @param text
+	 *            the content to send them
+	 * @param keepTrackOfSent
+	 *            increment the static variable {@link LineMessenger#count}, which
+	 *            tracks how many people got the message
+	 * @return true or false, depending on whether the message was sent successfully
+	 *         (200 OK)
+	 */
+	public boolean sendToUser(String custLineId, String text, boolean keepTrackOfSent) {
+
+<span class="fc" id="L84">		log.info(&quot;\tsending [{}] to line id: [{}]&quot;, text, custLineId);</span>
+<span class="fc" id="L85">		JSONObject body = null;</span>
+		try {
+<span class="fc" id="L87">			body = new JSONObject();</span>
+<span class="fc" id="L88">			body.put(&quot;to&quot;, custLineId);</span>
+
+<span class="fc" id="L90">			JSONObject msg1 = new JSONObject();</span>
+<span class="fc" id="L91">			msg1.put(&quot;type&quot;, &quot;text&quot;);</span>
+<span class="fc" id="L92">			msg1.put(&quot;text&quot;, text);</span>
+
+			// JSONObject msg2 = new JSONObject();
+			// msg2.put(&quot;type&quot;, &quot;text&quot;);
+			// msg2.put(&quot;text&quot;, &quot;goodbye!&quot;);
+
+<span class="fc" id="L98">			JSONArray msgArr = new JSONArray();</span>
+<span class="fc" id="L99">			msgArr.put(msg1);</span>
+			// msgArr.put(msg2);
+
+<span class="fc" id="L102">			body.put(&quot;messages&quot;, msgArr);</span>
+
+<span class="nc" id="L104">		} catch (JSONException e1) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L106">			log.info(e1.getMessage());</span>
+
+<span class="nc" id="L108">			return false;</span>
+<span class="fc" id="L109">		}</span>
+
+		try {
+<span class="fc" id="L112">			HttpClient client = HttpClientBuilder.create().build();</span>
+<span class="fc" id="L113">			HttpPost postRequest = new HttpPost(&quot;https://api.line.me/v2/bot/message/push&quot;);</span>
+<span class="fc" id="L114">			log.info(&quot;json data: [{}]&quot;, body.toString());</span>
+<span class="fc" id="L115">			StringEntity params = new StringEntity(body.toString());</span>
+
+<span class="fc" id="L117">			postRequest.addHeader(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+<span class="fc" id="L118">			postRequest.addHeader(&quot;Authorization&quot;, KV_BOT_AUTH_TOKEN_LINE);</span>
+<span class="fc" id="L119">			postRequest.setEntity(params);</span>
+
+<span class="fc" id="L121">			HttpResponse response = client.execute(postRequest);</span>
+<span class="fc" id="L122">			log.info(&quot;send message status: &quot; + response.getStatusLine().getStatusCode() + &quot; &quot;</span>
+<span class="fc" id="L123">					+ response.getStatusLine().getReasonPhrase() + &quot;\n&quot; + response.getEntity().toString());</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">			if (response.getStatusLine().getStatusCode() == 200) {</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">				if (keepTrackOfSent)</span>
+<span class="fc" id="L126">					count++;</span>
+<span class="fc" id="L127">				return true;</span>
+			} else {
+<span class="fc" id="L129">				return false;</span>
+			}
+<span class="nc" id="L131">		} catch (Exception ex) {</span>
+			// handle exception here
+<span class="nc" id="L133">			log.info(ex.getMessage());</span>
+<span class="nc" id="L134">			return false;</span>
+		}
+
+	}
+
+	/**
+	 * Send a message to everyone in an offering
+	 * 
+	 * @param o
+	 *            The offering whose customers you would like to notify
+	 * @param text
+	 *            The text to send them
+	 * @return True or false, depending on whether all customers in this offering
+	 *         were notified successfully. Note that for customers who don't have a
+	 *         line ID (i.e. walk in customers), we ignore them
+	 */
+	public boolean sendToOffering(Offering o, String text) {
+<span class="fc bfc" id="L151" title="All 2 branches covered.">		if (o.getId() == null) {</span>
+<span class="fc" id="L152">			log.info(&quot;Could not send to a transient offering&quot;);</span>
+<span class="fc" id="L153">			return false;</span>
+		}
+
+<span class="fc" id="L156">		log.info(&quot;\tBroadcasting to all users who booked for offering [{}]&quot;, o);</span>
+<span class="fc" id="L157">		log.info(&quot;there are [{}] booked customers&quot;, bRepo.findByOffering(o).size());</span>
+<span class="fc" id="L158">		boolean oneFailed = false;</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">		for (Booking record : bRepo.findByOffering(o)) {</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">			if (!record.getCustomer().getLineId().isEmpty()) {</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">				if (!sendToUser(record.getCustomer().getLineId(), text, true))</span>
+<span class="nc" id="L162">					oneFailed = true;</span>
+			} else {
+<span class="nc" id="L164">				log.info(&quot;customer [{}] doesn't have a line id, so nothing was sent to them&quot;,</span>
+<span class="nc" id="L165">						record.getCustomer().getName());</span>
+			}
+<span class="fc" id="L167">		}</span>
+<span class="fc" id="L168">		log.info(&quot;Succesfully sent to participants in this offering [{}]&quot;, o);</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">		return !oneFailed;</span>
+	}
+
+	/**
+	 * Send a message to everyone in a tour
+	 * 
+	 * @param t
+	 *            The tour whos participants (which span many offerings potentially)
+	 *            you want to reach
+	 * @param text
+	 *            The text to send them
+	 * @return True or false, depending on whether all associated users successfully
+	 *         recieved the message
+	 */
+	public boolean sendToTour(Tour t, String text) {
+<span class="pc bpc" id="L184" title="1 of 2 branches missed.">		if (t.getId() == null) {</span>
+<span class="fc" id="L185">			log.info(&quot;Could not send to a transient tour&quot;);</span>
+<span class="fc" id="L186">			return false;</span>
+		}
+
+<span class="nc" id="L189">		log.info(&quot;Broadcasting to all users who booked for offerings in the tour [{}]&quot;, t);</span>
+
+<span class="nc" id="L191">		oRepo.findByTour(t);</span>
+<span class="nc" id="L192">		boolean oneFailed = false;</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">		for (Offering o : oRepo.findByTour(t)) {</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">			if (!sendToOffering(o, text))</span>
+<span class="nc" id="L195">				oneFailed = true;</span>
+<span class="nc" id="L196">		}</span>
+<span class="nc" id="L197">		log.info(&quot;Succesfully sent to participants in this tour [{}]&quot;, t.getTourName());</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">		return !oneFailed;</span>
+	}
+
+	/**
+	 * Send a message to everyone
+	 * 
+	 * @param text
+	 *            Content to send to every known customers with a line ID
+	 * @return true or false, depending on whether every message was sent
+	 *         successfully (ignoring customers who don't have line iD)
+	 */
+	public boolean sendToAll(String text) {
+<span class="fc" id="L210">		log.info(&quot;Broadcasting to all known customers&quot;);</span>
+
+<span class="fc bfc" id="L212" title="All 2 branches covered.">		if (cRepo == null) { // mockito</span>
+<span class="fc" id="L213">			log.info(&quot;The customer repo was null&quot;);</span>
+<span class="fc" id="L214">			return false;</span>
+		}
+
+<span class="fc bfc" id="L217" title="All 2 branches covered.">		for (Customer c : cRepo.findAll()) {</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">			if (!c.getLineId().isEmpty())</span>
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">				if (!this.sendToUser(c.getLineId(), text, true))</span>
+<span class="nc" id="L220">					return false;</span>
+<span class="fc" id="L221">		}</span>
+<span class="fc" id="L222">		log.info(&quot;Successfully sent message to all known customers&quot;);</span>
+<span class="fc" id="L223">		return true;</span>
+	}
+
+	/**
+	 * Respond to a NonFAQQuery
+	 * 
+	 * @param custLineId
+	 *            the target recipient customer's line ID
+	 * @param query
+	 *            what they asked
+	 * @param answer
+	 *            what the employee answered via the web interface
+	 * @return true or false, depending on if successfully sent
+	 */
+	public boolean respondToQuery(String custLineId, String query, String answer) {
+<span class="fc" id="L238">		StringBuilder toSend = new StringBuilder();</span>
+<span class="fc" id="L239">		toSend.append(&quot;[Q: &quot; + query + &quot;]&quot;);</span>
+<span class="fc" id="L240">		toSend.append(&quot;\n&quot;);</span>
+<span class="fc" id="L241">		toSend.append(&quot;[A: &quot; + answer + &quot;]&quot;);</span>
+<span class="fc" id="L242">		count++;</span>
+<span class="fc" id="L243">		return this.sendToUser(custLineId, toSend.toString(), false);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DBManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.data</a> &gt; <span class="el_source">DBManager.java</span></div><h1>DBManager.java</h1><pre class="source lang-java linenums">package comp3111.data;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+
+import comp3111.input.exceptions.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.vaadin.data.ValidationResult;
+import com.vaadin.data.ValueContext;
+
+import comp3111.LineMessenger;
+import comp3111.Utils;
+import comp3111.data.model.Booking;
+import comp3111.data.model.Customer;
+import comp3111.data.model.LoginUser;
+import comp3111.data.model.Offering;
+import comp3111.data.model.PromoEvent;
+import comp3111.data.model.Tour;
+import comp3111.data.model.TourGuide;
+import comp3111.data.repo.BookingRepository;
+import comp3111.data.repo.CustomerRepository;
+import comp3111.data.repo.LoginUserRepository;
+import comp3111.data.repo.NonFAQQueryRepository;
+import comp3111.data.repo.OfferingRepository;
+import comp3111.data.repo.PromoEventRepository;
+import comp3111.data.repo.TourGuideRepository;
+import comp3111.data.repo.TourRepository;
+import comp3111.input.validators.DateAvailableInTourValidator;
+import comp3111.input.validators.ValidatorFactory;
+
+/**
+ * A mediator class responsible for handling common database actions.
+ * 
+ * @author Forsythe
+ *
+ */
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">@Component</span>
+<span class="fc" id="L43">public class DBManager {</span>
+<span class="fc" id="L44">	private static final Logger log = LoggerFactory.getLogger(DBManager.class);</span>
+
+	@Autowired
+	private CustomerRepository customerRepo;
+	@Autowired
+	private BookingRepository bookingRepo;
+	@Autowired
+	private TourRepository tourRepo;
+	@Autowired
+	private LoginUserRepository loginUserRepo;
+	@Autowired
+	private OfferingRepository offeringRepo;
+	@Autowired
+	private TourGuideRepository tourGuideRepo;
+	@Autowired
+	private NonFAQQueryRepository nonFAQQueryRepo;
+	@Autowired
+	private PromoEventRepository promoEventRepo;
+	@Autowired
+	private LineMessenger lineMessenger;
+
+	/**
+	 * Creates and persists a new offering in the database.
+	 * 
+	 * @param tour
+	 *            The tour for which the offering belongs to
+	 * @param tg
+	 *            The tour guide leading this offering
+	 * @param startDate
+	 *            When the offering starts
+	 * @param hotelName
+	 *            The hotel name
+	 * @param minCustomers
+	 *            The minimum number of customers required for this offering to be
+	 *            considered as {@link Offering#STATUS_CONFIRMED}
+	 * @param maxCustomers
+	 *            The maximum number of spots available for this offering
+	 * @return The persisted offering object
+	 * @throws OfferingDateUnsupportedException
+	 *             If you try to create an offering on a date or day of week for
+	 *             which the Tour does not support
+	 * @throws TourGuideUnavailableException
+	 *             If you try to assign a tour guide who has a time conflict with
+	 *             this offering
+	 */
+	public Offering createOfferingForTour(Tour tour, TourGuide tg, Date startDate, String hotelName, int minCustomers,
+			int maxCustomers) throws OfferingDateUnsupportedException, TourGuideUnavailableException {
+
+		// Make sure both the tour and the tour guide are concrete entity in the
+		// database
+<span class="fc" id="L94">		tour = tourRepo.save(tour);</span>
+<span class="fc" id="L95">		tg = tourGuideRepo.save(tg);</span>
+
+<span class="fc" id="L97">		DateAvailableInTourValidator dateValidator = ValidatorFactory.getDateAvailableInTourValidator(tour);</span>
+<span class="fc" id="L98">		ValidationResult result = dateValidator.apply(startDate, new ValueContext());</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">		if (result.isError()) {</span>
+<span class="fc" id="L100">			throw new OfferingDateUnsupportedException();</span>
+		}
+
+<span class="fc bfc" id="L103" title="All 2 branches covered.">		if (!isTourGuideAvailableBetweenDate(tg, startDate, Utils.addDate(startDate, tour.getDays()))) {</span>
+<span class="fc" id="L104">			throw new TourGuideUnavailableException();</span>
+		}
+
+<span class="fc" id="L107">		Offering o = offeringRepo.save(</span>
+				new Offering(tour, tg, startDate, hotelName, minCustomers, maxCustomers, Offering.STATUS_PENDING));
+
+<span class="fc" id="L110">		o.setTour(tour);</span>
+<span class="fc" id="L111">		o.setTourGuide(tg);</span>
+
+<span class="fc" id="L113">		offeringRepo.save(o);</span>
+
+<span class="fc" id="L115">		log.info(&quot;successfully created offering on [{}] for tour [{}]&quot;, startDate, tour.getTourName());</span>
+<span class="fc" id="L116">		return o;</span>
+	}
+
+	/**
+	 * Persists an edited detached or transient Offering object
+	 * 
+	 * @param o
+	 *            The Offering object to persist
+	 * @return The persisted Offering object
+	 * @throws TourGuideUnavailableException
+	 *             If you try to assign a tour guide who has a time conflict with
+	 *             this offering
+	 * @throws OfferingDateUnsupportedException
+	 *             If you try to create an offering on a date or day of week for
+	 *             which the Tour does not support
+	 */
+	public Offering editOfferingTorTour(Offering o)
+			throws TourGuideUnavailableException, OfferingDateUnsupportedException {
+<span class="fc" id="L134">		Tour t = o.getTour();</span>
+<span class="fc" id="L135">		Date startDate = o.getStartDate();</span>
+<span class="fc" id="L136">		TourGuide tg = o.getTourGuide();</span>
+
+<span class="fc" id="L138">		DateAvailableInTourValidator dateValidator = ValidatorFactory.getDateAvailableInTourValidator(t);</span>
+<span class="fc" id="L139">		ValidationResult result = dateValidator.apply(startDate, new ValueContext());</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">		if (result.isError()) {</span>
+<span class="fc" id="L141">			throw new OfferingDateUnsupportedException();</span>
+		}
+
+<span class="fc bfc" id="L144" title="All 2 branches covered.">		if (!isTourGuideAvailableBetweenDateExcludeOffering(tg, startDate, Utils.addDate(startDate, t.getDays()), o)) {</span>
+<span class="fc" id="L145">			throw new TourGuideUnavailableException();</span>
+		}
+
+<span class="fc" id="L148">		log.info(&quot;successfully edited offering on [{}] for tour [{}]&quot;, startDate, t.getTourName());</span>
+<span class="fc" id="L149">		return offeringRepo.save(o);</span>
+	}
+
+	/**
+	 * Checks if a tour guide is free to lead an offering
+	 * 
+	 * @param tg
+	 *            The tour guide
+	 * @param proposedOffering
+	 *            An offering
+	 * @return Whether or not the tour guide is free to lead this offering.
+	 */
+	public boolean isTourGuideAvailableForOffering(TourGuide tg, Offering proposedOffering) {
+<span class="nc" id="L162">		Date proposedStart = proposedOffering.getStartDate();</span>
+<span class="nc" id="L163">		Date proposedEnd = Utils.addDate(proposedOffering.getStartDate(), proposedOffering.getTour().getDays());</span>
+<span class="nc" id="L164">		return isTourGuideAvailableBetweenDate(tg, proposedStart, proposedEnd);</span>
+	}
+
+	/**
+	 * Checks if a tour guide is available during a time interval
+	 * 
+	 * @param tg
+	 *            The tour guide
+	 * @param testStart
+	 *            The beginning date
+	 * @param testEnd
+	 *            The ending date
+	 * @return Whether or not the tour guide is free (to lead more offerings)
+	 *         between this date interval
+	 */
+	public boolean isTourGuideAvailableBetweenDate(TourGuide tg, Date testStart, Date testEnd) {
+<span class="fc bfc" id="L180" title="All 2 branches covered.">		for (Offering existingOffering : findOfferingsByTourGuide(tg)) {</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">			if (existingOffering.getStatus().equals(Offering.STATUS_CANCELLED)) {</span>
+<span class="fc" id="L182">				continue;</span>
+			}
+<span class="fc" id="L184">			Date takenStart = existingOffering.getStartDate();</span>
+<span class="fc" id="L185">			Date takenEnd = Utils.addDate(takenStart, existingOffering.getTour().getDays());</span>
+
+<span class="fc bfc" id="L187" title="All 4 branches covered.">			if (testStart.after(takenStart) &amp;&amp; testEnd.before(takenEnd)</span>
+<span class="pc bpc" id="L188" title="1 of 4 branches missed.">					|| testStart.before(takenStart) &amp;&amp; testEnd.after(takenEnd)</span>
+<span class="pc bpc" id="L189" title="1 of 4 branches missed.">					|| testStart.before(takenEnd) &amp;&amp; testEnd.after(takenEnd)</span>
+<span class="pc bpc" id="L190" title="1 of 6 branches missed.">					|| testStart.before(takenStart) &amp;&amp; testEnd.after(takenStart) || testStart.equals(takenStart)</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">					|| testEnd.equals(takenEnd)) {</span>
+<span class="fc" id="L192">				log.info(&quot;Offering timerange [{}]-[{}] is occupied for tourguide [{}]&quot;, testStart, testEnd,</span>
+<span class="fc" id="L193">						tg.getName());</span>
+
+<span class="fc" id="L195">				return false;</span>
+			}
+
+<span class="fc" id="L198">		}</span>
+<span class="fc" id="L199">		return true;</span>
+	}
+
+	/**
+	 * Checks if a tour guide is free between a time interval, but ignoring the
+	 * potential time conflict of a single offering
+	 * 
+	 * @param tg
+	 *            The tour guide
+	 * @param testStart
+	 *            The start date interval to check if the tour guide is free
+	 * @param testEnd
+	 *            The end date of the interval to check
+	 * @param ignoredOffering
+	 *            The offering to ignore.
+	 * @return Whether the tour guide is available between the specified range. It
+	 *         scans all offerings associated with this tour guide, and checks if
+	 *         there are any time collisions with the provided date range. We also
+	 *         ignore the timerange used by the offering &quot;ignoredOffering&quot;
+	 */
+	public boolean isTourGuideAvailableBetweenDateExcludeOffering(TourGuide tg, Date testStart, Date testEnd,
+			Offering ignoredOffering) {
+<span class="fc" id="L221">		Collection&lt;Offering&gt; relevantOfferings = findOfferingsByTourGuide(tg);</span>
+<span class="fc" id="L222">		int size = relevantOfferings.size();</span>
+<span class="fc" id="L223">		log.info(&quot;size before removing: [{}]&quot;, size);</span>
+<span class="fc" id="L224">		relevantOfferings.removeIf(offer -&gt; offer.equals(ignoredOffering));</span>
+<span class="pc bpc" id="L225" title="2 of 4 branches missed.">		assert relevantOfferings.size() == size - 1;</span>
+<span class="fc" id="L226">		log.info(&quot;size after removing: [{}]&quot;, relevantOfferings.size());</span>
+
+<span class="fc bfc" id="L228" title="All 2 branches covered.">		for (Offering existingOffering : relevantOfferings) {</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">			if (existingOffering.getStatus().equals(Offering.STATUS_CANCELLED)) {</span>
+<span class="fc" id="L230">				continue;</span>
+			}
+<span class="fc" id="L232">			Date takenStart = existingOffering.getStartDate();</span>
+<span class="fc" id="L233">			Date takenEnd = Utils.addDate(takenStart, existingOffering.getTour().getDays());</span>
+
+<span class="fc bfc" id="L235" title="All 4 branches covered.">			if (testStart.after(takenStart) &amp;&amp; testEnd.before(takenEnd)</span>
+<span class="pc bpc" id="L236" title="1 of 4 branches missed.">					|| testStart.before(takenStart) &amp;&amp; testEnd.after(takenEnd)</span>
+<span class="pc bpc" id="L237" title="2 of 4 branches missed.">					|| testStart.before(takenEnd) &amp;&amp; testEnd.after(takenEnd)</span>
+<span class="pc bpc" id="L238" title="2 of 6 branches missed.">					|| testStart.before(takenStart) &amp;&amp; testEnd.after(takenStart) || testStart.equals(takenStart)</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">					|| testEnd.equals(takenEnd)) {</span>
+<span class="fc" id="L240">				log.info(&quot;Offering timerange [{}]-[{}] is occupied for tourguide [{}]&quot;, testStart, testEnd,</span>
+<span class="fc" id="L241">						tg.getName());</span>
+<span class="fc" id="L242">				return false;</span>
+			}
+
+<span class="nc" id="L245">		}</span>
+<span class="fc" id="L246">		return true;</span>
+	}
+
+	/**
+	 * Persists a transient offering object into the database
+	 * 
+	 * @param offering
+	 *            A transient offering object
+	 * @throws TourGuideUnavailableException
+	 *             If you try to assign a tour guide who has a time conflict with
+	 *             this offering
+	 * @throws OfferingDateUnsupportedException
+	 *             If you try to create an offering on a date or day of week for
+	 *             which the Tour does not support
+	 */
+	public void createOfferingForTour(Offering offering)
+			throws OfferingDateUnsupportedException, TourGuideUnavailableException {
+<span class="nc" id="L263">		createOfferingForTour(offering.getTour(), offering.getTourGuide(), offering.getStartDate(),</span>
+<span class="nc" id="L264">				offering.getHotelName(), offering.getMinCustomers(), offering.getMaxCustomers());</span>
+<span class="nc" id="L265">	}</span>
+
+	/**
+	 * Creates a booking for an offering with a promo code
+	 * 
+	 * @param o
+	 *            An offering to make a booking in
+	 * @param c
+	 *            Customer who made the booking
+	 * @param numAdults
+	 *            Number of adults
+	 * @param numChildren
+	 *            Number of children
+	 * @param numToddlers
+	 *            Number of toddlers
+	 * @param amountPaid
+	 *            The dollar amount the customer has already paid
+	 * @param specialRequests
+	 *            Any special requests made by the customer
+	 * @param paymentStatus
+	 *            The payment status. Can be {@link Booking#PAYMENT_PENDING},
+	 *            {@link Booking#PAYMENT_CONFIRMED}, or
+	 *            {@link Booking#PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED}
+	 * @param discount
+	 *            A double between [0, 1.0] indicating the discount multiplier. 1.0
+	 *            for full price (no discount).
+	 * @param promoCodeUsed
+	 *            The promo code used
+	 * @return The persisted Booking object
+	 * @throws OfferingOutOfRoomException
+	 *             If, after adding the number of adults, children, and toddlers to
+	 *             the current number of people in this offering, the value exceeds
+	 *             {@link Offering#getMaxCustomers()}
+	 */
+	public Booking createBookingForOffering(Offering o, Customer c, int numAdults, int numChildren, int numToddlers,
+			double amountPaid, String specialRequests, String paymentStatus, double discount, String promoCodeUsed)
+			throws OfferingOutOfRoomException {
+<span class="fc" id="L302">		int totalWantToJoin = numAdults + numChildren + numToddlers;</span>
+<span class="fc" id="L303">		int spotsTaken = 0;</span>
+
+<span class="fc" id="L305">		o = offeringRepo.save(o);</span>
+<span class="fc" id="L306">		c = customerRepo.save(c);</span>
+
+<span class="fc bfc" id="L308" title="All 2 branches covered.">		for (Booking rec : findBookingsForOffering(o)) {</span>
+<span class="fc" id="L309">			spotsTaken += rec.getNumAdults() + rec.getNumChildren() + rec.getNumToddlers();</span>
+<span class="fc" id="L310">		}</span>
+<span class="fc" id="L311">		int spotsLeft = o.getMaxCustomers() - spotsTaken;</span>
+<span class="fc bfc" id="L312" title="All 2 branches covered.">		if (totalWantToJoin &gt; spotsLeft) {</span>
+<span class="fc" id="L313">			throw new OfferingOutOfRoomException();</span>
+		}
+
+<span class="fc" id="L316">		Booking bookingRecord = bookingRepo.save(new Booking(c, o, numAdults, numChildren, numToddlers, amountPaid,</span>
+				specialRequests, paymentStatus, discount, promoCodeUsed));
+
+<span class="fc" id="L319">		log.info(&quot;customer [{}] succesfully made a booking for tour [{}], offering [{}]&quot;, c.getName(),</span>
+<span class="fc" id="L320">				o.getTour().getTourName(), o.getStartDate());</span>
+
+<span class="fc" id="L322">		return bookingRecord;</span>
+	}
+
+	/**
+	 * Creates a normal (non-promo event) booking for an offering
+	 * 
+	 * @param o
+	 *            An offering to make a booking in
+	 * @param c
+	 *            Customer who made the booking
+	 * @param numAdults
+	 *            Number of adults
+	 * @param numChildren
+	 *            Number of children
+	 * @param numToddlers
+	 *            Number of toddlers
+	 * @param amountPaid
+	 *            The dollar amount the customer has already paid
+	 * @param specialRequests
+	 *            Any special requests made by the customer
+	 * @param paymentStatus
+	 *            The payment status. Can be {@link Booking#PAYMENT_PENDING},
+	 *            {@link Booking#PAYMENT_CONFIRMED}, or
+	 *            {@link Booking#PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED}
+	 * @param discount
+	 *            A double between [0, 1.0] indicating the discount multiplier. 1.0
+	 *            for full price (no discount).
+	 * @return The persisted Booking object
+	 * @throws OfferingOutOfRoomException
+	 *             If, after adding the number of adults, children, and toddlers to
+	 *             the current number of people in this offering, the value exceeds
+	 *             {@link Offering#getMaxCustomers()}
+	 */
+	public Booking createBookingForOffering(Offering o, Customer c, int numAdults, int numChildren, int numToddlers,
+			double amountPaid, String specialRequests, String paymentStatus, double discount)
+			throws OfferingOutOfRoomException {
+<span class="fc" id="L358">		return createBookingForOffering(o, c, numAdults, numChildren, numToddlers, amountPaid, specialRequests,</span>
+				paymentStatus, discount, null);
+	}
+
+	/**
+	 * Persists a transient booking object
+	 * 
+	 * @param booking
+	 *            A transient Booking object
+	 * @throws OfferingOutOfRoomException
+	 *             If, after adding the number of adults, children, and toddlers to
+	 *             the current number of people in this offering, the value exceeds
+	 *             {@link Offering#getMaxCustomers()}
+	 */
+	public void createNormalBookingForOffering(Booking booking) throws OfferingOutOfRoomException {
+<span class="nc" id="L373">		createBookingForOffering(booking.getOffering(), booking.getCustomer(), booking.getNumAdults(),</span>
+<span class="nc" id="L374">				booking.getNumChildren(), booking.getNumToddlers(), booking.getAmountPaid(),</span>
+<span class="nc" id="L375">				booking.getSpecialRequests(), booking.getPaymentStatus(), 1, null);</span>
+<span class="nc" id="L376">	}</span>
+
+	/**
+	 * Validates promo codes
+	 * 
+	 * @param promoCode
+	 *            The promo code
+	 * @return Whether this promo code is valid
+	 * @throws PromoCodeUsedUpException
+	 *             If the promo code has been used up
+	 * @throws NoSuchPromoCodeException
+	 *             If the promo code doesn't exist
+	 */
+	public boolean validatePromoCode(String promoCode) throws PromoCodeUsedUpException, NoSuchPromoCodeException {
+<span class="fc" id="L390">		PromoEvent pe = promoEventRepo.findOneByPromoCode(promoCode);</span>
+<span class="fc" id="L391">		System.out.println(&quot;called&quot;);</span>
+<span class="fc bfc" id="L392" title="All 2 branches covered.">		if (pe == null)</span>
+<span class="fc" id="L393">			throw new NoSuchPromoCodeException();</span>
+<span class="fc bfc" id="L394" title="All 2 branches covered.">		if (pe.getPromoCodeUsesLeft() == 0)</span>
+<span class="fc" id="L395">			throw new PromoCodeUsedUpException();</span>
+<span class="fc" id="L396">		return true;</span>
+	}
+
+	/**
+	 * Creates a booking a promo code, given a booking object and promo code
+	 * 
+	 * @param booking
+	 *            The booking to make an offering for
+	 * @param promocode
+	 *            The promo code
+	 * @throws OfferingOutOfRoomException
+	 *             If the offering is out of room
+	 * @throws PromoCodeUsedUpException
+	 *             If the promo code has been used up
+	 * @throws NoSuchPromoCodeException
+	 *             If no such promo code exists
+	 * @throws PromoForCustomerExceededException
+	 *             If the customer exceeded the maximum number of reservations
+	 *             allowed per promotional booking
+	 * @throws PromoCodeNotForOfferingException
+	 *             If the wrong promo code was used
+	 */
+	public void createBookingForOfferingWithPromoCode(Booking booking, String promocode)
+			throws OfferingOutOfRoomException, PromoCodeUsedUpException, NoSuchPromoCodeException,
+			PromoForCustomerExceededException, PromoCodeNotForOfferingException {
+<span class="fc" id="L421">		validatePromoCode(promocode);</span>
+
+<span class="fc" id="L423">		PromoEvent pe = promoEventRepo.findOneByPromoCode(promocode);</span>
+<span class="fc bfc" id="L424" title="All 2 branches covered.">		if (!pe.getOffering().equals(booking.getOffering())) {</span>
+<span class="fc" id="L425">			throw new PromoCodeNotForOfferingException();</span>
+		}
+
+<span class="fc" id="L428">		int promoReservations = booking.getTotalNumberOfPeople();</span>
+<span class="fc bfc" id="L429" title="All 2 branches covered.">		for (Booking b : bookingRepo.findByCustomer(booking.getCustomer())) {</span>
+<span class="pc bpc" id="L430" title="2 of 4 branches missed.">			if (b.getPromoCodeUsed() != null &amp;&amp; b.getPromoCodeUsed().equals(promocode)) {</span>
+<span class="fc" id="L431">				promoReservations += b.getTotalNumberOfPeople();</span>
+			}
+<span class="fc" id="L433">		}</span>
+<span class="fc bfc" id="L434" title="All 2 branches covered.">		if (promoReservations &gt; pe.getMaxReservationsPerCustomer()) {</span>
+<span class="fc" id="L435">			throw new PromoForCustomerExceededException();</span>
+		}
+
+<span class="fc" id="L438">		createBookingForOffering(booking.getOffering(), booking.getCustomer(), booking.getNumAdults(),</span>
+<span class="fc" id="L439">				booking.getNumChildren(), booking.getNumToddlers(), booking.getAmountPaid(),</span>
+<span class="fc" id="L440">				booking.getSpecialRequests(), booking.getPaymentStatus(), pe.getDiscount(), pe.getPromoCode());</span>
+
+<span class="fc" id="L442">		pe.setPromoCodeUsesLeft(pe.getPromoCodeUsesLeft() - 1);</span>
+<span class="fc" id="L443">		promoEventRepo.save(pe);</span>
+<span class="fc" id="L444">	}</span>
+
+	/**
+	 * Finds all the offerings associated with a tour guide
+	 * 
+	 * @param tg
+	 *            A tour guide
+	 * @return A collection of offerings (of ALL statuses; pending, confirmed,
+	 *         cancelled) led by this tour guide in the past and assigned in the
+	 *         future
+	 */
+	public Collection&lt;Offering&gt; findOfferingsByTourGuide(TourGuide tg) {
+<span class="fc" id="L456">		Collection&lt;Offering&gt; guidedOfferingsByTourGuide = new HashSet&lt;Offering&gt;();</span>
+<span class="fc" id="L457">		log.info(&quot;Finding offerings for tour guide [{}]&quot;, tg.getName());</span>
+<span class="fc" id="L458">		int found = 0;</span>
+<span class="fc bfc" id="L459" title="All 2 branches covered.">		for (Offering o : offeringRepo.findAll()) {</span>
+<span class="fc bfc" id="L460" title="All 2 branches covered.">			if (o.getTourGuide().equals(tg)) {</span>
+<span class="fc" id="L461">				guidedOfferingsByTourGuide.add(o);</span>
+<span class="fc" id="L462">				log.info(&quot;\t[{}]&quot;, o.toString());</span>
+			}
+<span class="fc" id="L464">			found++;</span>
+<span class="fc" id="L465">		}</span>
+<span class="fc" id="L466">		log.info(&quot;\tfound [{}]&quot;, found);</span>
+<span class="fc" id="L467">		return guidedOfferingsByTourGuide;</span>
+	}
+
+	/**
+	 * Finds all the bookings for an offering
+	 * 
+	 * @param offering
+	 *            An offering
+	 * @return All bookings made for this offering
+	 */
+	public Collection&lt;Booking&gt; findBookingsForOffering(Offering offering) {
+<span class="fc" id="L478">		Collection&lt;Booking&gt; bookingsForOffering = new HashSet&lt;Booking&gt;();</span>
+<span class="fc bfc" id="L479" title="All 2 branches covered.">		for (Booking record : bookingRepo.findAll()) {</span>
+<span class="fc bfc" id="L480" title="All 2 branches covered.">			if (record.getOffering().equals(offering)) {</span>
+<span class="fc" id="L481">				bookingsForOffering.add(record);</span>
+			}
+<span class="fc" id="L483">		}</span>
+<span class="fc" id="L484">		return bookingsForOffering;</span>
+	}
+
+	/**
+	 * Clears out all the repositories (except the login user one)
+	 */
+	public void deleteAll() {
+<span class="fc" id="L491">		this.promoEventRepo.deleteAll();</span>
+<span class="fc" id="L492">		this.bookingRepo.deleteAll();</span>
+<span class="fc" id="L493">		this.offeringRepo.deleteAll();</span>
+<span class="fc" id="L494">		this.tourRepo.deleteAll();</span>
+<span class="fc" id="L495">		this.tourGuideRepo.deleteAll();</span>
+<span class="fc" id="L496">		this.nonFAQQueryRepo.deleteAll();</span>
+<span class="fc" id="L497">		this.customerRepo.deleteAll();</span>
+<span class="fc" id="L498">		this.promoEventRepo.deleteAll();</span>
+
+<span class="fc" id="L500">		log.info(&quot;successfully cleared all repos&quot;);</span>
+		// this.loginUserRepo.deleteAll();
+<span class="fc" id="L502">	}</span>
+
+	/**
+	 * Create a new login user
+	 * 
+	 * @param username
+	 *            The username
+	 * @param rawPassword
+	 *            The raw password
+	 * @return The LoginUser
+	 * @throws UsernameTakenException
+	 *             If the username is taken
+	 */
+	public LoginUser createNewLogin(String username, String rawPassword) throws UsernameTakenException {
+<span class="fc bfc" id="L516" title="All 2 branches covered.">		if (loginUserRepo.findByUsername(username) != null) {</span>
+<span class="fc" id="L517">			throw new UsernameTakenException();</span>
+		}
+<span class="fc" id="L519">		log.info(&quot;successfully created a new user login, username [{}]&quot;, username);</span>
+
+<span class="fc" id="L521">		return loginUserRepo.save(new LoginUser(username, rawPassword));</span>
+	}
+
+	/**
+	 * Counts how many offerings have been made for this tour
+	 * 
+	 * @param t
+	 *            A tour
+	 * @return How many offerings have been made for this tour
+	 */
+	public int countNumOfferingsForTour(Tour t) {
+<span class="fc" id="L532">		int count = 0;</span>
+<span class="fc bfc" id="L533" title="All 2 branches covered.">		for (Offering o : offeringRepo.findAll()) {</span>
+<span class="pc bpc" id="L534" title="1 of 2 branches missed.">			if (o.getTour().equals(t))</span>
+<span class="fc" id="L535">				count++;</span>
+<span class="fc" id="L536">		}</span>
+<span class="fc" id="L537">		return count;</span>
+	}
+
+	/**
+	 * Counts how many paying customers are associated with the offering
+	 * 
+	 * @param offering
+	 *            An offering
+	 * @return How many paid customers (adults, children, toddlers) are registered
+	 *         for this offering
+	 */
+	public int countNumberOfPaidPeopleInOffering(Offering offering) {
+<span class="fc" id="L549">		int num = 0;</span>
+<span class="fc bfc" id="L550" title="All 2 branches covered.">		for (Booking record : bookingRepo.findByOffering(offering)) {</span>
+<span class="fc bfc" id="L551" title="All 2 branches covered.">			if (record.getPaymentStatus().equals(Booking.PAYMENT_CONFIRMED)) {</span>
+<span class="fc" id="L552">				num += record.getNumAdults() + record.getNumChildren() + record.getNumToddlers();</span>
+			}
+<span class="fc" id="L554">		}</span>
+<span class="fc" id="L555">		return num;</span>
+	}
+
+	/**
+	 * Notifies all customers via LINE who have made bookings for the specified
+	 * offering about the status of said offering.
+	 * 
+	 * It updates the offering object's status in the database (
+	 * {@link Offering#STATUS_CANCELLED} or {@link Offering#STATUS_CONFIRMED} ).
+	 * 
+	 * If confirmed, a success message is sent to all associated customers.
+	 * 
+	 * However, if the offering is cancelled, then all booking records associated
+	 * with this offering are set to
+	 * {@link Booking#PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED}
+	 * 
+	 * @param offering
+	 *            An offering
+	 * @param confirmed
+	 *            The new status of the offering
+	 * 
+	 */
+	public void notifyOfferingStatus(Offering offering, boolean confirmed) {
+<span class="fc bfc" id="L578" title="All 2 branches covered.">		log.info(&quot;Setting [{}] to be [{}]&quot;, offering, confirmed ? &quot;confirmed&quot; : &quot;cancelled&quot;);</span>
+<span class="fc bfc" id="L579" title="All 2 branches covered.">		offering.setStatus(confirmed ? Offering.STATUS_CONFIRMED : Offering.STATUS_CANCELLED);</span>
+<span class="fc" id="L580">		offering = offeringRepo.save(offering);</span>
+<span class="fc bfc" id="L581" title="All 2 branches covered.">		if (!confirmed) {</span>
+<span class="fc bfc" id="L582" title="All 2 branches covered.">			for (Booking record : bookingRepo.findByOffering(offering)) {</span>
+<span class="fc" id="L583">				record.setPaymentStatus(Booking.PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED);</span>
+<span class="fc" id="L584">				record = bookingRepo.save(record);</span>
+<span class="fc" id="L585">				log.info(&quot;Cancelling booking record [{}]&quot;, record);</span>
+<span class="fc" id="L586">			}</span>
+<span class="fc" id="L587">			lineMessenger.sendToOffering(offering, offering + &quot; has been cancelled.&quot;);</span>
+		} else {
+
+<span class="fc" id="L590">			lineMessenger.sendToOffering(offering, offering + &quot; has been confirmed! See you soon!&quot;);</span>
+		}
+
+<span class="fc" id="L593">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
