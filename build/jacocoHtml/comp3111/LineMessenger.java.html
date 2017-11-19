@@ -80,67 +80,58 @@ import comp3111.view.CustomerEngagementView;
 	 *         (200 OK)
 	 */
 	public boolean sendToUser(String custLineId, String text, boolean keepTrackOfSent) {
-		// for testing only. in reality, can assume lineId is unique, so use
-		// findOneByLineId instead
-<span class="fc" id="L85">		Collection&lt;Customer&gt; col = cRepo.findByLineId(custLineId);</span>
-<span class="fc" id="L86">		log.info(&quot;for line id [{}], there were [{}] results&quot;, custLineId, col.size());</span>
-<span class="fc" id="L87">		Customer first = null;</span>
-<span class="pc bpc" id="L88" title="1 of 2 branches missed.">		for (Customer c : col) {</span>
-<span class="fc" id="L89">			first = c;</span>
-<span class="fc" id="L90">			break;</span>
-		}
 
-<span class="fc" id="L93">		log.info(&quot;\tsending [{}] to line id: [{}], [{}]&quot;, text, custLineId, first);</span>
-<span class="fc" id="L94">		JSONObject body = null;</span>
+<span class="fc" id="L84">		log.info(&quot;\tsending [{}] to line id: [{}]&quot;, text, custLineId);</span>
+<span class="fc" id="L85">		JSONObject body = null;</span>
 		try {
-<span class="fc" id="L96">			body = new JSONObject();</span>
-<span class="fc" id="L97">			body.put(&quot;to&quot;, custLineId);</span>
+<span class="fc" id="L87">			body = new JSONObject();</span>
+<span class="fc" id="L88">			body.put(&quot;to&quot;, custLineId);</span>
 
-<span class="fc" id="L99">			JSONObject msg1 = new JSONObject();</span>
-<span class="fc" id="L100">			msg1.put(&quot;type&quot;, &quot;text&quot;);</span>
-<span class="fc" id="L101">			msg1.put(&quot;text&quot;, text);</span>
+<span class="fc" id="L90">			JSONObject msg1 = new JSONObject();</span>
+<span class="fc" id="L91">			msg1.put(&quot;type&quot;, &quot;text&quot;);</span>
+<span class="fc" id="L92">			msg1.put(&quot;text&quot;, text);</span>
 
 			// JSONObject msg2 = new JSONObject();
 			// msg2.put(&quot;type&quot;, &quot;text&quot;);
 			// msg2.put(&quot;text&quot;, &quot;goodbye!&quot;);
 
-<span class="fc" id="L107">			JSONArray msgArr = new JSONArray();</span>
-<span class="fc" id="L108">			msgArr.put(msg1);</span>
+<span class="fc" id="L98">			JSONArray msgArr = new JSONArray();</span>
+<span class="fc" id="L99">			msgArr.put(msg1);</span>
 			// msgArr.put(msg2);
 
-<span class="fc" id="L111">			body.put(&quot;messages&quot;, msgArr);</span>
+<span class="fc" id="L102">			body.put(&quot;messages&quot;, msgArr);</span>
 
-<span class="nc" id="L113">		} catch (JSONException e1) {</span>
+<span class="nc" id="L104">		} catch (JSONException e1) {</span>
 			// TODO Auto-generated catch block
-<span class="nc" id="L115">			log.info(e1.getMessage());</span>
-<span class="nc" id="L116">			return false;</span>
-<span class="fc" id="L117">		}</span>
+<span class="nc" id="L106">			log.info(e1.getMessage());</span>
+
+<span class="nc" id="L108">			return false;</span>
+<span class="fc" id="L109">		}</span>
 
 		try {
-<span class="fc" id="L120">			HttpClient client = HttpClientBuilder.create().build();</span>
-<span class="fc" id="L121">			HttpPost postRequest = new HttpPost(&quot;https://api.line.me/v2/bot/message/push&quot;);</span>
-<span class="fc" id="L122">			log.info(&quot;json data: [{}]&quot;, body.toString());</span>
-<span class="fc" id="L123">			StringEntity params = new StringEntity(body.toString());</span>
+<span class="fc" id="L112">			HttpClient client = HttpClientBuilder.create().build();</span>
+<span class="fc" id="L113">			HttpPost postRequest = new HttpPost(&quot;https://api.line.me/v2/bot/message/push&quot;);</span>
+<span class="fc" id="L114">			log.info(&quot;json data: [{}]&quot;, body.toString());</span>
+<span class="fc" id="L115">			StringEntity params = new StringEntity(body.toString());</span>
 
-<span class="fc" id="L125">			postRequest.addHeader(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
-<span class="fc" id="L126">			postRequest.addHeader(&quot;Authorization&quot;, KV_BOT_AUTH_TOKEN_LINE);</span>
-<span class="fc" id="L127">			postRequest.setEntity(params);</span>
+<span class="fc" id="L117">			postRequest.addHeader(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+<span class="fc" id="L118">			postRequest.addHeader(&quot;Authorization&quot;, KV_BOT_AUTH_TOKEN_LINE);</span>
+<span class="fc" id="L119">			postRequest.setEntity(params);</span>
 
-<span class="fc" id="L129">			HttpResponse response = client.execute(postRequest);</span>
-<span class="fc" id="L130">			log.info(&quot;send message status: &quot; + response.getStatusLine().getStatusCode() + &quot; &quot;</span>
-<span class="fc" id="L131">					+ response.getStatusLine().getReasonPhrase() + &quot;\n&quot; + response.getEntity().toString());</span>
-
-<span class="pc bpc" id="L133" title="1 of 2 branches missed.">			if (response.getStatusLine().getStatusCode() == 200) {</span>
-<span class="fc bfc" id="L134" title="All 2 branches covered.">				if (keepTrackOfSent)</span>
-<span class="fc" id="L135">					count++;</span>
-<span class="fc" id="L136">				return true;</span>
+<span class="fc" id="L121">			HttpResponse response = client.execute(postRequest);</span>
+<span class="fc" id="L122">			log.info(&quot;send message status: &quot; + response.getStatusLine().getStatusCode() + &quot; &quot;</span>
+<span class="fc" id="L123">					+ response.getStatusLine().getReasonPhrase() + &quot;\n&quot; + response.getEntity().toString());</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">			if (response.getStatusLine().getStatusCode() == 200) {</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">				if (keepTrackOfSent)</span>
+<span class="fc" id="L126">					count++;</span>
+<span class="fc" id="L127">				return true;</span>
 			} else {
-<span class="nc" id="L138">				return false;</span>
+<span class="fc" id="L129">				return false;</span>
 			}
-<span class="nc" id="L140">		} catch (Exception ex) {</span>
+<span class="nc" id="L131">		} catch (Exception ex) {</span>
 			// handle exception here
-<span class="nc" id="L142">			log.info(ex.getMessage());</span>
-<span class="nc" id="L143">			return false;</span>
+<span class="nc" id="L133">			log.info(ex.getMessage());</span>
+<span class="nc" id="L134">			return false;</span>
 		}
 
 	}
@@ -157,20 +148,25 @@ import comp3111.view.CustomerEngagementView;
 	 *         line ID (i.e. walk in customers), we ignore them
 	 */
 	public boolean sendToOffering(Offering o, String text) {
-<span class="fc" id="L160">		log.info(&quot;\tBroadcasting to all users who booked for offering [{}]&quot;, o);</span>
-<span class="fc" id="L161">		log.info(&quot;there are [{}] booked customers&quot;, bRepo.findByOffering(o).size());</span>
-<span class="fc" id="L162">		boolean oneFailed = false;</span>
-<span class="fc bfc" id="L163" title="All 2 branches covered.">		for (Booking record : bRepo.findByOffering(o)) {</span>
-<span class="pc bpc" id="L164" title="1 of 2 branches missed.">			if (!record.getCustomer().getLineId().isEmpty()) {</span>
-<span class="pc bpc" id="L165" title="1 of 2 branches missed.">				if (!sendToUser(record.getCustomer().getLineId(), text, true))</span>
-<span class="nc" id="L166">					oneFailed = true;</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">		if (o.getId() == null) {</span>
+<span class="fc" id="L152">			log.info(&quot;Could not send to a transient offering&quot;);</span>
+<span class="fc" id="L153">			return false;</span>
+		}
+
+<span class="fc" id="L156">		log.info(&quot;\tBroadcasting to all users who booked for offering [{}]&quot;, o);</span>
+<span class="fc" id="L157">		log.info(&quot;there are [{}] booked customers&quot;, bRepo.findByOffering(o).size());</span>
+<span class="fc" id="L158">		boolean oneFailed = false;</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">		for (Booking record : bRepo.findByOffering(o)) {</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">			if (!record.getCustomer().getLineId().isEmpty()) {</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">				if (!sendToUser(record.getCustomer().getLineId(), text, true))</span>
+<span class="nc" id="L162">					oneFailed = true;</span>
 			} else {
-<span class="nc" id="L168">				log.info(&quot;customer [{}] doesn't have a line id, so nothing was sent to them&quot;,</span>
-<span class="nc" id="L169">						record.getCustomer().getName());</span>
+<span class="nc" id="L164">				log.info(&quot;customer [{}] doesn't have a line id, so nothing was sent to them&quot;,</span>
+<span class="nc" id="L165">						record.getCustomer().getName());</span>
 			}
-<span class="fc" id="L171">		}</span>
-<span class="fc" id="L172">		log.info(&quot;Succesfully sent to participants in this offering [{}]&quot;, o);</span>
-<span class="pc bpc" id="L173" title="1 of 2 branches missed.">		return !oneFailed;</span>
+<span class="fc" id="L167">		}</span>
+<span class="fc" id="L168">		log.info(&quot;Succesfully sent to participants in this offering [{}]&quot;, o);</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">		return !oneFailed;</span>
 	}
 
 	/**
@@ -185,16 +181,21 @@ import comp3111.view.CustomerEngagementView;
 	 *         recieved the message
 	 */
 	public boolean sendToTour(Tour t, String text) {
-<span class="nc" id="L188">		log.info(&quot;Broadcasting to all users who booked for offerings in the tour [{}]&quot;, t);</span>
+<span class="pc bpc" id="L184" title="1 of 2 branches missed.">		if (t.getId() == null) {</span>
+<span class="fc" id="L185">			log.info(&quot;Could not send to a transient tour&quot;);</span>
+<span class="fc" id="L186">			return false;</span>
+		}
 
-<span class="nc" id="L190">		oRepo.findByTour(t);</span>
-<span class="nc" id="L191">		boolean oneFailed = false;</span>
-<span class="nc bnc" id="L192" title="All 2 branches missed.">		for (Offering o : oRepo.findByTour(t)) {</span>
-<span class="nc bnc" id="L193" title="All 2 branches missed.">			if (!sendToOffering(o, text))</span>
-<span class="nc" id="L194">				oneFailed = true;</span>
-<span class="nc" id="L195">		}</span>
-<span class="nc" id="L196">		log.info(&quot;Succesfully sent to participants in this tour [{}]&quot;, t.getTourName());</span>
-<span class="nc bnc" id="L197" title="All 2 branches missed.">		return !oneFailed;</span>
+<span class="nc" id="L189">		log.info(&quot;Broadcasting to all users who booked for offerings in the tour [{}]&quot;, t);</span>
+
+<span class="nc" id="L191">		oRepo.findByTour(t);</span>
+<span class="nc" id="L192">		boolean oneFailed = false;</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">		for (Offering o : oRepo.findByTour(t)) {</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">			if (!sendToOffering(o, text))</span>
+<span class="nc" id="L195">				oneFailed = true;</span>
+<span class="nc" id="L196">		}</span>
+<span class="nc" id="L197">		log.info(&quot;Succesfully sent to participants in this tour [{}]&quot;, t.getTourName());</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">		return !oneFailed;</span>
 	}
 
 	/**
@@ -206,15 +207,20 @@ import comp3111.view.CustomerEngagementView;
 	 *         successfully (ignoring customers who don't have line iD)
 	 */
 	public boolean sendToAll(String text) {
-<span class="nc" id="L209">		log.info(&quot;Broadcasting to all known customers&quot;);</span>
+<span class="fc" id="L210">		log.info(&quot;Broadcasting to all known customers&quot;);</span>
 
-<span class="nc bnc" id="L211" title="All 2 branches missed.">		for (Customer c : cRepo.findAll()) {</span>
-<span class="nc bnc" id="L212" title="All 2 branches missed.">			if (!c.getLineId().isEmpty())</span>
-<span class="nc bnc" id="L213" title="All 2 branches missed.">				if (!this.sendToUser(c.getLineId(), text, true))</span>
-<span class="nc" id="L214">					return false;</span>
-<span class="nc" id="L215">		}</span>
-<span class="nc" id="L216">		log.info(&quot;Successfully sent message to all known customers&quot;);</span>
-<span class="nc" id="L217">		return true;</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">		if (cRepo == null) { // mockito</span>
+<span class="fc" id="L213">			log.info(&quot;The customer repo was null&quot;);</span>
+<span class="fc" id="L214">			return false;</span>
+		}
+
+<span class="fc bfc" id="L217" title="All 2 branches covered.">		for (Customer c : cRepo.findAll()) {</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">			if (!c.getLineId().isEmpty())</span>
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">				if (!this.sendToUser(c.getLineId(), text, true))</span>
+<span class="nc" id="L220">					return false;</span>
+<span class="fc" id="L221">		}</span>
+<span class="fc" id="L222">		log.info(&quot;Successfully sent message to all known customers&quot;);</span>
+<span class="fc" id="L223">		return true;</span>
 	}
 
 	/**
@@ -229,12 +235,12 @@ import comp3111.view.CustomerEngagementView;
 	 * @return true or false, depending on if successfully sent
 	 */
 	public boolean respondToQuery(String custLineId, String query, String answer) {
-<span class="fc" id="L232">		StringBuilder toSend = new StringBuilder();</span>
-<span class="fc" id="L233">		toSend.append(&quot;[Q: &quot; + query + &quot;]&quot;);</span>
-<span class="fc" id="L234">		toSend.append(&quot;\n&quot;);</span>
-<span class="fc" id="L235">		toSend.append(&quot;[A: &quot; + answer + &quot;]&quot;);</span>
-<span class="fc" id="L236">		count++;</span>
-<span class="fc" id="L237">		return this.sendToUser(custLineId, toSend.toString(), false);</span>
+<span class="fc" id="L238">		StringBuilder toSend = new StringBuilder();</span>
+<span class="fc" id="L239">		toSend.append(&quot;[Q: &quot; + query + &quot;]&quot;);</span>
+<span class="fc" id="L240">		toSend.append(&quot;\n&quot;);</span>
+<span class="fc" id="L241">		toSend.append(&quot;[A: &quot; + answer + &quot;]&quot;);</span>
+<span class="fc" id="L242">		count++;</span>
+<span class="fc" id="L243">		return this.sendToUser(custLineId, toSend.toString(), false);</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

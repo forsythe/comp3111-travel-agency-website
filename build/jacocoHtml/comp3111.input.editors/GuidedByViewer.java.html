@@ -44,63 +44,65 @@ public class GuidedByViewer extends VerticalLayout {
 <span class="nc" id="L44">	private final Grid&lt;Offering&gt; offeringGrid = new Grid&lt;Offering&gt;(Offering.class);</span>
 
 	/**
+	 * Constructs the View which displays all offerings guided by a tour guide
+	 * 
 	 * @param or
-	 *            Autowired, construct injection
+	 *            The OfferingRepository
 	 */
 	@Autowired
-<span class="nc" id="L51">	public GuidedByViewer(OfferingRepository or) {</span>
-<span class="nc" id="L52">		offeringRepo = or;</span>
+<span class="nc" id="L53">	public GuidedByViewer(OfferingRepository or) {</span>
+<span class="nc" id="L54">		offeringRepo = or;</span>
 
-<span class="nc" id="L54">		Button returnButton = new Button(&quot;Return&quot;);</span>
-<span class="nc" id="L55">		HorizontalLayout rowOfButtons = new HorizontalLayout();</span>
+<span class="nc" id="L56">		Button returnButton = new Button(&quot;Return&quot;);</span>
+<span class="nc" id="L57">		HorizontalLayout rowOfButtons = new HorizontalLayout();</span>
 
-<span class="nc" id="L57">		rowOfButtons.addComponent(returnButton);</span>
-<span class="nc" id="L58">		returnButton.setId(&quot;btn_return_offering&quot;);</span>
+<span class="nc" id="L59">		rowOfButtons.addComponent(returnButton);</span>
+<span class="nc" id="L60">		returnButton.setId(&quot;btn_return_offering&quot;);</span>
 
-<span class="nc" id="L60">		this.addComponent(rowOfButtons);</span>
+<span class="nc" id="L62">		this.addComponent(rowOfButtons);</span>
 
-<span class="nc" id="L62">		this.refreshData();</span>
+<span class="nc" id="L64">		this.refreshData();</span>
 
-<span class="nc" id="L64">		offeringGrid.setWidth(&quot;100%&quot;);</span>
-<span class="nc" id="L65">		offeringGrid.setSelectionMode(SelectionMode.SINGLE);</span>
+<span class="nc" id="L66">		offeringGrid.setWidth(&quot;100%&quot;);</span>
+<span class="nc" id="L67">		offeringGrid.setSelectionMode(SelectionMode.SINGLE);</span>
 
-<span class="nc" id="L67">		offeringGrid.removeColumn(GridCol.OFFERING_TOUR); // we'll combine days of week and dates</span>
-<span class="nc" id="L68">		offeringGrid.removeColumn(GridCol.OFFERING_TOUR_GUIDE);</span>
-<span class="nc" id="L69">		offeringGrid.removeColumn(GridCol.OFFERING_DATE);</span>
-<span class="nc" id="L70">		offeringGrid.removeColumn(GridCol.OFFERING_TOUR_GUIDE_NAME);</span>
-<span class="nc" id="L71">		offeringGrid.removeColumn(GridCol.OFFERING_TOUR_GUIDE_LINE_ID);</span>
-<span class="nc" id="L72">		offeringGrid.removeColumn(GridCol.OFFERING_MAX_CAPACITY);</span>
-<span class="nc" id="L73">		offeringGrid.removeColumn(GridCol.OFFERING_MIN_CAPACITY);</span>
-<span class="nc" id="L74">		offeringGrid.removeColumn(GridCol.OFFERING_LAST_EDITABLE_DATE);</span>
+<span class="nc" id="L69">		offeringGrid.removeColumn(GridCol.OFFERING_TOUR); // we'll combine days of week and dates</span>
+<span class="nc" id="L70">		offeringGrid.removeColumn(GridCol.OFFERING_TOUR_GUIDE);</span>
+<span class="nc" id="L71">		offeringGrid.removeColumn(GridCol.OFFERING_DATE);</span>
+<span class="nc" id="L72">		offeringGrid.removeColumn(GridCol.OFFERING_TOUR_GUIDE_NAME);</span>
+<span class="nc" id="L73">		offeringGrid.removeColumn(GridCol.OFFERING_TOUR_GUIDE_LINE_ID);</span>
+<span class="nc" id="L74">		offeringGrid.removeColumn(GridCol.OFFERING_MAX_CAPACITY);</span>
+<span class="nc" id="L75">		offeringGrid.removeColumn(GridCol.OFFERING_MIN_CAPACITY);</span>
+<span class="nc" id="L76">		offeringGrid.removeColumn(GridCol.OFFERING_LAST_EDITABLE_DATE);</span>
 
-<span class="nc" id="L76">		offeringGrid.addColumn(offering -&gt; dbManager.countNumberOfPaidPeopleInOffering(offering))</span>
-<span class="nc" id="L77">				.setCaption(&quot;Total number of paying people&quot;);</span>
+<span class="nc" id="L78">		offeringGrid.addColumn(offering -&gt; dbManager.countNumberOfPaidPeopleInOffering(offering))</span>
+<span class="nc" id="L79">				.setCaption(&quot;Total number of paying people&quot;);</span>
 
-<span class="nc" id="L79">		offeringGrid.setColumnOrder(GridCol.OFFERING_ID, GridCol.OFFERING_START_DATE, GridCol.OFFERING_TOUR_NAME,</span>
+<span class="nc" id="L81">		offeringGrid.setColumnOrder(GridCol.OFFERING_ID, GridCol.OFFERING_START_DATE, GridCol.OFFERING_TOUR_NAME,</span>
 				GridCol.OFFERING_HOTEL_NAME);
-<span class="nc" id="L81">		offeringGrid.getColumn(GridCol.OFFERING_START_DATE).setCaption(&quot;Start Date&quot;);</span>
+<span class="nc" id="L83">		offeringGrid.getColumn(GridCol.OFFERING_START_DATE).setCaption(&quot;Start Date&quot;);</span>
 
-<span class="nc bnc" id="L83" title="All 2 branches missed.">		for (Column&lt;Offering, ?&gt; col : offeringGrid.getColumns()) {</span>
-<span class="nc" id="L84">			col.setMinimumWidth(120);</span>
-<span class="nc" id="L85">			col.setHidable(true);</span>
-<span class="nc" id="L86">			col.setHidingToggleCaption(col.getCaption());</span>
-<span class="nc" id="L87">			col.setExpandRatio(1);</span>
-<span class="nc" id="L88">		}</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">		for (Column&lt;Offering, ?&gt; col : offeringGrid.getColumns()) {</span>
+<span class="nc" id="L86">			col.setMinimumWidth(120);</span>
+<span class="nc" id="L87">			col.setHidable(true);</span>
+<span class="nc" id="L88">			col.setHidingToggleCaption(col.getCaption());</span>
+<span class="nc" id="L89">			col.setExpandRatio(1);</span>
+<span class="nc" id="L90">		}</span>
 
-<span class="nc" id="L90">		this.addComponent(offeringGrid);</span>
+<span class="nc" id="L92">		this.addComponent(offeringGrid);</span>
 
-<span class="nc" id="L92">		returnButton.addClickListener(event -&gt; {</span>
-<span class="nc" id="L93">			getUI().getNavigator().navigateTo(TourGuideManagementView.VIEW_NAME);</span>
-<span class="nc" id="L94">		});</span>
+<span class="nc" id="L94">		returnButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L95">			getUI().getNavigator().navigateTo(TourGuideManagementView.VIEW_NAME);</span>
+<span class="nc" id="L96">		});</span>
 
-<span class="nc" id="L96">	}</span>
+<span class="nc" id="L98">	}</span>
 
 	public void refreshData() {
 
-<span class="nc" id="L100">		ListDataProvider&lt;Offering&gt; provider = new ListDataProvider&lt;&gt;(</span>
-<span class="nc" id="L101">				Utils.iterableToCollection(offeringRepo.findByTourGuide(this.selectedTourGuide)));</span>
-<span class="nc" id="L102">		offeringGrid.setDataProvider(provider);</span>
-<span class="nc" id="L103">	}</span>
+<span class="nc" id="L102">		ListDataProvider&lt;Offering&gt; provider = new ListDataProvider&lt;&gt;(</span>
+<span class="nc" id="L103">				Utils.iterableToCollection(offeringRepo.findByTourGuide(this.selectedTourGuide)));</span>
+<span class="nc" id="L104">		offeringGrid.setDataProvider(provider);</span>
+<span class="nc" id="L105">	}</span>
 
 	/**
 	 * Sets the selected tour guide (to show all their offerings)
@@ -109,14 +111,14 @@ public class GuidedByViewer extends VerticalLayout {
 	 *            The selected tour guide
 	 */
 	void setSelectedTourGuide(TourGuide selectedTourGuide) {
-<span class="nc" id="L112">		this.selectedTourGuide = selectedTourGuide;</span>
-<span class="nc" id="L113">	}</span>
+<span class="nc" id="L114">		this.selectedTourGuide = selectedTourGuide;</span>
+<span class="nc" id="L115">	}</span>
 
 	/**
 	 * @return The selected tour guide
 	 */
 	public TourGuide getSelectedTourGuide() {
-<span class="nc" id="L119">		return this.selectedTourGuide;</span>
+<span class="nc" id="L121">		return this.selectedTourGuide;</span>
 	}
 
 	/**
@@ -124,7 +126,7 @@ public class GuidedByViewer extends VerticalLayout {
 	 *            Sets the tour guide editor (the parent view)
 	 */
 	void setTourGuidesEditor(TourGuidesEditor te) {
-<span class="nc" id="L127">		this.tourGuidesEditor = te;</span>
-<span class="nc" id="L128">	}</span>
+<span class="nc" id="L129">		this.tourGuidesEditor = te;</span>
+<span class="nc" id="L130">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

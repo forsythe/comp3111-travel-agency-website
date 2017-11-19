@@ -192,16 +192,18 @@ import com.vaadin.ui.DateTimeField;
 	 * @param search
 	 *            The substring to search for per each element's string
 	 *            representation
+	 * @param &lt;T&gt;
+	 *            Any object with an overridden toString()
 	 * @return whether any of the elements' string representations contained the
 	 *         provided substring
 	 */
 	public static &lt;T&gt; Boolean collectionContainsIgnoreCase(Collection&lt;T&gt; arr, String search) {
-<span class="fc bfc" id="L199" title="All 2 branches covered.">		for (Object s : arr) {</span>
-<span class="fc bfc" id="L200" title="All 2 branches covered.">			if (containsIgnoreCase(s.toString(), search)) {</span>
-<span class="fc" id="L201">				return true;</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">		for (Object s : arr) {</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">			if (containsIgnoreCase(s.toString(), search)) {</span>
+<span class="fc" id="L203">				return true;</span>
 			}
-<span class="fc" id="L203">		}</span>
-<span class="fc" id="L204">		return false;</span>
+<span class="fc" id="L205">		}</span>
+<span class="fc" id="L206">		return false;</span>
 	}
 
 	/**
@@ -212,8 +214,8 @@ import com.vaadin.ui.DateTimeField;
 	 * @return A nicely formatted string following {@link #DATE_LOCALE}
 	 */
 	public static String simpleDateFormat(Date d) {
-<span class="fc" id="L215">		SimpleDateFormat sdf = new SimpleDateFormat(DATE_LOCALE);</span>
-<span class="fc" id="L216">		return sdf.format(d);</span>
+<span class="fc" id="L217">		SimpleDateFormat sdf = new SimpleDateFormat(DATE_LOCALE);</span>
+<span class="fc" id="L218">		return sdf.format(d);</span>
 	}
 
 	/**
@@ -226,9 +228,9 @@ import com.vaadin.ui.DateTimeField;
 	 *             If the parse was unsuccessful
 	 */
 	public static Date parseSimpleDateFormat(String s) throws ParseException {
-<span class="nc" id="L229">		SimpleDateFormat parser = new SimpleDateFormat(DATE_LOCALE);</span>
-<span class="nc" id="L230">		parser.setLenient(false);</span>
-<span class="nc" id="L231">		return parser.parse(s);</span>
+<span class="nc" id="L231">		SimpleDateFormat parser = new SimpleDateFormat(DATE_LOCALE);</span>
+<span class="nc" id="L232">		parser.setLenient(false);</span>
+<span class="nc" id="L233">		return parser.parse(s);</span>
 	}
 
 	/**
@@ -242,13 +244,13 @@ import com.vaadin.ui.DateTimeField;
 	 */
 	public static Boolean safeParseIntEquals(int val, String s) {
 		try {
-<span class="fc bfc" id="L245" title="All 2 branches covered.">			if (Integer.parseInt(s) == val) {</span>
-<span class="fc" id="L246">				return true;</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">			if (Integer.parseInt(s) == val) {</span>
+<span class="fc" id="L248">				return true;</span>
 			}
-<span class="fc" id="L248">		} catch (Exception e) {</span>
-<span class="fc" id="L249">			return false;</span>
-<span class="fc" id="L250">		}</span>
-<span class="fc" id="L251">		return false;</span>
+<span class="fc" id="L250">		} catch (Exception e) {</span>
+<span class="fc" id="L251">			return false;</span>
+<span class="fc" id="L252">		}</span>
+<span class="fc" id="L253">		return false;</span>
 	}
 
 	/**
@@ -262,13 +264,13 @@ import com.vaadin.ui.DateTimeField;
 	 */
 	public static Boolean safeParseBoolEquals(boolean val, String s) {
 		try {
-<span class="fc bfc" id="L265" title="All 2 branches covered.">			if (Boolean.parseBoolean(s) == val) {</span>
-<span class="fc" id="L266">				return true;</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">			if (Boolean.parseBoolean(s) == val) {</span>
+<span class="fc" id="L268">				return true;</span>
 			}
-<span class="nc" id="L268">		} catch (Exception e) {</span>
-<span class="nc" id="L269">			return false;</span>
-<span class="fc" id="L270">		}</span>
-<span class="fc" id="L271">		return false;</span>
+<span class="nc" id="L270">		} catch (Exception e) {</span>
+<span class="nc" id="L271">			return false;</span>
+<span class="fc" id="L272">		}</span>
+<span class="fc" id="L273">		return false;</span>
 	}
 
 	/**
@@ -282,13 +284,13 @@ import com.vaadin.ui.DateTimeField;
 	 */
 	public static Boolean safeParseLongEquals(Long val, String s) {
 		try {
-<span class="fc bfc" id="L285" title="All 2 branches covered.">			if (Long.parseLong(s) == val) {</span>
-<span class="fc" id="L286">				return true;</span>
+<span class="fc bfc" id="L287" title="All 2 branches covered.">			if (Long.parseLong(s) == val) {</span>
+<span class="fc" id="L288">				return true;</span>
 			}
-<span class="fc" id="L288">		} catch (Exception e) {</span>
-<span class="fc" id="L289">			return false;</span>
-<span class="fc" id="L290">		}</span>
-<span class="fc" id="L291">		return false;</span>
+<span class="fc" id="L290">		} catch (Exception e) {</span>
+<span class="fc" id="L291">			return false;</span>
+<span class="fc" id="L292">		}</span>
+<span class="fc" id="L293">		return false;</span>
 	}
 
 	/**
@@ -302,13 +304,13 @@ import com.vaadin.ui.DateTimeField;
 	 */
 	public static Boolean safeParseDoubleEquals(Double val, String s) {
 		try {
-<span class="fc bfc" id="L305" title="All 2 branches covered.">			if (Double.parseDouble(s) == val) {</span>
-<span class="fc" id="L306">				return true;</span>
+<span class="fc bfc" id="L307" title="All 2 branches covered.">			if (Double.parseDouble(s) == val) {</span>
+<span class="fc" id="L308">				return true;</span>
 			}
-<span class="fc" id="L308">		} catch (Exception e) {</span>
-<span class="fc" id="L309">			return false;</span>
-<span class="fc" id="L310">		}</span>
-<span class="fc" id="L311">		return false;</span>
+<span class="fc" id="L310">		} catch (Exception e) {</span>
+<span class="fc" id="L311">			return false;</span>
+<span class="fc" id="L312">		}</span>
+<span class="fc" id="L313">		return false;</span>
 	}
 
 	/**
@@ -319,11 +321,11 @@ import com.vaadin.ui.DateTimeField;
 	 * @return A nicely formatted string of the dates, with commas in between
 	 */
 	public static String dateCollectionToString(Collection&lt;Date&gt; dates) {
-<span class="fc" id="L322">		ArrayList&lt;String&gt; dateList = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L323" title="All 2 branches covered.">		for (Date day : dates) {</span>
-<span class="fc" id="L324">			dateList.add(Utils.simpleDateFormat(day));</span>
-<span class="fc" id="L325">		}</span>
-<span class="fc" id="L326">		return String.join(&quot;, &quot;, dateList);</span>
+<span class="fc" id="L324">		ArrayList&lt;String&gt; dateList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L325" title="All 2 branches covered.">		for (Date day : dates) {</span>
+<span class="fc" id="L326">			dateList.add(Utils.simpleDateFormat(day));</span>
+<span class="fc" id="L327">		}</span>
+<span class="fc" id="L328">		return String.join(&quot;, &quot;, dateList);</span>
 	}
 
 	/**
@@ -336,12 +338,12 @@ import com.vaadin.ui.DateTimeField;
 	 *         Mon, Tue, Wed)
 	 */
 	public static String integerCollectionToString(Collection&lt;Integer&gt; integerCollection) {
-<span class="fc" id="L339">		ArrayList&lt;String&gt; integerList = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L340" title="All 2 branches covered.">		for (int integer : integerCollection) {</span>
-<span class="fc" id="L341">			integerList.add(Utils.dayToString(integer));</span>
-<span class="fc" id="L342">		}</span>
+<span class="fc" id="L341">		ArrayList&lt;String&gt; integerList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L342" title="All 2 branches covered.">		for (int integer : integerCollection) {</span>
+<span class="fc" id="L343">			integerList.add(Utils.dayToString(integer));</span>
+<span class="fc" id="L344">		}</span>
 
-<span class="fc" id="L344">		return String.join(&quot;, &quot;, integerList);</span>
+<span class="fc" id="L346">		return String.join(&quot;, &quot;, integerList);</span>
 	}
 
 	/**
@@ -354,10 +356,10 @@ import com.vaadin.ui.DateTimeField;
 	 * @return The new Date object
 	 */
 	public static Date addDate(Date d, int days) {
-<span class="fc" id="L357">		GregorianCalendar cal = new GregorianCalendar();</span>
-<span class="fc" id="L358">		cal.setTime(d);</span>
-<span class="fc" id="L359">		cal.add(Calendar.DATE, days);</span>
-<span class="fc" id="L360">		return cal.getTime();</span>
+<span class="fc" id="L359">		GregorianCalendar cal = new GregorianCalendar();</span>
+<span class="fc" id="L360">		cal.setTime(d);</span>
+<span class="fc" id="L361">		cal.add(Calendar.DATE, days);</span>
+<span class="fc" id="L362">		return cal.getTime();</span>
 	}
 
 	/**
@@ -368,7 +370,7 @@ import com.vaadin.ui.DateTimeField;
 	 * @return The corresponding Date object
 	 */
 	public static Date localDateToDate(LocalDate local) {
-<span class="fc" id="L371">		return java.sql.Date.valueOf(local);</span>
+<span class="fc" id="L373">		return java.sql.Date.valueOf(local);</span>
 	}
 
 	/**
@@ -379,7 +381,7 @@ import com.vaadin.ui.DateTimeField;
 	 * @return The corresponding Date object
 	 */
 	public static Date localDateTimeToDate(LocalDateTime local) {
-<span class="fc" id="L382">		return Date.from(local.atZone(ZoneId.systemDefault()).toInstant());</span>
+<span class="fc" id="L384">		return Date.from(local.atZone(ZoneId.systemDefault()).toInstant());</span>
 	}
 
 	/**
@@ -392,7 +394,7 @@ import com.vaadin.ui.DateTimeField;
 	 * @return The corresponding Date object
 	 */
 	public static Date addDate(LocalDate value, int days) {
-<span class="nc" id="L395">		return addDate(localDateToDate(value), days);</span>
+<span class="nc" id="L397">		return addDate(localDateToDate(value), days);</span>
 	}
 
 	/**
@@ -400,14 +402,16 @@ import com.vaadin.ui.DateTimeField;
 	 * 
 	 * @param iterable
 	 *            The iterable
+	 * @param &lt;T&gt;
+	 *            Any type
 	 * @return A collection containing all the elements in the Iterable
 	 */
 	public static &lt;T&gt; Collection&lt;T&gt; iterableToCollection(Iterable&lt;T&gt; iterable) {
-<span class="fc" id="L406">		Collection&lt;T&gt; c = new ArrayList&lt;T&gt;();</span>
-<span class="fc bfc" id="L407" title="All 2 branches covered.">		for (T o : iterable) {</span>
-<span class="fc" id="L408">			c.add(o);</span>
-<span class="fc" id="L409">		}</span>
-<span class="fc" id="L410">		return c;</span>
+<span class="fc" id="L410">		Collection&lt;T&gt; c = new ArrayList&lt;T&gt;();</span>
+<span class="fc bfc" id="L411" title="All 2 branches covered.">		for (T o : iterable) {</span>
+<span class="fc" id="L412">			c.add(o);</span>
+<span class="fc" id="L413">		}</span>
+<span class="fc" id="L414">		return c;</span>
 	}
 
 	/**
@@ -418,9 +422,9 @@ import com.vaadin.ui.DateTimeField;
 	 * @return The DateField object
 	 */
 	public static DateField getDateFieldWithOurLocale(String caption) {
-<span class="nc" id="L421">		DateField d = new DateField(caption);</span>
-<span class="nc" id="L422">		d.setDateFormat(DATE_LOCALE);</span>
-<span class="nc" id="L423">		return d;</span>
+<span class="fc" id="L425">		DateField d = new DateField(caption);</span>
+<span class="fc" id="L426">		d.setDateFormat(DATE_LOCALE);</span>
+<span class="fc" id="L427">		return d;</span>
 	}
 
 	/**
@@ -431,10 +435,10 @@ import com.vaadin.ui.DateTimeField;
 	 * @return The DateTimeField object
 	 */
 	public static DateTimeField getDateTimeFieldWithOurLocale(String caption) {
-<span class="nc" id="L434">		DateTimeField d = new DateTimeField(caption);</span>
-<span class="nc" id="L435">		d.setDateFormat(DATE_TIME_LOCALE);</span>
-<span class="nc" id="L436">		d.setResolution(DateTimeResolution.MINUTE);</span>
-<span class="nc" id="L437">		return d;</span>
+<span class="fc" id="L438">		DateTimeField d = new DateTimeField(caption);</span>
+<span class="fc" id="L439">		d.setDateFormat(DATE_TIME_LOCALE);</span>
+<span class="fc" id="L440">		d.setResolution(DateTimeResolution.MINUTE);</span>
+<span class="fc" id="L441">		return d;</span>
 	}
 
 }

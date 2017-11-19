@@ -166,26 +166,27 @@ import comp3111.data.model.Tour;
 	 */
 	public static TourGuideAvailableForDatesValidation getTourGuideAvailableForDatesValidationIgnoreOneOffering(
 			DateField startDateField, int duration, DBManager dbManager, Offering ignoredOffering) {
-<span class="nc" id="L169">		return new TourGuideAvailableForDatesValidation(startDateField, duration, dbManager, ignoredOffering);</span>
+<span class="fc" id="L169">		return new TourGuideAvailableForDatesValidation(startDateField, duration, dbManager, ignoredOffering);</span>
 	}
 
 	/**
 	 * @param validationStatus
 	 *            the validationStatus object after we fill in a vaadin form that's
 	 *            binded to a bean
-	 * 
+	 * @param &lt;T&gt;
+	 *            The bean class for which the bound fields are being validated
 	 * @return a string that we can display as an error notification
 	 */
 	public static &lt;T&gt; String getValidatorErrorsString(BinderValidationStatus&lt;T&gt; validationStatus) {
-<span class="fc" id="L180">		StringBuilder sb = new StringBuilder();</span>
-<span class="fc bfc" id="L181" title="All 2 branches covered.">		for (BindingValidationStatus&lt;?&gt; result : validationStatus.getFieldValidationErrors()) {</span>
+<span class="fc" id="L181">		StringBuilder sb = new StringBuilder();</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">		for (BindingValidationStatus&lt;?&gt; result : validationStatus.getFieldValidationErrors()) {</span>
 			// for TextFields and dates etc
-<span class="pc bpc" id="L183" title="2 of 4 branches missed.">			if (result.getField() instanceof AbstractComponent &amp;&amp; result.getMessage().isPresent()) {</span>
-<span class="fc" id="L184">				sb.append(&quot;[&quot; + ((AbstractComponent) result.getField()).getCaption() + &quot;]&quot;).append(&quot; &quot;)</span>
-<span class="fc" id="L185">						.append(result.getMessage().get()).append(&quot;\n&quot;);</span>
+<span class="pc bpc" id="L184" title="2 of 4 branches missed.">			if (result.getField() instanceof AbstractComponent &amp;&amp; result.getMessage().isPresent()) {</span>
+<span class="fc" id="L185">				sb.append(&quot;[&quot; + ((AbstractComponent) result.getField()).getCaption() + &quot;]&quot;).append(&quot; &quot;)</span>
+<span class="fc" id="L186">						.append(result.getMessage().get()).append(&quot;\n&quot;);</span>
 			}
-<span class="fc" id="L187">		}</span>
-<span class="fc" id="L188">		return sb.toString();</span>
+<span class="fc" id="L188">		}</span>
+<span class="fc" id="L189">		return sb.toString();</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

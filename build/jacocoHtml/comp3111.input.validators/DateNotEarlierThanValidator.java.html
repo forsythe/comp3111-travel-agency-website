@@ -41,7 +41,7 @@ public class DateNotEarlierThanValidator implements Validator&lt;Date&gt; {
 <span class="fc bfc" id="L41" title="All 2 branches covered.">		if (value != null) {</span>
 <span class="fc bfc" id="L42" title="All 2 branches covered.">			if (value.before(notEarlierThanThis)) {</span>
 <span class="fc" id="L43">				return getValidationErrorLogged(</span>
-<span class="fc" id="L44">						&quot;date cannot be earlier than &quot; + Utils.simpleDateFormat(notEarlierThanThis));</span>
+<span class="fc" id="L44">						&quot;date must be later than &quot; + Utils.simpleDateFormat(notEarlierThanThis));</span>
 			} else {
 <span class="fc" id="L46">				return ValidationResult.ok();</span>
 			}

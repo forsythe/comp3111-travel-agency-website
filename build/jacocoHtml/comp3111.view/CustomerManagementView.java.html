@@ -14,43 +14,45 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 
 /**
- * Generates the UI elements for the front-end side of the Customer Management page. 
+ * Generates the UI elements for the front-end side of the Customer Management
+ * page.
  * 
  * @author kristiansuhartono
  *
  */
 @SpringView(name = CustomerManagementView.VIEW_NAME)
-<span class="nc" id="L23">public class CustomerManagementView extends VerticalLayout implements View {</span>
+<span class="nc" id="L24">public class CustomerManagementView extends VerticalLayout implements View {</span>
 	public static final String VIEW_NAME = &quot;customersManagement&quot;;
-<span class="nc" id="L25">	private static final Logger log = LoggerFactory.getLogger(CustomerManagementView.class);</span>
+<span class="nc" id="L26">	private static final Logger log = LoggerFactory.getLogger(CustomerManagementView.class);</span>
 
 	@Autowired
 	CustomerEditor customerEditor;
 
 	@PostConstruct
 	void init() {
-<span class="nc" id="L32">		Label titleLabel = new Label(&quot;&lt;h1&gt;Customer Management&lt;/h1&gt;&quot;, ContentMode.HTML);</span>
+<span class="nc" id="L33">		Label titleLabel = new Label(&quot;&lt;h1&gt;Customer Management&lt;/h1&gt;&quot;, ContentMode.HTML);</span>
 
 		// A container that is 100% wide by default
-<span class="nc" id="L35">		VerticalLayout layout = new VerticalLayout();</span>
+<span class="nc" id="L36">		VerticalLayout layout = new VerticalLayout();</span>
 
 		// label will only take the space it needs
-<span class="nc" id="L38">		layout.addComponent(titleLabel);</span>
-<span class="nc" id="L39">		layout.addComponent(customerEditor);</span>
+<span class="nc" id="L39">		layout.addComponent(titleLabel);</span>
+<span class="nc" id="L40">		layout.addComponent(customerEditor);</span>
 
-<span class="nc" id="L41">		this.addComponent(layout);</span>
-<span class="nc" id="L42">	}</span>
+<span class="nc" id="L42">		this.addComponent(layout);</span>
+<span class="nc" id="L43">	}</span>
 
-	/** 
-	 * Function is called when the view is loaded up in the browser, refreshes the data so that the tables
-	 * are updated to the newest data contents.
+	/**
+	 * Function is called when the view is loaded up in the browser, refreshes the
+	 * data so that the tables are updated to the newest data contents.
+	 * 
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
 	// called AFTER init()
 	public void enter(ViewChangeEvent event) {
 		// This view is constructed in the init() method()
-<span class="nc" id="L53">		customerEditor.refreshData();</span>
-<span class="nc" id="L54">	}</span>
+<span class="nc" id="L55">		customerEditor.refreshData();</span>
+<span class="nc" id="L56">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
