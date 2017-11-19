@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.079s</div>
+<div class="counter">0.085s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,7 +79,7 @@
 </thead>
 <tr>
 <td class="success">testCanEditEvent</td>
-<td>0.013s</td>
+<td>0.017s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
@@ -89,7 +89,7 @@
 </tr>
 <tr>
 <td class="success">testCatchDuplicatePromoCode</td>
-<td>0.030s</td>
+<td>0.032s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -97,33 +97,32 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>2017-11-20 01:00:48.240  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
-2017-11-20 01:00:48.240  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 01:00:48.241  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 01:00:48.241  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 01:00:48.241  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
-2017-11-20 01:00:48.242  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 01:00:48.242  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 01:00:48.242  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 01:00:48.245  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
-2017-11-20 01:00:48.246  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 01:00:48.246  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 01:00:48.247  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 01:00:48.247  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
-2017-11-20 01:00:48.247  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 01:00:48.248  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 01:00:48.248  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 01:00:48.256  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 01:00:48.257  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 01:00:48.260  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 01:00:48.262  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 01:00:48.265  INFO 4808 --- [    Test worker] comp3111.input.editors.PromoEventEditor  : About to save promo event [PromoEvent[id=null, offeringId=null, date=Mon Nov 20 01:00:48 CST 2017]]
-2017-11-20 01:00:48.266  INFO 4808 --- [    Test worker] comp3111.input.editors.PromoEventEditor  : Saved a new promo event [PromoEvent[id=null, offeringId=null, date=Mon Nov 20 01:00:48 CST 2017]] successfully
-2017-11-20 01:00:48.271  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 01:00:48.272  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 01:00:48.273  INFO 4808 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 01:00:48.277  INFO 4808 --- [    Test worker] comp3111.input.editors.PromoEventEditor  : About to save promo event [PromoEvent[id=123, offeringId=null, date=Mon Nov 20 01:00:48 CST 2017]]
-2017-11-20 01:00:48.277  INFO 4808 --- [    Test worker] comp3111.input.editors.PromoEventEditor  : Saved an edited booking [PromoEvent[id=123, offeringId=null, date=Mon Nov 20 01:00:48 CST 2017]] successfully
+<pre>2017-11-20 01:47:56.913  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
+2017-11-20 01:47:56.913  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 01:47:56.914  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 01:47:56.915  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 01:47:56.916  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
+2017-11-20 01:47:56.916  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 01:47:56.916  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 01:47:56.916  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 01:47:56.918  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
+2017-11-20 01:47:56.919  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 01:47:56.919  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 01:47:56.920  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 01:47:56.920  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
+2017-11-20 01:47:56.920  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 01:47:56.921  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 01:47:56.921  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 01:47:56.929  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 01:47:56.931  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 01:47:56.932  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 01:47:56.936  INFO 10469 --- [    Test worker] comp3111.input.editors.PromoEventEditor  : About to save promo event [PromoEvent[id=null, offeringId=null, date=Mon Nov 20 01:47:56 HKT 2017]]
+2017-11-20 01:47:56.937  INFO 10469 --- [    Test worker] comp3111.input.editors.PromoEventEditor  : Saved a new promo event [PromoEvent[id=null, offeringId=null, date=Mon Nov 20 01:47:56 HKT 2017]] successfully
+2017-11-20 01:47:56.942  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 01:47:56.943  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 01:47:56.947  INFO 10469 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 01:47:56.951  INFO 10469 --- [    Test worker] comp3111.input.editors.PromoEventEditor  : About to save promo event [PromoEvent[id=123, offeringId=null, date=Mon Nov 20 01:47:56 HKT 2017]]
+2017-11-20 01:47:56.952  INFO 10469 --- [    Test worker] comp3111.input.editors.PromoEventEditor  : Saved an edited booking [PromoEvent[id=123, offeringId=null, date=Mon Nov 20 01:47:56 HKT 2017]] successfully
 </pre>
 </span>
 </div>
@@ -135,7 +134,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 4.3-rc-1</a> at Nov 20, 2017 1:01:05 AM</p>
+<a href="http://www.gradle.org">Gradle 4.3-rc-1</a> at Nov 20, 2017 1:48:18 AM</p>
 </div>
 </div>
 </body>
