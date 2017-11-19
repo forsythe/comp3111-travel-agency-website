@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VaadinLoginUI.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.view</a> &gt; <span class="el_source">VaadinLoginUI.java</span></div><h1>VaadinLoginUI.java</h1><pre class="source lang-java linenums">package comp3111.view;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.vaadin.annotations.Theme;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.navigator.ViewDisplay;
+import com.vaadin.server.Page;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.spring.annotation.SpringUI;
+import com.vaadin.spring.annotation.SpringViewDisplay;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.PasswordField;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
+
+import comp3111.input.auth.Authentication;
+
+/**
+ * Generates the UI elements for the front-end side of the Login page which is also the landing page. 
+ * @author kristiansuhartono
+ *
+ */
+@Theme(&quot;valo&quot;)
+@SpringUI
+@SpringViewDisplay
+<span class="nc" id="L38">public class VaadinLoginUI extends UI implements ViewDisplay {</span>
+
+	private Panel springViewDisplay;
+
+	@Autowired
+	Authentication authentication;
+
+	HorizontalLayout root;
+	VerticalLayout navigationBar;
+
+	@Override
+	public void init(VaadinRequest request) {
+
+<span class="nc" id="L51">		root = new HorizontalLayout();</span>
+<span class="nc" id="L52">		root.setSizeFull();</span>
+<span class="nc" id="L53">		setContent(root);</span>
+<span class="nc" id="L54">		springViewDisplay = new Panel();</span>
+<span class="nc" id="L55">		springViewDisplay.setSizeFull();</span>
+<span class="nc" id="L56">		root.addComponent(springViewDisplay);</span>
+<span class="nc" id="L57">		springViewDisplay.setVisible(false);</span>
+
+<span class="nc" id="L59">		drawLoginForm();</span>
+<span class="nc" id="L60">		getUI().getNavigator().setErrorView(HomeView.class);</span>
+
+<span class="nc" id="L62">		getUI().getNavigator().addViewChangeListener(new ViewChangeListener() {</span>
+			@Override
+			public boolean beforeViewChange(ViewChangeEvent event) {
+<span class="nc" id="L65">				View newView = event.getNewView();</span>
+<span class="nc" id="L66">				String newViewName = event.getViewName();</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">				if (newViewName.equals(OfferingManagementView.VIEW_NAME)) {</span>
+					// prevent a user from directly accessing offering management view without
+					// selecting a tour for the offerings
+<span class="nc" id="L70">					return ((OfferingManagementView) newView).userHasSelectedTour();</span>
+				}
+<span class="nc" id="L72">				return true;</span>
+			}
+
+			@Override
+			public void afterViewChange(ViewChangeEvent event) {
+				// NO-OP
+<span class="nc" id="L78">			}</span>
+		});
+
+<span class="nc" id="L81">		getUI().getNavigator().addViewChangeListener(new ViewChangeListener() {</span>
+			@Override
+			public boolean beforeViewChange(ViewChangeEvent event) {
+<span class="nc" id="L84">				View newView = event.getNewView();</span>
+<span class="nc" id="L85">				String newViewName = event.getViewName();</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">				if (newViewName.equals(GuidedByView.VIEW_NAME)) {</span>
+					// prevent a user from directly accessing
+<span class="nc" id="L88">					return ((GuidedByView) newView).userHasSelectedTourGuide();</span>
+				}
+<span class="nc" id="L90">				return true;</span>
+			}
+
+			@Override
+			public void afterViewChange(ViewChangeEvent event) {
+				// NO-OP
+<span class="nc" id="L96">			}</span>
+		});
+<span class="nc" id="L98">	}</span>
+
+	private Button createNavigationButton(String caption, final String viewName) {
+<span class="nc" id="L101">		Button button = new Button(caption);</span>
+<span class="nc" id="L102">		button.addStyleName(ValoTheme.BUTTON_LINK);</span>
+<span class="nc" id="L103">		button.addClickListener(event -&gt; getUI().getNavigator().navigateTo(viewName));</span>
+<span class="nc" id="L104">		button.setId(caption);</span>
+<span class="nc" id="L105">		return button;</span>
+	}
+
+	private Button createLogoutButton() {
+<span class="nc" id="L109">		Button button = new Button(&quot;Logout&quot;);</span>
+<span class="nc" id="L110">		button.addStyleName(ValoTheme.BUTTON_LINK);</span>
+
+<span class="nc" id="L112">		button.addClickListener(event -&gt; {</span>
+<span class="nc" id="L113">			navigationBar.setVisible(false);</span>
+<span class="nc" id="L114">			springViewDisplay.setVisible(false);</span>
+<span class="nc" id="L115">			getUI().getNavigator().navigateTo(HomeView.VIEW_NAME);</span>
+<span class="nc" id="L116">			drawLoginForm();</span>
+<span class="nc" id="L117">		});</span>
+<span class="nc" id="L118">		return button;</span>
+	}
+
+	private void drawLoginForm() {
+<span class="nc" id="L122">		Panel loginPanel = new Panel(&quot;Login&quot;);</span>
+<span class="nc" id="L123">		loginPanel.setSizeUndefined();</span>
+<span class="nc" id="L124">		root.addComponent(loginPanel);</span>
+<span class="nc" id="L125">		root.setComponentAlignment(loginPanel, Alignment.MIDDLE_CENTER);</span>
+
+<span class="nc" id="L127">		FormLayout content = new FormLayout();</span>
+<span class="nc" id="L128">		TextField username = new TextField(&quot;Username&quot;);</span>
+<span class="nc" id="L129">		username.setId(&quot;tf_username&quot;);</span>
+<span class="nc" id="L130">		content.addComponent(username);</span>
+<span class="nc" id="L131">		PasswordField password = new PasswordField(&quot;Password&quot;);</span>
+<span class="nc" id="L132">		password.setId(&quot;tf_password&quot;);</span>
+<span class="nc" id="L133">		content.addComponent(password);</span>
+
+<span class="nc" id="L135">		Button submit = new Button(&quot;Enter&quot;);</span>
+<span class="nc" id="L136">		submit.setId(&quot;btn_submit&quot;);</span>
+
+<span class="nc" id="L138">		content.addComponent(submit);</span>
+<span class="nc" id="L139">		content.setSizeUndefined();</span>
+<span class="nc" id="L140">		content.setMargin(true);</span>
+<span class="nc" id="L141">		loginPanel.setContent(content);</span>
+<span class="nc" id="L142">		root.setComponentAlignment(loginPanel, Alignment.MIDDLE_CENTER);</span>
+
+<span class="nc" id="L144">		submit.addClickListener(new ClickListener() {</span>
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+<span class="nc bnc" id="L149" title="All 2 branches missed.">				if (authentication.authenticate(username.getValue(), password.getValue())) {</span>
+<span class="nc" id="L150">					drawLoggedInComponents();</span>
+<span class="nc" id="L151">					username.clear();</span>
+<span class="nc" id="L152">					password.clear();</span>
+<span class="nc" id="L153">					loginPanel.setVisible(false);</span>
+				} else {
+<span class="nc" id="L155">					NotificationFactory.getTopBarErrorNotification(&quot;Invalid credentials.&quot;, null, 5)</span>
+<span class="nc" id="L156">							.show(Page.getCurrent());</span>
+					;
+
+				}
+<span class="nc" id="L160">			}</span>
+
+		});
+<span class="nc" id="L163">	}</span>
+
+	private void drawLoggedInComponents() {
+<span class="nc" id="L166">		navigationBar = new VerticalLayout();</span>
+
+<span class="nc" id="L168">		root.removeAllComponents();</span>
+
+<span class="nc" id="L170">		Label title = new Label(&quot;COMP3111 travel agency&quot;);</span>
+<span class="nc" id="L171">		title.setId(&quot;lbl_title&quot;);</span>
+
+<span class="nc" id="L173">		navigationBar.addComponent(title);</span>
+<span class="nc" id="L174">		navigationBar.addComponent(createNavigationButton(&quot;Home View&quot;, HomeView.VIEW_NAME));</span>
+<span class="nc" id="L175">		navigationBar.addComponent(createNavigationButton(&quot;Tour Management&quot;, TourManagementView.VIEW_NAME));</span>
+<span class="nc" id="L176">		navigationBar.addComponent(createNavigationButton(&quot;Bookings&quot;, BookingsManagementView.VIEW_NAME));</span>
+<span class="nc" id="L177">		navigationBar.addComponent(createNavigationButton(&quot;Customers&quot;, CustomerManagementView.VIEW_NAME));</span>
+<span class="nc" id="L178">		navigationBar.addComponent(createNavigationButton(&quot;Tour Guides&quot;, TourGuideManagementView.VIEW_NAME));</span>
+<span class="nc" id="L179">		navigationBar.addComponent(createNavigationButton(&quot;Customer Engagement&quot;, CustomerEngagementView.VIEW_NAME));</span>
+<span class="nc" id="L180">		navigationBar.addComponent(createNavigationButton(&quot;Promotion Management&quot;, PromoEventManagementView.VIEW_NAME));</span>
+
+<span class="nc" id="L182">		navigationBar.addComponent(createLogoutButton());</span>
+
+<span class="nc" id="L184">		navigationBar.setSizeUndefined();</span>
+<span class="nc" id="L185">		navigationBar.setSpacing(false);</span>
+
+<span class="nc" id="L187">		springViewDisplay.setSizeFull();</span>
+<span class="nc" id="L188">		root.addComponent(navigationBar);</span>
+<span class="nc" id="L189">		root.addComponent(springViewDisplay);</span>
+
+<span class="nc" id="L191">		navigationBar.setVisible(true);</span>
+<span class="nc" id="L192">		springViewDisplay.setVisible(true);</span>
+
+<span class="nc" id="L194">		root.setExpandRatio(navigationBar, 0);</span>
+<span class="nc" id="L195">		root.setExpandRatio(springViewDisplay, 1);</span>
+
+<span class="nc" id="L197">	}</span>
+
+	/** 
+	 * Sets the UI to display an the passed view element
+	 * @see com.vaadin.navigator.ViewDisplay#showView(com.vaadin.navigator.View)
+	 */
+	@Override
+	public void showView(View view) {
+<span class="nc" id="L205">		springViewDisplay.setContent((Component) view);</span>
+<span class="nc" id="L206">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OfferingStillOpenValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.input.validators</a> &gt; <span class="el_source">OfferingStillOpenValidator.java</span></div><h1>OfferingStillOpenValidator.java</h1><pre class="source lang-java linenums">package comp3111.input.validators;
+
+import com.vaadin.data.ValidationResult;
+import com.vaadin.data.Validator;
+import com.vaadin.data.ValueContext;
+import comp3111.data.model.Offering;
+
+import java.time.Instant;
+import java.util.Date;
+
+import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
+
+/**
+ * Validates whether an offering is still open for new applications (has it gone
+ * over the last possible day of booking or not)
+ * 
+ * @author kristiansuhartono
+ * @version 1.0
+ * @since 2017-11-18
+ *
+ */
+public class OfferingStillOpenValidator implements Validator&lt;Offering&gt; {
+
+	/**
+	 * Constructor of the validator
+	 */
+<span class="fc" id="L27">	OfferingStillOpenValidator() {</span>
+<span class="fc" id="L28">	}</span>
+
+	/**
+	 * Overrides the apply method in vaadin validators, checks whether the offering
+	 * is still open or not
+	 * 
+	 * @param value
+	 *            The offering object that is going to be checked
+	 * @param context
+	 *            A value context for converters. Contains relevant information for
+	 *            converting values.
+	 * @see com.vaadin.data.Validator#apply(java.lang.Object,
+	 *      com.vaadin.data.ValueContext)
+	 */
+	@Override
+	public ValidationResult apply(Offering value, ValueContext context) {
+<span class="fc bfc" id="L44" title="All 2 branches covered.">		if (value != null) {</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">			if (value.getStatus().equals(Offering.STATUS_CANCELLED)</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">					|| value.getLastEditableDate().before(Date.from(Instant.now()))) {</span>
+<span class="fc" id="L47">				return getValidationErrorLogged(&quot;offering is no longer open for application&quot;);</span>
+			} else {
+<span class="fc" id="L49">				return ValidationResult.ok();</span>
+			}
+		} else {
+<span class="fc" id="L52">			return getValidationErrorLogged(&quot;offering does not exist&quot;);</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

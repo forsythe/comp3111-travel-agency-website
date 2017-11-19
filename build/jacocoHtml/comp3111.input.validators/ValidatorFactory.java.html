@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ValidatorFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.input.validators</a> &gt; <span class="el_source">ValidatorFactory.java</span></div><h1>ValidatorFactory.java</h1><pre class="source lang-java linenums">package comp3111.input.validators;
+
+import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.vaadin.data.BinderValidationStatus;
+import com.vaadin.data.BindingValidationStatus;
+import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.AbstractTextField;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.DateField;
+
+import comp3111.data.DBManager;
+import comp3111.data.model.Offering;
+import comp3111.data.model.Tour;
+
+/**
+ * A factory class that creates an instance of the validators when requested.
+ * 
+ * @author kristiansuhartono
+ * @version 1.0
+ * @since 2017-11-18
+ *
+ */
+<span class="nc" id="L27">public class ValidatorFactory {</span>
+<span class="fc" id="L28">	private static final Logger log = LoggerFactory.getLogger(ValidatorFactory.class);</span>
+
+	/**
+	 * @param minInclusive
+	 *            The lower integer bound, inclusive
+	 * @param maxExclusive
+	 *            The upper integer bound, inclusive
+	 * @return An IntegerRangeValidator object
+	 */
+	public static IntegerRangeValidator getIntegerRangeValidator(int minInclusive, int maxExclusive) {
+<span class="fc" id="L38">		return new IntegerRangeValidator(minInclusive, maxExclusive);</span>
+	}
+
+	/**
+	 * @param minInclusive
+	 *            The lower integer bound, inclusive
+	 * @return An IntegerLowerBoundValidator object
+	 */
+	public static IntegerLowerBoundValidator getIntegerRangeValidator(int minInclusive) {
+<span class="fc" id="L47">		return new IntegerLowerBoundValidator(minInclusive);</span>
+	}
+
+	/**
+	 * @param field
+	 *            The textfield that has the lower bound value
+	 * @return An IntegerLowerBoundedByAnotherFieldValidator object
+	 */
+	public static IntegerLowerBoundedByAnotherFieldValidator getIntegerLowerBoundedByAnotherFieldValidator(
+			AbstractTextField field) {
+<span class="fc" id="L57">		return new IntegerLowerBoundedByAnotherFieldValidator(field);</span>
+	}
+
+	/**
+	 * @param minInclusive
+	 *            The lower bound, inclusive
+	 * @param maxInclusive
+	 *            The upper bound, inclusive
+	 * @return A DoubleRangeValidator object
+	 */
+	public static DoubleRangeValidator getDoubleRangeValidator(double minInclusive, double maxInclusive) {
+<span class="fc" id="L68">		return new DoubleRangeValidator(minInclusive, maxInclusive);</span>
+	}
+
+	/**
+	 * @param minInclusive
+	 *            The lower bound, inclusive.
+	 * @return A DoubleLowerBoundValidator object
+	 */
+	public static DoubleLowerBoundValidator getDoubleRangeValidator(double minInclusive) {
+<span class="fc" id="L77">		return new DoubleLowerBoundValidator(minInclusive);</span>
+	}
+
+	/**
+	 * @return A ListOfDatesValidator object
+	 */
+	public static ListOfDatesValidator getListOfDatesValidator() {
+<span class="fc" id="L84">		return new ListOfDatesValidator();</span>
+	}
+
+	/**
+	 * @param maxLength
+	 *            The maximum length of the string
+	 * @return A StringLengthValidator object
+	 */
+	public static StringLengthValidator getStringLengthValidator(int maxLength) {
+<span class="fc" id="L93">		return new StringLengthValidator(maxLength);</span>
+	}
+
+	/**
+	 * @param maxLength
+	 *            The maximum length of the string
+	 * @return A StringLengthCanNullValidator object
+	 */
+	public static StringLengthCanNullValidator getStringLengthCanNullValidator(int maxLength) {
+<span class="fc" id="L102">		return new StringLengthCanNullValidator(maxLength);</span>
+	}
+
+	/**
+	 * @return A PhoneNumberValidator object
+	 */
+	public static PhoneNumberValidator getPhoneNumberValidator() {
+<span class="fc" id="L109">		return new PhoneNumberValidator();</span>
+	}
+
+	/**
+	 * @return A HKIDValidator object
+	 */
+	public static HKIDValidator getHKIDValidator() {
+<span class="fc" id="L116">		return new HKIDValidator();</span>
+	}
+
+	public static DateNotEarlierThanValidator getDateNotEarlierThanValidator(Date notEarlierThanThis) {
+<span class="fc" id="L120">		return new DateNotEarlierThanValidator(notEarlierThanThis);</span>
+	}
+
+	/**
+	 * 
+	 * @param offering
+	 *            need to pass in the offering combobox because the value could
+	 *            change
+	 * @return a DateIsEarlierThanOfferingLastEditableDateValidator object
+	 * 
+	 */
+	public static DateIsEarlierThanOfferingLastEditableDateValidator getDateIsEarlierThanOfferingLastEditableDateValidator(
+			ComboBox&lt;Offering&gt; offering) {
+<span class="fc" id="L133">		return new DateIsEarlierThanOfferingLastEditableDateValidator(offering);</span>
+	}
+
+	/**
+	 * @return An OfferingStillOpenValidator object
+	 */
+	public static OfferingStillOpenValidator getOfferingStillOpenValidator() {
+<span class="fc" id="L140">		return new OfferingStillOpenValidator();</span>
+	}
+
+	/**
+	 * @param tour
+	 *            This is the tour object that is going to use for validation
+	 * @return A DateAvailableInTourValidator object
+	 */
+	public static DateAvailableInTourValidator getDateAvailableInTourValidator(Tour tour) {
+<span class="fc" id="L149">		return new DateAvailableInTourValidator(tour);</span>
+	}
+
+	/**
+	 * @param startDateField
+	 *            the starting date to check
+	 * @param duration
+	 *            the length of the interval to check (in days)
+	 * @param dbManager
+	 *            A DBManager object
+	 * @param ignoredOffering
+	 *            the offering to ignore (can be null)
+	 * @return whether or not the tour guide is available from time startDateField
+	 *         to startDateField+duration. If ignoredOffering is not null, then we
+	 *         ignore the time interval used by ignoredOffering when checking if
+	 *         tour guide is free. Useful for when editing offerings, we don't want
+	 *         the edited offering time-colliding with itself
+	 */
+	public static TourGuideAvailableForDatesValidation getTourGuideAvailableForDatesValidationIgnoreOneOffering(
+			DateField startDateField, int duration, DBManager dbManager, Offering ignoredOffering) {
+<span class="fc" id="L169">		return new TourGuideAvailableForDatesValidation(startDateField, duration, dbManager, ignoredOffering);</span>
+	}
+
+	/**
+	 * @param validationStatus
+	 *            the validationStatus object after we fill in a vaadin form that's
+	 *            binded to a bean
+	 * @param &lt;T&gt;
+	 *            The bean class for which the bound fields are being validated
+	 * @return a string that we can display as an error notification
+	 */
+	public static &lt;T&gt; String getValidatorErrorsString(BinderValidationStatus&lt;T&gt; validationStatus) {
+<span class="fc" id="L181">		StringBuilder sb = new StringBuilder();</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">		for (BindingValidationStatus&lt;?&gt; result : validationStatus.getFieldValidationErrors()) {</span>
+			// for TextFields and dates etc
+<span class="pc bpc" id="L184" title="2 of 4 branches missed.">			if (result.getField() instanceof AbstractComponent &amp;&amp; result.getMessage().isPresent()) {</span>
+<span class="fc" id="L185">				sb.append(&quot;[&quot; + ((AbstractComponent) result.getField()).getCaption() + &quot;]&quot;).append(&quot; &quot;)</span>
+<span class="fc" id="L186">						.append(result.getMessage().get()).append(&quot;\n&quot;);</span>
+			}
+<span class="fc" id="L188">		}</span>
+<span class="fc" id="L189">		return sb.toString();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

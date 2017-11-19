@@ -1,6 +1,10 @@
 # Build output
 target/
 build/
+!build/jacoco/
+!build/jacocoHtml/
+!build/docs/
+!build/reports/
 out/
 
 # gradle

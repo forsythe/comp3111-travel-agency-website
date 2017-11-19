@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConverterFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.input.converters</a> &gt; <span class="el_source">ConverterFactory.java</span></div><h1>ConverterFactory.java</h1><pre class="source lang-java linenums">package comp3111.input.converters;
+
+import com.vaadin.data.converter.StringToBooleanConverter;
+import com.vaadin.data.converter.StringToDoubleConverter;
+import com.vaadin.data.converter.StringToIntegerConverter;
+
+/**
+ * A factory which generates converters
+ * 
+ * @author Forsythe
+ */
+<span class="nc" id="L12">public class ConverterFactory {</span>
+	/**
+	 * @return A string to double converter
+	 */
+	public static StringToDoubleConverter getStringToDoubleConverter() {
+<span class="fc" id="L17">		return new StringToDoubleConverter(&quot;must be a double&quot;);</span>
+	}
+
+	/**
+	 * @return A string to integer converter
+	 */
+	public static StringToIntegerConverter getStringToIntegerConverter() {
+<span class="fc" id="L24">		return new StringToIntegerConverter(&quot;must be an integer&quot;);</span>
+	}
+
+	/**
+	 * @return A string to boolean converter
+	 */
+	public static StringToBooleanConverter getStringToBooleanConverter() {
+<span class="fc" id="L31">		return new StringToBooleanConverter(&quot;must be true or false&quot;);</span>
+	}
+
+	/**
+	 * @return A LocalDateTime to UtilDateTime converter
+	 */
+	public static LocalDateTimeToUtilDateTimeConverter getLocalDateTimeToUtilDateTimeConverter() {
+<span class="fc" id="L38">		return new LocalDateTimeToUtilDateTimeConverter();</span>
+	}
+
+	public static LocalDateToUtilDateConverter getLocalDateToUtilDateConverter(){
+<span class="fc" id="L42">		return new LocalDateToUtilDateConverter();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

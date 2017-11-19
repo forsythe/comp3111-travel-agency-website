@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TourGuideAvailableForDatesValidation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.input.validators</a> &gt; <span class="el_source">TourGuideAvailableForDatesValidation.java</span></div><h1>TourGuideAvailableForDatesValidation.java</h1><pre class="source lang-java linenums">package comp3111.input.validators;
+
+import com.vaadin.data.ValidationResult;
+import com.vaadin.data.Validator;
+import com.vaadin.data.ValueContext;
+import com.vaadin.ui.DateField;
+import comp3111.Utils;
+import comp3111.data.DBManager;
+import comp3111.data.model.Offering;
+import comp3111.data.model.TourGuide;
+import java.util.Calendar;
+import java.util.Date;
+
+import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
+
+/**
+ * Validates whether a tour guide is available between a certain date range.
+ * 
+ * 
+ * 
+ * @author Forsythe
+ *
+ */
+public class TourGuideAvailableForDatesValidation implements Validator&lt;TourGuide&gt; {
+
+	private DateField startDateField;
+	private int duration;
+	private DBManager dbManager;
+	private Offering ignoredOffering;
+
+	/**
+	 * @param startDateField
+	 *            The start date range to check
+	 * @param duration
+	 *            How long the duration you want to check, starting from startDate
+	 * @param dbManager
+	 *            The database manager
+	 * @param ignoredOffering
+	 *            An offering to ignore when checking if any date collisions occur
+	 *            for this tour guide. Useful when you're editing an offering, and
+	 *            you want to scan whether there are any date collisions (but you
+	 *            don't want the offering to collide with itself when saving the
+	 *            updated version to DB). Can be null
+	 */
+	TourGuideAvailableForDatesValidation(DateField startDateField, int duration, DBManager dbManager,
+<span class="fc" id="L46">			Offering ignoredOffering) {</span>
+<span class="fc" id="L47">		this.startDateField = startDateField;</span>
+<span class="fc" id="L48">		this.duration = duration;</span>
+<span class="fc" id="L49">		this.dbManager = dbManager;</span>
+<span class="fc" id="L50">		this.ignoredOffering = ignoredOffering;</span>
+<span class="fc" id="L51">	}</span>
+
+	/**
+	 * Overrides the apply method in vaadin validators, checks whether said
+	 * tourguide is available on the dates that the validator was constructed with.
+	 * 
+	 * @param value
+	 *            The TourGuide object whose availability shall be checked
+	 * @param context
+	 *            A value context for converters. Contains relevant information for
+	 *            converting values.
+	 * @see com.vaadin.data.Validator#apply(java.lang.Object,
+	 *      com.vaadin.data.ValueContext)
+	 */
+	@Override
+	public ValidationResult apply(TourGuide value, ValueContext context) {
+		try {
+<span class="fc" id="L68">			Date startDate = Utils.localDateToDate(startDateField.getValue());</span>
+
+<span class="fc" id="L70">			Calendar cal = Calendar.getInstance();</span>
+<span class="fc" id="L71">			cal.setTime(startDate);</span>
+<span class="fc" id="L72">			cal.add(Calendar.DATE, duration);</span>
+<span class="fc" id="L73">			Date endDate = cal.getTime();</span>
+<span class="pc bpc" id="L74" title="3 of 4 branches missed.">			if (ignoredOffering == null || ignoredOffering.getId() == null) {</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">				if (dbManager.isTourGuideAvailableBetweenDate(value, startDate, endDate)) {</span>
+<span class="nc" id="L76">					return ValidationResult.ok();</span>
+				} else {
+<span class="fc" id="L78">					return getValidationErrorLogged(&quot;tour guide not available in given period&quot;);</span>
+				}
+			} else {
+<span class="nc bnc" id="L81" title="All 2 branches missed.">				if (dbManager.isTourGuideAvailableBetweenDateExcludeOffering(value, startDate, endDate,</span>
+						ignoredOffering)) {
+<span class="nc" id="L83">					return ValidationResult.ok();</span>
+				} else {
+<span class="nc" id="L85">					return getValidationErrorLogged(&quot;tour guide not available in given period&quot;);</span>
+				}
+			}
+<span class="nc" id="L88">		} catch (NullPointerException e) {</span>
+			// Some values are null, just jump to ok
+<span class="nc" id="L90">			return ValidationResult.ok();</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

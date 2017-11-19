@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Utils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111</a> &gt; <span class="el_source">Utils.java</span></div><h1>Utils.java</h1><pre class="source lang-java linenums">package comp3111;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.vaadin.shared.ui.datefield.DateTimeResolution;
+import com.vaadin.ui.DateField;
+import com.vaadin.ui.DateTimeField;
+
+/**
+ * A class holding common utility functions
+ * 
+ * @author Forsythe
+ *
+ */
+<span class="nc" id="L27">public class Utils {</span>
+
+	public static final String DATE_LOCALE = &quot;dd/MM/yyyy&quot;;
+	public static final String DATE_TIME_LOCALE = DATE_LOCALE + &quot; HH:mm:ss Z&quot;;
+
+	/**
+	 * Returns the error to show when a required field is left empty
+	 * 
+	 * @return The error to show when a required field is left empty
+	 */
+	public static String generateRequiredError() {
+<span class="fc" id="L38">		return &quot;cannot be empty&quot;;</span>
+	}
+
+	/**
+	 * Returns the error to show when no tour guides are available
+	 * 
+	 * @return The error to show when no tour guides are available
+	 */
+	public static String generateNoTourGuideAvailableError() {
+<span class="nc" id="L47">		return &quot;no tour guides are free for this date&quot;;</span>
+	}
+
+	/**
+	 * Converts a string to a set of dates
+	 * 
+	 * @param listOfDates
+	 *            A string containing comma separated values of dates
+	 * @return A collection of Date objects
+	 */
+	public static Collection&lt;Date&gt; stringToDateSet(String listOfDates) {
+<span class="fc" id="L58">		Set&lt;Date&gt; dates = new HashSet&lt;Date&gt;();</span>
+<span class="pc bpc" id="L59" title="1 of 4 branches missed.">		if (listOfDates == null || listOfDates.isEmpty())</span>
+<span class="fc" id="L60">			return dates;</span>
+<span class="fc" id="L61">		String[] temp = listOfDates.replace(&quot; &quot;, &quot;&quot;).split(&quot;,&quot;);</span>
+
+<span class="fc" id="L63">		SimpleDateFormat parser = new SimpleDateFormat(DATE_LOCALE);</span>
+<span class="fc" id="L64">		parser.setLenient(false);</span>
+
+<span class="fc bfc" id="L66" title="All 2 branches covered.">		for (String s : temp) {</span>
+			try {
+<span class="fc" id="L68">				dates.add(parser.parse(s));</span>
+<span class="nc" id="L69">			} catch (ParseException e) {</span>
+				// TODO Auto-generated catch block
+<span class="nc" id="L71">				e.printStackTrace();</span>
+<span class="fc" id="L72">			}</span>
+		}
+<span class="fc" id="L74">		return dates;</span>
+	}
+
+	/**
+	 * Converts a collection of integers to a collection of strings representing
+	 * days of the week
+	 * 
+	 * @param integers
+	 *            The collection of integers
+	 * @return A set of strings representing the weekday names
+	 */
+	public static Set&lt;String&gt; integerSetToStringDayNameSet(Collection&lt;Integer&gt; integers) {
+<span class="fc" id="L86">		Set&lt;String&gt; strings = new HashSet&lt;String&gt;();</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">		for (Integer i : integers) {</span>
+<span class="fc" id="L88">			strings.add(dayToString(i));</span>
+<span class="fc" id="L89">		}</span>
+<span class="fc" id="L90">		return strings;</span>
+	}
+
+	/**
+	 * Converts a collection of strings representing days of the week to a
+	 * collection of integers
+	 * 
+	 * @param strings
+	 *            A collection of strings representing the weekday names
+	 * @return The collection of integers representing the days of the week
+	 */
+	public static Collection&lt;Integer&gt; stringDayNameSetToIntegerSet(Collection&lt;String&gt; strings) {
+<span class="fc" id="L102">		Set&lt;Integer&gt; ints = new HashSet&lt;Integer&gt;();</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">		for (String s : strings) {</span>
+<span class="fc" id="L104">			ints.add(stringToDay(s));</span>
+<span class="fc" id="L105">		}</span>
+<span class="fc" id="L106">		return ints;</span>
+	}
+
+	/**
+	 * Converts an integer representing a day of the week to the string
+	 * representation
+	 * 
+	 * @param day
+	 *            The integer representing the day of the week
+	 * @return The string representation of the day of the week
+	 */
+	public static String dayToString(int day) {
+<span class="fc bfc" id="L118" title="All 8 branches covered.">		switch (day) {</span>
+		case Calendar.MONDAY:
+<span class="fc" id="L120">			return &quot;Mon&quot;;</span>
+		case Calendar.TUESDAY:
+<span class="fc" id="L122">			return &quot;Tue&quot;;</span>
+		case Calendar.WEDNESDAY:
+<span class="fc" id="L124">			return &quot;Wed&quot;;</span>
+		case Calendar.THURSDAY:
+<span class="fc" id="L126">			return &quot;Thu&quot;;</span>
+		case Calendar.FRIDAY:
+<span class="fc" id="L128">			return &quot;Fri&quot;;</span>
+		case Calendar.SATURDAY:
+<span class="fc" id="L130">			return &quot;Sat&quot;;</span>
+		case Calendar.SUNDAY:
+<span class="fc" id="L132">			return &quot;Sun&quot;;</span>
+		default:
+<span class="fc" id="L134">			return &quot;invalid day&quot;;</span>
+		}
+	}
+
+	/**
+	 * Converts a string representation of a day of the week to an integer
+	 * 
+	 * @param s
+	 *            The day of the week, (Mon, Tue, Wed, Thu, Fri, Sat, Sun)
+	 * @return The integer representation
+	 */
+	public static Integer stringToDay(String s) {
+<span class="fc bfc" id="L146" title="All 2 branches covered.">		if (s.equals(&quot;Mon&quot;))</span>
+<span class="fc" id="L147">			return Calendar.MONDAY;</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">		else if (s.equals(&quot;Tue&quot;))</span>
+<span class="fc" id="L149">			return Calendar.TUESDAY;</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">		else if (s.equals(&quot;Wed&quot;))</span>
+<span class="fc" id="L151">			return Calendar.WEDNESDAY;</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">		else if (s.equals(&quot;Thu&quot;))</span>
+<span class="fc" id="L153">			return Calendar.THURSDAY;</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">		else if (s.equals(&quot;Fri&quot;))</span>
+<span class="fc" id="L155">			return Calendar.FRIDAY;</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">		else if (s.equals(&quot;Sat&quot;))</span>
+<span class="fc" id="L157">			return Calendar.SATURDAY;</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">		else if (s.equals(&quot;Sun&quot;))</span>
+<span class="fc" id="L159">			return Calendar.SUNDAY;</span>
+		else
+<span class="fc" id="L161">			return -1;</span>
+	}
+
+	/**
+	 * Returns a collection of all days of the week
+	 * 
+	 * @return A collection of strings containing all the days of the week
+	 */
+	public static Collection&lt;String&gt; getDaysOfWeek() {
+<span class="fc" id="L170">		return Arrays.asList(&quot;Mon&quot;, &quot;Tue&quot;, &quot;Wed&quot;, &quot;Thu&quot;, &quot;Fri&quot;, &quot;Sat&quot;, &quot;Sun&quot;);</span>
+	}
+
+	/**
+	 * Checks if a string contains a substring, ignoring case
+	 * 
+	 * @param fullString
+	 *            The full string
+	 * @param search
+	 *            The substring to search for
+	 * @return Whether or not the substring was found
+	 */
+	public static Boolean containsIgnoreCase(String fullString, String search) {
+<span class="fc" id="L183">		return fullString.toLowerCase().contains(search.toLowerCase());</span>
+	}
+
+	/**
+	 * For each element of a collection, checks if the string representation of each
+	 * element contains a specified substring
+	 * 
+	 * @param arr
+	 *            The collection of elements
+	 * @param search
+	 *            The substring to search for per each element's string
+	 *            representation
+	 * @param &lt;T&gt;
+	 *            Any object with an overridden toString()
+	 * @return whether any of the elements' string representations contained the
+	 *         provided substring
+	 */
+	public static &lt;T&gt; Boolean collectionContainsIgnoreCase(Collection&lt;T&gt; arr, String search) {
+<span class="fc bfc" id="L201" title="All 2 branches covered.">		for (Object s : arr) {</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">			if (containsIgnoreCase(s.toString(), search)) {</span>
+<span class="fc" id="L203">				return true;</span>
+			}
+<span class="fc" id="L205">		}</span>
+<span class="fc" id="L206">		return false;</span>
+	}
+
+	/**
+	 * Converts a Date object to a nicely formatted string
+	 * 
+	 * @param d
+	 *            The Date object
+	 * @return A nicely formatted string following {@link #DATE_LOCALE}
+	 */
+	public static String simpleDateFormat(Date d) {
+<span class="fc" id="L217">		SimpleDateFormat sdf = new SimpleDateFormat(DATE_LOCALE);</span>
+<span class="fc" id="L218">		return sdf.format(d);</span>
+	}
+
+	/**
+	 * Parses a string into a Date object
+	 * 
+	 * @param s
+	 *            The string
+	 * @return A Date object
+	 * @throws ParseException
+	 *             If the parse was unsuccessful
+	 */
+	public static Date parseSimpleDateFormat(String s) throws ParseException {
+<span class="nc" id="L231">		SimpleDateFormat parser = new SimpleDateFormat(DATE_LOCALE);</span>
+<span class="nc" id="L232">		parser.setLenient(false);</span>
+<span class="nc" id="L233">		return parser.parse(s);</span>
+	}
+
+	/**
+	 * Safely parses an integer, and check if it equals a value
+	 * 
+	 * @param val
+	 *            The expected value
+	 * @param s
+	 *            The string to parse
+	 * @return Whether the parsed value matches the expected value
+	 */
+	public static Boolean safeParseIntEquals(int val, String s) {
+		try {
+<span class="fc bfc" id="L247" title="All 2 branches covered.">			if (Integer.parseInt(s) == val) {</span>
+<span class="fc" id="L248">				return true;</span>
+			}
+<span class="fc" id="L250">		} catch (Exception e) {</span>
+<span class="fc" id="L251">			return false;</span>
+<span class="fc" id="L252">		}</span>
+<span class="fc" id="L253">		return false;</span>
+	}
+
+	/**
+	 * Safely parses a boolean, and check if it equals a value
+	 * 
+	 * @param val
+	 *            The expected value
+	 * @param s
+	 *            The string to parse
+	 * @return Whether the parsed value matches the expected value
+	 */
+	public static Boolean safeParseBoolEquals(boolean val, String s) {
+		try {
+<span class="fc bfc" id="L267" title="All 2 branches covered.">			if (Boolean.parseBoolean(s) == val) {</span>
+<span class="fc" id="L268">				return true;</span>
+			}
+<span class="nc" id="L270">		} catch (Exception e) {</span>
+<span class="nc" id="L271">			return false;</span>
+<span class="fc" id="L272">		}</span>
+<span class="fc" id="L273">		return false;</span>
+	}
+
+	/**
+	 * Safely parses a long, and check if it equals a value
+	 * 
+	 * @param val
+	 *            The expected value
+	 * @param s
+	 *            The string to parse
+	 * @return Whether the parsed value matches the expected value
+	 */
+	public static Boolean safeParseLongEquals(Long val, String s) {
+		try {
+<span class="fc bfc" id="L287" title="All 2 branches covered.">			if (Long.parseLong(s) == val) {</span>
+<span class="fc" id="L288">				return true;</span>
+			}
+<span class="fc" id="L290">		} catch (Exception e) {</span>
+<span class="fc" id="L291">			return false;</span>
+<span class="fc" id="L292">		}</span>
+<span class="fc" id="L293">		return false;</span>
+	}
+
+	/**
+	 * Safely parses a double, and check if it equals a value
+	 * 
+	 * @param val
+	 *            The expected value
+	 * @param s
+	 *            The string to parse
+	 * @return Whether the parsed value matches the expected value
+	 */
+	public static Boolean safeParseDoubleEquals(Double val, String s) {
+		try {
+<span class="fc bfc" id="L307" title="All 2 branches covered.">			if (Double.parseDouble(s) == val) {</span>
+<span class="fc" id="L308">				return true;</span>
+			}
+<span class="fc" id="L310">		} catch (Exception e) {</span>
+<span class="fc" id="L311">			return false;</span>
+<span class="fc" id="L312">		}</span>
+<span class="fc" id="L313">		return false;</span>
+	}
+
+	/**
+	 * Converts a collection of dates into a single formatted string
+	 * 
+	 * @param dates
+	 *            A collection of dates
+	 * @return A nicely formatted string of the dates, with commas in between
+	 */
+	public static String dateCollectionToString(Collection&lt;Date&gt; dates) {
+<span class="fc" id="L324">		ArrayList&lt;String&gt; dateList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L325" title="All 2 branches covered.">		for (Date day : dates) {</span>
+<span class="fc" id="L326">			dateList.add(Utils.simpleDateFormat(day));</span>
+<span class="fc" id="L327">		}</span>
+<span class="fc" id="L328">		return String.join(&quot;, &quot;, dateList);</span>
+	}
+
+	/**
+	 * Converts a collection of integers (representing days of the week) to a single
+	 * formatted string
+	 * 
+	 * @param integerCollection
+	 *            A collection of integers representing days of the week
+	 * @return A nicely formatted string of the days, with commas in between; (e.g.
+	 *         Mon, Tue, Wed)
+	 */
+	public static String integerCollectionToString(Collection&lt;Integer&gt; integerCollection) {
+<span class="fc" id="L341">		ArrayList&lt;String&gt; integerList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L342" title="All 2 branches covered.">		for (int integer : integerCollection) {</span>
+<span class="fc" id="L343">			integerList.add(Utils.dayToString(integer));</span>
+<span class="fc" id="L344">		}</span>
+
+<span class="fc" id="L346">		return String.join(&quot;, &quot;, integerList);</span>
+	}
+
+	/**
+	 * Adds days to a date, to get a new Date object
+	 * 
+	 * @param d
+	 *            The original date
+	 * @param days
+	 *            How many days to add
+	 * @return The new Date object
+	 */
+	public static Date addDate(Date d, int days) {
+<span class="fc" id="L359">		GregorianCalendar cal = new GregorianCalendar();</span>
+<span class="fc" id="L360">		cal.setTime(d);</span>
+<span class="fc" id="L361">		cal.add(Calendar.DATE, days);</span>
+<span class="fc" id="L362">		return cal.getTime();</span>
+	}
+
+	/**
+	 * Converts LocalDate objects to Date objects
+	 * 
+	 * @param local
+	 *            The LocalDate object
+	 * @return The corresponding Date object
+	 */
+	public static Date localDateToDate(LocalDate local) {
+<span class="fc" id="L373">		return java.sql.Date.valueOf(local);</span>
+	}
+
+	/**
+	 * Converts LocalDateTime objects to Date objects
+	 * 
+	 * @param local
+	 *            The LocalDateTime object
+	 * @return The corresponding Date object
+	 */
+	public static Date localDateTimeToDate(LocalDateTime local) {
+<span class="fc" id="L384">		return Date.from(local.atZone(ZoneId.systemDefault()).toInstant());</span>
+	}
+
+	/**
+	 * Adds days to a LocalDate object
+	 * 
+	 * @param value
+	 *            The LocalDate object
+	 * @param days
+	 *            The number of days to add
+	 * @return The corresponding Date object
+	 */
+	public static Date addDate(LocalDate value, int days) {
+<span class="nc" id="L397">		return addDate(localDateToDate(value), days);</span>
+	}
+
+	/**
+	 * Converts an iterable to a collection
+	 * 
+	 * @param iterable
+	 *            The iterable
+	 * @param &lt;T&gt;
+	 *            Any type
+	 * @return A collection containing all the elements in the Iterable
+	 */
+	public static &lt;T&gt; Collection&lt;T&gt; iterableToCollection(Iterable&lt;T&gt; iterable) {
+<span class="fc" id="L410">		Collection&lt;T&gt; c = new ArrayList&lt;T&gt;();</span>
+<span class="fc bfc" id="L411" title="All 2 branches covered.">		for (T o : iterable) {</span>
+<span class="fc" id="L412">			c.add(o);</span>
+<span class="fc" id="L413">		}</span>
+<span class="fc" id="L414">		return c;</span>
+	}
+
+	/**
+	 * Returns a Vaadin DateField which follows our {@link #DATE_LOCALE}
+	 * 
+	 * @param caption
+	 *            The caption of the input box
+	 * @return The DateField object
+	 */
+	public static DateField getDateFieldWithOurLocale(String caption) {
+<span class="fc" id="L425">		DateField d = new DateField(caption);</span>
+<span class="fc" id="L426">		d.setDateFormat(DATE_LOCALE);</span>
+<span class="fc" id="L427">		return d;</span>
+	}
+
+	/**
+	 * Returns a Vaadin DateTimeField which follows our {@link #DATE_TIME_LOCALE}
+	 * 
+	 * @param caption
+	 *            The caption of the input box
+	 * @return The DateTimeField object
+	 */
+	public static DateTimeField getDateTimeFieldWithOurLocale(String caption) {
+<span class="fc" id="L438">		DateTimeField d = new DateTimeField(caption);</span>
+<span class="fc" id="L439">		d.setDateFormat(DATE_TIME_LOCALE);</span>
+<span class="fc" id="L440">		d.setResolution(DateTimeResolution.MINUTE);</span>
+<span class="fc" id="L441">		return d;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

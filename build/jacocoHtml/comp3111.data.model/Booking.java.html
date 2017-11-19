@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Booking.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.data.model</a> &gt; <span class="el_source">Booking.java</span></div><h1>Booking.java</h1><pre class="source lang-java linenums">package comp3111.data.model;
+
+import javax.persistence.*;
+import java.util.Calendar;
+
+/**
+ * 
+ * This class represents a single booking record between a customer and an offering in the database.
+ */
+/**
+ * @author Forsythe
+ *
+ */
+@Entity
+public class Booking {
+
+	public static final String PAYMENT_PENDING = &quot;Pending&quot;;
+	public static final String PAYMENT_CONFIRMED = &quot;Confirmed&quot;;
+	public static final String PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED = &quot;Offering cancelled&quot;;
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Customer customer;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Offering offering;
+
+	private int numAdults;
+	private int numChildren;
+	private int numToddlers;
+	private double amountPaid;
+	private String specialRequests;
+	private String paymentStatus;
+
+	private double promoDiscountMultiplier;
+
+	private String promoCodeUsed;
+
+<span class="fc" id="L40">	public Booking() {</span>
+<span class="fc" id="L41">		promoDiscountMultiplier = 1;</span>
+<span class="fc" id="L42">	}</span>
+
+	/**
+	 * Creates a new transient (not yet saved in DB) booking object without a promo
+	 * code.
+	 * 
+	 * @param customer
+	 *            The customer making the booking
+	 * @param offering
+	 *            The offering to book
+	 * @param numAdults
+	 *            How many adults in the booking
+	 * @param numChildren
+	 *            How many children in the booking
+	 * @param numToddlers
+	 *            How many toddlers in the booking
+	 * @param amountPaid
+	 *            How much the customer has already paid
+	 * @param specialRequests
+	 *            Special requests
+	 * @param paymentStatus
+	 *            The payment status. Can be {@link Booking#PAYMENT_PENDING},
+	 *            {@link Booking#PAYMENT_CONFIRMED}, or
+	 *            {@link Booking#PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED}
+	 */
+	public Booking(Customer customer, Offering offering, int numAdults, int numChildren, int numToddlers,
+<span class="fc" id="L68">			double amountPaid, String specialRequests, String paymentStatus) {</span>
+<span class="fc" id="L69">		this.customer = customer;</span>
+<span class="fc" id="L70">		this.offering = offering;</span>
+<span class="fc" id="L71">		this.numAdults = numAdults;</span>
+<span class="fc" id="L72">		this.numChildren = numChildren;</span>
+<span class="fc" id="L73">		this.numToddlers = numToddlers;</span>
+<span class="fc" id="L74">		this.amountPaid = amountPaid;</span>
+<span class="fc" id="L75">		this.specialRequests = specialRequests;</span>
+<span class="fc" id="L76">		this.paymentStatus = paymentStatus;</span>
+<span class="fc" id="L77">		this.promoDiscountMultiplier = 1; // no promo discount</span>
+<span class="fc" id="L78">		this.promoCodeUsed = null;</span>
+<span class="fc" id="L79">	}</span>
+
+	/**
+	 * Creates a new transient (not yet saved in DB) booking object, but with a
+	 * promo code code.
+	 * 
+	 * @param customer
+	 *            The customer making the booking
+	 * @param offering
+	 *            The offering to book
+	 * @param numAdults
+	 *            How many adults in the booking
+	 * @param numChildren
+	 *            How many children in the booking
+	 * @param numToddlers
+	 *            How many toddlers in the booking
+	 * @param amountPaid
+	 *            How much the customer has already paid
+	 * @param specialRequests
+	 *            Special requests
+	 * @param paymentStatus
+	 *            The payment status. Can be {@link Booking#PAYMENT_PENDING},
+	 *            {@link Booking#PAYMENT_CONFIRMED}, or
+	 *            {@link Booking#PAYMENT_CANCELLED_BECAUSE_OFFERING_CANCELLED}
+	 * @param promoDiscountMultiplier
+	 *            The discount provided by the promotion; a double between [0, 1].
+	 *            E.g. 0.7 indicates 30% off the final price.
+	 * @param promoCodeUsed
+	 *            The actual promo code.
+	 */
+	public Booking(Customer customer, Offering offering, int numAdults, int numChildren, int numToddlers,
+			double amountPaid, String specialRequests, String paymentStatus, double promoDiscountMultiplier,
+<span class="fc" id="L111">			String promoCodeUsed) {</span>
+<span class="fc" id="L112">		this.customer = customer;</span>
+<span class="fc" id="L113">		this.offering = offering;</span>
+<span class="fc" id="L114">		this.numAdults = numAdults;</span>
+<span class="fc" id="L115">		this.numChildren = numChildren;</span>
+<span class="fc" id="L116">		this.numToddlers = numToddlers;</span>
+<span class="fc" id="L117">		this.amountPaid = amountPaid;</span>
+<span class="fc" id="L118">		this.specialRequests = specialRequests;</span>
+<span class="fc" id="L119">		this.paymentStatus = paymentStatus;</span>
+<span class="fc" id="L120">		this.promoDiscountMultiplier = promoDiscountMultiplier;</span>
+<span class="fc" id="L121">		this.promoCodeUsed = promoCodeUsed;</span>
+<span class="fc" id="L122">	}</span>
+
+	public Long getId() {
+<span class="fc" id="L125">		return id;</span>
+	}
+
+	public void setId(long id) {
+<span class="fc" id="L129">		this.id = id;</span>
+<span class="fc" id="L130">	}</span>
+
+	public String getCustomerName() {
+<span class="fc bfc" id="L133" title="All 2 branches covered.">		return customer != null ? customer.getName() : null;</span>
+	}
+
+	public String getCustomerHkid() {
+<span class="fc bfc" id="L137" title="All 2 branches covered.">		return customer != null ? customer.getHkid() : null;</span>
+	}
+
+	public Customer getCustomer() {
+<span class="fc" id="L141">		return customer;</span>
+	}
+
+	public void setCustomer(Customer customer) {
+<span class="fc" id="L145">		this.customer = customer;</span>
+<span class="fc" id="L146">	}</span>
+
+	/**
+	 * @return Gets the Id of the tour that this offering belongs to.
+	 */
+	public Long getTourId() {
+<span class="nc" id="L152">		return getOffering().getTour().getId();</span>
+	}
+
+	/**
+	 * @return The name of the tour that this offering belongs to.
+	 */
+	public String getTourName() {
+<span class="nc" id="L159">		return getOffering().getTour().getTourName();</span>
+	}
+
+	public Offering getOffering() {
+<span class="fc" id="L163">		return offering;</span>
+	}
+
+	public void setOffering(Offering offering) {
+<span class="fc" id="L167">		this.offering = offering;</span>
+<span class="fc" id="L168">	}</span>
+
+	public int getNumAdults() {
+<span class="fc" id="L171">		return numAdults;</span>
+	}
+
+	public void setNumAdults(int numAdults) {
+<span class="fc" id="L175">		this.numAdults = numAdults;</span>
+<span class="fc" id="L176">	}</span>
+
+	public int getNumChildren() {
+<span class="fc" id="L179">		return numChildren;</span>
+	}
+
+	public void setNumChildren(int numChildren) {
+<span class="fc" id="L183">		this.numChildren = numChildren;</span>
+<span class="fc" id="L184">	}</span>
+
+	public int getNumToddlers() {
+<span class="fc" id="L187">		return numToddlers;</span>
+	}
+
+	public void setNumToddlers(int numToddlers) {
+<span class="fc" id="L191">		this.numToddlers = numToddlers;</span>
+<span class="fc" id="L192">	}</span>
+
+	public int getTotalNumberOfPeople() {
+<span class="fc" id="L195">		return numAdults + numChildren + numToddlers;</span>
+	}
+
+	public String getPromoCodeUsed() {
+<span class="fc" id="L199">		return promoCodeUsed;</span>
+	}
+
+	public void setPromoCodeUsed(String promoCodeUsed) {
+<span class="fc" id="L203">		this.promoCodeUsed = promoCodeUsed;</span>
+<span class="fc" id="L204">	}</span>
+
+	/**
+	 * @return The dollar cost of this booking record. Depends on if it's
+	 *         weekday/weekend, the number of adults, children, toddlers, child
+	 *         discount, and toddler discount. Will also apply the promotional
+	 *         discount, if applicable.
+	 */
+	public double getTotalCost() {
+<span class="fc" id="L213">		Calendar cal = Calendar.getInstance();</span>
+<span class="fc" id="L214">		cal.setTime(offering.getStartDate());</span>
+<span class="fc" id="L215">		int day = cal.get(Calendar.DAY_OF_WEEK);</span>
+		int price;
+<span class="pc bpc" id="L217" title="1 of 4 branches missed.">		if (day &gt;= Calendar.MONDAY &amp;&amp; day &lt;= Calendar.FRIDAY) {</span>
+<span class="fc" id="L218">			price = this.offering.getTour().getWeekdayPrice();</span>
+		} else {
+<span class="fc" id="L220">			price = this.offering.getTour().getWeekendPrice();</span>
+		}
+<span class="fc" id="L222">		double rawPrice = numAdults * price + numChildren * price * this.offering.getTour().getChildDiscount()</span>
+<span class="fc" id="L223">				+ numToddlers * price * this.offering.getTour().getToddlerDiscount();</span>
+<span class="fc" id="L224">		return rawPrice * promoDiscountMultiplier;</span>
+	}
+
+	/**
+	 * @return The dollar amount that's already been paid by the customer
+	 */
+	public double getAmountPaid() {
+<span class="fc" id="L231">		return amountPaid;</span>
+	}
+
+	public void setAmountPaid(double amountPaid) {
+<span class="fc" id="L235">		this.amountPaid = amountPaid;</span>
+<span class="fc" id="L236">	}</span>
+
+	public String getSpecialRequests() {
+<span class="fc" id="L239">		return specialRequests;</span>
+	}
+
+	public void setSpecialRequests(String specialRequests) {
+<span class="fc" id="L243">		this.specialRequests = specialRequests;</span>
+<span class="fc" id="L244">	}</span>
+
+	public String getPaymentStatus() {
+<span class="fc" id="L247">		return paymentStatus;</span>
+	}
+
+	public void setPaymentStatus(String paymentStatus) {
+<span class="fc" id="L251">		this.paymentStatus = paymentStatus;</span>
+<span class="fc" id="L252">	}</span>
+
+	/**
+	 * @return Returns a double [0, 1.0] indicating the discount multiplier. E.g.
+	 *         0.7 means a 30% discount.
+	 */
+	public double getPromoDiscountMultiplier() {
+<span class="nc" id="L259">		return promoDiscountMultiplier;</span>
+	}
+
+	/**
+	 * @param promoDiscountMultiplier
+	 *            A double between [0, 1.0] indicating the discount multiplier. 1.0
+	 *            for full price (no discount).
+	 */
+	public void setPromoDiscountMultiplier(double promoDiscountMultiplier) {
+<span class="fc" id="L268">		this.promoDiscountMultiplier = promoDiscountMultiplier;</span>
+<span class="fc" id="L269">	}</span>
+
+	@Override
+	public String toString() {
+<span class="fc" id="L273">		return &quot;Booking[&quot; + customer.getName() + &quot;, &quot; + offering + &quot;]&quot;;</span>
+	}
+
+	@Override
+	public boolean equals(Object other) {
+<span class="fc bfc" id="L278" title="All 2 branches covered.">		if (other instanceof Booking)</span>
+<span class="fc" id="L279">			return ((Booking) other).getId().equals(this.getId());</span>
+<span class="fc" id="L280">		return false;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
