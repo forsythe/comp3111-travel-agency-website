@@ -1,6 +1,8 @@
 # Build output
 target/
 build/
+!build/jacoco/
+!build/jacoco/Html/
 out/
 
 # gradle
