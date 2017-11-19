@@ -215,7 +215,7 @@ public class PromoEventEditor extends VerticalLayout {
 	 */
 	public boolean canEditEvent(PromoEvent event) {
 		if (event == null)
-			return true;
+			return false;
 
 		Date today = Date.from(Instant.now());
 		Date triggerDate = event.getTriggerDate();

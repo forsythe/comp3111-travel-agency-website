@@ -103,7 +103,7 @@ public class PromoEventEditorTests {
 
 	@Test
 	public void testCanEditEvent() {
-		assertTrue(promoEditor.canEditEvent(null));
+		assertFalse(promoEditor.canEditEvent(null));
 
 		PromoEvent tooLate = new PromoEvent();
 		tooLate.setTriggerDate(Utils.addDate(Utils.localDateTimeToDate(LocalDateTime.now()), -10));

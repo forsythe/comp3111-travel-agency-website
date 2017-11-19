@@ -21,6 +21,7 @@ import org.mockito.Spy;
 
 import comp3111.Utils;
 import comp3111.data.DBManager;
+import comp3111.data.model.Booking;
 import comp3111.data.model.Offering;
 import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
@@ -100,6 +101,19 @@ public class OfferingEditorTests {
 
 		assertFalse(offeringEditor.getValidationStatus().isOk());
 		assertEquals(5, offeringEditor.getValidationStatus().getFieldValidationErrors().size());
+	}
+
+	@Test
+	public void testCanEditBooking() {
+		assertFalse(offeringEditor.canEditOffering(null));
+
+		Offering tooLateOffering = new Offering();
+		tooLateOffering.setStartDate(Utils.addDate(new Date(), -10));
+		assertFalse(offeringEditor.canEditOffering(tooLateOffering));
+
+		Offering futureOffering = new Offering();
+		futureOffering.setStartDate(Utils.addDate(new Date(), 3));
+		assertTrue(offeringEditor.canEditOffering(futureOffering));
 	}
 
 	private void setEditorFormValues(TourGuide tourGuide, LocalDate startDate, String hotelName, String minCustomers,

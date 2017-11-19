@@ -140,7 +140,7 @@ public class BookingEditorTests {
 
 	@Test
 	public void testCanEditBooking() {
-		assertTrue(bookingEditor.canEditBooking(null));
+		assertFalse(bookingEditor.canEditBooking(null));
 
 		Booking tooLate = new Booking();
 		Offering tooLateOffering = new Offering();

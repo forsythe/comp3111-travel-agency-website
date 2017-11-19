@@ -230,7 +230,7 @@ public class BookingEditor extends VerticalLayout {
 	 */
 	public boolean canEditBooking(Booking booking) {
 		if (booking == null)
-			return true;
+			return false;
 
 		Date today = Date.from(Instant.now());
 		Date threeDayBeforeStart = booking.getOffering().getLastEditableDate();

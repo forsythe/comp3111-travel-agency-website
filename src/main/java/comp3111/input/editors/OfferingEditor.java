@@ -437,8 +437,8 @@ public class OfferingEditor extends VerticalLayout {
 	 * @return Whether the offering is editable
 	 */
 	public boolean canEditOffering(Offering offering) {
-		if (offering == null || offering.getId() == null)
-			return true;
+		if (offering == null)
+			return false;
 
 		Date today = Date.from(Instant.now());
 		Date threeDayBeforeStart = offering.getLastEditableDate();
