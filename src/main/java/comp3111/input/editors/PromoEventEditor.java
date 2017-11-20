@@ -284,8 +284,10 @@ public class PromoEventEditor extends VerticalLayout {
 		binder.forField(triggerDate).asRequired(Utils.generateRequiredError())
 				.withConverter(ConverterFactory.getLocalDateTimeToUtilDateTimeConverter())
 				.withValidator(ValidatorFactory.getDateIsEarlierThanOfferingLastEditableDateValidator(offering))
+				// .withValidator(ValidatorFactory.getDateNotEarlierThanValidator(
+				// Date.from(Instant.now().atZone(ZoneId.of(Utils.TIMEZONE)).toInstant())))
 				.withValidator(ValidatorFactory.getDateNotEarlierThanValidator(
-						Date.from(Instant.now().atZone(ZoneId.of(Utils.TIMEZONE)).toInstant())))
+						Date.from(Instant.now().atZone(ZoneId.systemDefault()).toInstant())))
 				.bind(PromoEvent::getTriggerDate, PromoEvent::setTriggerDate);
 
 		binder.forField(discountMultiplier).asRequired(Utils.generateRequiredError())
