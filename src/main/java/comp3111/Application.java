@@ -52,38 +52,38 @@ public class Application {
 
 	}
 
-	@Bean
-	public CommandLineRunner loadData(TourRepository tourRepo, OfferingRepository offerRepo, TourGuideRepository tgRepo,
-			CustomerRepository customerRepo, BookingRepository bookingRepo, DBManager dbManager) {
-		return (args) -> {
-			dbManager.deleteAll();
-			log.info("Populating the db...");
-
-			TourGuide kim = new TourGuide("Kim", "tensorflowboss");
-			kim = tgRepo.save(kim);
-			TourGuide kevin = new TourGuide("Kevin", "springboss");
-			kevin = tgRepo.save(kevin);
-
-			Customer heng = new Customer("Heng", "Uc8f613f85e41d93ed9ffa228188466d1", "123-12311", 20, "A123456(3)");
-			Customer kv = new Customer("KV", "U7e5b42b4ea64a1ff1d812a3ff33b48b0", "123-12311", 20, "A123456(3)");
-			Customer rex = new Customer("Rex", "U8b20aa2040714d4ff45782709f7b1ba6", "123-12311", 20, "A123456(3)");
-			Customer kris = new Customer("Kris", "U4b23c4647091ccdcce12d5392d37866d", "123-12311", 20, "A123456(3)");
-			heng = customerRepo.save(heng);
-			kv = customerRepo.save(kv);
-			rex = customerRepo.save(rex);
-			kris = customerRepo.save(kris);
-
-			Tour lg7 = new Tour("LG7", "Bad food", 2, 0.8, 0.2, 200, 250);
-			lg7.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7)));
-			lg7 = tourRepo.save(lg7);
-
-			Offering offer = new Offering(lg7, kim, Utils.addDate(new Date(), 5), "Hotel California", 15, 50,
-					Offering.STATUS_PENDING);
-			offer = offerRepo.save(offer);
-
-			Booking book = new Booking(kris, offer, 2, 1, 0, 0, "No cockroaches in my food", Booking.PAYMENT_PENDING);
-			book = bookingRepo.save(book);
-		};
-	}
+//	@Bean
+//	public CommandLineRunner loadData(TourRepository tourRepo, OfferingRepository offerRepo, TourGuideRepository tgRepo,
+//			CustomerRepository customerRepo, BookingRepository bookingRepo, DBManager dbManager) {
+//		return (args) -> {
+//			dbManager.deleteAll();
+//			log.info("Populating the db...");
+//
+//			TourGuide kim = new TourGuide("Kim", "tensorflowboss");
+//			kim = tgRepo.save(kim);
+//			TourGuide kevin = new TourGuide("Kevin", "springboss");
+//			kevin = tgRepo.save(kevin);
+//
+//			Customer heng = new Customer("Heng", "Uc8f613f85e41d93ed9ffa228188466d1", "123-12311", 20, "A123456(3)");
+//			Customer kv = new Customer("KV", "U7e5b42b4ea64a1ff1d812a3ff33b48b0", "123-12311", 20, "A123456(3)");
+//			Customer rex = new Customer("Rex", "U8b20aa2040714d4ff45782709f7b1ba6", "123-12311", 20, "A123456(3)");
+//			Customer kris = new Customer("Kris", "U4b23c4647091ccdcce12d5392d37866d", "123-12311", 20, "A123456(3)");
+//			heng = customerRepo.save(heng);
+//			kv = customerRepo.save(kv);
+//			rex = customerRepo.save(rex);
+//			kris = customerRepo.save(kris);
+//
+//			Tour lg7 = new Tour("LG7", "Bad food", 2, 0.8, 0.2, 200, 250);
+//			lg7.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7)));
+//			lg7 = tourRepo.save(lg7);
+//
+//			Offering offer = new Offering(lg7, kim, Utils.addDate(new Date(), 5), "Hotel California", 15, 50,
+//					Offering.STATUS_PENDING);
+//			offer = offerRepo.save(offer);
+//
+//			Booking book = new Booking(kris, offer, 2, 1, 0, 0, "No cockroaches in my food", Booking.PAYMENT_PENDING);
+//			book = bookingRepo.save(book);
+//		};
+//	}
 
 }
