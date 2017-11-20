@@ -1,6 +1,20 @@
 package comp3111.input.editors;
 
 import java.util.Date;
+import java.util.HashMap;
+
+import javax.persistence.EntityNotFoundException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
 
 import comp3111.Utils;
 import comp3111.data.GridCol;
@@ -20,6 +34,7 @@ import comp3111.input.exceptions.ColumnNameNotFoundException;
  *
  */
 public class FilterFactory {
+	private static final Logger log = LoggerFactory.getLogger(FilterFactory.class);
 
 	/**
 	 * @param colId
@@ -30,7 +45,7 @@ public class FilterFactory {
 	 * @throws ColumnNameNotFoundException
 	 *             If the column id doesn't exist
 	 */
-	public static ProviderAndPredicate<Tour, ?> getFilterForTour(String colId, String searchVal)
+	private static ProviderAndPredicate<Tour, ?> getFilterForTour(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		/*
 		 * we need "safe parsing", because try catch won't work here. the predicate
@@ -81,7 +96,7 @@ public class FilterFactory {
 	 * @throws ColumnNameNotFoundException
 	 *             If the column id doesn't exist
 	 */
-	public static ProviderAndPredicate<TourGuide, ?> getFilterForTourGuide(String colId, String searchVal)
+	private static ProviderAndPredicate<TourGuide, ?> getFilterForTourGuide(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.TOURGUIDE_ID))
 			return new ProviderAndPredicate<TourGuide, Long>(TourGuide::getId,
@@ -105,7 +120,7 @@ public class FilterFactory {
 	 * @throws ColumnNameNotFoundException
 	 *             If the column id doesn't exist
 	 */
-	public static ProviderAndPredicate<Customer, ?> getFilterForCustomer(String colId, String searchVal)
+	private static ProviderAndPredicate<Customer, ?> getFilterForCustomer(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.CUSTOMER_ID))
 			return new ProviderAndPredicate<Customer, Long>(Customer::getId,
@@ -138,7 +153,7 @@ public class FilterFactory {
 	 * @throws ColumnNameNotFoundException
 	 *             If the column id doesn't exist
 	 */
-	public static ProviderAndPredicate<Booking, ?> getFilterForBooking(String colId, String searchVal)
+	private static ProviderAndPredicate<Booking, ?> getFilterForBooking(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.BOOKING_NUM_CHILDREN))
 			return new ProviderAndPredicate<Booking, Integer>(Booking::getNumChildren,
@@ -198,7 +213,7 @@ public class FilterFactory {
 	 * @throws ColumnNameNotFoundException
 	 *             If the column id doesn't exist
 	 */
-	public static ProviderAndPredicate<NonFAQQuery, ?> getFilterForNonFAQQuery(String colId, String searchVal)
+	private static ProviderAndPredicate<NonFAQQuery, ?> getFilterForNonFAQQuery(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.NONFAQQUERY_ID))
 			return new ProviderAndPredicate<NonFAQQuery, Long>(NonFAQQuery::getId,
@@ -225,7 +240,7 @@ public class FilterFactory {
 	 * @throws ColumnNameNotFoundException
 	 *             If the column id doesn't exist
 	 */
-	public static ProviderAndPredicate<Offering, ?> getFilterForOffering(String colId, String searchVal)
+	private static ProviderAndPredicate<Offering, ?> getFilterForOffering(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.OFFERING_ID))
 			return new ProviderAndPredicate<Offering, Long>(Offering::getId,
@@ -267,7 +282,7 @@ public class FilterFactory {
 	 * @throws ColumnNameNotFoundException
 	 *             If the column id doesn't exist
 	 */
-	public static ProviderAndPredicate<PromoEvent, ?> getFilterForPromoEvent(String colId, String searchVal)
+	private static ProviderAndPredicate<PromoEvent, ?> getFilterForPromoEvent(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		if (colId.equals(GridCol.PROMOEVENT_ID))
 			return new ProviderAndPredicate<PromoEvent, Long>(PromoEvent::getId,
@@ -298,5 +313,95 @@ public class FilterFactory {
 					t -> Utils.safeParseBoolEquals(t, searchVal));
 
 		throw new ColumnNameNotFoundException("[" + colId + "] isn't a valid column id for [Offering]");
+	}
+
+	public static ProviderAndPredicate<?, ?> getFilters(Class entityClass, String colId, String searchVal)
+			throws ColumnNameNotFoundException {
+		if (entityClass.equals(Tour.class))
+			return FilterFactory.getFilterForTour(colId, searchVal);
+		if (entityClass.equals(TourGuide.class))
+			return FilterFactory.getFilterForTourGuide(colId, searchVal);
+		if (entityClass.equals(NonFAQQuery.class))
+			return FilterFactory.getFilterForNonFAQQuery(colId, searchVal);
+		if (entityClass.equals(Offering.class))
+			return FilterFactory.getFilterForOffering(colId, searchVal);
+		if (entityClass.equals(Customer.class))
+			return FilterFactory.getFilterForCustomer(colId, searchVal);
+		if (entityClass.equals(Booking.class))
+			return FilterFactory.getFilterForBooking(colId, searchVal);
+		if (entityClass.equals(PromoEvent.class))
+			return FilterFactory.getFilterForPromoEvent(colId, searchVal);
+		throw new IllegalArgumentException("No such class");
+	}
+
+	/**
+	 * Adds the search boxes into the headers for every column in a vaadin grid
+	 * 
+	 * @param entityClass
+	 *            The class which this grid is representing (e.g. Tour, Offering,
+	 *            etc)
+	 * @param theGrid
+	 *            The vaadin grid
+	 * @param gridFilters
+	 *            A hashmap to store the filters
+	 */
+	public static <T> void addFilterInputBoxesToGridHeaderRow(Class entityClass, Grid<T> theGrid,
+			HashMap<String, ProviderAndPredicate<?, ?>> gridFilters) {
+		HeaderRow filterRow = theGrid.appendHeaderRow();
+
+		theGrid.addColumnResizeListener(e -> {
+			int newWidth = (int) e.getColumn().getWidth() - 30;
+			// update width of new input box
+			filterRow.getCell(e.getColumn().getId()).getComponent().setWidth(newWidth, Unit.PIXELS);
+		});
+
+		for (Column<T, ?> col : theGrid.getColumns()) {
+			col.setHidable(true);
+			col.setExpandRatio(1);
+			col.setHidingToggleCaption(col.getCaption());
+			HeaderCell cell = filterRow.getCell(col.getId());
+
+			// Have an input field to use for filter
+			TextField filterField = new TextField();
+			filterField.setWidth(130, Unit.PIXELS);
+			filterField.setHeight(30, Unit.PIXELS);
+
+			filterField.addValueChangeListener(change -> {
+				String searchVal = change.getValue();
+				String colId = col.getId();
+
+				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
+				ListDataProvider<T> dataProvider = (ListDataProvider<T>) theGrid.getDataProvider();
+				if (!filterField.isEmpty()) {
+					try {
+						// note: if we keep typing into same textfield, we will overwrite the old filter
+						// for this column, which is desirable (rather than having filters for "h",
+						// "he", "hel", etc
+
+						gridFilters.put(colId, FilterFactory.getFilters(entityClass, colId, searchVal));
+
+						log.info("updated filter on attribute [{}]", colId);
+
+					} catch (Exception e) {
+						log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
+					}
+				} else {
+					// the filter field was empty, so try
+					// removing the filter associated with this col
+					gridFilters.remove(colId);
+					log.info("removed filter on attribute [{}]", colId);
+
+				}
+				dataProvider.clearFilters();
+				for (String colFilter : gridFilters.keySet()) {
+					ProviderAndPredicate paf = gridFilters.get(colFilter);
+					dataProvider.addFilter(paf.provider, paf.predicate);
+				}
+
+				dataProvider.refreshAll();
+			});
+			cell.setComponent(filterField);
+
+		}
 	}
 }

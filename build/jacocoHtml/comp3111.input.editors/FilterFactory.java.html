@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FilterFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111.input.editors</a> &gt; <span class="el_source">FilterFactory.java</span></div><h1>FilterFactory.java</h1><pre class="source lang-java linenums">package comp3111.input.editors;
 
 import java.util.Date;
+import java.util.HashMap;
+
+import javax.persistence.EntityNotFoundException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
 
 import comp3111.Utils;
 import comp3111.data.GridCol;
@@ -19,7 +33,8 @@ import comp3111.input.exceptions.ColumnNameNotFoundException;
  * @author Forsythe
  *
  */
-<span class="nc" id="L22">public class FilterFactory {</span>
+<span class="nc" id="L36">public class FilterFactory {</span>
+<span class="fc" id="L37">	private static final Logger log = LoggerFactory.getLogger(FilterFactory.class);</span>
 
 	/**
 	 * @param colId
@@ -30,7 +45,7 @@ import comp3111.input.exceptions.ColumnNameNotFoundException;
 	 * @throws ColumnNameNotFoundException
 	 *             If the column id doesn't exist
 	 */
-	public static ProviderAndPredicate&lt;Tour, ?&gt; getFilterForTour(String colId, String searchVal)
+	private static ProviderAndPredicate&lt;Tour, ?&gt; getFilterForTour(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
 		/*
 		 * we need &quot;safe parsing&quot;, because try catch won't work here. the predicate
@@ -40,36 +55,36 @@ import comp3111.input.exceptions.ColumnNameNotFoundException;
 		 * because the predicate must be generated at runtime, based on the varying
 		 * search values.
 		 */
-<span class="fc bfc" id="L43" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_ID))</span>
-<span class="pc" id="L44">			return new ProviderAndPredicate&lt;Tour, Long&gt;(Tour::getId, t -&gt; Utils.safeParseLongEquals(t, searchVal));</span>
-<span class="fc bfc" id="L45" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_TOUR_NAME))</span>
-<span class="fc" id="L46">			return new ProviderAndPredicate&lt;Tour, String&gt;(Tour::getTourName,</span>
-<span class="nc" id="L47">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L48" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_DAYS))</span>
-<span class="pc" id="L49">			return new ProviderAndPredicate&lt;Tour, Integer&gt;(Tour::getDays, t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
-<span class="fc bfc" id="L50" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_OFFERING_AVAILABILITY))</span>
-<span class="fc" id="L51">			return new ProviderAndPredicate&lt;Tour, String&gt;(Tour::getOfferingAvailability,</span>
-<span class="nc" id="L52">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_DESCRIPTION))</span>
-<span class="fc" id="L54">			return new ProviderAndPredicate&lt;Tour, String&gt;(Tour::getDescription,</span>
-<span class="nc" id="L55">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L56" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_WEEKDAY_PRICE))</span>
-<span class="fc" id="L57">			return new ProviderAndPredicate&lt;Tour, Integer&gt;(Tour::getWeekdayPrice,</span>
-<span class="nc" id="L58">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
-<span class="fc bfc" id="L59" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_WEEKEND_PRICE))</span>
-<span class="fc" id="L60">			return new ProviderAndPredicate&lt;Tour, Integer&gt;(Tour::getWeekendPrice,</span>
-<span class="nc" id="L61">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
-<span class="fc bfc" id="L62" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_CHILD_DISCOUNT))</span>
-<span class="fc" id="L63">			return new ProviderAndPredicate&lt;Tour, Double&gt;(Tour::getChildDiscount,</span>
-<span class="nc" id="L64">					t -&gt; Utils.safeParseDoubleEquals(t, searchVal));</span>
-<span class="fc bfc" id="L65" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_TODDLER_DISCOUNT))</span>
-<span class="fc" id="L66">			return new ProviderAndPredicate&lt;Tour, Double&gt;(Tour::getToddlerDiscount,</span>
-<span class="nc" id="L67">					t -&gt; Utils.safeParseDoubleEquals(t, searchVal));</span>
-<span class="fc bfc" id="L68" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_IS_CHILD_FRIENDLY))</span>
-<span class="fc" id="L69">			return new ProviderAndPredicate&lt;Tour, Boolean&gt;(Tour::isChildFriendly,</span>
-<span class="nc" id="L70">					t -&gt; Utils.containsIgnoreCase(t.toString(), searchVal));</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_ID))</span>
+<span class="pc" id="L59">			return new ProviderAndPredicate&lt;Tour, Long&gt;(Tour::getId, t -&gt; Utils.safeParseLongEquals(t, searchVal));</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_TOUR_NAME))</span>
+<span class="fc" id="L61">			return new ProviderAndPredicate&lt;Tour, String&gt;(Tour::getTourName,</span>
+<span class="nc" id="L62">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_DAYS))</span>
+<span class="pc" id="L64">			return new ProviderAndPredicate&lt;Tour, Integer&gt;(Tour::getDays, t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_OFFERING_AVAILABILITY))</span>
+<span class="fc" id="L66">			return new ProviderAndPredicate&lt;Tour, String&gt;(Tour::getOfferingAvailability,</span>
+<span class="nc" id="L67">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_DESCRIPTION))</span>
+<span class="fc" id="L69">			return new ProviderAndPredicate&lt;Tour, String&gt;(Tour::getDescription,</span>
+<span class="nc" id="L70">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_WEEKDAY_PRICE))</span>
+<span class="fc" id="L72">			return new ProviderAndPredicate&lt;Tour, Integer&gt;(Tour::getWeekdayPrice,</span>
+<span class="nc" id="L73">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_WEEKEND_PRICE))</span>
+<span class="fc" id="L75">			return new ProviderAndPredicate&lt;Tour, Integer&gt;(Tour::getWeekendPrice,</span>
+<span class="nc" id="L76">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_CHILD_DISCOUNT))</span>
+<span class="fc" id="L78">			return new ProviderAndPredicate&lt;Tour, Double&gt;(Tour::getChildDiscount,</span>
+<span class="nc" id="L79">					t -&gt; Utils.safeParseDoubleEquals(t, searchVal));</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_TODDLER_DISCOUNT))</span>
+<span class="fc" id="L81">			return new ProviderAndPredicate&lt;Tour, Double&gt;(Tour::getToddlerDiscount,</span>
+<span class="nc" id="L82">					t -&gt; Utils.safeParseDoubleEquals(t, searchVal));</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">		if (colId.equals(GridCol.TOUR_IS_CHILD_FRIENDLY))</span>
+<span class="fc" id="L84">			return new ProviderAndPredicate&lt;Tour, Boolean&gt;(Tour::isChildFriendly,</span>
+<span class="nc" id="L85">					t -&gt; Utils.containsIgnoreCase(t.toString(), searchVal));</span>
 
-<span class="fc" id="L72">		throw new ColumnNameNotFoundException(&quot;[&quot; + colId + &quot;] isn't a valid column id for [Tour]&quot;);</span>
+<span class="fc" id="L87">		throw new ColumnNameNotFoundException(&quot;[&quot; + colId + &quot;] isn't a valid column id for [Tour]&quot;);</span>
 	}
 
 	/**
@@ -81,19 +96,19 @@ import comp3111.input.exceptions.ColumnNameNotFoundException;
 	 * @throws ColumnNameNotFoundException
 	 *             If the column id doesn't exist
 	 */
-	public static ProviderAndPredicate&lt;TourGuide, ?&gt; getFilterForTourGuide(String colId, String searchVal)
+	private static ProviderAndPredicate&lt;TourGuide, ?&gt; getFilterForTourGuide(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
-<span class="fc bfc" id="L86" title="All 2 branches covered.">		if (colId.equals(GridCol.TOURGUIDE_ID))</span>
-<span class="fc" id="L87">			return new ProviderAndPredicate&lt;TourGuide, Long&gt;(TourGuide::getId,</span>
-<span class="nc" id="L88">					t -&gt; Utils.safeParseLongEquals(t, searchVal));</span>
-<span class="fc bfc" id="L89" title="All 2 branches covered.">		if (colId.equals(GridCol.TOURGUIDE_NAME))</span>
-<span class="fc" id="L90">			return new ProviderAndPredicate&lt;TourGuide, String&gt;(TourGuide::getName,</span>
-<span class="nc" id="L91">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L92" title="All 2 branches covered.">		if (colId.equals(GridCol.TOURGUIDE_LINE_USERNAME))</span>
-<span class="fc" id="L93">			return new ProviderAndPredicate&lt;TourGuide, String&gt;(TourGuide::getLineUsername,</span>
-<span class="nc" id="L94">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">		if (colId.equals(GridCol.TOURGUIDE_ID))</span>
+<span class="fc" id="L102">			return new ProviderAndPredicate&lt;TourGuide, Long&gt;(TourGuide::getId,</span>
+<span class="nc" id="L103">					t -&gt; Utils.safeParseLongEquals(t, searchVal));</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">		if (colId.equals(GridCol.TOURGUIDE_NAME))</span>
+<span class="fc" id="L105">			return new ProviderAndPredicate&lt;TourGuide, String&gt;(TourGuide::getName,</span>
+<span class="nc" id="L106">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">		if (colId.equals(GridCol.TOURGUIDE_LINE_USERNAME))</span>
+<span class="fc" id="L108">			return new ProviderAndPredicate&lt;TourGuide, String&gt;(TourGuide::getLineUsername,</span>
+<span class="nc" id="L109">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
 
-<span class="fc" id="L96">		throw new ColumnNameNotFoundException(&quot;[&quot; + colId + &quot;] isn't a valid column id for [TourGuide]&quot;);</span>
+<span class="fc" id="L111">		throw new ColumnNameNotFoundException(&quot;[&quot; + colId + &quot;] isn't a valid column id for [TourGuide]&quot;);</span>
 	}
 
 	/**
@@ -105,28 +120,28 @@ import comp3111.input.exceptions.ColumnNameNotFoundException;
 	 * @throws ColumnNameNotFoundException
 	 *             If the column id doesn't exist
 	 */
-	public static ProviderAndPredicate&lt;Customer, ?&gt; getFilterForCustomer(String colId, String searchVal)
+	private static ProviderAndPredicate&lt;Customer, ?&gt; getFilterForCustomer(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
-<span class="fc bfc" id="L110" title="All 2 branches covered.">		if (colId.equals(GridCol.CUSTOMER_ID))</span>
-<span class="fc" id="L111">			return new ProviderAndPredicate&lt;Customer, Long&gt;(Customer::getId,</span>
-<span class="nc" id="L112">					t -&gt; Utils.safeParseLongEquals(t, searchVal));</span>
-<span class="fc bfc" id="L113" title="All 2 branches covered.">		if (colId.equals(GridCol.CUSTOMER_NAME))</span>
-<span class="fc" id="L114">			return new ProviderAndPredicate&lt;Customer, String&gt;(Customer::getName,</span>
-<span class="nc" id="L115">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L116" title="All 2 branches covered.">		if (colId.equals(GridCol.CUSTOMER_LINE_ID))</span>
-<span class="fc" id="L117">			return new ProviderAndPredicate&lt;Customer, String&gt;(Customer::getLineId,</span>
-<span class="nc" id="L118">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L119" title="All 2 branches covered.">		if (colId.equals(GridCol.CUSTOMER_HKID))</span>
-<span class="fc" id="L120">			return new ProviderAndPredicate&lt;Customer, String&gt;(Customer::getHkid,</span>
-<span class="nc" id="L121">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L122" title="All 2 branches covered.">		if (colId.equals(GridCol.CUSTOMER_PHONE))</span>
-<span class="fc" id="L123">			return new ProviderAndPredicate&lt;Customer, String&gt;(Customer::getPhone,</span>
-<span class="nc" id="L124">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L125" title="All 2 branches covered.">		if (colId.equals(GridCol.CUSTOMER_AGE))</span>
-<span class="fc" id="L126">			return new ProviderAndPredicate&lt;Customer, Integer&gt;(Customer::getAge,</span>
-<span class="nc" id="L127">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">		if (colId.equals(GridCol.CUSTOMER_ID))</span>
+<span class="fc" id="L126">			return new ProviderAndPredicate&lt;Customer, Long&gt;(Customer::getId,</span>
+<span class="nc" id="L127">					t -&gt; Utils.safeParseLongEquals(t, searchVal));</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">		if (colId.equals(GridCol.CUSTOMER_NAME))</span>
+<span class="fc" id="L129">			return new ProviderAndPredicate&lt;Customer, String&gt;(Customer::getName,</span>
+<span class="nc" id="L130">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">		if (colId.equals(GridCol.CUSTOMER_LINE_ID))</span>
+<span class="fc" id="L132">			return new ProviderAndPredicate&lt;Customer, String&gt;(Customer::getLineId,</span>
+<span class="nc" id="L133">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">		if (colId.equals(GridCol.CUSTOMER_HKID))</span>
+<span class="fc" id="L135">			return new ProviderAndPredicate&lt;Customer, String&gt;(Customer::getHkid,</span>
+<span class="nc" id="L136">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">		if (colId.equals(GridCol.CUSTOMER_PHONE))</span>
+<span class="fc" id="L138">			return new ProviderAndPredicate&lt;Customer, String&gt;(Customer::getPhone,</span>
+<span class="nc" id="L139">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">		if (colId.equals(GridCol.CUSTOMER_AGE))</span>
+<span class="fc" id="L141">			return new ProviderAndPredicate&lt;Customer, Integer&gt;(Customer::getAge,</span>
+<span class="nc" id="L142">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
 
-<span class="fc" id="L129">		throw new ColumnNameNotFoundException(&quot;[&quot; + colId + &quot;] isn't a valid column id for [Customer]&quot;);</span>
+<span class="fc" id="L144">		throw new ColumnNameNotFoundException(&quot;[&quot; + colId + &quot;] isn't a valid column id for [Customer]&quot;);</span>
 	}
 
 	/**
@@ -138,55 +153,55 @@ import comp3111.input.exceptions.ColumnNameNotFoundException;
 	 * @throws ColumnNameNotFoundException
 	 *             If the column id doesn't exist
 	 */
-	public static ProviderAndPredicate&lt;Booking, ?&gt; getFilterForBooking(String colId, String searchVal)
+	private static ProviderAndPredicate&lt;Booking, ?&gt; getFilterForBooking(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
-<span class="fc bfc" id="L143" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_NUM_CHILDREN))</span>
-<span class="fc" id="L144">			return new ProviderAndPredicate&lt;Booking, Integer&gt;(Booking::getNumChildren,</span>
-<span class="nc" id="L145">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
-<span class="fc bfc" id="L146" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_NUM_ADULTS))</span>
-<span class="fc" id="L147">			return new ProviderAndPredicate&lt;Booking, Integer&gt;(Booking::getNumAdults,</span>
-<span class="nc" id="L148">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
-<span class="fc bfc" id="L149" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_NUM_TODDLERS))</span>
-<span class="fc" id="L150">			return new ProviderAndPredicate&lt;Booking, Integer&gt;(Booking::getNumToddlers,</span>
-<span class="nc" id="L151">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
-<span class="fc bfc" id="L152" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_CUSTOMER_NAME))</span>
-<span class="fc" id="L153">			return new ProviderAndPredicate&lt;Booking, String&gt;(Booking::getCustomerName,</span>
-<span class="nc" id="L154">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L155" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_CUSTOMER_HKID))</span>
-<span class="fc" id="L156">			return new ProviderAndPredicate&lt;Booking, String&gt;(Booking::getCustomerHkid,</span>
-<span class="nc" id="L157">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L158" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_TOUR_ID))</span>
-<span class="fc" id="L159">			return new ProviderAndPredicate&lt;Booking, Long&gt;(Booking::getTourId,</span>
-<span class="nc" id="L160">					t -&gt; Utils.safeParseLongEquals(t, searchVal));</span>
-<span class="fc bfc" id="L161" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_TOUR_NAME))</span>
-<span class="fc" id="L162">			return new ProviderAndPredicate&lt;Booking, String&gt;(Booking::getTourName,</span>
-<span class="nc" id="L163">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L164" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_AMOUNT_PAID))</span>
-<span class="fc" id="L165">			return new ProviderAndPredicate&lt;Booking, Double&gt;(Booking::getAmountPaid,</span>
-<span class="nc" id="L166">					t -&gt; Utils.safeParseDoubleEquals(t, searchVal));</span>
-<span class="fc bfc" id="L167" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_TOTAL_COST))</span>
-<span class="fc" id="L168">			return new ProviderAndPredicate&lt;Booking, Double&gt;(Booking::getTotalCost,</span>
-<span class="nc" id="L169">					t -&gt; Utils.safeParseDoubleEquals(t, searchVal));</span>
-<span class="fc bfc" id="L170" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_SPECIAL_REQUEST))</span>
-<span class="fc" id="L171">			return new ProviderAndPredicate&lt;Booking, String&gt;(Booking::getSpecialRequests,</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_NUM_CHILDREN))</span>
+<span class="fc" id="L159">			return new ProviderAndPredicate&lt;Booking, Integer&gt;(Booking::getNumChildren,</span>
+<span class="nc" id="L160">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_NUM_ADULTS))</span>
+<span class="fc" id="L162">			return new ProviderAndPredicate&lt;Booking, Integer&gt;(Booking::getNumAdults,</span>
+<span class="nc" id="L163">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_NUM_TODDLERS))</span>
+<span class="fc" id="L165">			return new ProviderAndPredicate&lt;Booking, Integer&gt;(Booking::getNumToddlers,</span>
+<span class="nc" id="L166">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_CUSTOMER_NAME))</span>
+<span class="fc" id="L168">			return new ProviderAndPredicate&lt;Booking, String&gt;(Booking::getCustomerName,</span>
+<span class="nc" id="L169">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_CUSTOMER_HKID))</span>
+<span class="fc" id="L171">			return new ProviderAndPredicate&lt;Booking, String&gt;(Booking::getCustomerHkid,</span>
 <span class="nc" id="L172">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L173" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_PAYMENT_STATUS))</span>
-<span class="fc" id="L174">			return new ProviderAndPredicate&lt;Booking, String&gt;(Booking::getPaymentStatus,</span>
-<span class="nc" id="L175">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L176" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_OFFERING))</span>
-<span class="fc" id="L177">			return new ProviderAndPredicate&lt;Booking, Offering&gt;(Booking::getOffering,</span>
-<span class="nc" id="L178">					t -&gt; Utils.containsIgnoreCase(t.toString(), searchVal));</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_TOUR_ID))</span>
+<span class="fc" id="L174">			return new ProviderAndPredicate&lt;Booking, Long&gt;(Booking::getTourId,</span>
+<span class="nc" id="L175">					t -&gt; Utils.safeParseLongEquals(t, searchVal));</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_TOUR_NAME))</span>
+<span class="fc" id="L177">			return new ProviderAndPredicate&lt;Booking, String&gt;(Booking::getTourName,</span>
+<span class="nc" id="L178">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_AMOUNT_PAID))</span>
+<span class="fc" id="L180">			return new ProviderAndPredicate&lt;Booking, Double&gt;(Booking::getAmountPaid,</span>
+<span class="nc" id="L181">					t -&gt; Utils.safeParseDoubleEquals(t, searchVal));</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_TOTAL_COST))</span>
+<span class="fc" id="L183">			return new ProviderAndPredicate&lt;Booking, Double&gt;(Booking::getTotalCost,</span>
+<span class="nc" id="L184">					t -&gt; Utils.safeParseDoubleEquals(t, searchVal));</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_SPECIAL_REQUEST))</span>
+<span class="fc" id="L186">			return new ProviderAndPredicate&lt;Booking, String&gt;(Booking::getSpecialRequests,</span>
+<span class="nc" id="L187">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_PAYMENT_STATUS))</span>
+<span class="fc" id="L189">			return new ProviderAndPredicate&lt;Booking, String&gt;(Booking::getPaymentStatus,</span>
+<span class="nc" id="L190">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_OFFERING))</span>
+<span class="fc" id="L192">			return new ProviderAndPredicate&lt;Booking, Offering&gt;(Booking::getOffering,</span>
+<span class="nc" id="L193">					t -&gt; Utils.containsIgnoreCase(t.toString(), searchVal));</span>
 
-<span class="fc bfc" id="L180" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_PROMO_DISCOUNT_MULTIPLIER_MASKED)) {</span>
-<span class="pc bpc" id="L181" title="1 of 2 branches missed.">			if (Utils.containsIgnoreCase(&quot;none&quot;, searchVal)) {</span>
-<span class="nc bnc" id="L182" title="All 2 branches missed.">				return new ProviderAndPredicate&lt;&gt;(Booking::getPromoDiscountMultiplier, t -&gt; t == 1);</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">		if (colId.equals(GridCol.BOOKING_PROMO_DISCOUNT_MULTIPLIER_MASKED)) {</span>
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">			if (Utils.containsIgnoreCase(&quot;none&quot;, searchVal)) {</span>
+<span class="nc bnc" id="L197" title="All 2 branches missed.">				return new ProviderAndPredicate&lt;&gt;(Booking::getPromoDiscountMultiplier, t -&gt; t == 1);</span>
 			} else {
-<span class="fc" id="L184">				return new ProviderAndPredicate&lt;&gt;(Booking::getPromoDiscountMultiplier,</span>
-<span class="nc" id="L185">						t -&gt; Utils.safeParseDoubleEquals(t, searchVal));</span>
+<span class="fc" id="L199">				return new ProviderAndPredicate&lt;&gt;(Booking::getPromoDiscountMultiplier,</span>
+<span class="nc" id="L200">						t -&gt; Utils.safeParseDoubleEquals(t, searchVal));</span>
 			}
 		}
 
-<span class="fc" id="L189">		throw new ColumnNameNotFoundException(&quot;[&quot; + colId + &quot;] isn't a valid column id for [Booking]&quot;);</span>
+<span class="fc" id="L204">		throw new ColumnNameNotFoundException(&quot;[&quot; + colId + &quot;] isn't a valid column id for [Booking]&quot;);</span>
 	}
 
 	/**
@@ -198,22 +213,22 @@ import comp3111.input.exceptions.ColumnNameNotFoundException;
 	 * @throws ColumnNameNotFoundException
 	 *             If the column id doesn't exist
 	 */
-	public static ProviderAndPredicate&lt;NonFAQQuery, ?&gt; getFilterForNonFAQQuery(String colId, String searchVal)
+	private static ProviderAndPredicate&lt;NonFAQQuery, ?&gt; getFilterForNonFAQQuery(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
-<span class="fc bfc" id="L203" title="All 2 branches covered.">		if (colId.equals(GridCol.NONFAQQUERY_ID))</span>
-<span class="fc" id="L204">			return new ProviderAndPredicate&lt;NonFAQQuery, Long&gt;(NonFAQQuery::getId,</span>
-<span class="nc" id="L205">					t -&gt; Utils.safeParseLongEquals(t, searchVal));</span>
-<span class="fc bfc" id="L206" title="All 2 branches covered.">		if (colId.equals(GridCol.NONFAQQUERY_ANSWER))</span>
-<span class="fc" id="L207">			return new ProviderAndPredicate&lt;NonFAQQuery, String&gt;(NonFAQQuery::getAnswer,</span>
-<span class="nc" id="L208">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L209" title="All 2 branches covered.">		if (colId.equals(GridCol.NONFAQQUERY_QUERY))</span>
-<span class="fc" id="L210">			return new ProviderAndPredicate&lt;NonFAQQuery, String&gt;(NonFAQQuery::getQuery,</span>
-<span class="nc" id="L211">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L212" title="All 2 branches covered.">		if (colId.equals(GridCol.NONFAQQUERY_CUSTOMER))</span>
-<span class="fc" id="L213">			return new ProviderAndPredicate&lt;NonFAQQuery, String&gt;(NonFAQQuery::getCustomerName,</span>
-<span class="nc" id="L214">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">		if (colId.equals(GridCol.NONFAQQUERY_ID))</span>
+<span class="fc" id="L219">			return new ProviderAndPredicate&lt;NonFAQQuery, Long&gt;(NonFAQQuery::getId,</span>
+<span class="nc" id="L220">					t -&gt; Utils.safeParseLongEquals(t, searchVal));</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">		if (colId.equals(GridCol.NONFAQQUERY_ANSWER))</span>
+<span class="fc" id="L222">			return new ProviderAndPredicate&lt;NonFAQQuery, String&gt;(NonFAQQuery::getAnswer,</span>
+<span class="nc" id="L223">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">		if (colId.equals(GridCol.NONFAQQUERY_QUERY))</span>
+<span class="fc" id="L225">			return new ProviderAndPredicate&lt;NonFAQQuery, String&gt;(NonFAQQuery::getQuery,</span>
+<span class="nc" id="L226">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">		if (colId.equals(GridCol.NONFAQQUERY_CUSTOMER))</span>
+<span class="fc" id="L228">			return new ProviderAndPredicate&lt;NonFAQQuery, String&gt;(NonFAQQuery::getCustomerName,</span>
+<span class="nc" id="L229">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
 
-<span class="fc" id="L216">		throw new ColumnNameNotFoundException(&quot;[&quot; + colId + &quot;] isn't a valid column id for [NonFAQQuery]&quot;);</span>
+<span class="fc" id="L231">		throw new ColumnNameNotFoundException(&quot;[&quot; + colId + &quot;] isn't a valid column id for [NonFAQQuery]&quot;);</span>
 	}
 
 	/**
@@ -225,37 +240,37 @@ import comp3111.input.exceptions.ColumnNameNotFoundException;
 	 * @throws ColumnNameNotFoundException
 	 *             If the column id doesn't exist
 	 */
-	public static ProviderAndPredicate&lt;Offering, ?&gt; getFilterForOffering(String colId, String searchVal)
+	private static ProviderAndPredicate&lt;Offering, ?&gt; getFilterForOffering(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
-<span class="fc bfc" id="L230" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_ID))</span>
-<span class="fc" id="L231">			return new ProviderAndPredicate&lt;Offering, Long&gt;(Offering::getId,</span>
-<span class="nc" id="L232">					t -&gt; Utils.safeParseLongEquals(t, searchVal));</span>
-<span class="fc bfc" id="L233" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_HOTEL_NAME))</span>
-<span class="fc" id="L234">			return new ProviderAndPredicate&lt;Offering, String&gt;(Offering::getHotelName,</span>
-<span class="nc" id="L235">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L236" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_START_DATE))</span>
-<span class="fc" id="L237">			return new ProviderAndPredicate&lt;Offering, String&gt;(Offering::getStartDateString,</span>
-<span class="nc" id="L238">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L239" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_TOUR_GUIDE_NAME))</span>
-<span class="fc" id="L240">			return new ProviderAndPredicate&lt;Offering, String&gt;(Offering::getTourGuideName,</span>
-<span class="nc" id="L241">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L242" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_TOUR_GUIDE_LINE_ID))</span>
-<span class="fc" id="L243">			return new ProviderAndPredicate&lt;Offering, String&gt;(Offering::getTourGuideLineId,</span>
-<span class="nc" id="L244">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L245" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_TOUR_NAME))</span>
-<span class="fc" id="L246">			return new ProviderAndPredicate&lt;Offering, String&gt;(Offering::getTourName,</span>
-<span class="nc" id="L247">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L248" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_MIN_CAPACITY))</span>
-<span class="fc" id="L249">			return new ProviderAndPredicate&lt;Offering, Integer&gt;(Offering::getMinCustomers,</span>
-<span class="nc" id="L250">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
-<span class="fc bfc" id="L251" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_MAX_CAPACITY))</span>
-<span class="fc" id="L252">			return new ProviderAndPredicate&lt;Offering, Integer&gt;(Offering::getMaxCustomers,</span>
-<span class="nc" id="L253">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
-<span class="fc bfc" id="L254" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_STATUS))</span>
-<span class="fc" id="L255">			return new ProviderAndPredicate&lt;Offering, String&gt;(Offering::getStatus,</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_ID))</span>
+<span class="fc" id="L246">			return new ProviderAndPredicate&lt;Offering, Long&gt;(Offering::getId,</span>
+<span class="nc" id="L247">					t -&gt; Utils.safeParseLongEquals(t, searchVal));</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_HOTEL_NAME))</span>
+<span class="fc" id="L249">			return new ProviderAndPredicate&lt;Offering, String&gt;(Offering::getHotelName,</span>
+<span class="nc" id="L250">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L251" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_START_DATE))</span>
+<span class="fc" id="L252">			return new ProviderAndPredicate&lt;Offering, String&gt;(Offering::getStartDateString,</span>
+<span class="nc" id="L253">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_TOUR_GUIDE_NAME))</span>
+<span class="fc" id="L255">			return new ProviderAndPredicate&lt;Offering, String&gt;(Offering::getTourGuideName,</span>
 <span class="nc" id="L256">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_TOUR_GUIDE_LINE_ID))</span>
+<span class="fc" id="L258">			return new ProviderAndPredicate&lt;Offering, String&gt;(Offering::getTourGuideLineId,</span>
+<span class="nc" id="L259">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_TOUR_NAME))</span>
+<span class="fc" id="L261">			return new ProviderAndPredicate&lt;Offering, String&gt;(Offering::getTourName,</span>
+<span class="nc" id="L262">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L263" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_MIN_CAPACITY))</span>
+<span class="fc" id="L264">			return new ProviderAndPredicate&lt;Offering, Integer&gt;(Offering::getMinCustomers,</span>
+<span class="nc" id="L265">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
+<span class="fc bfc" id="L266" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_MAX_CAPACITY))</span>
+<span class="fc" id="L267">			return new ProviderAndPredicate&lt;Offering, Integer&gt;(Offering::getMaxCustomers,</span>
+<span class="nc" id="L268">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">		if (colId.equals(GridCol.OFFERING_STATUS))</span>
+<span class="fc" id="L270">			return new ProviderAndPredicate&lt;Offering, String&gt;(Offering::getStatus,</span>
+<span class="nc" id="L271">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
 
-<span class="fc" id="L258">		throw new ColumnNameNotFoundException(&quot;[&quot; + colId + &quot;] isn't a valid column id for [Offering]&quot;);</span>
+<span class="fc" id="L273">		throw new ColumnNameNotFoundException(&quot;[&quot; + colId + &quot;] isn't a valid column id for [Offering]&quot;);</span>
 	}
 
 	/**
@@ -267,37 +282,127 @@ import comp3111.input.exceptions.ColumnNameNotFoundException;
 	 * @throws ColumnNameNotFoundException
 	 *             If the column id doesn't exist
 	 */
-	public static ProviderAndPredicate&lt;PromoEvent, ?&gt; getFilterForPromoEvent(String colId, String searchVal)
+	private static ProviderAndPredicate&lt;PromoEvent, ?&gt; getFilterForPromoEvent(String colId, String searchVal)
 			throws ColumnNameNotFoundException {
-<span class="fc bfc" id="L272" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_ID))</span>
-<span class="fc" id="L273">			return new ProviderAndPredicate&lt;PromoEvent, Long&gt;(PromoEvent::getId,</span>
-<span class="nc" id="L274">					t -&gt; Utils.safeParseLongEquals(t, searchVal));</span>
-<span class="fc bfc" id="L275" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_PROMO_CODE))</span>
-<span class="fc" id="L276">			return new ProviderAndPredicate&lt;PromoEvent, String&gt;(PromoEvent::getPromoCode,</span>
-<span class="nc" id="L277">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L278" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_PROMO_CODE_USES_LEFT))</span>
-<span class="fc" id="L279">			return new ProviderAndPredicate&lt;PromoEvent, Integer&gt;(PromoEvent::getPromoCodeUsesLeft,</span>
-<span class="nc" id="L280">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
-<span class="fc bfc" id="L281" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_DISCOUNT))</span>
-<span class="fc" id="L282">			return new ProviderAndPredicate&lt;PromoEvent, Double&gt;(PromoEvent::getDiscount,</span>
-<span class="nc" id="L283">					t -&gt; Utils.safeParseDoubleEquals(t, searchVal));</span>
-<span class="fc bfc" id="L284" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_CUSTOM_MESSAGE))</span>
-<span class="fc" id="L285">			return new ProviderAndPredicate&lt;PromoEvent, String&gt;(PromoEvent::getCustomMessage,</span>
-<span class="nc" id="L286">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
-<span class="fc bfc" id="L287" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER))</span>
-<span class="fc" id="L288">			return new ProviderAndPredicate&lt;PromoEvent, Integer&gt;(PromoEvent::getMaxReservationsPerCustomer,</span>
-<span class="nc" id="L289">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
-<span class="fc bfc" id="L290" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_OFFERING))</span>
-<span class="fc" id="L291">			return new ProviderAndPredicate&lt;PromoEvent, Offering&gt;(PromoEvent::getOffering,</span>
-<span class="nc" id="L292">					t -&gt; Utils.containsIgnoreCase(t.toString(), searchVal));</span>
-<span class="fc bfc" id="L293" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_TRIGGER_DATE))</span>
-<span class="fc" id="L294">			return new ProviderAndPredicate&lt;PromoEvent, Date&gt;(PromoEvent::getTriggerDate,</span>
-<span class="nc bnc" id="L295" title="All 2 branches missed.">					t -&gt; Utils.containsIgnoreCase(t == null ? &quot;&quot; : t.toString(), searchVal));</span>
-<span class="fc bfc" id="L296" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_IS_TRIGGERED))</span>
-<span class="fc" id="L297">			return new ProviderAndPredicate&lt;PromoEvent, Boolean&gt;(PromoEvent::isTriggered,</span>
-<span class="nc" id="L298">					t -&gt; Utils.safeParseBoolEquals(t, searchVal));</span>
+<span class="fc bfc" id="L287" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_ID))</span>
+<span class="fc" id="L288">			return new ProviderAndPredicate&lt;PromoEvent, Long&gt;(PromoEvent::getId,</span>
+<span class="nc" id="L289">					t -&gt; Utils.safeParseLongEquals(t, searchVal));</span>
+<span class="fc bfc" id="L290" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_PROMO_CODE))</span>
+<span class="fc" id="L291">			return new ProviderAndPredicate&lt;PromoEvent, String&gt;(PromoEvent::getPromoCode,</span>
+<span class="nc" id="L292">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L293" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_PROMO_CODE_USES_LEFT))</span>
+<span class="fc" id="L294">			return new ProviderAndPredicate&lt;PromoEvent, Integer&gt;(PromoEvent::getPromoCodeUsesLeft,</span>
+<span class="nc" id="L295">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
+<span class="fc bfc" id="L296" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_DISCOUNT))</span>
+<span class="fc" id="L297">			return new ProviderAndPredicate&lt;PromoEvent, Double&gt;(PromoEvent::getDiscount,</span>
+<span class="nc" id="L298">					t -&gt; Utils.safeParseDoubleEquals(t, searchVal));</span>
+<span class="fc bfc" id="L299" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_CUSTOM_MESSAGE))</span>
+<span class="fc" id="L300">			return new ProviderAndPredicate&lt;PromoEvent, String&gt;(PromoEvent::getCustomMessage,</span>
+<span class="nc" id="L301">					t -&gt; Utils.containsIgnoreCase(t, searchVal));</span>
+<span class="fc bfc" id="L302" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER))</span>
+<span class="fc" id="L303">			return new ProviderAndPredicate&lt;PromoEvent, Integer&gt;(PromoEvent::getMaxReservationsPerCustomer,</span>
+<span class="nc" id="L304">					t -&gt; Utils.safeParseIntEquals(t, searchVal));</span>
+<span class="fc bfc" id="L305" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_OFFERING))</span>
+<span class="fc" id="L306">			return new ProviderAndPredicate&lt;PromoEvent, Offering&gt;(PromoEvent::getOffering,</span>
+<span class="nc" id="L307">					t -&gt; Utils.containsIgnoreCase(t.toString(), searchVal));</span>
+<span class="fc bfc" id="L308" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_TRIGGER_DATE))</span>
+<span class="fc" id="L309">			return new ProviderAndPredicate&lt;PromoEvent, Date&gt;(PromoEvent::getTriggerDate,</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">					t -&gt; Utils.containsIgnoreCase(t == null ? &quot;&quot; : t.toString(), searchVal));</span>
+<span class="fc bfc" id="L311" title="All 2 branches covered.">		if (colId.equals(GridCol.PROMOEVENT_IS_TRIGGERED))</span>
+<span class="fc" id="L312">			return new ProviderAndPredicate&lt;PromoEvent, Boolean&gt;(PromoEvent::isTriggered,</span>
+<span class="nc" id="L313">					t -&gt; Utils.safeParseBoolEquals(t, searchVal));</span>
 
-<span class="fc" id="L300">		throw new ColumnNameNotFoundException(&quot;[&quot; + colId + &quot;] isn't a valid column id for [Offering]&quot;);</span>
+<span class="fc" id="L315">		throw new ColumnNameNotFoundException(&quot;[&quot; + colId + &quot;] isn't a valid column id for [Offering]&quot;);</span>
 	}
+
+	public static ProviderAndPredicate&lt;?, ?&gt; getFilters(Class entityClass, String colId, String searchVal)
+			throws ColumnNameNotFoundException {
+<span class="fc bfc" id="L320" title="All 2 branches covered.">		if (entityClass.equals(Tour.class))</span>
+<span class="fc" id="L321">			return FilterFactory.getFilterForTour(colId, searchVal);</span>
+<span class="fc bfc" id="L322" title="All 2 branches covered.">		if (entityClass.equals(TourGuide.class))</span>
+<span class="fc" id="L323">			return FilterFactory.getFilterForTourGuide(colId, searchVal);</span>
+<span class="fc bfc" id="L324" title="All 2 branches covered.">		if (entityClass.equals(NonFAQQuery.class))</span>
+<span class="fc" id="L325">			return FilterFactory.getFilterForNonFAQQuery(colId, searchVal);</span>
+<span class="fc bfc" id="L326" title="All 2 branches covered.">		if (entityClass.equals(Offering.class))</span>
+<span class="fc" id="L327">			return FilterFactory.getFilterForOffering(colId, searchVal);</span>
+<span class="fc bfc" id="L328" title="All 2 branches covered.">		if (entityClass.equals(Customer.class))</span>
+<span class="fc" id="L329">			return FilterFactory.getFilterForCustomer(colId, searchVal);</span>
+<span class="fc bfc" id="L330" title="All 2 branches covered.">		if (entityClass.equals(Booking.class))</span>
+<span class="fc" id="L331">			return FilterFactory.getFilterForBooking(colId, searchVal);</span>
+<span class="fc bfc" id="L332" title="All 2 branches covered.">		if (entityClass.equals(PromoEvent.class))</span>
+<span class="fc" id="L333">			return FilterFactory.getFilterForPromoEvent(colId, searchVal);</span>
+<span class="fc" id="L334">		throw new IllegalArgumentException(&quot;No such class&quot;);</span>
+	}
+
+	/**
+	 * Adds the search boxes into the headers for every column in a vaadin grid
+	 * 
+	 * @param entityClass
+	 *            The class which this grid is representing (e.g. Tour, Offering,
+	 *            etc)
+	 * @param theGrid
+	 *            The vaadin grid
+	 * @param gridFilters
+	 *            A hashmap to store the filters
+	 */
+	public static &lt;T&gt; void addFilterInputBoxesToGridHeaderRow(Class entityClass, Grid&lt;T&gt; theGrid,
+			HashMap&lt;String, ProviderAndPredicate&lt;?, ?&gt;&gt; gridFilters) {
+<span class="fc" id="L350">		HeaderRow filterRow = theGrid.appendHeaderRow();</span>
+
+<span class="fc" id="L352">		theGrid.addColumnResizeListener(e -&gt; {</span>
+<span class="nc" id="L353">			int newWidth = (int) e.getColumn().getWidth() - 30;</span>
+			// update width of new input box
+<span class="nc" id="L355">			filterRow.getCell(e.getColumn().getId()).getComponent().setWidth(newWidth, Unit.PIXELS);</span>
+<span class="nc" id="L356">		});</span>
+
+<span class="fc bfc" id="L358" title="All 2 branches covered.">		for (Column&lt;T, ?&gt; col : theGrid.getColumns()) {</span>
+<span class="fc" id="L359">			col.setHidable(true);</span>
+<span class="fc" id="L360">			col.setExpandRatio(1);</span>
+<span class="fc" id="L361">			col.setHidingToggleCaption(col.getCaption());</span>
+<span class="fc" id="L362">			HeaderCell cell = filterRow.getCell(col.getId());</span>
+
+			// Have an input field to use for filter
+<span class="fc" id="L365">			TextField filterField = new TextField();</span>
+<span class="fc" id="L366">			filterField.setWidth(130, Unit.PIXELS);</span>
+<span class="fc" id="L367">			filterField.setHeight(30, Unit.PIXELS);</span>
+
+<span class="fc" id="L369">			filterField.addValueChangeListener(change -&gt; {</span>
+<span class="nc" id="L370">				String searchVal = change.getValue();</span>
+<span class="nc" id="L371">				String colId = col.getId();</span>
+
+<span class="nc" id="L373">				log.info(&quot;Value change in col [{}], val=[{}]&quot;, colId, searchVal);</span>
+<span class="nc" id="L374">				ListDataProvider&lt;T&gt; dataProvider = (ListDataProvider&lt;T&gt;) theGrid.getDataProvider();</span>
+<span class="nc bnc" id="L375" title="All 2 branches missed.">				if (!filterField.isEmpty()) {</span>
+					try {
+						// note: if we keep typing into same textfield, we will overwrite the old filter
+						// for this column, which is desirable (rather than having filters for &quot;h&quot;,
+						// &quot;he&quot;, &quot;hel&quot;, etc
+
+<span class="nc" id="L381">						gridFilters.put(colId, FilterFactory.getFilters(entityClass, colId, searchVal));</span>
+
+<span class="nc" id="L383">						log.info(&quot;updated filter on attribute [{}]&quot;, colId);</span>
+
+<span class="nc" id="L385">					} catch (Exception e) {</span>
+<span class="nc" id="L386">						log.info(&quot;ignoring val=[{}], col=[{}] is invalid&quot;, searchVal, colId);</span>
+<span class="nc" id="L387">					}</span>
+				} else {
+					// the filter field was empty, so try
+					// removing the filter associated with this col
+<span class="nc" id="L391">					gridFilters.remove(colId);</span>
+<span class="nc" id="L392">					log.info(&quot;removed filter on attribute [{}]&quot;, colId);</span>
+
+				}
+<span class="nc" id="L395">				dataProvider.clearFilters();</span>
+<span class="nc bnc" id="L396" title="All 2 branches missed.">				for (String colFilter : gridFilters.keySet()) {</span>
+<span class="nc" id="L397">					ProviderAndPredicate paf = gridFilters.get(colFilter);</span>
+<span class="nc" id="L398">					dataProvider.addFilter(paf.provider, paf.predicate);</span>
+<span class="nc" id="L399">				}</span>
+
+<span class="nc" id="L401">				dataProvider.refreshAll();</span>
+<span class="nc" id="L402">			});</span>
+<span class="fc" id="L403">			cell.setComponent(filterField);</span>
+
+<span class="fc" id="L405">		}</span>
+<span class="fc" id="L406">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

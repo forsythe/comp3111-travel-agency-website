@@ -150,15 +150,16 @@ import comp3111.data.model.Tour;
 <span class="fc" id="L150">		return new DateAvailableInTourValidator(tour);</span>
 	}
 
-
 	/**
-	 * @param banned The string that the value being validated should not match, case insensitive
+	 * @param bannedString
+	 *            The string that the value being validated should not match, case
+	 *            insensitive
 	 * @return A StringNotEqualsToIgnoreCaseValidator object
 	 */
-	public static StringNotEqualsToIgnoreCaseValidator getStringNotEqualsToIgnoreCaseValidator(String banned) {
-<span class="fc" id="L159">		return new StringNotEqualsToIgnoreCaseValidator(banned);</span>
+	public static StringNotEqualsToIgnoreCaseValidator getStringNotEqualsToIgnoreCaseValidator(String bannedString) {
+<span class="fc" id="L160">		return new StringNotEqualsToIgnoreCaseValidator(bannedString);</span>
 	}
-	
+
 	/**
 	 * @param startDateField
 	 *            the starting date to check
@@ -168,15 +169,26 @@ import comp3111.data.model.Tour;
 	 *            A DBManager object
 	 * @param ignoredOffering
 	 *            the offering to ignore (can be null)
-	 * @return whether or not the tour guide is available from time startDateField
-	 *         to startDateField+duration. If ignoredOffering is not null, then we
-	 *         ignore the time interval used by ignoredOffering when checking if
-	 *         tour guide is free. Useful for when editing offerings, we don't want
-	 *         the edited offering time-colliding with itself
+	 * @return A validator which checks whether or not the tour guide is available
+	 *         from time startDateField to startDateField+duration. If
+	 *         ignoredOffering is not null, then we ignore the time interval used by
+	 *         ignoredOffering when checking if tour guide is free. Useful for when
+	 *         editing offerings, we don't want the edited offering time-colliding
+	 *         with itself
 	 */
-	public static TourGuideAvailableForDatesValidation getTourGuideAvailableForDatesValidationIgnoreOneOffering(
+	public static TourGuideAvailableForDatesValidater getTourGuideAvailableForDatesValidaterIgnoreOneOffering(
 			DateField startDateField, int duration, DBManager dbManager, Offering ignoredOffering) {
-<span class="fc" id="L179">		return new TourGuideAvailableForDatesValidation(startDateField, duration, dbManager, ignoredOffering);</span>
+<span class="fc" id="L181">		return new TourGuideAvailableForDatesValidater(startDateField, duration, dbManager, ignoredOffering);</span>
+	}
+
+	/**
+	 * @param bannedSubstring
+	 *            The banned substring
+	 * @return A validator which checks whether the value being validated contains
+	 *         the banned substring.
+	 */
+	public static StringDoesNotContainSubstringValidator getStringDoesNotContainSubstringValidator(String bannedSubstring) {
+<span class="fc" id="L191">		return new StringDoesNotContainSubstringValidator(bannedSubstring);</span>
 	}
 
 	/**
@@ -188,15 +200,15 @@ import comp3111.data.model.Tour;
 	 * @return a string that we can display as an error notification
 	 */
 	public static &lt;T&gt; String getValidatorErrorsString(BinderValidationStatus&lt;T&gt; validationStatus) {
-<span class="fc" id="L191">		StringBuilder sb = new StringBuilder();</span>
-<span class="fc bfc" id="L192" title="All 2 branches covered.">		for (BindingValidationStatus&lt;?&gt; result : validationStatus.getFieldValidationErrors()) {</span>
+<span class="fc" id="L203">		StringBuilder sb = new StringBuilder();</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">		for (BindingValidationStatus&lt;?&gt; result : validationStatus.getFieldValidationErrors()) {</span>
 			// for TextFields and dates etc
-<span class="pc bpc" id="L194" title="2 of 4 branches missed.">			if (result.getField() instanceof AbstractComponent &amp;&amp; result.getMessage().isPresent()) {</span>
-<span class="fc" id="L195">				sb.append(&quot;[&quot; + ((AbstractComponent) result.getField()).getCaption() + &quot;]&quot;).append(&quot; &quot;)</span>
-<span class="fc" id="L196">						.append(result.getMessage().get()).append(&quot;\n&quot;);</span>
+<span class="pc bpc" id="L206" title="2 of 4 branches missed.">			if (result.getField() instanceof AbstractComponent &amp;&amp; result.getMessage().isPresent()) {</span>
+<span class="fc" id="L207">				sb.append(&quot;[&quot; + ((AbstractComponent) result.getField()).getCaption() + &quot;]&quot;).append(&quot; &quot;)</span>
+<span class="fc" id="L208">						.append(result.getMessage().get()).append(&quot;\n&quot;);</span>
 			}
-<span class="fc" id="L198">		}</span>
-<span class="fc" id="L199">		return sb.toString();</span>
+<span class="fc" id="L210">		}</span>
+<span class="fc" id="L211">		return sb.toString();</span>
 	}
 
 }

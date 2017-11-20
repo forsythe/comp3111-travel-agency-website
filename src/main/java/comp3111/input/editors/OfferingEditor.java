@@ -153,62 +153,11 @@ public class OfferingEditor extends VerticalLayout {
 
 		offeringGrid.getColumn(GridCol.OFFERING_START_DATE).setCaption("Start Date");
 
-		offeringGrid.addColumn(offering -> {
-			return dbManager.countNumberOfPaidPeopleInOffering(offering);
-		}).setId(GridCol.OFFERING_NUM_CONFIRMED_CUSTOMERS).setCaption("Confirmed Participants");
-
 		offeringGrid.setColumnOrder(GridCol.OFFERING_ID, GridCol.OFFERING_STATUS, GridCol.OFFERING_START_DATE,
 				GridCol.OFFERING_TOUR_GUIDE_NAME, GridCol.OFFERING_TOUR_GUIDE_LINE_ID, GridCol.OFFERING_TOUR_NAME,
-				GridCol.OFFERING_NUM_CONFIRMED_CUSTOMERS, GridCol.OFFERING_MIN_CAPACITY, GridCol.OFFERING_MAX_CAPACITY);
+				GridCol.OFFERING_MIN_CAPACITY, GridCol.OFFERING_MAX_CAPACITY);
 
-		HeaderRow filterRow = offeringGrid.appendHeaderRow();
-
-		for (Column<Offering, ?> col : offeringGrid.getColumns()) {
-			col.setMinimumWidth(120);
-			col.setHidable(true);
-			col.setHidingToggleCaption(col.getCaption());
-			col.setExpandRatio(1);
-			HeaderCell cell = filterRow.getCell(col.getId());
-
-			// Have an input field to use for filter
-			TextField filterField = new TextField();
-			filterField.setWidth(130, Unit.PIXELS);
-			filterField.setHeight(30, Unit.PIXELS);
-
-			filterField.addValueChangeListener(change -> {
-				String searchVal = change.getValue();
-				String colId = col.getId();
-
-				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
-				ListDataProvider<Offering> dataProvider = (ListDataProvider<Offering>) offeringGrid.getDataProvider();
-
-				if (!filterField.isEmpty()) {
-					try {
-						// note: if we keep typing into same textfield, we will overwrite the old filter
-						// for this column, which is desirable (rather than having filters for "h",
-						// "he", "hel", etc
-						gridFilters.put(colId, FilterFactory.getFilterForOffering(colId, searchVal));
-						log.info("updated filter on attribute [{}]", colId);
-
-					} catch (Exception e) {
-						log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
-					}
-				} else {
-					// the filter field was empty, so try
-					// removing the filter associated with this col
-					gridFilters.remove(colId);
-					log.info("removed filter on attribute [{}]", colId);
-
-				}
-				dataProvider.clearFilters();
-				for (String colFilter : gridFilters.keySet()) {
-					ProviderAndPredicate paf = gridFilters.get(colFilter);
-					dataProvider.addFilter(paf.provider, paf.predicate);
-				}
-				dataProvider.refreshAll();
-			});
-			cell.setComponent(filterField);
-		}
+		FilterFactory.addFilterInputBoxesToGridHeaderRow(Offering.class, offeringGrid, gridFilters);
 
 		this.addComponent(offeringGrid);
 
@@ -342,7 +291,7 @@ public class OfferingEditor extends VerticalLayout {
 		Binder<Offering> binder = new Binder<>(Offering.class);
 
 		binder.forField(tourGuide).asRequired(Utils.generateRequiredError())
-				.withValidator(ValidatorFactory.getTourGuideAvailableForDatesValidationIgnoreOneOffering(startDate,
+				.withValidator(ValidatorFactory.getTourGuideAvailableForDatesValidaterIgnoreOneOffering(startDate,
 						hostTour.getDays(), dbManager, isCreatingNewOffering ? null : offeringToSave))
 				.bind(Offering::getTourGuide, Offering::setTourGuide);
 
@@ -454,8 +403,9 @@ public class OfferingEditor extends VerticalLayout {
 			return false;
 		} else if (offering.getStatus().equals(Offering.STATUS_CANCELLED)) {
 			if (Page.getCurrent() != null) // can be null if using mockito
-				NotificationFactory.getTopBarWarningNotification(
-						"It's too late to edit this offering. It has been cancelled.", 5).show(Page.getCurrent());
+				NotificationFactory
+						.getTopBarWarningNotification("It's too late to edit this offering. It has been cancelled.", 5)
+						.show(Page.getCurrent());
 			return false;
 		}
 

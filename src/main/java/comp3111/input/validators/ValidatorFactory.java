@@ -150,15 +150,16 @@ public class ValidatorFactory {
 		return new DateAvailableInTourValidator(tour);
 	}
 
-
 	/**
-	 * @param banned The string that the value being validated should not match, case insensitive
+	 * @param bannedString
+	 *            The string that the value being validated should not match, case
+	 *            insensitive
 	 * @return A StringNotEqualsToIgnoreCaseValidator object
 	 */
-	public static StringNotEqualsToIgnoreCaseValidator getStringNotEqualsToIgnoreCaseValidator(String banned) {
-		return new StringNotEqualsToIgnoreCaseValidator(banned);
+	public static StringNotEqualsToIgnoreCaseValidator getStringNotEqualsToIgnoreCaseValidator(String bannedString) {
+		return new StringNotEqualsToIgnoreCaseValidator(bannedString);
 	}
-	
+
 	/**
 	 * @param startDateField
 	 *            the starting date to check
@@ -168,15 +169,26 @@ public class ValidatorFactory {
 	 *            A DBManager object
 	 * @param ignoredOffering
 	 *            the offering to ignore (can be null)
-	 * @return whether or not the tour guide is available from time startDateField
-	 *         to startDateField+duration. If ignoredOffering is not null, then we
-	 *         ignore the time interval used by ignoredOffering when checking if
-	 *         tour guide is free. Useful for when editing offerings, we don't want
-	 *         the edited offering time-colliding with itself
+	 * @return A validator which checks whether or not the tour guide is available
+	 *         from time startDateField to startDateField+duration. If
+	 *         ignoredOffering is not null, then we ignore the time interval used by
+	 *         ignoredOffering when checking if tour guide is free. Useful for when
+	 *         editing offerings, we don't want the edited offering time-colliding
+	 *         with itself
 	 */
-	public static TourGuideAvailableForDatesValidation getTourGuideAvailableForDatesValidationIgnoreOneOffering(
+	public static TourGuideAvailableForDatesValidater getTourGuideAvailableForDatesValidaterIgnoreOneOffering(
 			DateField startDateField, int duration, DBManager dbManager, Offering ignoredOffering) {
-		return new TourGuideAvailableForDatesValidation(startDateField, duration, dbManager, ignoredOffering);
+		return new TourGuideAvailableForDatesValidater(startDateField, duration, dbManager, ignoredOffering);
+	}
+
+	/**
+	 * @param bannedSubstring
+	 *            The banned substring
+	 * @return A validator which checks whether the value being validated contains
+	 *         the banned substring.
+	 */
+	public static StringDoesNotContainSubstringValidator getStringDoesNotContainSubstringValidator(String bannedSubstring) {
+		return new StringDoesNotContainSubstringValidator(bannedSubstring);
 	}
 
 	/**

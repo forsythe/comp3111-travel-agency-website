@@ -8,6 +8,13 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 import comp3111.data.GridCol;
+import comp3111.data.model.Booking;
+import comp3111.data.model.Customer;
+import comp3111.data.model.NonFAQQuery;
+import comp3111.data.model.Offering;
+import comp3111.data.model.PromoEvent;
+import comp3111.data.model.Tour;
+import comp3111.data.model.TourGuide;
 import comp3111.input.editors.FilterFactory;
 import comp3111.input.exceptions.ColumnNameNotFoundException;
 
@@ -25,13 +32,13 @@ public class FilterFactoryTest {
 				GridCol.TOUR_IS_CHILD_FRIENDLY };
 
 		for (String colId : colIds) {
-			assertNotNull(FilterFactory.getFilterForTour(colId, "search"));
+			assertNotNull(FilterFactory.getFilters(Tour.class, colId, "search"));
 		}
 	}
 
 	@Test(expected = ColumnNameNotFoundException.class)
 	public void testFailMakeFilterForTourTableInvalidColId() throws ColumnNameNotFoundException {
-		FilterFactory.getFilterForTour("i want to column", "what");
+		FilterFactory.getFilters(Tour.class, "i want to column", "what");
 	}
 
 	@Test
@@ -40,13 +47,13 @@ public class FilterFactoryTest {
 				GridCol.TOURGUIDE_LINE_USERNAME };
 
 		for (String colId : colIds) {
-			assertNotNull(FilterFactory.getFilterForTourGuide(colId, "search"));
+			assertNotNull(FilterFactory.getFilters(TourGuide.class, colId, "search"));
 		}
 	}
 
 	@Test(expected = ColumnNameNotFoundException.class)
 	public void testFailMakeFilterForTourGuideTableInvalidColId() throws ColumnNameNotFoundException {
-		FilterFactory.getFilterForTourGuide("i want to column", "what");
+		FilterFactory.getFilters(TourGuide.class, "i want to column", "what");
 	}
 
 	@Test
@@ -55,13 +62,13 @@ public class FilterFactoryTest {
 				GridCol.CUSTOMER_HKID, GridCol.CUSTOMER_PHONE, GridCol.CUSTOMER_AGE };
 
 		for (String colId : colIds) {
-			assertNotNull(FilterFactory.getFilterForCustomer(colId, "search"));
+			assertNotNull(FilterFactory.getFilters(Customer.class, colId, "search"));
 		}
 	}
 
 	@Test(expected = ColumnNameNotFoundException.class)
 	public void testFailMakeFilterForCustomerTableInvalidColId() throws ColumnNameNotFoundException {
-		FilterFactory.getFilterForCustomer("i want to column", "what");
+		FilterFactory.getFilters(Customer.class, "i want to column", "what");
 	}
 
 	@Test
@@ -73,13 +80,13 @@ public class FilterFactoryTest {
 				GridCol.BOOKING_PAYMENT_STATUS, GridCol.BOOKING_PROMO_DISCOUNT_MULTIPLIER_MASKED };
 
 		for (String colId : colIds) {
-			assertNotNull(FilterFactory.getFilterForBooking(colId, "search"));
+			assertNotNull(FilterFactory.getFilters(Booking.class, colId, "search"));
 		}
 	}
 
 	@Test(expected = ColumnNameNotFoundException.class)
 	public void testFailMakeFilterForBookingTableInvalidColId() throws ColumnNameNotFoundException {
-		FilterFactory.getFilterForBooking("i want to column", "what");
+		FilterFactory.getFilters(Booking.class, "i want to column", "what");
 	}
 
 	@Test
@@ -88,13 +95,13 @@ public class FilterFactoryTest {
 				GridCol.NONFAQQUERY_CUSTOMER };
 
 		for (String colId : colIds) {
-			assertNotNull(FilterFactory.getFilterForNonFAQQuery(colId, "search"));
+			assertNotNull(FilterFactory.getFilters(NonFAQQuery.class, colId, "search"));
 		}
 	}
 
 	@Test(expected = ColumnNameNotFoundException.class)
 	public void testFailMakeFilterForNonFAQQueryTableInvalidColId() throws ColumnNameNotFoundException {
-		FilterFactory.getFilterForNonFAQQuery("i want to column", "what");
+		FilterFactory.getFilters(NonFAQQuery.class, "i want to column", "what");
 	}
 
 	@Test
@@ -104,13 +111,13 @@ public class FilterFactoryTest {
 				GridCol.OFFERING_MIN_CAPACITY, GridCol.OFFERING_MAX_CAPACITY, GridCol.OFFERING_STATUS };
 
 		for (String colId : colIds) {
-			assertNotNull(FilterFactory.getFilterForOffering(colId, "search"));
+			assertNotNull(FilterFactory.getFilters(Offering.class, colId, "search"));
 		}
 	}
 
 	@Test(expected = ColumnNameNotFoundException.class)
 	public void testFailMakeFilterForOfferingTableInvalidColId() throws ColumnNameNotFoundException {
-		FilterFactory.getFilterForOffering("i want to column", "what");
+		FilterFactory.getFilters(Offering.class, "i want to column", "what");
 	}
 
 	@Test
@@ -121,13 +128,18 @@ public class FilterFactoryTest {
 				GridCol.PROMOEVENT_TRIGGER_DATE, GridCol.PROMOEVENT_IS_TRIGGERED };
 
 		for (String colId : colIds) {
-			assertNotNull(FilterFactory.getFilterForPromoEvent(colId, "search"));
+			assertNotNull(FilterFactory.getFilters(PromoEvent.class, colId, "search"));
 		}
 	}
 
 	@Test(expected = ColumnNameNotFoundException.class)
 	public void testFailMakeFilterForPromoEventTableInvalidColId() throws ColumnNameNotFoundException {
-		FilterFactory.getFilterForPromoEvent("i want to column", "what");
+		FilterFactory.getFilters(PromoEvent.class, "i want to column", "what");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testFailNoFiltersForEntity() throws ColumnNameNotFoundException {
+		FilterFactory.getFilters(Object.class, "i want to column", "what");
 	}
 
 }

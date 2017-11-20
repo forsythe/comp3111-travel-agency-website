@@ -83,7 +83,7 @@ import comp3111.input.editors.ProviderAndPredicate;
 	private Button sendButton;
 
 	// the query tab fields
-	private Grid&lt;NonFAQQuery&gt; grid;
+	private Grid&lt;NonFAQQuery&gt; nonfaqGrid;
 	private TextArea replyBox;
 	private Button submitAnswerButton;
 
@@ -270,27 +270,27 @@ import comp3111.input.editors.ProviderAndPredicate;
 	public VerticalLayout getQueryTab() {
 <span class="fc" id="L271">		VerticalLayout layout = new VerticalLayout();</span>
 
-<span class="fc" id="L273">		grid = new Grid&lt;NonFAQQuery&gt;(NonFAQQuery.class);</span>
+<span class="fc" id="L273">		nonfaqGrid = new Grid&lt;NonFAQQuery&gt;(NonFAQQuery.class);</span>
 <span class="fc" id="L274">		replyBox = new TextArea(&quot;Response&quot;);</span>
 <span class="fc" id="L275">		submitAnswerButton = new Button(&quot;Send&quot;);</span>
 
-<span class="fc" id="L277">		layout.addComponent(grid);</span>
+<span class="fc" id="L277">		layout.addComponent(nonfaqGrid);</span>
 <span class="fc" id="L278">		layout.addComponent(replyBox);</span>
 <span class="fc" id="L279">		layout.addComponent(submitAnswerButton);</span>
 
 <span class="fc" id="L281">		submitAnswerButton.setEnabled(false);</span>
 
 <span class="pc bpc" id="L283" title="1 of 2 branches missed.">		if (qRepo.findAll() != null)// mockito</span>
-<span class="nc" id="L284">			grid.setDataProvider(new ListDataProvider&lt;NonFAQQuery&gt;(Utils.iterableToCollection(qRepo.findAll())));</span>
-<span class="fc" id="L285">		grid.removeColumn(GridCol.NONFAQQUERY_CUSTOMER_NAME);</span>
-<span class="fc" id="L286">		grid.setColumnOrder(GridCol.NONFAQQUERY_ID, GridCol.NONFAQQUERY_CUSTOMER, GridCol.NONFAQQUERY_QUERY,</span>
+<span class="nc" id="L284">			nonfaqGrid.setDataProvider(new ListDataProvider&lt;NonFAQQuery&gt;(Utils.iterableToCollection(qRepo.findAll())));</span>
+<span class="fc" id="L285">		nonfaqGrid.removeColumn(GridCol.NONFAQQUERY_CUSTOMER_NAME);</span>
+<span class="fc" id="L286">		nonfaqGrid.setColumnOrder(GridCol.NONFAQQUERY_ID, GridCol.NONFAQQUERY_CUSTOMER, GridCol.NONFAQQUERY_QUERY,</span>
 				GridCol.NONFAQQUERY_ANSWER);
-<span class="fc" id="L288">		grid.setHeight(&quot;90%&quot;);</span>
+<span class="fc" id="L288">		nonfaqGrid.setHeight(&quot;90%&quot;);</span>
 <span class="pc bpc" id="L289" title="1 of 2 branches missed.">		if (qRepo.findAll() != null)// mockito</span>
 <span class="nc" id="L290">			log.info(&quot;there are [{}] unresolved queries&quot;,</span>
 <span class="nc" id="L291">					Utils.iterableToCollection(qRepo.findAll()).stream().filter(q -&gt; q.getAnswer().isEmpty()).count());</span>
 
-<span class="fc" id="L293">		grid.addSelectionListener(event -&gt; {</span>
+<span class="fc" id="L293">		nonfaqGrid.addSelectionListener(event -&gt; {</span>
 <span class="fc bfc" id="L294" title="All 2 branches covered.">			if (event.getFirstSelectedItem().isPresent()) {</span>
 <span class="fc" id="L295">				selectedQuery = event.getFirstSelectedItem().get();</span>
 <span class="fc" id="L296">				submitAnswerButton.setEnabled(true);</span>
@@ -300,106 +300,61 @@ import comp3111.input.editors.ProviderAndPredicate;
 			}
 <span class="fc" id="L301">		});</span>
 
-<span class="fc" id="L303">		HeaderRow filterRow = grid.appendHeaderRow();</span>
 
-<span class="fc bfc" id="L305" title="All 2 branches covered.">		for (Column&lt;NonFAQQuery, ?&gt; col : grid.getColumns()) {</span>
-<span class="fc" id="L306">			col.setMinimumWidth(160);</span>
-<span class="fc" id="L307">			col.setHidable(true);</span>
-<span class="fc" id="L308">			col.setExpandRatio(1);</span>
-<span class="fc" id="L309">			col.setHidingToggleCaption(col.getCaption());</span>
-<span class="fc" id="L310">			HeaderCell cell = filterRow.getCell(col.getId());</span>
+<span class="fc" id="L304">		FilterFactory.addFilterInputBoxesToGridHeaderRow(NonFAQQuery.class, nonfaqGrid, gridFilters);</span>
 
-			// Have an input field to use for filter
-<span class="fc" id="L313">			TextField filterField = new TextField();</span>
-<span class="fc" id="L314">			filterField.setWidth(130, Unit.PIXELS);</span>
-<span class="fc" id="L315">			filterField.setHeight(30, Unit.PIXELS);</span>
+		
 
-<span class="fc" id="L317">			filterField.addValueChangeListener(change -&gt; {</span>
-<span class="nc" id="L318">				String searchVal = change.getValue();</span>
-<span class="nc" id="L319">				String colId = col.getId();</span>
-
-<span class="nc" id="L321">				log.info(&quot;Value change in col [{}], val=[{}]&quot;, colId, searchVal);</span>
-<span class="nc" id="L322">				ListDataProvider&lt;NonFAQQuery&gt; dataProvider = (ListDataProvider&lt;NonFAQQuery&gt;) grid.getDataProvider();</span>
-
-<span class="nc bnc" id="L324" title="All 2 branches missed.">				if (!filterField.isEmpty()) {</span>
-					try {
-						// note: if we keep typing into same textfield, we will overwrite the old filter
-						// for this column, which is desirable (rather than having filters for &quot;h&quot;,
-						// &quot;he&quot;, &quot;hel&quot;, etc
-<span class="nc" id="L329">						gridFilters.put(colId, FilterFactory.getFilterForNonFAQQuery(colId, searchVal));</span>
-<span class="nc" id="L330">						log.info(&quot;updated filter on attribute [{}]&quot;, colId);</span>
-
-<span class="nc" id="L332">					} catch (Exception e) {</span>
-<span class="nc" id="L333">						log.info(&quot;ignoring val=[{}], col=[{}] is invalid&quot;, searchVal, colId);</span>
-<span class="nc" id="L334">					}</span>
-				} else {
-					// the filter field was empty, so try
-					// removing the filter associated with this col
-<span class="nc" id="L338">					gridFilters.remove(colId);</span>
-<span class="nc" id="L339">					log.info(&quot;removed filter on attribute [{}]&quot;, colId);</span>
-
-				}
-<span class="nc" id="L342">				dataProvider.clearFilters();</span>
-<span class="nc bnc" id="L343" title="All 2 branches missed.">				for (String colFilter : gridFilters.keySet()) {</span>
-<span class="nc" id="L344">					ProviderAndPredicate paf = gridFilters.get(colFilter);</span>
-<span class="nc" id="L345">					dataProvider.addFilter(paf.provider, paf.predicate);</span>
-<span class="nc" id="L346">				}</span>
-<span class="nc" id="L347">				dataProvider.refreshAll();</span>
-<span class="nc" id="L348">			});</span>
-<span class="fc" id="L349">			cell.setComponent(filterField);</span>
-
-<span class="fc" id="L351">		}</span>
-
-<span class="fc" id="L353">		grid.setWidth(&quot;100%&quot;);</span>
+<span class="fc" id="L308">		nonfaqGrid.setWidth(&quot;100%&quot;);</span>
 		// TODO: check that the lengths of query and answer are &lt;=255
 
-<span class="fc" id="L356">		submitAnswerButton.addClickListener(event -&gt; {</span>
-<span class="pc bpc" id="L357" title="1 of 2 branches missed.">			if (!replyBox.isEmpty()) {</span>
-<span class="fc" id="L358">				LineMessenger.resetCounter();</span>
-<span class="fc" id="L359">				boolean status = false;</span>
-<span class="pc bpc" id="L360" title="1 of 2 branches missed.">				if (selectedQuery.getCustomer() != null) {</span>
-<span class="fc" id="L361">					status = lineMessenger.respondToQuery(selectedQuery.getCustomer().getLineId(),</span>
-<span class="fc" id="L362">							selectedQuery.getQuery(), replyBox.getValue());</span>
+<span class="fc" id="L311">		submitAnswerButton.addClickListener(event -&gt; {</span>
+<span class="pc bpc" id="L312" title="1 of 2 branches missed.">			if (!replyBox.isEmpty()) {</span>
+<span class="fc" id="L313">				LineMessenger.resetCounter();</span>
+<span class="fc" id="L314">				boolean status = false;</span>
+<span class="pc bpc" id="L315" title="1 of 2 branches missed.">				if (selectedQuery.getCustomer() != null) {</span>
+<span class="fc" id="L316">					status = lineMessenger.respondToQuery(selectedQuery.getCustomer().getLineId(),</span>
+<span class="fc" id="L317">							selectedQuery.getQuery(), replyBox.getValue());</span>
 				}
-<span class="pc bpc" id="L364" title="1 of 2 branches missed.">				if (Page.getCurrent() != null)// mockito</span>
-<span class="nc bnc" id="L365" title="All 2 branches missed.">					NotificationFactory</span>
-<span class="nc" id="L366">							.getTopBarWarningNotification(&quot;Message delivery &quot; + (status ? &quot; succeeded!&quot; : &quot; failed!&quot;),</span>
-<span class="nc" id="L367">									LineMessenger.getCounter() + &quot; recepient(s)&quot;, 5)</span>
-<span class="nc" id="L368">							.show(Page.getCurrent());</span>
+<span class="pc bpc" id="L319" title="1 of 2 branches missed.">				if (Page.getCurrent() != null)// mockito</span>
+<span class="nc bnc" id="L320" title="All 2 branches missed.">					NotificationFactory</span>
+<span class="nc" id="L321">							.getTopBarWarningNotification(&quot;Message delivery &quot; + (status ? &quot; succeeded!&quot; : &quot; failed!&quot;),</span>
+<span class="nc" id="L322">									LineMessenger.getCounter() + &quot; recepient(s)&quot;, 5)</span>
+<span class="nc" id="L323">							.show(Page.getCurrent());</span>
 
-<span class="pc bpc" id="L370" title="1 of 2 branches missed.">				if (status) {</span>
-<span class="fc" id="L371">					selectedQuery.setAnswer(replyBox.getValue());</span>
-<span class="fc" id="L372">					qRepo.save(selectedQuery);</span>
-<span class="pc bpc" id="L373" title="1 of 2 branches missed.">					if (qRepo.findAll() != null) // mockito</span>
-<span class="nc" id="L374">						grid.setDataProvider(</span>
-<span class="nc" id="L375">								new ListDataProvider&lt;NonFAQQuery&gt;(Utils.iterableToCollection(qRepo.findAll())));</span>
+<span class="pc bpc" id="L325" title="1 of 2 branches missed.">				if (status) {</span>
+<span class="fc" id="L326">					selectedQuery.setAnswer(replyBox.getValue());</span>
+<span class="fc" id="L327">					qRepo.save(selectedQuery);</span>
+<span class="pc bpc" id="L328" title="1 of 2 branches missed.">					if (qRepo.findAll() != null) // mockito</span>
+<span class="nc" id="L329">						nonfaqGrid.setDataProvider(</span>
+<span class="nc" id="L330">								new ListDataProvider&lt;NonFAQQuery&gt;(Utils.iterableToCollection(qRepo.findAll())));</span>
 				}
 			}
-<span class="fc" id="L378">		});</span>
+<span class="fc" id="L333">		});</span>
 
-<span class="fc" id="L380">		return layout;</span>
+<span class="fc" id="L335">		return layout;</span>
 
 	}
 
 	/**
-	 * @return the NonFAQQuery grid
+	 * @return the NonFAQQuery nonfaqGrid
 	 */
 	public Grid&lt;NonFAQQuery&gt; getGrid() {
-<span class="fc" id="L388">		return grid;</span>
+<span class="fc" id="L343">		return nonfaqGrid;</span>
 	}
 
 	/**
 	 * @return the replyBox field
 	 */
 	public TextArea getReplyBox() {
-<span class="fc" id="L395">		return replyBox;</span>
+<span class="fc" id="L350">		return replyBox;</span>
 	}
 
 	/**
 	 * @return the submitAnswerButton button
 	 */
 	public Button getSubmitAnswerButton() {
-<span class="fc" id="L402">		return submitAnswerButton;</span>
+<span class="fc" id="L357">		return submitAnswerButton;</span>
 	}
 
 	/**
@@ -412,7 +367,7 @@ import comp3111.input.editors.ProviderAndPredicate;
 	// called AFTER init()
 	public void enter(ViewChangeEvent event) {
 		// This view is constructed in the init() method()
-<span class="nc" id="L415">	}</span>
+<span class="nc" id="L370">	}</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
