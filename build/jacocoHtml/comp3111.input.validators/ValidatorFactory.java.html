@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
+import com.vaadin.data.Validator;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.ComboBox;
@@ -24,8 +25,8 @@ import comp3111.data.model.Tour;
  * @since 2017-11-18
  *
  */
-<span class="nc" id="L27">public class ValidatorFactory {</span>
-<span class="fc" id="L28">	private static final Logger log = LoggerFactory.getLogger(ValidatorFactory.class);</span>
+<span class="nc" id="L28">public class ValidatorFactory {</span>
+<span class="fc" id="L29">	private static final Logger log = LoggerFactory.getLogger(ValidatorFactory.class);</span>
 
 	/**
 	 * @param minInclusive
@@ -35,7 +36,7 @@ import comp3111.data.model.Tour;
 	 * @return An IntegerRangeValidator object
 	 */
 	public static IntegerRangeValidator getIntegerRangeValidator(int minInclusive, int maxExclusive) {
-<span class="fc" id="L38">		return new IntegerRangeValidator(minInclusive, maxExclusive);</span>
+<span class="fc" id="L39">		return new IntegerRangeValidator(minInclusive, maxExclusive);</span>
 	}
 
 	/**
@@ -44,7 +45,7 @@ import comp3111.data.model.Tour;
 	 * @return An IntegerLowerBoundValidator object
 	 */
 	public static IntegerLowerBoundValidator getIntegerRangeValidator(int minInclusive) {
-<span class="fc" id="L47">		return new IntegerLowerBoundValidator(minInclusive);</span>
+<span class="fc" id="L48">		return new IntegerLowerBoundValidator(minInclusive);</span>
 	}
 
 	/**
@@ -54,7 +55,7 @@ import comp3111.data.model.Tour;
 	 */
 	public static IntegerLowerBoundedByAnotherFieldValidator getIntegerLowerBoundedByAnotherFieldValidator(
 			AbstractTextField field) {
-<span class="fc" id="L57">		return new IntegerLowerBoundedByAnotherFieldValidator(field);</span>
+<span class="fc" id="L58">		return new IntegerLowerBoundedByAnotherFieldValidator(field);</span>
 	}
 
 	/**
@@ -65,7 +66,7 @@ import comp3111.data.model.Tour;
 	 * @return A DoubleRangeValidator object
 	 */
 	public static DoubleRangeValidator getDoubleRangeValidator(double minInclusive, double maxInclusive) {
-<span class="fc" id="L68">		return new DoubleRangeValidator(minInclusive, maxInclusive);</span>
+<span class="fc" id="L69">		return new DoubleRangeValidator(minInclusive, maxInclusive);</span>
 	}
 
 	/**
@@ -74,14 +75,14 @@ import comp3111.data.model.Tour;
 	 * @return A DoubleLowerBoundValidator object
 	 */
 	public static DoubleLowerBoundValidator getDoubleRangeValidator(double minInclusive) {
-<span class="fc" id="L77">		return new DoubleLowerBoundValidator(minInclusive);</span>
+<span class="fc" id="L78">		return new DoubleLowerBoundValidator(minInclusive);</span>
 	}
 
 	/**
 	 * @return A ListOfDatesValidator object
 	 */
 	public static ListOfDatesValidator getListOfDatesValidator() {
-<span class="fc" id="L84">		return new ListOfDatesValidator();</span>
+<span class="fc" id="L85">		return new ListOfDatesValidator();</span>
 	}
 
 	/**
@@ -90,7 +91,7 @@ import comp3111.data.model.Tour;
 	 * @return A StringLengthValidator object
 	 */
 	public static StringLengthValidator getStringLengthValidator(int maxLength) {
-<span class="fc" id="L93">		return new StringLengthValidator(maxLength);</span>
+<span class="fc" id="L94">		return new StringLengthValidator(maxLength);</span>
 	}
 
 	/**
@@ -99,25 +100,25 @@ import comp3111.data.model.Tour;
 	 * @return A StringLengthCanNullValidator object
 	 */
 	public static StringLengthCanNullValidator getStringLengthCanNullValidator(int maxLength) {
-<span class="fc" id="L102">		return new StringLengthCanNullValidator(maxLength);</span>
+<span class="fc" id="L103">		return new StringLengthCanNullValidator(maxLength);</span>
 	}
 
 	/**
 	 * @return A PhoneNumberValidator object
 	 */
 	public static PhoneNumberValidator getPhoneNumberValidator() {
-<span class="fc" id="L109">		return new PhoneNumberValidator();</span>
+<span class="fc" id="L110">		return new PhoneNumberValidator();</span>
 	}
 
 	/**
 	 * @return A HKIDValidator object
 	 */
 	public static HKIDValidator getHKIDValidator() {
-<span class="fc" id="L116">		return new HKIDValidator();</span>
+<span class="fc" id="L117">		return new HKIDValidator();</span>
 	}
 
 	public static DateNotEarlierThanValidator getDateNotEarlierThanValidator(Date notEarlierThanThis) {
-<span class="fc" id="L120">		return new DateNotEarlierThanValidator(notEarlierThanThis);</span>
+<span class="fc" id="L121">		return new DateNotEarlierThanValidator(notEarlierThanThis);</span>
 	}
 
 	/**
@@ -130,14 +131,14 @@ import comp3111.data.model.Tour;
 	 */
 	public static DateIsEarlierThanOfferingLastEditableDateValidator getDateIsEarlierThanOfferingLastEditableDateValidator(
 			ComboBox&lt;Offering&gt; offering) {
-<span class="fc" id="L133">		return new DateIsEarlierThanOfferingLastEditableDateValidator(offering);</span>
+<span class="fc" id="L134">		return new DateIsEarlierThanOfferingLastEditableDateValidator(offering);</span>
 	}
 
 	/**
 	 * @return An OfferingStillOpenValidator object
 	 */
 	public static OfferingStillOpenValidator getOfferingStillOpenValidator() {
-<span class="fc" id="L140">		return new OfferingStillOpenValidator();</span>
+<span class="fc" id="L141">		return new OfferingStillOpenValidator();</span>
 	}
 
 	/**
@@ -146,9 +147,18 @@ import comp3111.data.model.Tour;
 	 * @return A DateAvailableInTourValidator object
 	 */
 	public static DateAvailableInTourValidator getDateAvailableInTourValidator(Tour tour) {
-<span class="fc" id="L149">		return new DateAvailableInTourValidator(tour);</span>
+<span class="fc" id="L150">		return new DateAvailableInTourValidator(tour);</span>
 	}
 
+
+	/**
+	 * @param banned The string that the value being validated should not match, case insensitive
+	 * @return A StringNotEqualsToIgnoreCaseValidator object
+	 */
+	public static StringNotEqualsToIgnoreCaseValidator getStringNotEqualsToIgnoreCaseValidator(String banned) {
+<span class="fc" id="L159">		return new StringNotEqualsToIgnoreCaseValidator(banned);</span>
+	}
+	
 	/**
 	 * @param startDateField
 	 *            the starting date to check
@@ -166,7 +176,7 @@ import comp3111.data.model.Tour;
 	 */
 	public static TourGuideAvailableForDatesValidation getTourGuideAvailableForDatesValidationIgnoreOneOffering(
 			DateField startDateField, int duration, DBManager dbManager, Offering ignoredOffering) {
-<span class="fc" id="L169">		return new TourGuideAvailableForDatesValidation(startDateField, duration, dbManager, ignoredOffering);</span>
+<span class="fc" id="L179">		return new TourGuideAvailableForDatesValidation(startDateField, duration, dbManager, ignoredOffering);</span>
 	}
 
 	/**
@@ -178,15 +188,16 @@ import comp3111.data.model.Tour;
 	 * @return a string that we can display as an error notification
 	 */
 	public static &lt;T&gt; String getValidatorErrorsString(BinderValidationStatus&lt;T&gt; validationStatus) {
-<span class="fc" id="L181">		StringBuilder sb = new StringBuilder();</span>
-<span class="fc bfc" id="L182" title="All 2 branches covered.">		for (BindingValidationStatus&lt;?&gt; result : validationStatus.getFieldValidationErrors()) {</span>
+<span class="fc" id="L191">		StringBuilder sb = new StringBuilder();</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">		for (BindingValidationStatus&lt;?&gt; result : validationStatus.getFieldValidationErrors()) {</span>
 			// for TextFields and dates etc
-<span class="pc bpc" id="L184" title="2 of 4 branches missed.">			if (result.getField() instanceof AbstractComponent &amp;&amp; result.getMessage().isPresent()) {</span>
-<span class="fc" id="L185">				sb.append(&quot;[&quot; + ((AbstractComponent) result.getField()).getCaption() + &quot;]&quot;).append(&quot; &quot;)</span>
-<span class="fc" id="L186">						.append(result.getMessage().get()).append(&quot;\n&quot;);</span>
+<span class="pc bpc" id="L194" title="2 of 4 branches missed.">			if (result.getField() instanceof AbstractComponent &amp;&amp; result.getMessage().isPresent()) {</span>
+<span class="fc" id="L195">				sb.append(&quot;[&quot; + ((AbstractComponent) result.getField()).getCaption() + &quot;]&quot;).append(&quot; &quot;)</span>
+<span class="fc" id="L196">						.append(result.getMessage().get()).append(&quot;\n&quot;);</span>
 			}
-<span class="fc" id="L188">		}</span>
-<span class="fc" id="L189">		return sb.toString();</span>
+<span class="fc" id="L198">		}</span>
+<span class="fc" id="L199">		return sb.toString();</span>
 	}
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

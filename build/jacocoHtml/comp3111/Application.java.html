@@ -1,61 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Application.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">website</a> &gt; <a href="index.source.html" class="el_package">comp3111</a> &gt; <span class="el_source">Application.java</span></div><h1>Application.java</h1><pre class="source lang-java linenums">package comp3111;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import comp3111.data.DBManager;
+import comp3111.data.model.Booking;
+import comp3111.data.model.Customer;
+import comp3111.data.model.Offering;
+import comp3111.data.model.Tour;
+import comp3111.data.model.TourGuide;
+import comp3111.data.repo.BookingRepository;
+import comp3111.data.repo.CustomerRepository;
+import comp3111.data.repo.OfferingRepository;
+import comp3111.data.repo.TourGuideRepository;
+import comp3111.data.repo.TourRepository;
+
 /**
  * Spring Application point of entry
+ * 
  * @author Forsythe
  *
  */
 @SpringBootApplication
-<span class="fc" id="L17">public class Application {</span>
+<span class="fc" id="L36">public class Application {</span>
 
-<span class="fc" id="L19">	private static final Logger log = LoggerFactory.getLogger(Application.class);</span>
+<span class="fc" id="L38">	private static final Logger log = LoggerFactory.getLogger(Application.class);</span>
 
 	public static void main(String[] args) {
-<span class="nc" id="L22">		SpringApplication.run(Application.class);</span>
-<span class="nc" id="L23">	}</span>
-	
-	//Don't want scheduling on test cases, or else it causes race conditions!
-	//Annotate all SPRING test classes with @SpringBootTest(properties = &quot;scheduling.enabled=false&quot;)
-	//Non-spring tests don't need this annotation.	
+<span class="nc" id="L41">		SpringApplication.run(Application.class);</span>
+<span class="nc" id="L42">	}</span>
+
+	// Don't want scheduling on test cases, or else it causes race conditions!
+	// Annotate all SPRING test classes with @SpringBootTest(properties =
+	// &quot;scheduling.enabled=false&quot;)
+	// Non-spring tests don't need this annotation.
 	@Configuration
-    @ConditionalOnProperty(value = &quot;scheduling.enabled&quot;, havingValue = &quot;true&quot;, matchIfMissing = true)
-    @EnableScheduling
-<span class="nc" id="L31">    static class SchedulingConfiguration {</span>
+	@ConditionalOnProperty(value = &quot;scheduling.enabled&quot;, havingValue = &quot;true&quot;, matchIfMissing = true)
+	@EnableScheduling
+<span class="nc" id="L51">	static class SchedulingConfiguration {</span>
 
-    }
+	}
 
-	// @Bean
-	// public CommandLineRunner loadData(CustomerRepository repository) {
-	// return (args) -&gt; {
-	// // save a couple of customers
-	// repository.save(new Customer(&quot;Jack&quot;, 5));
-	// repository.save(new Customer(&quot;JOhn&quot;, 5));
-	// repository.save(new Customer(&quot;Bob&quot;, 5));
-	// repository.save(new Customer(&quot;David&quot;, 5));
-	//
-	// // fetch all customers
-	// log.info(&quot;Customers found with findAll():&quot;);
-	// log.info(&quot;-------------------------------&quot;);
-	// for (Customer customer : repository.findAll()) {
-	// log.info(customer.toString());
-	// }
-	// log.info(&quot;&quot;);
-	//
-	// // fetch an individual customer by ID
-	// Customer customer = repository.findOne(1L);
-	// customer.setAge(999);
-	// repository.save(customer);
-	// log.info(&quot;saved updated customer&quot;);
-	// };
-	// }
+//	@Bean
+//	public CommandLineRunner loadData(TourRepository tourRepo, OfferingRepository offerRepo, TourGuideRepository tgRepo,
+//			CustomerRepository customerRepo, BookingRepository bookingRepo, DBManager dbManager) {
+//		return (args) -&gt; {
+//			dbManager.deleteAll();
+//			log.info(&quot;Populating the db...&quot;);
+//
+//			TourGuide kim = new TourGuide(&quot;Kim&quot;, &quot;tensorflowboss&quot;);
+//			kim = tgRepo.save(kim);
+//			TourGuide kevin = new TourGuide(&quot;Kevin&quot;, &quot;springboss&quot;);
+//			kevin = tgRepo.save(kevin);
+//
+//			Customer heng = new Customer(&quot;Heng&quot;, &quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;, &quot;123-12311&quot;, 20, &quot;A123456(3)&quot;);
+//			Customer kv = new Customer(&quot;KV&quot;, &quot;U7e5b42b4ea64a1ff1d812a3ff33b48b0&quot;, &quot;123-12311&quot;, 20, &quot;A123456(3)&quot;);
+//			Customer rex = new Customer(&quot;Rex&quot;, &quot;U8b20aa2040714d4ff45782709f7b1ba6&quot;, &quot;123-12311&quot;, 20, &quot;A123456(3)&quot;);
+//			Customer kris = new Customer(&quot;Kris&quot;, &quot;U4b23c4647091ccdcce12d5392d37866d&quot;, &quot;123-12311&quot;, 20, &quot;A123456(3)&quot;);
+//			heng = customerRepo.save(heng);
+//			kv = customerRepo.save(kv);
+//			rex = customerRepo.save(rex);
+//			kris = customerRepo.save(kris);
+//
+//			Tour lg7 = new Tour(&quot;LG7&quot;, &quot;Bad food&quot;, 2, 0.8, 0.2, 200, 250);
+//			lg7.setAllowedDaysOfWeek(new HashSet&lt;Integer&gt;(Arrays.asList(1, 2, 3, 4, 5, 6, 7)));
+//			lg7 = tourRepo.save(lg7);
+//
+//			Offering offer = new Offering(lg7, kim, Utils.addDate(new Date(), 5), &quot;Hotel California&quot;, 15, 50,
+//					Offering.STATUS_PENDING);
+//			offer = offerRepo.save(offer);
+//
+//			Booking book = new Booking(kris, offer, 2, 1, 0, 0, &quot;No cockroaches in my food&quot;, Booking.PAYMENT_PENDING);
+//			book = bookingRepo.save(book);
+//
+//			Offering offer2 = new Offering(lg7, kevin, Utils.addDate(new Date(), 8), &quot;Hotel Waldo&quot;, 15, 50,
+//					Offering.STATUS_PENDING);
+//			offer2 = offerRepo.save(offer2);
+//			Booking book2 = new Booking(heng, offer2, 2, 1, 0, 0, &quot;Non smoking room&quot;, Booking.PAYMENT_PENDING);
+//			book2 = bookingRepo.save(book2);
+//
+//		};
+//	}
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

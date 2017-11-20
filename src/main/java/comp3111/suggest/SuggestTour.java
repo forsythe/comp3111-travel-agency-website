@@ -38,6 +38,7 @@ public class SuggestTour {
      * @param bookingRepo Booking repo
      * @param offeringRepo Offering repo
      * @param tourRepo Tour repo
+     * @param cluster The tour cluster
      */
     @Autowired
     public SuggestTour(CustomerRepository customerRepo, BookingRepository bookingRepo,

@@ -305,7 +305,7 @@ public class OfferingEditor extends VerticalLayout {
 <span class="fc" id="L305">		tourGuide.setPopupWidth(null);</span>
 
 <span class="fc" id="L307">		Iterable&lt;TourGuide&gt; tourGuidesIterable = tourGuideRepo.findAll();</span>
-<span class="pc bpc" id="L308" title="1 of 2 branches missed.">		if(tourGuidesIterable != null) {</span>
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">		if (tourGuidesIterable != null) {</span>
 <span class="nc" id="L309">			tourGuide.setItems(Utils.iterableToCollection(tourGuidesIterable).stream()</span>
 <span class="nc" id="L310">					.sorted((tg1, tg2) -&gt; tg1.getId().compareTo(tg2.getId())));</span>
 		}
@@ -430,29 +430,36 @@ public class OfferingEditor extends VerticalLayout {
 
 	/**
 	 * Check whether an offering is editable or not based on start date and current
-	 * date
+	 * date. If the offering is cancelled but has not reached the time of
+	 * confirmation, it also returns false, but displays a different error message
 	 * 
 	 * @param offering
 	 *            The offering to check
 	 * @return Whether the offering is editable
 	 */
 	public boolean canEditOffering(Offering offering) {
-<span class="fc bfc" id="L440" title="All 2 branches covered.">		if (offering == null)</span>
-<span class="fc" id="L441">			return false;</span>
+<span class="fc bfc" id="L441" title="All 2 branches covered.">		if (offering == null)</span>
+<span class="fc" id="L442">			return false;</span>
 
-<span class="fc" id="L443">		Date today = Date.from(Instant.now());</span>
-<span class="fc" id="L444">		Date threeDayBeforeStart = offering.getLastEditableDate();</span>
+<span class="fc" id="L444">		Date today = Date.from(Instant.now());</span>
+<span class="fc" id="L445">		Date threeDayBeforeStart = offering.getLastEditableDate();</span>
 
-<span class="fc bfc" id="L446" title="All 2 branches covered.">		if (today.after(threeDayBeforeStart)) {</span>
-<span class="pc bpc" id="L447" title="1 of 2 branches missed.">			if (Page.getCurrent() != null) // can be null if using mockito</span>
-<span class="nc" id="L448">				NotificationFactory.getTopBarWarningNotification(</span>
+<span class="fc bfc" id="L447" title="All 2 branches covered.">		if (today.after(threeDayBeforeStart)) {</span>
+<span class="pc bpc" id="L448" title="1 of 2 branches missed.">			if (Page.getCurrent() != null) // can be null if using mockito</span>
+<span class="nc" id="L449">				NotificationFactory.getTopBarWarningNotification(</span>
 						&quot;It's too late to edit this offering. Its status was finalized on &quot;
-<span class="nc" id="L450">								+ Utils.simpleDateFormat(threeDayBeforeStart),</span>
-<span class="nc" id="L451">						5).show(Page.getCurrent());</span>
+<span class="nc" id="L451">								+ Utils.simpleDateFormat(threeDayBeforeStart),</span>
+<span class="nc" id="L452">						5).show(Page.getCurrent());</span>
 
-<span class="fc" id="L453">			return false;</span>
+<span class="fc" id="L454">			return false;</span>
+<span class="fc bfc" id="L455" title="All 2 branches covered.">		} else if (offering.getStatus().equals(Offering.STATUS_CANCELLED)) {</span>
+<span class="pc bpc" id="L456" title="1 of 2 branches missed.">			if (Page.getCurrent() != null) // can be null if using mockito</span>
+<span class="nc" id="L457">				NotificationFactory.getTopBarWarningNotification(</span>
+<span class="nc" id="L458">						&quot;It's too late to edit this offering. It has been cancelled.&quot;, 5).show(Page.getCurrent());</span>
+<span class="fc" id="L459">			return false;</span>
 		}
-<span class="fc" id="L455">		return true;</span>
+
+<span class="fc" id="L462">		return true;</span>
 	}
 
 	/**
@@ -460,41 +467,41 @@ public class OfferingEditor extends VerticalLayout {
 	 */
 	public void refreshData() {
 
-<span class="fc" id="L463">		ListDataProvider&lt;Offering&gt; provider = new ListDataProvider&lt;&gt;(</span>
-<span class="fc" id="L464">				Utils.iterableToCollection(offeringRepo.findByTour(this.selectedTour)));</span>
-<span class="fc" id="L465">		offeringGrid.setDataProvider(provider);</span>
-<span class="fc" id="L466">	}</span>
+<span class="fc" id="L470">		ListDataProvider&lt;Offering&gt; provider = new ListDataProvider&lt;&gt;(</span>
+<span class="fc" id="L471">				Utils.iterableToCollection(offeringRepo.findByTour(this.selectedTour)));</span>
+<span class="fc" id="L472">		offeringGrid.setDataProvider(provider);</span>
+<span class="fc" id="L473">	}</span>
 
 	public Button getSubwindowConfirmButton() {
-<span class="fc" id="L469">		return subwindowConfirmButton;</span>
+<span class="fc" id="L476">		return subwindowConfirmButton;</span>
 	}
 
 	public TextField getTourName() {
-<span class="nc" id="L473">		return tourName;</span>
+<span class="nc" id="L480">		return tourName;</span>
 	}
 
 	public ComboBox&lt;TourGuide&gt; getTourGuide() {
-<span class="fc" id="L477">		return tourGuide;</span>
+<span class="fc" id="L484">		return tourGuide;</span>
 	}
 
 	public DateField getStartDate() {
-<span class="fc" id="L481">		return startDate;</span>
+<span class="fc" id="L488">		return startDate;</span>
 	}
 
 	public TextField getHotelName() {
-<span class="fc" id="L485">		return hotelName;</span>
+<span class="fc" id="L492">		return hotelName;</span>
 	}
 
 	public TextField getMinCustomer() {
-<span class="fc" id="L489">		return minCustomer;</span>
+<span class="fc" id="L496">		return minCustomer;</span>
 	}
 
 	public TextField getMaxCustomer() {
-<span class="fc" id="L493">		return maxCustomer;</span>
+<span class="fc" id="L500">		return maxCustomer;</span>
 	}
 
 	public BinderValidationStatus&lt;Offering&gt; getValidationStatus() {
-<span class="fc" id="L497">		return validationStatus;</span>
+<span class="fc" id="L504">		return validationStatus;</span>
 	}
 
 	// Helpers for accessing stuff from tourEditor
@@ -503,14 +510,14 @@ public class OfferingEditor extends VerticalLayout {
 	 *            Set the selected tour
 	 */
 	public void setSelectedTour(Tour selectedTour) {
-<span class="fc" id="L506">		this.selectedTour = selectedTour;</span>
-<span class="fc" id="L507">	}</span>
+<span class="fc" id="L513">		this.selectedTour = selectedTour;</span>
+<span class="fc" id="L514">	}</span>
 
 	/**
 	 * @return get the selected tour object
 	 */
 	public Tour getSelectedTour() {
-<span class="fc" id="L513">		return this.selectedTour;</span>
+<span class="fc" id="L520">		return this.selectedTour;</span>
 	}
 
 	/**
@@ -518,7 +525,7 @@ public class OfferingEditor extends VerticalLayout {
 	 *            Set the parent TourEditor object
 	 */
 	public void setTourEditor(TourEditor te) {
-<span class="nc" id="L521">		this.tourEditor = te;</span>
-<span class="nc" id="L522">	}</span>
+<span class="nc" id="L528">		this.tourEditor = te;</span>
+<span class="nc" id="L529">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

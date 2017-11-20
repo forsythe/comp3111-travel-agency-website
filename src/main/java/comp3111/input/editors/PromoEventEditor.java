@@ -273,6 +273,14 @@ public class PromoEventEditor extends VerticalLayout {
 		subwindow.setResizable(false);
 		subwindow.setDraggable(false);
 
+		offering.setWidth(300, Unit.PIXELS);
+		triggerDate.setWidth(300, Unit.PIXELS);
+		discountMultiplier.setWidth(300, Unit.PIXELS);
+		maxReservationsPerCustomer.setWidth(300, Unit.PIXELS);
+		promoCode.setWidth(300, Unit.PIXELS);
+		promoCodeUses.setWidth(300, Unit.PIXELS);
+		customMessage.setWidth(300, Unit.PIXELS);
+
 		form.addComponent(offering);
 		form.addComponent(triggerDate);
 		form.addComponent(discountMultiplier);
@@ -320,6 +328,7 @@ public class PromoEventEditor extends VerticalLayout {
 		// For old promo event, the code cannot be changed to make our life easier
 		binder.forField(promoCode).asRequired(Utils.generateRequiredError())
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
+				.withValidator(ValidatorFactory.getStringNotEqualsToIgnoreCaseValidator("none"))
 				.bind(PromoEvent::getPromoCode, PromoEvent::setPromoCode);
 
 		binder.forField(promoCodeUses).asRequired(Utils.generateRequiredError())

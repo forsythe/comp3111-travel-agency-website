@@ -112,8 +112,11 @@ public class OfferingEditorTests {
 		assertFalse(offeringEditor.canEditOffering(tooLateOffering));
 
 		Offering futureOffering = new Offering();
-		futureOffering.setStartDate(Utils.addDate(new Date(), 3));
+		futureOffering.setStartDate(Utils.addDate(new Date(), 4));
 		assertTrue(offeringEditor.canEditOffering(futureOffering));
+		
+		futureOffering.setStatus(Offering.STATUS_CANCELLED);
+		assertFalse(offeringEditor.canEditOffering(futureOffering));
 	}
 
 	private void setEditorFormValues(TourGuide tourGuide, LocalDate startDate, String hotelName, String minCustomers,
