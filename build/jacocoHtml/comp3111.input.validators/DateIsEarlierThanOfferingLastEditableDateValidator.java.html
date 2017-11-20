@@ -48,7 +48,7 @@ public class DateIsEarlierThanOfferingLastEditableDateValidator implements Valid
 <span class="fc bfc" id="L48" title="All 2 branches covered.">		if (value != null) {</span>
 <span class="fc bfc" id="L49" title="All 2 branches covered.">			if (!value.before(o.getValue().getLastEditableDate())) {</span>
 <span class="fc" id="L50">				return getValidationErrorLogged(</span>
-<span class="fc" id="L51">						&quot;date must be earlier than &quot; + Utils.simpleDateFormat(o.getValue().getLastEditableDate()));</span>
+<span class="fc" id="L51">						&quot;date must be earlier than &quot; + o.getValue().getLastEditableDate());</span>
 			} else {
 <span class="fc" id="L53">				return ValidationResult.ok();</span>
 			}

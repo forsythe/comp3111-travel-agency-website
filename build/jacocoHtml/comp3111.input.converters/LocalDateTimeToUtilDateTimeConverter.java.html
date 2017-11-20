@@ -12,23 +12,25 @@ import comp3111.Utils;
 
 /**
  * Converts between LocalDateTime objects and DateTime objects
+ * 
  * @author Forsythe
  *
  */
-<span class="fc" id="L18">public class LocalDateTimeToUtilDateTimeConverter implements Converter&lt;LocalDateTime, Date&gt; {</span>
+<span class="fc" id="L19">public class LocalDateTimeToUtilDateTimeConverter implements Converter&lt;LocalDateTime, Date&gt; {</span>
 
 	@Override
 	public Result&lt;Date&gt; convertToModel(LocalDateTime local, ValueContext context) {
-<span class="fc bfc" id="L22" title="All 2 branches covered.">		if (local == null)</span>
-<span class="fc" id="L23">			return Result.error(&quot;invalid date&quot;);</span>
-<span class="fc" id="L24">		return Result.ok(Utils.localDateTimeToDate(local));</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">		if (local == null)</span>
+<span class="fc" id="L24">			return Result.error(&quot;invalid date&quot;);</span>
+<span class="fc" id="L25">		return Result.ok(Utils.localDateTimeToDate(local));</span>
 	}
 
 	@Override
 	public LocalDateTime convertToPresentation(Date date, ValueContext context) {
-<span class="fc bfc" id="L29" title="All 2 branches covered.">		if (date == null)</span>
-<span class="fc" id="L30">			return LocalDateTime.now();</span>
-<span class="fc" id="L31">		return date.toInstant().atZone(ZoneId.of(Utils.TIMEZONE)).toLocalDateTime();</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">		if (date == null)</span>
+<span class="fc" id="L31">			return LocalDateTime.now();</span>
+<span class="fc" id="L32">		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();</span>
+		// return date.toInstant().atZone(ZoneId.of(Utils.TIMEZONE)).toLocalDateTime();
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

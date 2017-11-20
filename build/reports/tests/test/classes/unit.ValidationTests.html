@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.011s</div>
+<div class="counter">0.007s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,17 +79,17 @@
 </thead>
 <tr>
 <td class="success">testDateIsEarlierThanOfferingLastEditableDateValidation</td>
-<td>0.002s</td>
+<td>0.001s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testDateNotEarlierThanValidator</td>
-<td>0.001s</td>
+<td>0s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testDoubleRangeValidator</td>
-<td>0.001s</td>
+<td>0s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
@@ -104,27 +104,27 @@
 </tr>
 <tr>
 <td class="success">testIntegerRangeValidator</td>
-<td>0.003s</td>
+<td>0.001s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testListOfDatesValidator</td>
-<td>0.001s</td>
+<td>0.002s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testOfferingStillOpenValidator</td>
-<td>0s</td>
-<td class="success">passed</td>
-</tr>
-<tr>
-<td class="success">testPhoneNumberValidation</td>
 <td>0.001s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">testStringDoesNotContainSubstringValidator</td>
+<td class="success">testPhoneNumberValidation</td>
 <td>0s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testStringDoesNotContainSubstringValidator</td>
+<td>0.001s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
@@ -134,7 +134,7 @@
 </tr>
 <tr>
 <td class="success">testStringNotEqualsToIgnoreCaseValidator</td>
-<td>0.001s</td>
+<td>0s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -142,37 +142,37 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: provide at least 1 date, dd/mm/yyyy, separated by commas
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong check digit
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: string is null
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 5 characters
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 5 characters
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= null
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: date does not exist
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: date must be later than 05/12/2017
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: there is no associated offering yet
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: there is no associated offering yet
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: No associated date value
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: date must be earlier than 01/12/2017
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must not contain &quot;bob&quot;
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must not contain &quot;bob&quot;
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: offering does not exist
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: offering is no longer open for application
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: offering is no longer open for application
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [1.0, 2.0]
-2017-11-20 20:24:56.503  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [1.0, 2.0]
-2017-11-20 20:24:56.518  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
-2017-11-20 20:24:56.518  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
-2017-11-20 20:24:56.518  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: must be a number
-2017-11-20 20:24:56.518  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must not equal [bobby], case insensitive
-2017-11-20 20:24:56.518  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must not equal [bobby], case insensitive
-2017-11-20 20:24:56.518  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be [1, 5)
-2017-11-20 20:24:56.518  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be [1, 5)
-2017-11-20 20:24:56.518  INFO 7472 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 2
+<pre>2017-11-20 22:38:14.850  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: provide at least 1 date, dd/mm/yyyy, separated by commas
+2017-11-20 22:38:14.852  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong check digit
+2017-11-20 22:38:14.852  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
+2017-11-20 22:38:14.852  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
+2017-11-20 22:38:14.852  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
+2017-11-20 22:38:14.852  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
+2017-11-20 22:38:14.853  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: string is null
+2017-11-20 22:38:14.853  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 5 characters
+2017-11-20 22:38:14.853  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 5 characters
+2017-11-20 22:38:14.853  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= null
+2017-11-20 22:38:14.853  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: date does not exist
+2017-11-20 22:38:14.854  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: date must be later than Tue Dec 05 00:00:00 CST 2017, but was actually Mon Dec 04 00:00:00 CST 2017
+2017-11-20 22:38:14.854  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: there is no associated offering yet
+2017-11-20 22:38:14.854  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: there is no associated offering yet
+2017-11-20 22:38:14.854  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: No associated date value
+2017-11-20 22:38:14.855  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: date must be earlier than Fri Dec 01 00:00:00 CST 2017
+2017-11-20 22:38:14.855  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must not contain &quot;bob&quot;
+2017-11-20 22:38:14.855  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must not contain &quot;bob&quot;
+2017-11-20 22:38:14.856  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: offering does not exist
+2017-11-20 22:38:14.856  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: offering is no longer open for application
+2017-11-20 22:38:14.856  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: offering is no longer open for application
+2017-11-20 22:38:14.856  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [1.0, 2.0]
+2017-11-20 22:38:14.856  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [1.0, 2.0]
+2017-11-20 22:38:14.857  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
+2017-11-20 22:38:14.857  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
+2017-11-20 22:38:14.857  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: must be a number
+2017-11-20 22:38:14.858  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must not equal [bobby], case insensitive
+2017-11-20 22:38:14.858  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must not equal [bobby], case insensitive
+2017-11-20 22:38:14.859  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be [1, 5)
+2017-11-20 22:38:14.860  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be [1, 5)
+2017-11-20 22:38:14.860  INFO 11360 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 2
 </pre>
 </span>
 </div>
@@ -184,7 +184,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 4.2.1</a> at Nov 20, 2017 8:24:57 PM</p>
+<a href="http://www.gradle.org">Gradle 4.2.1</a> at Nov 20, 2017 10:38:18 PM</p>
 </div>
 </div>
 </body>

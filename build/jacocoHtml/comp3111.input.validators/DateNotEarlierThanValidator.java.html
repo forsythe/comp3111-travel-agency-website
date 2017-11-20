@@ -24,29 +24,36 @@ public class DateNotEarlierThanValidator implements Validator&lt;Date&gt; {
 	/**
 	 * Constructor for the validator
 	 * 
-	 * @param notEarlierThanThis The date that is to be compared to
+	 * @param notEarlierThanThis
+	 *            The date that is to be compared to
 	 */
-<span class="fc" id="L29">	DateNotEarlierThanValidator(Date notEarlierThanThis) {</span>
-<span class="fc" id="L30">		this.notEarlierThanThis = notEarlierThanThis;</span>
-<span class="fc" id="L31">	}</span>
-	/** 
-	 * Overrides the apply method in vaadin validators, checks whether the given value
-	 * is earlier than the date object that the validator has
-	 * @param value The date value that is going to be validated
-	 * @param context A value context for converters. Contains relevant information for converting values. 
-	 * @see com.vaadin.data.Validator#apply(java.lang.Object, com.vaadin.data.ValueContext)
+<span class="fc" id="L30">	DateNotEarlierThanValidator(Date notEarlierThanThis) {</span>
+<span class="fc" id="L31">		this.notEarlierThanThis = notEarlierThanThis;</span>
+<span class="fc" id="L32">	}</span>
+
+	/**
+	 * Overrides the apply method in vaadin validators, checks whether the given
+	 * value is earlier than the date object that the validator has
+	 * 
+	 * @param value
+	 *            The date value that is going to be validated
+	 * @param context
+	 *            A value context for converters. Contains relevant information for
+	 *            converting values.
+	 * @see com.vaadin.data.Validator#apply(java.lang.Object,
+	 *      com.vaadin.data.ValueContext)
 	 */
 	@Override
 	public ValidationResult apply(Date value, ValueContext context) {
-<span class="fc bfc" id="L41" title="All 2 branches covered.">		if (value != null) {</span>
-<span class="fc bfc" id="L42" title="All 2 branches covered.">			if (value.before(notEarlierThanThis)) {</span>
-<span class="fc" id="L43">				return getValidationErrorLogged(</span>
-<span class="fc" id="L44">						&quot;date must be later than &quot; + Utils.simpleDateFormat(notEarlierThanThis));</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">		if (value != null) {</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">			if (value.before(notEarlierThanThis)) {</span>
+<span class="fc" id="L50">				return getValidationErrorLogged(</span>
+						&quot;date must be later than &quot; + notEarlierThanThis + &quot;, but was actually &quot; + value);
 			} else {
-<span class="fc" id="L46">				return ValidationResult.ok();</span>
+<span class="fc" id="L53">				return ValidationResult.ok();</span>
 			}
 		} else {
-<span class="fc" id="L49">			return getValidationErrorLogged(&quot;date does not exist&quot;);</span>
+<span class="fc" id="L56">			return getValidationErrorLogged(&quot;date does not exist&quot;);</span>
 		}
 	}
 }

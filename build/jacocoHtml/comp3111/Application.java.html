@@ -52,72 +52,69 @@ import comp3111.data.repo.TourRepository;
 
 	}
 
-//	@Bean
-//	public CommandLineRunner loadData(TourRepository tourRepo, OfferingRepository offerRepo, TourGuideRepository tgRepo,
-//			CustomerRepository customerRepo, BookingRepository bookingRepo, DBManager dbManager) {
-//		return (args) -&gt; {
-//			dbManager.deleteAll();
-//			log.info(&quot;Populating the db...&quot;);
-//
-//			TourGuide kim = new TourGuide(&quot;Kim&quot;, &quot;tensorflowboss&quot;);
-//			kim = tgRepo.save(kim);
-//			TourGuide kevin = new TourGuide(&quot;Kevin&quot;, &quot;springboss&quot;);
-//			kevin = tgRepo.save(kevin);
-//			TourGuide bigshaq = new TourGuide(&quot;Big Shaq&quot;, &quot;nothot&quot;);
-//			bigshaq = tgRepo.save(bigshaq);
-//
-//			Customer heng = new Customer(&quot;Heng&quot;, &quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;, &quot;123-12311&quot;, 20, &quot;A123456(3)&quot;);
-//			Customer kv = new Customer(&quot;KV&quot;, &quot;U7e5b42b4ea64a1ff1d812a3ff33b48b0&quot;, &quot;123-12311&quot;, 20, &quot;A123456(3)&quot;);
-//			Customer rex = new Customer(&quot;Rex&quot;, &quot;U8b20aa2040714d4ff45782709f7b1ba6&quot;, &quot;123-12311&quot;, 20, &quot;A123456(3)&quot;);
-//			Customer kris = new Customer(&quot;Kris&quot;, &quot;U4b23c4647091ccdcce12d5392d37866d&quot;, &quot;123-12311&quot;, 20, &quot;A123456(3)&quot;);
-//			heng = customerRepo.save(heng);
-//			kv = customerRepo.save(kv);
-//			rex = customerRepo.save(rex);
-//			kris = customerRepo.save(kris);
-//
-//			Tour lg7 = new Tour(&quot;LG7&quot;, &quot;Bad food&quot;, 2, 0.8, 0.2, 200, 250);
-//			lg7.setAllowedDaysOfWeek(new HashSet&lt;Integer&gt;(Arrays.asList(1, 2, 3, 4, 5, 6, 7)));
-//			lg7 = tourRepo.save(lg7);
-//			Tour shimen = new Tour(&quot;Shimen National Forest Tour&quot;,
-//					&quot;Shimen colorful pond * stunning red maple * Staying at \&quot;Yihua Hot Spring Hotel\&quot;&quot;,
-//					2, 0.7, 0.7, 499, 599);
-//			shimen.setAllowedDaysOfWeek(new HashSet&lt;Integer&gt;(Arrays.asList(1,3,6)));
-//			shimen = tourRepo.save(shimen);
-//			Tour yangshan = new Tour(&quot;Yangshan Hot Spring Tour&quot;,
-//					&quot;Unlimited use of hot spring * Famous Yangshan roaster cusine&quot;,
-//					2, 0.7, 0.7, 299, 399);
-//			yangshan.setAllowedDaysOfWeek(new HashSet&lt;Integer&gt;(Arrays.asList(1,3,5)));
-//			yangshan = tourRepo.save(yangshan);
-//			Tour nationalPark = new Tour(&quot;National Park Tour&quot;,
-//					&quot;Green Lake District (Ferry Tour Included) * Asia tallest musical fountain * Staying at 4 stars hotel &quot;,
-//					2, 0.7, 0.7, 299, 399);
-//			nationalPark.setAllowedDaysOfWeek(new HashSet&lt;Integer&gt;(Arrays.asList(2,6)));
-//			nationalPark = tourRepo.save(nationalPark);
-//			Tour kaiping = new Tour(&quot;Kaiping culture tour&quot;,
-//					&quot;Kaiping Watchtowers * Jinshan Hot Spring * 5 starts hotel&quot;,
-//					3, 0.7, 0.7, 699, 899);
-//			kaiping.setAllowedDaysOfWeek(new HashSet&lt;Integer&gt;(Arrays.asList(1,3,6)));
-//			kaiping = tourRepo.save(kaiping);
-//			Tour baojing = new Tour(&quot;Qingyuan historic-landscape tour&quot;,
-//					&quot;Baojing Palace of Yingde * Sankeng Hot Spring * Sankeng Hot Spring &quot;,
-//					3, 0.7, 0.7, 899, 899);
-//			baojing.setAllowedDates(new HashSet&lt;Date&gt;(Arrays.asList(Utils.addDate(new Date(), 20),
-//					Utils.addDate(new Date(), 25))));
-//			baojing = tourRepo.save(baojing);
-//
-//			Offering offer = new Offering(lg7, kim, Utils.addDate(new Date(), 5), &quot;Hotel California&quot;, 15, 50,
-//					Offering.STATUS_PENDING);
-//			offer = offerRepo.save(offer);
-//
-//			Booking book = new Booking(kris, offer, 2, 1, 0, 0, &quot;No cockroaches in my food&quot;, Booking.PAYMENT_PENDING);
-//			book = bookingRepo.save(book);
-//			Offering offer2 = new Offering(lg7, kevin, Utils.addDate(new Date(), 8), &quot;Hotel Waldo&quot;, 15, 50,
-//				Offering.STATUS_PENDING);
-//			offer2 = offerRepo.save(offer2);
-//			Booking book2 = new Booking(heng, offer2, 2, 1, 0, 0, &quot;Non smoking room&quot;, Booking.PAYMENT_PENDING);
-//			book2 = bookingRepo.save(book2);
-//		};
-//	}
+	@Bean
+	public CommandLineRunner loadData(TourRepository tourRepo, OfferingRepository offerRepo, TourGuideRepository tgRepo,
+			CustomerRepository customerRepo, BookingRepository bookingRepo, DBManager dbManager) {
+<span class="fc" id="L58">		return (args) -&gt; {</span>
+<span class="fc" id="L59">			dbManager.deleteAll();</span>
+<span class="fc" id="L60">			log.info(&quot;Populating the db...&quot;);</span>
+
+<span class="fc" id="L62">			TourGuide kim = new TourGuide(&quot;Kim&quot;, &quot;tensorflowboss&quot;);</span>
+<span class="fc" id="L63">			kim = tgRepo.save(kim);</span>
+<span class="fc" id="L64">			TourGuide kevin = new TourGuide(&quot;Kevin&quot;, &quot;springboss&quot;);</span>
+<span class="fc" id="L65">			kevin = tgRepo.save(kevin);</span>
+<span class="fc" id="L66">			TourGuide bigshaq = new TourGuide(&quot;Big Shaq&quot;, &quot;nothot&quot;);</span>
+<span class="fc" id="L67">			bigshaq = tgRepo.save(bigshaq);</span>
+
+<span class="fc" id="L69">			Customer heng = new Customer(&quot;Heng&quot;, &quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;, &quot;123-12311&quot;, 20, &quot;A123456(3)&quot;);</span>
+<span class="fc" id="L70">			Customer kv = new Customer(&quot;KV&quot;, &quot;U7e5b42b4ea64a1ff1d812a3ff33b48b0&quot;, &quot;123-12311&quot;, 20, &quot;A123456(3)&quot;);</span>
+<span class="fc" id="L71">			Customer rex = new Customer(&quot;Rex&quot;, &quot;U8b20aa2040714d4ff45782709f7b1ba6&quot;, &quot;123-12311&quot;, 20, &quot;A123456(3)&quot;);</span>
+<span class="fc" id="L72">			Customer kris = new Customer(&quot;Kris&quot;, &quot;U4b23c4647091ccdcce12d5392d37866d&quot;, &quot;123-12311&quot;, 20, &quot;A123456(3)&quot;);</span>
+<span class="fc" id="L73">			heng = customerRepo.save(heng);</span>
+<span class="fc" id="L74">			kv = customerRepo.save(kv);</span>
+<span class="fc" id="L75">			rex = customerRepo.save(rex);</span>
+<span class="fc" id="L76">			kris = customerRepo.save(kris);</span>
+
+<span class="fc" id="L78">			Tour lg7 = new Tour(&quot;LG7&quot;, &quot;Bad food&quot;, 2, 0.8, 0.2, 200, 250);</span>
+<span class="fc" id="L79">			lg7.setAllowedDaysOfWeek(new HashSet&lt;Integer&gt;(Arrays.asList(1, 2, 3, 4, 5, 6, 7)));</span>
+<span class="fc" id="L80">			lg7 = tourRepo.save(lg7);</span>
+<span class="fc" id="L81">			Tour shimen = new Tour(&quot;Shimen National Forest Tour&quot;,</span>
+					&quot;Shimen colorful pond * stunning red maple * Staying at Yihua Hot Spring Hotel&quot;, 2, 0.7, 0.7, 499,
+					599);
+<span class="fc" id="L84">			shimen.setAllowedDaysOfWeek(new HashSet&lt;Integer&gt;(Arrays.asList(1, 3, 6)));</span>
+<span class="fc" id="L85">			shimen = tourRepo.save(shimen);</span>
+<span class="fc" id="L86">			Tour yangshan = new Tour(&quot;Yangshan Hot Spring Tour&quot;,</span>
+					&quot;Unlimited use of hot spring * Famous Yangshan roaster cusine&quot;, 2, 0.7, 0.7, 299, 399);
+<span class="fc" id="L88">			yangshan.setAllowedDaysOfWeek(new HashSet&lt;Integer&gt;(Arrays.asList(1, 3, 5)));</span>
+<span class="fc" id="L89">			yangshan = tourRepo.save(yangshan);</span>
+<span class="fc" id="L90">			Tour nationalPark = new Tour(&quot;National Park Tour&quot;,</span>
+					&quot;Green Lake District (Ferry Tour Included) * Asia tallest musical fountain * Staying at 4 stars hotel &quot;,
+					2, 0.7, 0.7, 299, 399);
+<span class="fc" id="L93">			nationalPark.setAllowedDaysOfWeek(new HashSet&lt;Integer&gt;(Arrays.asList(2, 6)));</span>
+<span class="fc" id="L94">			nationalPark = tourRepo.save(nationalPark);</span>
+<span class="fc" id="L95">			Tour kaiping = new Tour(&quot;Kaiping culture tour&quot;,</span>
+					&quot;Kaiping Watchtowers *	 Jinshan Hot Spring * 5 starts hotel&quot;, 3, 0.7, 0.7, 699, 899);
+<span class="fc" id="L97">			kaiping.setAllowedDaysOfWeek(new HashSet&lt;Integer&gt;(Arrays.asList(1, 3, 6)));</span>
+<span class="fc" id="L98">			kaiping = tourRepo.save(kaiping);</span>
+<span class="fc" id="L99">			Tour baojing = new Tour(&quot;Qingyuan historic-landscape tour&quot;,</span>
+					&quot;Baojing Palace of Yingde * Sankeng Hot Spring * Sankeng Hot Spring &quot;, 3, 0.7, 0.7, 899, 899);
+<span class="fc" id="L101">			baojing.setAllowedDates(</span>
+<span class="fc" id="L102">					new HashSet&lt;Date&gt;(Arrays.asList(Utils.addDate(new Date(), 20), Utils.addDate(new Date(), 25))));</span>
+<span class="fc" id="L103">			baojing = tourRepo.save(baojing);</span>
+
+<span class="fc" id="L105">			Offering offer = new Offering(lg7, kim, Utils.addDate(new Date(), 5), &quot;Hotel California&quot;, 15, 50,</span>
+					Offering.STATUS_PENDING);
+<span class="fc" id="L107">			offer = offerRepo.save(offer);</span>
+
+<span class="fc" id="L109">			Booking book = new Booking(kris, offer, 2, 1, 0, 0, &quot;No cockroaches in my food&quot;, Booking.PAYMENT_PENDING);</span>
+<span class="fc" id="L110">			book = bookingRepo.save(book);</span>
+<span class="fc" id="L111">			Offering offer2 = new Offering(lg7, kevin, Utils.addDate(new Date(), 8), &quot;Hotel Waldo&quot;, 15, 50,</span>
+					Offering.STATUS_PENDING);
+<span class="fc" id="L113">			offer2 = offerRepo.save(offer2);</span>
+<span class="fc" id="L114">			Booking book2 = new Booking(heng, offer2, 2, 1, 0, 0, &quot;Non smoking room&quot;, Booking.PAYMENT_PENDING);</span>
+<span class="fc" id="L115">			book2 = bookingRepo.save(book2);</span>
+<span class="fc" id="L116">		};</span>
+	}
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
