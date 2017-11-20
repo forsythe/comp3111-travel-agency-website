@@ -96,7 +96,7 @@ public class DBManagerTests {
 
 	@Before // called before each test
 	public void setUp() {
-		//dbManager.deleteAll();
+		dbManager.deleteAll();
 
 		c1 = new Customer(C1_NAME, 30);
 		c2 = new Customer(C2_NAME, 30);
