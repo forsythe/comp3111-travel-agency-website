@@ -1,6 +1,7 @@
 package comp3111.input.editors;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -141,9 +142,7 @@ public class PromoEventEditor extends VerticalLayout {
 				GridCol.PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER, GridCol.PROMOEVENT_PROMO_CODE,
 				GridCol.PROMOEVENT_PROMO_CODE_USES_LEFT, GridCol.PROMOEVENT_DISCOUNT);
 
-
 		FilterFactory.addFilterInputBoxesToGridHeaderRow(PromoEvent.class, eventGrid, gridFilters);
-
 
 		this.addComponent(eventGrid);
 
@@ -285,7 +284,8 @@ public class PromoEventEditor extends VerticalLayout {
 		binder.forField(triggerDate).asRequired(Utils.generateRequiredError())
 				.withConverter(ConverterFactory.getLocalDateTimeToUtilDateTimeConverter())
 				.withValidator(ValidatorFactory.getDateIsEarlierThanOfferingLastEditableDateValidator(offering))
-				.withValidator(ValidatorFactory.getDateNotEarlierThanValidator(Date.from(Instant.now())))
+				.withValidator(ValidatorFactory.getDateNotEarlierThanValidator(
+						Date.from(Instant.now().atZone(ZoneId.of(Utils.TIMEZONE)).toInstant())))
 				.bind(PromoEvent::getTriggerDate, PromoEvent::setTriggerDate);
 
 		binder.forField(discountMultiplier).asRequired(Utils.generateRequiredError())
