@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">6.199s</div>
+<div class="counter">4.710s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,42 +79,42 @@
 </thead>
 <tr>
 <td class="success">testFailureOfferingAutomaticCancelNotEnoughConfirmedPayments</td>
-<td>0.716s</td>
+<td>0.571s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSuccessAutomatedCheckingAt8AMEveryDay</td>
-<td>0.040s</td>
+<td>0.043s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSuccessCanPersistNonFAQQueryAndRespond</td>
-<td>0.468s</td>
+<td>0.241s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSuccessDirectMessage</td>
-<td>0.447s</td>
+<td>0.411s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSuccessManuallyCancelOffering</td>
-<td>1.779s</td>
+<td>1.475s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSuccessOfferingAutomaticConfirmedCapacity</td>
-<td>1.121s</td>
+<td>0.495s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSuccessSendMessageToOfferingParticipants</td>
-<td>0.661s</td>
+<td>0.457s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testTriggerPromoEvent</td>
-<td>0.967s</td>
+<td>1.017s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -122,136 +122,136 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>2017-11-20 20:03:48.102  INFO 14028 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Neither @ContextConfiguration nor @ContextHierarchy found for test class [unit.LineInteractionTests], using SpringBootContextLoader
-2017-11-20 20:03:48.102  INFO 14028 --- [    Test worker] o.s.t.c.support.AbstractContextLoader    : Could not detect default resource locations for test class [unit.LineInteractionTests]: no resource found for suffixes {-context.xml, Context.groovy}.
-2017-11-20 20:03:48.118  INFO 14028 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener]
-2017-11-20 20:03:48.133  INFO 14028 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@2a8e7fcf, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@52d5e282, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@6613fee2, org.springframework.test.context.support.DirtiesContextTestExecutionListener@16bbbf75, org.springframework.test.context.transaction.TransactionalTestExecutionListener@4f12da6a, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@32aee0f8, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@4bb3eca1, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@b8a2b5, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@59a0f942, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@1c4c7bae, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@48ce4a62, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@d26e4c4]
-2017-11-20 20:03:48.149  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
-2017-11-20 20:03:48.180  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : Finding offerings for tour guide [professor kim]
-2017-11-20 20:03:48.180  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : 	found [0]
-2017-11-20 20:03:48.196  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully created offering on [Sat Dec 09 00:00:00 CST 2017] for tour [comp3111h]
-2017-11-20 20:03:48.196  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : customer [heng] succesfully made a booking for tour [comp3111h], offering [Sat Dec 09 00:00:00 CST 2017]
-2017-11-20 20:03:48.211  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : customer [KV] succesfully made a booking for tour [comp3111h], offering [Sat Dec 09 00:00:00 CST 2017]
-2017-11-20 20:03:48.211  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : Setting [Offering[id=17499, 09/12/2017, tour=comp3111h]] to be [cancelled]
-2017-11-20 20:03:48.249  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : Cancelling booking record [Booking[heng, Offering[id=17499, 09/12/2017, tour=comp3111h]]]
-2017-11-20 20:03:48.260  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : Cancelling booking record [Booking[KV, Offering[id=17499, 09/12/2017, tour=comp3111h]]]
-2017-11-20 20:03:48.260  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	Broadcasting to all users who booked for offering [Offering[id=17499, 09/12/2017, tour=comp3111h]]
-2017-11-20 20:03:48.271  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : there are [2] booked customers
-2017-11-20 20:03:48.282  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [Offering[id=17499, 09/12/2017, tour=comp3111h] has been cancelled.] to line id: [Uc8f613f85e41d93ed9ffa228188466d1]
-2017-11-20 20:03:49.022  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;Offering[id=17499, 09/12/2017, tour=comp3111h] has been cancelled.&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;}]
-2017-11-20 20:03:49.596  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
+<pre>2017-11-20 20:24:42.828  INFO 7472 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Neither @ContextConfiguration nor @ContextHierarchy found for test class [unit.LineInteractionTests], using SpringBootContextLoader
+2017-11-20 20:24:42.828  INFO 7472 --- [    Test worker] o.s.t.c.support.AbstractContextLoader    : Could not detect default resource locations for test class [unit.LineInteractionTests]: no resource found for suffixes {-context.xml, Context.groovy}.
+2017-11-20 20:24:42.843  INFO 7472 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener]
+2017-11-20 20:24:42.843  INFO 7472 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@2cbcdbb2, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@26439f18, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@2f32b43b, org.springframework.test.context.support.DirtiesContextTestExecutionListener@2cc2efbe, org.springframework.test.context.transaction.TransactionalTestExecutionListener@6669c0df, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@5ce83855, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@6641dc9f, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@5dc560f6, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@75022ca9, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@68b598cc, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@f80461, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@76cc1658]
+2017-11-20 20:24:42.874  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:42.890  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : Finding offerings for tour guide [professor kim]
+2017-11-20 20:24:42.890  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : 	found [0]
+2017-11-20 20:24:42.890  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully created offering on [Sat Dec 09 00:00:00 CST 2017] for tour [comp3111h]
+2017-11-20 20:24:42.906  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : customer [heng] succesfully made a booking for tour [comp3111h], offering [Sat Dec 09 00:00:00 CST 2017]
+2017-11-20 20:24:42.921  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : customer [KV] succesfully made a booking for tour [comp3111h], offering [Sat Dec 09 00:00:00 CST 2017]
+2017-11-20 20:24:42.921  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : Setting [Offering[id=17856, 09/12/2017, tour=comp3111h]] to be [cancelled]
+2017-11-20 20:24:42.937  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : Cancelling booking record [Booking[heng, Offering[id=17856, 09/12/2017, tour=comp3111h]]]
+2017-11-20 20:24:42.953  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : Cancelling booking record [Booking[KV, Offering[id=17856, 09/12/2017, tour=comp3111h]]]
+2017-11-20 20:24:42.953  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	Broadcasting to all users who booked for offering [Offering[id=17856, 09/12/2017, tour=comp3111h]]
+2017-11-20 20:24:42.953  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : there are [2] booked customers
+2017-11-20 20:24:42.953  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [Offering[id=17856, 09/12/2017, tour=comp3111h] has been cancelled.] to line id: [Uc8f613f85e41d93ed9ffa228188466d1]
+2017-11-20 20:24:43.592  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;Offering[id=17856, 09/12/2017, tour=comp3111h] has been cancelled.&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;}]
+2017-11-20 20:24:44.063  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
 ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length: 2,Chunked: false]}
-2017-11-20 20:03:49.596  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [Offering[id=17499, 09/12/2017, tour=comp3111h] has been cancelled.] to line id: [U7e5b42b4ea64a1ff1d812a3ff33b48b0]
-2017-11-20 20:03:49.627  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;Offering[id=17499, 09/12/2017, tour=comp3111h] has been cancelled.&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U7e5b42b4ea64a1ff1d812a3ff33b48b0&quot;}]
-2017-11-20 20:03:49.835  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
+2017-11-20 20:24:44.063  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [Offering[id=17856, 09/12/2017, tour=comp3111h] has been cancelled.] to line id: [U7e5b42b4ea64a1ff1d812a3ff33b48b0]
+2017-11-20 20:24:44.063  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;Offering[id=17856, 09/12/2017, tour=comp3111h] has been cancelled.&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U7e5b42b4ea64a1ff1d812a3ff33b48b0&quot;}]
+2017-11-20 20:24:44.235  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
 ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length: 2,Chunked: false]}
-2017-11-20 20:03:49.835  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : Succesfully sent to participants in this offering [Offering[id=17499, 09/12/2017, tour=comp3111h]]
-2017-11-20 20:03:49.922  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
-2017-11-20 20:03:49.936  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
-2017-11-20 20:03:49.953  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : Finding offerings for tour guide [professor kim]
-2017-11-20 20:03:49.953  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : 	found [0]
-2017-11-20 20:03:49.953  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully created offering on [Sat Nov 18 20:03:49 CST 2017] for tour [comp3111h]
-2017-11-20 20:03:49.969  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : customer [heng] succesfully made a booking for tour [comp3111h], offering [Sat Nov 18 20:03:49 CST 2017]
-2017-11-20 20:03:49.993  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : customer [KV] succesfully made a booking for tour [comp3111h], offering [Sat Nov 18 20:03:49 CST 2017]
-2017-11-20 20:03:50.002  INFO 14028 --- [    Test worker] comp3111.ScheduledTasks                  : Offering [Offering[id=17508, 18/11/2017, tour=comp3111h]] has reached t=-3 days before start!
-2017-11-20 20:03:50.004  INFO 14028 --- [    Test worker] comp3111.ScheduledTasks                  : Fail! Offering [Offering[id=17508, 18/11/2017, tour=comp3111h]] cannot be offered, having only [0] of [5] minimum customers
-2017-11-20 20:03:50.004  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : Setting [Offering[id=17508, 18/11/2017, tour=comp3111h]] to be [cancelled]
-2017-11-20 20:03:50.036  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : Cancelling booking record [Booking[heng, Offering[id=17508, 18/11/2017, tour=comp3111h]]]
-2017-11-20 20:03:50.036  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : Cancelling booking record [Booking[KV, Offering[id=17508, 18/11/2017, tour=comp3111h]]]
-2017-11-20 20:03:50.036  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	Broadcasting to all users who booked for offering [Offering[id=17508, 18/11/2017, tour=comp3111h]]
-2017-11-20 20:03:50.051  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : there are [2] booked customers
-2017-11-20 20:03:50.063  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [Offering[id=17508, 18/11/2017, tour=comp3111h] has been cancelled.] to line id: [Uc8f613f85e41d93ed9ffa228188466d1]
-2017-11-20 20:03:50.067  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;Offering[id=17508, 18/11/2017, tour=comp3111h] has been cancelled.&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;}]
-2017-11-20 20:03:50.317  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
+2017-11-20 20:24:44.235  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : Succesfully sent to participants in this offering [Offering[id=17856, 09/12/2017, tour=comp3111h]]
+2017-11-20 20:24:44.329  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:44.345  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:44.360  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : Finding offerings for tour guide [professor kim]
+2017-11-20 20:24:44.360  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : 	found [0]
+2017-11-20 20:24:44.360  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully created offering on [Sat Nov 18 20:24:44 CST 2017] for tour [comp3111h]
+2017-11-20 20:24:44.376  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : customer [heng] succesfully made a booking for tour [comp3111h], offering [Sat Nov 18 20:24:44 CST 2017]
+2017-11-20 20:24:44.392  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : customer [KV] succesfully made a booking for tour [comp3111h], offering [Sat Nov 18 20:24:44 CST 2017]
+2017-11-20 20:24:44.392  INFO 7472 --- [    Test worker] comp3111.ScheduledTasks                  : Offering [Offering[id=17865, 18/11/2017, tour=comp3111h]] has reached t=-3 days before start!
+2017-11-20 20:24:44.407  INFO 7472 --- [    Test worker] comp3111.ScheduledTasks                  : Fail! Offering [Offering[id=17865, 18/11/2017, tour=comp3111h]] cannot be offered, having only [0] of [5] minimum customers
+2017-11-20 20:24:44.407  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : Setting [Offering[id=17865, 18/11/2017, tour=comp3111h]] to be [cancelled]
+2017-11-20 20:24:44.423  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : Cancelling booking record [Booking[heng, Offering[id=17865, 18/11/2017, tour=comp3111h]]]
+2017-11-20 20:24:44.438  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : Cancelling booking record [Booking[KV, Offering[id=17865, 18/11/2017, tour=comp3111h]]]
+2017-11-20 20:24:44.438  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	Broadcasting to all users who booked for offering [Offering[id=17865, 18/11/2017, tour=comp3111h]]
+2017-11-20 20:24:44.438  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : there are [2] booked customers
+2017-11-20 20:24:44.454  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [Offering[id=17865, 18/11/2017, tour=comp3111h] has been cancelled.] to line id: [Uc8f613f85e41d93ed9ffa228188466d1]
+2017-11-20 20:24:44.454  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;Offering[id=17865, 18/11/2017, tour=comp3111h] has been cancelled.&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;}]
+2017-11-20 20:24:44.613  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
 ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length: 2,Chunked: false]}
-2017-11-20 20:03:50.317  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [Offering[id=17508, 18/11/2017, tour=comp3111h] has been cancelled.] to line id: [U7e5b42b4ea64a1ff1d812a3ff33b48b0]
-2017-11-20 20:03:50.317  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;Offering[id=17508, 18/11/2017, tour=comp3111h] has been cancelled.&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U7e5b42b4ea64a1ff1d812a3ff33b48b0&quot;}]
-2017-11-20 20:03:50.562  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
+2017-11-20 20:24:44.613  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [Offering[id=17865, 18/11/2017, tour=comp3111h] has been cancelled.] to line id: [U7e5b42b4ea64a1ff1d812a3ff33b48b0]
+2017-11-20 20:24:44.613  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;Offering[id=17865, 18/11/2017, tour=comp3111h] has been cancelled.&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U7e5b42b4ea64a1ff1d812a3ff33b48b0&quot;}]
+2017-11-20 20:24:44.837  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
 ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length: 2,Chunked: false]}
-2017-11-20 20:03:50.562  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : Succesfully sent to participants in this offering [Offering[id=17508, 18/11/2017, tour=comp3111h]]
-2017-11-20 20:03:50.624  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
-2017-11-20 20:03:50.640  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
-2017-11-20 20:03:50.677  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : Finding offerings for tour guide [professor kim]
-2017-11-20 20:03:50.679  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : 	found [0]
-2017-11-20 20:03:50.681  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully created offering on [Sat Nov 18 20:03:50 CST 2017] for tour [comp3111h]
-2017-11-20 20:03:50.689  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : customer [heng] succesfully made a booking for tour [comp3111h], offering [Sat Nov 18 20:03:50 CST 2017]
-2017-11-20 20:03:50.705  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : customer [KV] succesfully made a booking for tour [comp3111h], offering [Sat Nov 18 20:03:50 CST 2017]
-2017-11-20 20:03:50.705  INFO 14028 --- [    Test worker] comp3111.ScheduledTasks                  : Offering [Offering[id=17517, 18/11/2017, tour=comp3111h]] has reached t=-3 days before start!
-2017-11-20 20:03:50.705  INFO 14028 --- [    Test worker] comp3111.ScheduledTasks                  : Success! Offering [Offering[id=17517, 18/11/2017, tour=comp3111h]] can be offered, having [18] of [5] minimum confirmed payment customers
-2017-11-20 20:03:50.705  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : Setting [Offering[id=17517, 18/11/2017, tour=comp3111h]] to be [confirmed]
-2017-11-20 20:03:50.720  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	Broadcasting to all users who booked for offering [Offering[id=17517, 18/11/2017, tour=comp3111h]]
-2017-11-20 20:03:50.720  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : there are [2] booked customers
-2017-11-20 20:03:50.736  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [Offering[id=17517, 18/11/2017, tour=comp3111h] has been confirmed! See you soon!] to line id: [Uc8f613f85e41d93ed9ffa228188466d1]
-2017-11-20 20:03:50.736  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;Offering[id=17517, 18/11/2017, tour=comp3111h] has been confirmed! See you soon!&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;}]
-2017-11-20 20:03:51.147  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
+2017-11-20 20:24:44.837  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : Succesfully sent to participants in this offering [Offering[id=17865, 18/11/2017, tour=comp3111h]]
+2017-11-20 20:24:44.893  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:44.909  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:44.925  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : Finding offerings for tour guide [professor kim]
+2017-11-20 20:24:44.925  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : 	found [0]
+2017-11-20 20:24:44.925  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully created offering on [Sat Nov 18 20:24:44 CST 2017] for tour [comp3111h]
+2017-11-20 20:24:44.940  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : customer [heng] succesfully made a booking for tour [comp3111h], offering [Sat Nov 18 20:24:44 CST 2017]
+2017-11-20 20:24:44.956  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : customer [KV] succesfully made a booking for tour [comp3111h], offering [Sat Nov 18 20:24:44 CST 2017]
+2017-11-20 20:24:44.956  INFO 7472 --- [    Test worker] comp3111.ScheduledTasks                  : Offering [Offering[id=17874, 18/11/2017, tour=comp3111h]] has reached t=-3 days before start!
+2017-11-20 20:24:44.956  INFO 7472 --- [    Test worker] comp3111.ScheduledTasks                  : Success! Offering [Offering[id=17874, 18/11/2017, tour=comp3111h]] can be offered, having [18] of [5] minimum confirmed payment customers
+2017-11-20 20:24:44.956  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : Setting [Offering[id=17874, 18/11/2017, tour=comp3111h]] to be [confirmed]
+2017-11-20 20:24:44.972  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	Broadcasting to all users who booked for offering [Offering[id=17874, 18/11/2017, tour=comp3111h]]
+2017-11-20 20:24:44.972  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : there are [2] booked customers
+2017-11-20 20:24:44.972  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [Offering[id=17874, 18/11/2017, tour=comp3111h] has been confirmed! See you soon!] to line id: [Uc8f613f85e41d93ed9ffa228188466d1]
+2017-11-20 20:24:44.987  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;Offering[id=17874, 18/11/2017, tour=comp3111h] has been confirmed! See you soon!&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;}]
+2017-11-20 20:24:45.128  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
 ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length: 2,Chunked: false]}
-2017-11-20 20:03:51.147  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [Offering[id=17517, 18/11/2017, tour=comp3111h] has been confirmed! See you soon!] to line id: [U7e5b42b4ea64a1ff1d812a3ff33b48b0]
-2017-11-20 20:03:51.147  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;Offering[id=17517, 18/11/2017, tour=comp3111h] has been confirmed! See you soon!&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U7e5b42b4ea64a1ff1d812a3ff33b48b0&quot;}]
-2017-11-20 20:03:51.652  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
+2017-11-20 20:24:45.128  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [Offering[id=17874, 18/11/2017, tour=comp3111h] has been confirmed! See you soon!] to line id: [U7e5b42b4ea64a1ff1d812a3ff33b48b0]
+2017-11-20 20:24:45.128  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;Offering[id=17874, 18/11/2017, tour=comp3111h] has been confirmed! See you soon!&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U7e5b42b4ea64a1ff1d812a3ff33b48b0&quot;}]
+2017-11-20 20:24:45.315  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
 ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length: 2,Chunked: false]}
-2017-11-20 20:03:51.652  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : Succesfully sent to participants in this offering [Offering[id=17517, 18/11/2017, tour=comp3111h]]
-2017-11-20 20:03:51.748  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
-2017-11-20 20:03:51.779  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
-2017-11-20 20:03:51.791  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [hi heng's phone, this is test case] to line id: [Uc8f613f85e41d93ed9ffa228188466d1]
-2017-11-20 20:03:51.797  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;hi heng's phone, this is test case&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;}]
-2017-11-20 20:03:51.984  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
+2017-11-20 20:24:45.315  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : Succesfully sent to participants in this offering [Offering[id=17874, 18/11/2017, tour=comp3111h]]
+2017-11-20 20:24:45.393  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:45.409  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:45.409  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [hi heng's phone, this is test case] to line id: [Uc8f613f85e41d93ed9ffa228188466d1]
+2017-11-20 20:24:45.409  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;hi heng's phone, this is test case&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;}]
+2017-11-20 20:24:45.599  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
 ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length: 2,Chunked: false]}
-2017-11-20 20:03:51.984  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [hi kv's phone, this is test case] to line id: [U7e5b42b4ea64a1ff1d812a3ff33b48b0]
-2017-11-20 20:03:51.984  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;hi kv's phone, this is test case&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U7e5b42b4ea64a1ff1d812a3ff33b48b0&quot;}]
-2017-11-20 20:03:52.175  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
+2017-11-20 20:24:45.599  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [hi kv's phone, this is test case] to line id: [U7e5b42b4ea64a1ff1d812a3ff33b48b0]
+2017-11-20 20:24:45.599  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;hi kv's phone, this is test case&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U7e5b42b4ea64a1ff1d812a3ff33b48b0&quot;}]
+2017-11-20 20:24:45.771  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
 ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length: 2,Chunked: false]}
-2017-11-20 20:03:52.196  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
-2017-11-20 20:03:52.204  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
-2017-11-20 20:03:52.235  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [[Q: what is spaghet]
+2017-11-20 20:24:45.802  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:45.818  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:45.849  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [[Q: what is spaghet]
 [A: the answer is spaghet]] to line id: [Uc8f613f85e41d93ed9ffa228188466d1]
-2017-11-20 20:03:52.235  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;[Q: what is spaghet]\n[A: the answer is spaghet]&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;}]
-2017-11-20 20:03:52.613  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
+2017-11-20 20:24:45.849  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;[Q: what is spaghet]\n[A: the answer is spaghet]&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;}]
+2017-11-20 20:24:46.005  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
 ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length: 2,Chunked: false]}
-2017-11-20 20:03:52.659  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
-2017-11-20 20:03:52.675  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
-2017-11-20 20:03:52.706  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
-2017-11-20 20:03:52.706  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
-2017-11-20 20:03:52.722  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : Finding offerings for tour guide [lucy]
-2017-11-20 20:03:52.722  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : 	found [0]
-2017-11-20 20:03:52.737  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully created offering on [Mon Dec 04 00:00:00 CST 2017] for tour [LG7]
-2017-11-20 20:03:52.737  INFO 14028 --- [    Test worker] comp3111.ScheduledTasks                  : Time to trigger promoevent [17540]
-2017-11-20 20:03:52.737  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : Broadcasting to all known customers
-2017-11-20 20:03:52.737  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [For offering Offering[id=17539, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last] to line id: [Uc8f613f85e41d93ed9ffa228188466d1]
-2017-11-20 20:03:52.753  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;For offering Offering[id=17539, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;}]
-2017-11-20 20:03:52.917  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
+2017-11-20 20:24:46.037  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:46.068  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:46.083  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:46.099  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:46.115  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : Finding offerings for tour guide [lucy]
+2017-11-20 20:24:46.115  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : 	found [0]
+2017-11-20 20:24:46.130  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully created offering on [Mon Dec 04 00:00:00 CST 2017] for tour [LG7]
+2017-11-20 20:24:46.130  INFO 7472 --- [    Test worker] comp3111.ScheduledTasks                  : Time to trigger promoevent [17897]
+2017-11-20 20:24:46.130  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : Broadcasting to all known customers
+2017-11-20 20:24:46.130  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [For offering Offering[id=17896, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last] to line id: [Uc8f613f85e41d93ed9ffa228188466d1]
+2017-11-20 20:24:46.146  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;For offering Offering[id=17896, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;}]
+2017-11-20 20:24:46.302  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
 ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length: 2,Chunked: false]}
-2017-11-20 20:03:52.918  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [For offering Offering[id=17539, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last] to line id: [U7e5b42b4ea64a1ff1d812a3ff33b48b0]
-2017-11-20 20:03:52.926  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;For offering Offering[id=17539, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U7e5b42b4ea64a1ff1d812a3ff33b48b0&quot;}]
-2017-11-20 20:03:53.136  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
+2017-11-20 20:24:46.302  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [For offering Offering[id=17896, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last] to line id: [U7e5b42b4ea64a1ff1d812a3ff33b48b0]
+2017-11-20 20:24:46.302  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;For offering Offering[id=17896, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U7e5b42b4ea64a1ff1d812a3ff33b48b0&quot;}]
+2017-11-20 20:24:46.505  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
 ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length: 2,Chunked: false]}
-2017-11-20 20:03:53.137  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [For offering Offering[id=17539, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last] to line id: [U8b20aa2040714d4ff45782709f7b1ba6]
-2017-11-20 20:03:53.137  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;For offering Offering[id=17539, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U8b20aa2040714d4ff45782709f7b1ba6&quot;}]
-2017-11-20 20:03:53.341  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
+2017-11-20 20:24:46.505  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [For offering Offering[id=17896, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last] to line id: [U8b20aa2040714d4ff45782709f7b1ba6]
+2017-11-20 20:24:46.505  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;For offering Offering[id=17896, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U8b20aa2040714d4ff45782709f7b1ba6&quot;}]
+2017-11-20 20:24:46.845  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
 ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length: 2,Chunked: false]}
-2017-11-20 20:03:53.341  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [For offering Offering[id=17539, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last] to line id: [U4b23c4647091ccdcce12d5392d37866d]
-2017-11-20 20:03:53.341  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;For offering Offering[id=17539, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U4b23c4647091ccdcce12d5392d37866d&quot;}]
-2017-11-20 20:03:53.602  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
+2017-11-20 20:24:46.845  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [For offering Offering[id=17896, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last] to line id: [U4b23c4647091ccdcce12d5392d37866d]
+2017-11-20 20:24:46.845  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;For offering Offering[id=17896, 04/12/2017, tour=LG7], use code VAPE420 for 50% off! 5 reservations per customer max, while offers last&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U4b23c4647091ccdcce12d5392d37866d&quot;}]
+2017-11-20 20:24:47.039  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
 ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length: 2,Chunked: false]}
-2017-11-20 20:03:53.602  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : Successfully sent message to all known customers
-2017-11-20 20:03:53.670  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
-2017-11-20 20:03:53.686  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
-2017-11-20 20:03:53.702  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : Finding offerings for tour guide [professor kim]
-2017-11-20 20:03:53.702  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : 	found [0]
-2017-11-20 20:03:53.702  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully created offering on [Sat Dec 09 00:00:00 CST 2017] for tour [comp3111h]
-2017-11-20 20:03:53.718  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : customer [heng] succesfully made a booking for tour [comp3111h], offering [Sat Dec 09 00:00:00 CST 2017]
-2017-11-20 20:03:53.731  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : customer [KV] succesfully made a booking for tour [comp3111h], offering [Sat Dec 09 00:00:00 CST 2017]
-2017-11-20 20:03:53.731  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	Broadcasting to all users who booked for offering [Offering[id=17547, 09/12/2017, tour=comp3111h]]
-2017-11-20 20:03:53.738  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : there are [2] booked customers
-2017-11-20 20:03:53.746  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [send to all participants in offering test case] to line id: [Uc8f613f85e41d93ed9ffa228188466d1]
-2017-11-20 20:03:53.748  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;send to all participants in offering test case&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;}]
-2017-11-20 20:03:53.948  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
+2017-11-20 20:24:47.039  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : Successfully sent message to all known customers
+2017-11-20 20:24:47.102  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:47.133  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:47.149  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : Finding offerings for tour guide [professor kim]
+2017-11-20 20:24:47.149  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : 	found [0]
+2017-11-20 20:24:47.164  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully created offering on [Sat Dec 09 00:00:00 CST 2017] for tour [comp3111h]
+2017-11-20 20:24:47.164  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : customer [heng] succesfully made a booking for tour [comp3111h], offering [Sat Dec 09 00:00:00 CST 2017]
+2017-11-20 20:24:47.180  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : customer [KV] succesfully made a booking for tour [comp3111h], offering [Sat Dec 09 00:00:00 CST 2017]
+2017-11-20 20:24:47.180  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	Broadcasting to all users who booked for offering [Offering[id=17904, 09/12/2017, tour=comp3111h]]
+2017-11-20 20:24:47.196  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : there are [2] booked customers
+2017-11-20 20:24:47.196  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [send to all participants in offering test case] to line id: [Uc8f613f85e41d93ed9ffa228188466d1]
+2017-11-20 20:24:47.211  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;send to all participants in offering test case&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;Uc8f613f85e41d93ed9ffa228188466d1&quot;}]
+2017-11-20 20:24:47.367  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
 ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length: 2,Chunked: false]}
-2017-11-20 20:03:53.948  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [send to all participants in offering test case] to line id: [U7e5b42b4ea64a1ff1d812a3ff33b48b0]
-2017-11-20 20:03:53.953  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;send to all participants in offering test case&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U7e5b42b4ea64a1ff1d812a3ff33b48b0&quot;}]
-2017-11-20 20:03:54.284  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
+2017-11-20 20:24:47.367  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : 	sending [send to all participants in offering test case] to line id: [U7e5b42b4ea64a1ff1d812a3ff33b48b0]
+2017-11-20 20:24:47.367  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : json data: [{&quot;messages&quot;:[{&quot;text&quot;:&quot;send to all participants in offering test case&quot;,&quot;type&quot;:&quot;text&quot;}],&quot;to&quot;:&quot;U7e5b42b4ea64a1ff1d812a3ff33b48b0&quot;}]
+2017-11-20 20:24:47.539  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : send message status: 200 OK
 ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length: 2,Chunked: false]}
-2017-11-20 20:03:54.284  INFO 14028 --- [    Test worker] comp3111.view.CustomerEngagementView     : Succesfully sent to participants in this offering [Offering[id=17547, 09/12/2017, tour=comp3111h]]
-2017-11-20 20:03:54.334  INFO 14028 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
+2017-11-20 20:24:47.539  INFO 7472 --- [    Test worker] comp3111.view.CustomerEngagementView     : Succesfully sent to participants in this offering [Offering[id=17904, 09/12/2017, tour=comp3111h]]
+2017-11-20 20:24:47.571  INFO 7472 --- [    Test worker] comp3111.data.DBManager                  : successfully cleared all repos
 </pre>
 </span>
 </div>
@@ -263,7 +263,7 @@ ResponseEntityProxy{[Content-Type: application/json;charset=UTF-8,Content-Length
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 4.2.1</a> at Nov 20, 2017 8:04:06 PM</p>
+<a href="http://www.gradle.org">Gradle 4.2.1</a> at Nov 20, 2017 8:24:57 PM</p>
 </div>
 </div>
 </body>
