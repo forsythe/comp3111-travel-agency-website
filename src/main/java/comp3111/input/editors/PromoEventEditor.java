@@ -320,6 +320,7 @@ public class PromoEventEditor extends VerticalLayout {
 		// For old promo event, the code cannot be changed to make our life easier
 		binder.forField(promoCode).asRequired(Utils.generateRequiredError())
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
+				.withValidator(ValidatorFactory.getStringNotEqualsToIgnoreCaseValidator("none"))
 				.bind(PromoEvent::getPromoCode, PromoEvent::setPromoCode);
 
 		binder.forField(promoCodeUses).asRequired(Utils.generateRequiredError())
