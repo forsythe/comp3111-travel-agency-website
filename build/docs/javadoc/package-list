@@ -8,4 +8,5 @@ comp3111.input.editors
 comp3111.input.exceptions
 comp3111.input.field
 comp3111.input.validators
+comp3111.suggest
 comp3111.view

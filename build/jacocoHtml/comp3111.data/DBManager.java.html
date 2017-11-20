@@ -89,7 +89,7 @@ import comp3111.input.validators.ValidatorFactory;
 	public Offering createOfferingForTour(Tour tour, TourGuide tg, Date startDate, String hotelName, int minCustomers,
 			int maxCustomers) throws OfferingDateUnsupportedException, TourGuideUnavailableException {
 
-		// Make sure both the tour and the tour guide are concrete entity in the
+		// Make sure both the tour and the tour guide are persistent entities in the
 		// database
 <span class="fc" id="L94">		tour = tourRepo.save(tour);</span>
 <span class="fc" id="L95">		tg = tourGuideRepo.save(tg);</span>
@@ -107,10 +107,10 @@ import comp3111.input.validators.ValidatorFactory;
 <span class="fc" id="L107">		Offering o = offeringRepo.save(</span>
 				new Offering(tour, tg, startDate, hotelName, minCustomers, maxCustomers, Offering.STATUS_PENDING));
 
-<span class="fc" id="L110">		o.setTour(tour);</span>
-<span class="fc" id="L111">		o.setTourGuide(tg);</span>
-
-<span class="fc" id="L113">		offeringRepo.save(o);</span>
+//		o.setTour(tour);
+//		o.setTourGuide(tg);
+//
+//		offeringRepo.save(o);
 
 <span class="fc" id="L115">		log.info(&quot;successfully created offering on [{}] for tour [{}]&quot;, startDate, tour.getTourName());</span>
 <span class="fc" id="L116">		return o;</span>
@@ -187,7 +187,7 @@ import comp3111.input.validators.ValidatorFactory;
 <span class="fc bfc" id="L187" title="All 4 branches covered.">			if (testStart.after(takenStart) &amp;&amp; testEnd.before(takenEnd)</span>
 <span class="pc bpc" id="L188" title="1 of 4 branches missed.">					|| testStart.before(takenStart) &amp;&amp; testEnd.after(takenEnd)</span>
 <span class="pc bpc" id="L189" title="1 of 4 branches missed.">					|| testStart.before(takenEnd) &amp;&amp; testEnd.after(takenEnd)</span>
-<span class="pc bpc" id="L190" title="1 of 6 branches missed.">					|| testStart.before(takenStart) &amp;&amp; testEnd.after(takenStart) || testStart.equals(takenStart)</span>
+<span class="fc bfc" id="L190" title="All 6 branches covered.">					|| testStart.before(takenStart) &amp;&amp; testEnd.after(takenStart) || testStart.equals(takenStart)</span>
 <span class="pc bpc" id="L191" title="1 of 2 branches missed.">					|| testEnd.equals(takenEnd)) {</span>
 <span class="fc" id="L192">				log.info(&quot;Offering timerange [{}]-[{}] is occupied for tourguide [{}]&quot;, testStart, testEnd,</span>
 <span class="fc" id="L193">						tg.getName());</span>
@@ -260,9 +260,9 @@ import comp3111.input.validators.ValidatorFactory;
 	 */
 	public void createOfferingForTour(Offering offering)
 			throws OfferingDateUnsupportedException, TourGuideUnavailableException {
-<span class="nc" id="L263">		createOfferingForTour(offering.getTour(), offering.getTourGuide(), offering.getStartDate(),</span>
-<span class="nc" id="L264">				offering.getHotelName(), offering.getMinCustomers(), offering.getMaxCustomers());</span>
-<span class="nc" id="L265">	}</span>
+<span class="fc" id="L263">		createOfferingForTour(offering.getTour(), offering.getTourGuide(), offering.getStartDate(),</span>
+<span class="fc" id="L264">				offering.getHotelName(), offering.getMinCustomers(), offering.getMaxCustomers());</span>
+<span class="fc" id="L265">	}</span>
 
 	/**
 	 * Creates a booking for an offering with a promo code
@@ -370,10 +370,10 @@ import comp3111.input.validators.ValidatorFactory;
 	 *             {@link Offering#getMaxCustomers()}
 	 */
 	public void createNormalBookingForOffering(Booking booking) throws OfferingOutOfRoomException {
-<span class="nc" id="L373">		createBookingForOffering(booking.getOffering(), booking.getCustomer(), booking.getNumAdults(),</span>
-<span class="nc" id="L374">				booking.getNumChildren(), booking.getNumToddlers(), booking.getAmountPaid(),</span>
-<span class="nc" id="L375">				booking.getSpecialRequests(), booking.getPaymentStatus(), 1, null);</span>
-<span class="nc" id="L376">	}</span>
+<span class="fc" id="L373">		createBookingForOffering(booking.getOffering(), booking.getCustomer(), booking.getNumAdults(),</span>
+<span class="fc" id="L374">				booking.getNumChildren(), booking.getNumToddlers(), booking.getAmountPaid(),</span>
+<span class="fc" id="L375">				booking.getSpecialRequests(), booking.getPaymentStatus(), 1, null);</span>
+<span class="fc" id="L376">	}</span>
 
 	/**
 	 * Validates promo codes
