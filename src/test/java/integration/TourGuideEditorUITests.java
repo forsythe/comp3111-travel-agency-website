@@ -2,6 +2,7 @@ package integration;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,6 +41,11 @@ public class TourGuideEditorUITests extends TestBenchTestCase {
 	@Before
 	public void setUp() throws Exception {
 		setDriver(new ChromeDriver());
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		getDriver().quit();
 	}
 
 	@Test

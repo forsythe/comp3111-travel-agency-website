@@ -96,7 +96,7 @@ public class DBManagerTests {
 
 	@Before // called before each test
 	public void setUp() {
-		//dbManager.deleteAll();
+		dbManager.deleteAll();
 
 		c1 = new Customer(C1_NAME, 30);
 		c2 = new Customer(C2_NAME, 30);
@@ -218,7 +218,7 @@ public class DBManagerTests {
 				5, 18);
 		Booking book2 = dbManager.createBookingForOffering(offeringRepo.findOne(offering2.getId()),
 				customerRepo.findOne(c2.getId()), 3, 4, 2, 0, "kids meal", Booking.PAYMENT_CONFIRMED, 1);
-
+		
 		then(this.offeringRepo.findByHotelName(offering1.getHotelName()).size()).isEqualTo(1);
 		then(this.offeringRepo.findByHotelName(offering2.getHotelName()).size()).isEqualTo(1);
 		then(this.bookingRepo.findByPaymentStatus(book1.getPaymentStatus()).size()).isEqualTo(1);
