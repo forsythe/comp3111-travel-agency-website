@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.BindingValidationStatus;
+import com.vaadin.data.Validator;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.ComboBox;
@@ -149,6 +150,15 @@ public class ValidatorFactory {
 		return new DateAvailableInTourValidator(tour);
 	}
 
+
+	/**
+	 * @param banned The string that the value being validated should not match, case insensitive
+	 * @return A StringNotEqualsToIgnoreCaseValidator object
+	 */
+	public static StringNotEqualsToIgnoreCaseValidator getStringNotEqualsToIgnoreCaseValidator(String banned) {
+		return new StringNotEqualsToIgnoreCaseValidator(banned);
+	}
+	
 	/**
 	 * @param startDateField
 	 *            the starting date to check
@@ -188,4 +198,5 @@ public class ValidatorFactory {
 		}
 		return sb.toString();
 	}
+
 }

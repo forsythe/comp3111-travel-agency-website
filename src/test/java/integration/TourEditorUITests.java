@@ -49,6 +49,11 @@ public class TourEditorUITests extends TestBenchTestCase {
 		setDriver(new ChromeDriver());
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		getDriver().quit();
+	}
+
 	@Test
 	public void testCreateTour() {
 		Collection<Tour> originalTours = tourRepo.findByTourName(TEST_TOUR_NAME);
@@ -110,8 +115,4 @@ public class TourEditorUITests extends TestBenchTestCase {
 		assertThat(count == 1);
 	}
 
-	@After
-	public void tearDown() throws Exception {
-		getDriver().quit();
-	}
 }
