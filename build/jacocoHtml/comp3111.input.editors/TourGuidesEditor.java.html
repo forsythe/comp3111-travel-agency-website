@@ -116,174 +116,133 @@ public class TourGuidesEditor extends VerticalLayout {
 
 <span class="fc" id="L117">		tourGuideGrid.setColumnOrder(GridCol.TOURGUIDE_ID, GridCol.TOURGUIDE_NAME, GridCol.TOURGUIDE_LINE_USERNAME);</span>
 
-<span class="fc" id="L119">		HeaderRow filterRow = tourGuideGrid.appendHeaderRow();</span>
+<span class="fc" id="L119">		FilterFactory.addFilterInputBoxesToGridHeaderRow(TourGuide.class, tourGuideGrid, gridFilters);</span>
 
-<span class="fc bfc" id="L121" title="All 2 branches covered.">		for (Column&lt;TourGuide, ?&gt; col : tourGuideGrid.getColumns()) {</span>
-<span class="fc" id="L122">			col.setMinimumWidth(120);</span>
-<span class="fc" id="L123">			col.setHidable(true);</span>
-<span class="fc" id="L124">			col.setHidingToggleCaption(col.getCaption());</span>
-<span class="fc" id="L125">			col.setExpandRatio(1);</span>
 
-<span class="fc" id="L127">			HeaderCell cell = filterRow.getCell(col.getId());</span>
-<span class="fc" id="L128">			TextField filterField = new TextField();</span>
-<span class="fc" id="L129">			filterField.setWidth(130, Unit.PIXELS);</span>
-<span class="fc" id="L130">			filterField.setHeight(30, Unit.PIXELS);</span>
+<span class="fc" id="L122">		this.addComponent(tourGuideGrid);</span>
 
-<span class="fc" id="L132">			filterField.addValueChangeListener(change -&gt; {</span>
-<span class="nc" id="L133">				String searchVal = change.getValue();</span>
-<span class="nc" id="L134">				String colId = col.getId();</span>
+<span class="fc" id="L124">		createTourGuideButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L125">			getUI();</span>
+<span class="nc" id="L126">			UI.getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, new TourGuide()));</span>
 
-<span class="nc" id="L136">				log.info(&quot;Value change in col [{}], val=[{}]&quot;, colId, searchVal);</span>
-<span class="nc" id="L137">				ListDataProvider&lt;TourGuide&gt; dataProvider = (ListDataProvider&lt;TourGuide&gt;) tourGuideGrid</span>
-<span class="nc" id="L138">						.getDataProvider();</span>
+<span class="nc" id="L128">		});</span>
 
-<span class="nc bnc" id="L140" title="All 2 branches missed.">				if (!filterField.isEmpty()) {</span>
-					try {
-<span class="nc" id="L142">						gridFilters.put(colId, FilterFactory.getFilterForTourGuide(colId, searchVal));</span>
-<span class="nc" id="L143">						log.info(&quot;updated filter on attribute [{}]&quot;, colId);</span>
+<span class="fc" id="L130">		editTourGuideButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L131">			getUI();</span>
+<span class="nc" id="L132">			UI.getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, selectedTourGuide));</span>
 
-<span class="nc" id="L145">					} catch (Exception e) {</span>
-<span class="nc" id="L146">						log.info(&quot;ignoring val=[{}], col=[{}] is invalid&quot;, searchVal, colId);</span>
-<span class="nc" id="L147">					}</span>
-				} else {
-<span class="nc" id="L149">					gridFilters.remove(colId);</span>
-<span class="nc" id="L150">					log.info(&quot;removed filter on attribute [{}]&quot;, colId);</span>
+<span class="nc" id="L134">		});</span>
 
-				}
-<span class="nc" id="L153">				dataProvider.clearFilters();</span>
-<span class="nc bnc" id="L154" title="All 2 branches missed.">				for (String colFilter : gridFilters.keySet()) {</span>
-<span class="nc" id="L155">					ProviderAndPredicate paf = gridFilters.get(colFilter);</span>
-<span class="nc" id="L156">					dataProvider.addFilter(paf.provider, paf.predicate);</span>
-<span class="nc" id="L157">				}</span>
-<span class="nc" id="L158">				dataProvider.refreshAll();</span>
-<span class="nc" id="L159">			});</span>
-<span class="fc" id="L160">			cell.setComponent(filterField);</span>
-<span class="fc" id="L161">		}</span>
-
-<span class="fc" id="L163">		this.addComponent(tourGuideGrid);</span>
-
-<span class="fc" id="L165">		createTourGuideButton.addClickListener(event -&gt; {</span>
-<span class="nc" id="L166">			getUI();</span>
-<span class="nc" id="L167">			UI.getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, new TourGuide()));</span>
-
-<span class="nc" id="L169">		});</span>
-
-<span class="fc" id="L171">		editTourGuideButton.addClickListener(event -&gt; {</span>
-<span class="nc" id="L172">			getUI();</span>
-<span class="nc" id="L173">			UI.getCurrent().addWindow(getSubwindow(tourGuideRepo, tourGuideCollectionCached, selectedTourGuide));</span>
-
-<span class="nc" id="L175">		});</span>
-
-<span class="fc" id="L177">		viewGuidedToursButton.addClickListener(event -&gt; {</span>
-<span class="nc" id="L178">			guidedByViewer.setSelectedTourGuide(selectedTourGuide);</span>
-<span class="nc" id="L179">			guidedByViewer.setTourGuidesEditor(this);</span>
-<span class="nc" id="L180">			getUI().getNavigator().navigateTo(GuidedByView.VIEW_NAME);</span>
-<span class="nc" id="L181">			refreshData();</span>
-<span class="nc" id="L182">		});</span>
-<span class="fc" id="L183">	}</span>
+<span class="fc" id="L136">		viewGuidedToursButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L137">			guidedByViewer.setSelectedTourGuide(selectedTourGuide);</span>
+<span class="nc" id="L138">			guidedByViewer.setTourGuidesEditor(this);</span>
+<span class="nc" id="L139">			getUI().getNavigator().navigateTo(GuidedByView.VIEW_NAME);</span>
+<span class="nc" id="L140">			refreshData();</span>
+<span class="nc" id="L141">		});</span>
+<span class="fc" id="L142">	}</span>
 
 	public Window getSubwindow(TourGuideRepository tourGuideRepo, Collection&lt;TourGuide&gt; tourGuideCollectionCached,
 			TourGuide tourGuideToSave) {
 		// Creating the confirm button
-<span class="fc" id="L188">		subwindowConfirm = new Button(&quot;Confirm&quot;);</span>
-<span class="fc" id="L189">		getSubwindowConfirmButton().setId(&quot;btn_confirm_tour_guide&quot;);</span>
+<span class="fc" id="L147">		subwindowConfirm = new Button(&quot;Confirm&quot;);</span>
+<span class="fc" id="L148">		getSubwindowConfirmButton().setId(&quot;btn_confirm_tour_guide&quot;);</span>
 
-<span class="fc" id="L191">		tourGuideName = new TextField(&quot;Name&quot;);</span>
-<span class="fc" id="L192">		tourGuideName.setId(&quot;tf_tour_guide_name&quot;);</span>
-<span class="fc" id="L193">		tourGuideLineUsername = new TextField(&quot;LINE Username&quot;);</span>
-<span class="fc" id="L194">		tourGuideLineUsername.setId(&quot;tf_tour_guide_line_id&quot;);</span>
+<span class="fc" id="L150">		tourGuideName = new TextField(&quot;Name&quot;);</span>
+<span class="fc" id="L151">		tourGuideName.setId(&quot;tf_tour_guide_name&quot;);</span>
+<span class="fc" id="L152">		tourGuideLineUsername = new TextField(&quot;LINE Username&quot;);</span>
+<span class="fc" id="L153">		tourGuideLineUsername.setId(&quot;tf_tour_guide_line_id&quot;);</span>
 
-<span class="fc bfc" id="L196" title="All 2 branches covered.">		if (tourGuideToSave.getId() == null) { // passed in an unsaved object</span>
-<span class="fc" id="L197">			subwindow = new Window(&quot;Create new tour guide&quot;);</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">		if (tourGuideToSave.getId() == null) { // passed in an unsaved object</span>
+<span class="fc" id="L156">			subwindow = new Window(&quot;Create new tour guide&quot;);</span>
 		} else {
-<span class="fc" id="L199">			subwindow = new Window(&quot;Edit a tour guide&quot;);</span>
+<span class="fc" id="L158">			subwindow = new Window(&quot;Edit a tour guide&quot;);</span>
 		}
 
-<span class="fc" id="L202">		FormLayout form = new FormLayout();</span>
-<span class="fc" id="L203">		VerticalLayout formContainer = new VerticalLayout();</span>
-<span class="fc" id="L204">		formContainer.addComponent(form);</span>
+<span class="fc" id="L161">		FormLayout form = new FormLayout();</span>
+<span class="fc" id="L162">		VerticalLayout formContainer = new VerticalLayout();</span>
+<span class="fc" id="L163">		formContainer.addComponent(form);</span>
 
-<span class="fc" id="L206">		subwindow.setWidth(&quot;400px&quot;);</span>
-<span class="fc" id="L207">		subwindow.setContent(formContainer);</span>
-<span class="fc" id="L208">		subwindow.center();</span>
-<span class="fc" id="L209">		subwindow.setClosable(false);</span>
-<span class="fc" id="L210">		subwindow.setModal(true);</span>
-<span class="fc" id="L211">		subwindow.setResizable(false);</span>
-<span class="fc" id="L212">		subwindow.setDraggable(false);</span>
+<span class="fc" id="L165">		subwindow.setWidth(&quot;400px&quot;);</span>
+<span class="fc" id="L166">		subwindow.setContent(formContainer);</span>
+<span class="fc" id="L167">		subwindow.center();</span>
+<span class="fc" id="L168">		subwindow.setClosable(false);</span>
+<span class="fc" id="L169">		subwindow.setModal(true);</span>
+<span class="fc" id="L170">		subwindow.setResizable(false);</span>
+<span class="fc" id="L171">		subwindow.setDraggable(false);</span>
 
-<span class="fc" id="L214">		form.addComponent(tourGuideName);</span>
-<span class="fc" id="L215">		form.addComponent(tourGuideLineUsername);</span>
+<span class="fc" id="L173">		form.addComponent(tourGuideName);</span>
+<span class="fc" id="L174">		form.addComponent(tourGuideLineUsername);</span>
 
-<span class="fc" id="L217">		HorizontalLayout buttonActions = new HorizontalLayout();</span>
-<span class="fc" id="L218">		buttonActions.addComponent(getSubwindowConfirmButton());</span>
-<span class="pc" id="L219">		buttonActions.addComponent(new Button(&quot;Cancel&quot;, event -&gt; subwindow.close()));</span>
-<span class="fc" id="L220">		form.addComponent(buttonActions);</span>
+<span class="fc" id="L176">		HorizontalLayout buttonActions = new HorizontalLayout();</span>
+<span class="fc" id="L177">		buttonActions.addComponent(getSubwindowConfirmButton());</span>
+<span class="pc" id="L178">		buttonActions.addComponent(new Button(&quot;Cancel&quot;, event -&gt; subwindow.close()));</span>
+<span class="fc" id="L179">		form.addComponent(buttonActions);</span>
 
-<span class="fc" id="L222">		Binder&lt;TourGuide&gt; binder = new Binder&lt;&gt;();</span>
-<span class="fc" id="L223">		binder.forField(tourGuideName).withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
-<span class="fc" id="L224">				.asRequired(Utils.generateRequiredError()).bind(TourGuide::getName, TourGuide::setName);</span>
+<span class="fc" id="L181">		Binder&lt;TourGuide&gt; binder = new Binder&lt;&gt;();</span>
+<span class="fc" id="L182">		binder.forField(tourGuideName).withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
+<span class="fc" id="L183">				.asRequired(Utils.generateRequiredError()).bind(TourGuide::getName, TourGuide::setName);</span>
 
-<span class="fc" id="L226">		binder.forField(tourGuideLineUsername).withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
-<span class="fc" id="L227">				.asRequired(Utils.generateRequiredError()).bind(TourGuide::getLineUsername, TourGuide::setLineUsername);</span>
+<span class="fc" id="L185">		binder.forField(tourGuideLineUsername).withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
+<span class="fc" id="L186">				.asRequired(Utils.generateRequiredError()).bind(TourGuide::getLineUsername, TourGuide::setLineUsername);</span>
 
-<span class="fc" id="L229">		binder.setBean(tourGuideToSave);</span>
+<span class="fc" id="L188">		binder.setBean(tourGuideToSave);</span>
 
-<span class="fc" id="L231">		getSubwindowConfirmButton().addClickListener(event -&gt; {</span>
-<span class="fc" id="L232">			validationStatus = binder.validate();</span>
+<span class="fc" id="L190">		getSubwindowConfirmButton().addClickListener(event -&gt; {</span>
+<span class="fc" id="L191">			validationStatus = binder.validate();</span>
 
-<span class="fc bfc" id="L234" title="All 2 branches covered.">			if (validationStatus.isOk()) {</span>
-<span class="fc" id="L235">				binder.writeBeanIfValid(tourGuideToSave);</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">			if (validationStatus.isOk()) {</span>
+<span class="fc" id="L194">				binder.writeBeanIfValid(tourGuideToSave);</span>
 
-<span class="fc" id="L237">				log.info(&quot;About to save tour guide [{}]&quot;, tourGuideName.getValue());</span>
+<span class="fc" id="L196">				log.info(&quot;About to save tour guide [{}]&quot;, tourGuideName.getValue());</span>
 
-<span class="fc" id="L239">				tourGuideRepo.save(tourGuideToSave);</span>
-<span class="fc" id="L240">				this.refreshData();</span>
-<span class="fc" id="L241">				subwindow.close();</span>
-<span class="fc" id="L242">				log.info(&quot;Saved a new/edited tour guide [{}] successfully&quot;, tourGuideName.getValue());</span>
+<span class="fc" id="L198">				tourGuideRepo.save(tourGuideToSave);</span>
+<span class="fc" id="L199">				this.refreshData();</span>
+<span class="fc" id="L200">				subwindow.close();</span>
+<span class="fc" id="L201">				log.info(&quot;Saved a new/edited tour guide [{}] successfully&quot;, tourGuideName.getValue());</span>
 
-<span class="fc" id="L244">				binder.removeBean();</span>
-<span class="pc bpc" id="L245" title="1 of 2 branches missed.">				if (Page.getCurrent() != null)</span>
-<span class="nc" id="L246">					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());</span>
+<span class="fc" id="L203">				binder.removeBean();</span>
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">				if (Page.getCurrent() != null)</span>
+<span class="nc" id="L205">					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());</span>
 
 			} else {
-<span class="fc" id="L249">				String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);</span>
-<span class="pc bpc" id="L250" title="1 of 2 branches missed.">				if (Page.getCurrent() != null)</span>
-<span class="nc" id="L251">					NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());</span>
+<span class="fc" id="L208">				String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);</span>
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">				if (Page.getCurrent() != null)</span>
+<span class="nc" id="L210">					NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());</span>
 			}
-<span class="fc" id="L253">		});</span>
+<span class="fc" id="L212">		});</span>
 
-<span class="fc" id="L255">		return subwindow;</span>
+<span class="fc" id="L214">		return subwindow;</span>
 	}
 
 	/**
 	 * Refreshes the data in the vaadin grid
 	 */
 	public void refreshData() {
-<span class="fc" id="L262">		Iterable&lt;TourGuide&gt; tourGuides = tourGuideRepo.findAll();</span>
-<span class="pc bpc" id="L263" title="1 of 2 branches missed.">		if (tourGuides != null) {</span>
-<span class="nc" id="L264">			tourGuideCollectionCached.clear();</span>
-<span class="nc" id="L265">			tourGuides.forEach(tourGuideCollectionCached::add);</span>
-<span class="nc" id="L266">			ListDataProvider&lt;TourGuide&gt; provider = new ListDataProvider&lt;TourGuide&gt;(tourGuideCollectionCached);</span>
-<span class="nc" id="L267">			tourGuideGrid.setDataProvider(provider);</span>
+<span class="fc" id="L221">		Iterable&lt;TourGuide&gt; tourGuides = tourGuideRepo.findAll();</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">		if (tourGuides != null) {</span>
+<span class="nc" id="L223">			tourGuideCollectionCached.clear();</span>
+<span class="nc" id="L224">			tourGuides.forEach(tourGuideCollectionCached::add);</span>
+<span class="nc" id="L225">			ListDataProvider&lt;TourGuide&gt; provider = new ListDataProvider&lt;TourGuide&gt;(tourGuideCollectionCached);</span>
+<span class="nc" id="L226">			tourGuideGrid.setDataProvider(provider);</span>
 		}
 		// tourGrid.setItems(tourCollectionCached);
 
-<span class="fc" id="L271">	}</span>
+<span class="fc" id="L230">	}</span>
 
 	public Button getSubwindowConfirmButton() {
-<span class="fc" id="L274">		return subwindowConfirm;</span>
+<span class="fc" id="L233">		return subwindowConfirm;</span>
 	}
 
 	public TextField getTourGuideName() {
-<span class="fc" id="L278">		return tourGuideName;</span>
+<span class="fc" id="L237">		return tourGuideName;</span>
 	}
 
 	public TextField getTourGuideLineUsername() {
-<span class="fc" id="L282">		return tourGuideLineUsername;</span>
+<span class="fc" id="L241">		return tourGuideLineUsername;</span>
 	}
 
 	public BinderValidationStatus&lt;TourGuide&gt; getValidationStatus() {
-<span class="fc" id="L286">		return validationStatus;</span>
+<span class="fc" id="L245">		return validationStatus;</span>
 	}
 
 }

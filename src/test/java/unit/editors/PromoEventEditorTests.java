@@ -1,6 +1,8 @@
 package unit.editors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -12,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.vaadin.ui.TextArea;
+
 import comp3111.Utils;
 import comp3111.data.model.Offering;
 import comp3111.data.model.PromoEvent;
@@ -19,6 +23,7 @@ import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
 import comp3111.data.repo.PromoEventRepository;
+import comp3111.input.editors.CustomMessageContainer;
 import comp3111.input.editors.PromoEventEditor;
 
 /**
@@ -112,6 +117,31 @@ public class PromoEventEditorTests {
 		PromoEvent editable = new PromoEvent();
 		editable.setTriggerDate(Utils.addDate(Utils.localDateTimeToDate(LocalDateTime.now()), 10));
 		assertTrue(promoEditor.canEditEvent(editable));
+	}
+
+	@Test
+	public void testCustomMessageContainer() {
+		TextArea ta = new TextArea();
+		CustomMessageContainer cmc = new CustomMessageContainer(ta);
+
+		// Wrong inputs
+		assertEquals(0, ta.getValue().length());
+		cmc.setOffering(new Offering());
+		assertEquals(0, ta.getValue().length());
+		cmc.setDiscountMultiplier("-1");
+		assertEquals(0, ta.getValue().length());
+		cmc.setDiscountMultiplier("2");
+		assertEquals(0, ta.getValue().length());
+		cmc.setMaxReservationsPerCustomer("f");
+		assertEquals(0, ta.getValue().length());
+
+		// Correct inputs
+		cmc.setDiscountMultiplier("0.5");
+		cmc.setMaxReservationsPerCustomer("2");
+		cmc.setPromoCode("VAPE");
+		cmc.setPromoCodeUses("2");
+		assertTrue(0 < ta.getValue().length());
+
 	}
 
 	private void setEditorFormValues(Offering o, LocalDateTime d, String discountMultiplier,

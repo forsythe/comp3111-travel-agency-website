@@ -1,10 +1,15 @@
 package comp3111.data.model;
 
-import comp3111.Utils;
-
-import javax.persistence.*;
 import java.util.Calendar;
 import java.util.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import comp3111.Utils;
 
 /**
  * Represents an offering entity in the database. One tour may have multiple
@@ -38,6 +43,7 @@ public class Offering {
 	private String status;
 
 	public Offering() {
+		this.status = Offering.STATUS_PENDING;
 	}
 
 	/**

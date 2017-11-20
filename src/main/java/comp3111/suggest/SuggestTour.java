@@ -38,6 +38,7 @@ public class SuggestTour {
      * @param bookingRepo Booking repo
      * @param offeringRepo Offering repo
      * @param tourRepo Tour repo
+     * @param cluster The tour cluster
      */
     @Autowired
     public SuggestTour(CustomerRepository customerRepo, BookingRepository bookingRepo,
@@ -53,7 +54,7 @@ public class SuggestTour {
      * Init the cluster. Large computation involved.
      */
     public void initCluster(){
-        cluster.clusterTour();
+        cluster.clusterTour(false);
         cluster.printCluster();
     }
 
@@ -83,7 +84,7 @@ public class SuggestTour {
             }
             INDArray vector = Nd4j.create(averageVector);
             Point pt = new Point(customer.getId().toString(), vector);
-            Cluster c = cluster.getClusterWithPoint(pt);
+            Cluster c = cluster.getClusterWithPointPreferResult(pt);
             tourList = cluster.getToursInCluster(c);
 
             //Filter tours that this customer has already taken

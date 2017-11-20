@@ -21,7 +21,7 @@ import static comp3111.input.validators.ReturnValidationErrorWithLogging.getVali
  * @author Forsythe
  *
  */
-public class TourGuideAvailableForDatesValidation implements Validator<TourGuide> {
+public class TourGuideAvailableForDatesValidater implements Validator<TourGuide> {
 
 	private DateField startDateField;
 	private int duration;
@@ -42,7 +42,7 @@ public class TourGuideAvailableForDatesValidation implements Validator<TourGuide
 	 *            don't want the offering to collide with itself when saving the
 	 *            updated version to DB). Can be null
 	 */
-	TourGuideAvailableForDatesValidation(DateField startDateField, int duration, DBManager dbManager,
+	TourGuideAvailableForDatesValidater(DateField startDateField, int duration, DBManager dbManager,
 			Offering ignoredOffering) {
 		this.startDateField = startDateField;
 		this.duration = duration;

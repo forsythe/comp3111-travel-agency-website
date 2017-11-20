@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import comp3111.data.model.PromoEvent;
+import comp3111.data.model.Tour;
 import comp3111.data.repo.PromoEventRepository;
 import comp3111.input.exceptions.*;
 import org.slf4j.Logger;
@@ -160,50 +161,7 @@ public class BookingEditor extends VerticalLayout {
 			}
 		}).setId(GridCol.BOOKING_PROMO_DISCOUNT_MULTIPLIER_MASKED).setCaption("Promotional Discount");
 
-		HeaderRow filterRow = bookingGrid.appendHeaderRow();
-
-		for (Column<Booking, ?> col : bookingGrid.getColumns()) {
-			col.setMinimumWidth(120);
-			col.setHidable(true);
-			col.setHidingToggleCaption(col.getCaption());
-			col.setExpandRatio(1);
-			HeaderCell cell = filterRow.getCell(col.getId());
-
-			// Have an input field to use for filter
-			TextField filterField = new TextField();
-			filterField.setWidth(130, Unit.PIXELS);
-			filterField.setHeight(30, Unit.PIXELS);
-
-			filterField.addValueChangeListener(change -> {
-				String searchVal = change.getValue();
-				String colId = col.getId();
-
-				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
-				ListDataProvider<Booking> dataProvider = (ListDataProvider<Booking>) bookingGrid.getDataProvider();
-
-				if (!filterField.isEmpty()) {
-					try {
-						gridFilters.put(colId, FilterFactory.getFilterForBooking(colId, searchVal));
-						log.info("updated filter on attribute [{}]", colId);
-
-					} catch (Exception e) {
-						log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
-					}
-				} else {
-					gridFilters.remove(colId);
-					log.info("removed filter on attribute [{}]", colId);
-
-				}
-				dataProvider.clearFilters();
-				for (String colFilter : gridFilters.keySet()) {
-					ProviderAndPredicate paf = gridFilters.get(colFilter);
-					dataProvider.addFilter(paf.provider, paf.predicate);
-				}
-				dataProvider.refreshAll();
-			});
-			cell.setComponent(filterField);
-
-		}
+		FilterFactory.addFilterInputBoxesToGridHeaderRow(BookingEditor.class, bookingGrid, gridFilters);
 
 		this.addComponent(bookingGrid);
 

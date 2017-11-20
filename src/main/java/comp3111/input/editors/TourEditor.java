@@ -88,7 +88,7 @@ public class TourEditor extends VerticalLayout {
 	private Button subwindowConfirmButton;
 
 	// this is FINAL so we can access it inside our filtering callback function
-	private final Grid<Tour> tourGrid = new Grid<Tour>(Tour.class);
+	private final Grid<Tour> grid = new Grid<Tour>(Tour.class);
 
 	/* The currently edited tour */
 	Tour selectedTour;
@@ -142,10 +142,10 @@ public class TourEditor extends VerticalLayout {
 		// get the repetaingTours from GridCol
 		this.refreshData();
 
-		tourGrid.setWidth("100%");
-		tourGrid.setSelectionMode(SelectionMode.SINGLE);
+		grid.setWidth("100%");
+		grid.setSelectionMode(SelectionMode.SINGLE);
 
-		tourGrid.addSelectionListener(event -> {
+		grid.addSelectionListener(event -> {
 			{
 				if (event.getFirstSelectedItem().isPresent()) {
 					selectedTour = event.getFirstSelectedItem().get();
@@ -161,77 +161,17 @@ public class TourEditor extends VerticalLayout {
 			}
 		});
 
-		tourGrid.removeColumn(GridCol.TOUR_ALLOWED_DAYS_OF_WEEK); // we'll combine days of week and dates
-		tourGrid.removeColumn(GridCol.TOUR_ALLOWED_DATES);
+		grid.removeColumn(GridCol.TOUR_ALLOWED_DAYS_OF_WEEK); // we'll combine days of week and dates
+		grid.removeColumn(GridCol.TOUR_ALLOWED_DATES);
 
-		tourGrid.setColumnOrder(GridCol.TOUR_ID, GridCol.TOUR_TOUR_NAME, GridCol.TOUR_DAYS,
+		grid.setColumnOrder(GridCol.TOUR_ID, GridCol.TOUR_TOUR_NAME, GridCol.TOUR_DAYS,
 				GridCol.TOUR_OFFERING_AVAILABILITY, GridCol.TOUR_DESCRIPTION, GridCol.TOUR_WEEKDAY_PRICE,
 				GridCol.TOUR_WEEKEND_PRICE, GridCol.TOUR_CHILD_DISCOUNT, GridCol.TOUR_TODDLER_DISCOUNT,
 				GridCol.TOUR_IS_CHILD_FRIENDLY);
 
-		tourGrid.addColumn(tour -> {
-			return dbManager.countNumOfferingsForTour(tour);
-		}).setId("NUM_OFFERINGS").setCaption("Offering Count");
+		FilterFactory.addFilterInputBoxesToGridHeaderRow(Tour.class, grid, gridFilters);
 
-		HeaderRow filterRow = tourGrid.appendHeaderRow();
-
-		/*
-		 * every column has a header, which has a textfield. every textfield is
-		 * associated with a value change listener. if the listener detects change, it
-		 * adds a filter to the list of filters (gridFilters). if it detects change and
-		 * the textfield is empty, it removes from the list of filters.
-		 * 
-		 * the list of tilers is reapplied everytime on any textfield change.
-		 */
-		for (Column<Tour, ?> col : tourGrid.getColumns()) {
-			col.setMinimumWidth(160);
-			col.setHidable(true);
-			col.setExpandRatio(1);
-			col.setHidingToggleCaption(col.getCaption());
-			HeaderCell cell = filterRow.getCell(col.getId());
-
-			// Have an input field to use for filter
-			TextField filterField = new TextField();
-			filterField.setWidth(130, Unit.PIXELS);
-			filterField.setHeight(30, Unit.PIXELS);
-
-			filterField.addValueChangeListener(change -> {
-				String searchVal = change.getValue();
-				String colId = col.getId();
-
-				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
-				ListDataProvider<Tour> dataProvider = (ListDataProvider<Tour>) tourGrid.getDataProvider();
-
-				if (!filterField.isEmpty()) {
-					try {
-						// note: if we keep typing into same textfield, we will overwrite the old filter
-						// for this column, which is desirable (rather than having filters for "h",
-						// "he", "hel", etc
-						gridFilters.put(colId, FilterFactory.getFilterForTour(colId, searchVal));
-						log.info("updated filter on attribute [{}]", colId);
-
-					} catch (Exception e) {
-						log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
-					}
-				} else {
-					// the filter field was empty, so try
-					// removing the filter associated with this col
-					gridFilters.remove(colId);
-					log.info("removed filter on attribute [{}]", colId);
-
-				}
-				dataProvider.clearFilters();
-				for (String colFilter : gridFilters.keySet()) {
-					ProviderAndPredicate paf = gridFilters.get(colFilter);
-					dataProvider.addFilter(paf.provider, paf.predicate);
-				}
-				dataProvider.refreshAll();
-			});
-			cell.setComponent(filterField);
-
-		}
-
-		this.addComponent(tourGrid);
+		this.addComponent(grid);
 
 		// Both buttons should call the same window function now, difference is what is
 		// passed to the window
@@ -478,10 +418,10 @@ public class TourEditor extends VerticalLayout {
 			tourCollectionCached.clear();
 			tours.forEach(tourCollectionCached::add);
 			ListDataProvider<Tour> provider = new ListDataProvider<Tour>(tourCollectionCached);
-			tourGrid.setDataProvider(provider);
+			grid.setDataProvider(provider);
 		}
 
-		// tourGrid.setItems(tourCollectionCached);
+		// grid.setItems(tourCollectionCached);
 	}
 
 	public Button getSubwindowConfirmButton() {

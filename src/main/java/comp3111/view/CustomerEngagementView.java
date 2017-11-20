@@ -83,7 +83,7 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 	private Button sendButton;
 
 	// the query tab fields
-	private Grid<NonFAQQuery> grid;
+	private Grid<NonFAQQuery> nonfaqGrid;
 	private TextArea replyBox;
 	private Button submitAnswerButton;
 
@@ -270,27 +270,27 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 	public VerticalLayout getQueryTab() {
 		VerticalLayout layout = new VerticalLayout();
 
-		grid = new Grid<NonFAQQuery>(NonFAQQuery.class);
+		nonfaqGrid = new Grid<NonFAQQuery>(NonFAQQuery.class);
 		replyBox = new TextArea("Response");
 		submitAnswerButton = new Button("Send");
 
-		layout.addComponent(grid);
+		layout.addComponent(nonfaqGrid);
 		layout.addComponent(replyBox);
 		layout.addComponent(submitAnswerButton);
 
 		submitAnswerButton.setEnabled(false);
 
 		if (qRepo.findAll() != null)// mockito
-			grid.setDataProvider(new ListDataProvider<NonFAQQuery>(Utils.iterableToCollection(qRepo.findAll())));
-		grid.removeColumn(GridCol.NONFAQQUERY_CUSTOMER_NAME);
-		grid.setColumnOrder(GridCol.NONFAQQUERY_ID, GridCol.NONFAQQUERY_CUSTOMER, GridCol.NONFAQQUERY_QUERY,
+			nonfaqGrid.setDataProvider(new ListDataProvider<NonFAQQuery>(Utils.iterableToCollection(qRepo.findAll())));
+		nonfaqGrid.removeColumn(GridCol.NONFAQQUERY_CUSTOMER_NAME);
+		nonfaqGrid.setColumnOrder(GridCol.NONFAQQUERY_ID, GridCol.NONFAQQUERY_CUSTOMER, GridCol.NONFAQQUERY_QUERY,
 				GridCol.NONFAQQUERY_ANSWER);
-		grid.setHeight("90%");
+		nonfaqGrid.setHeight("90%");
 		if (qRepo.findAll() != null)// mockito
 			log.info("there are [{}] unresolved queries",
 					Utils.iterableToCollection(qRepo.findAll()).stream().filter(q -> q.getAnswer().isEmpty()).count());
 
-		grid.addSelectionListener(event -> {
+		nonfaqGrid.addSelectionListener(event -> {
 			if (event.getFirstSelectedItem().isPresent()) {
 				selectedQuery = event.getFirstSelectedItem().get();
 				submitAnswerButton.setEnabled(true);
@@ -300,57 +300,12 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 			}
 		});
 
-		HeaderRow filterRow = grid.appendHeaderRow();
 
-		for (Column<NonFAQQuery, ?> col : grid.getColumns()) {
-			col.setMinimumWidth(160);
-			col.setHidable(true);
-			col.setExpandRatio(1);
-			col.setHidingToggleCaption(col.getCaption());
-			HeaderCell cell = filterRow.getCell(col.getId());
+		FilterFactory.addFilterInputBoxesToGridHeaderRow(NonFAQQuery.class, nonfaqGrid, gridFilters);
 
-			// Have an input field to use for filter
-			TextField filterField = new TextField();
-			filterField.setWidth(130, Unit.PIXELS);
-			filterField.setHeight(30, Unit.PIXELS);
+		
 
-			filterField.addValueChangeListener(change -> {
-				String searchVal = change.getValue();
-				String colId = col.getId();
-
-				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
-				ListDataProvider<NonFAQQuery> dataProvider = (ListDataProvider<NonFAQQuery>) grid.getDataProvider();
-
-				if (!filterField.isEmpty()) {
-					try {
-						// note: if we keep typing into same textfield, we will overwrite the old filter
-						// for this column, which is desirable (rather than having filters for "h",
-						// "he", "hel", etc
-						gridFilters.put(colId, FilterFactory.getFilterForNonFAQQuery(colId, searchVal));
-						log.info("updated filter on attribute [{}]", colId);
-
-					} catch (Exception e) {
-						log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
-					}
-				} else {
-					// the filter field was empty, so try
-					// removing the filter associated with this col
-					gridFilters.remove(colId);
-					log.info("removed filter on attribute [{}]", colId);
-
-				}
-				dataProvider.clearFilters();
-				for (String colFilter : gridFilters.keySet()) {
-					ProviderAndPredicate paf = gridFilters.get(colFilter);
-					dataProvider.addFilter(paf.provider, paf.predicate);
-				}
-				dataProvider.refreshAll();
-			});
-			cell.setComponent(filterField);
-
-		}
-
-		grid.setWidth("100%");
+		nonfaqGrid.setWidth("100%");
 		// TODO: check that the lengths of query and answer are <=255
 
 		submitAnswerButton.addClickListener(event -> {
@@ -371,7 +326,7 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 					selectedQuery.setAnswer(replyBox.getValue());
 					qRepo.save(selectedQuery);
 					if (qRepo.findAll() != null) // mockito
-						grid.setDataProvider(
+						nonfaqGrid.setDataProvider(
 								new ListDataProvider<NonFAQQuery>(Utils.iterableToCollection(qRepo.findAll())));
 				}
 			}
@@ -382,10 +337,10 @@ public class CustomerEngagementView extends VerticalLayout implements View {
 	}
 
 	/**
-	 * @return the NonFAQQuery grid
+	 * @return the NonFAQQuery nonfaqGrid
 	 */
 	public Grid<NonFAQQuery> getGrid() {
-		return grid;
+		return nonfaqGrid;
 	}
 
 	/**

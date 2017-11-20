@@ -25,6 +25,7 @@ import comp3111.input.validators.IntegerRangeValidator;
 import comp3111.input.validators.ListOfDatesValidator;
 import comp3111.input.validators.OfferingStillOpenValidator;
 import comp3111.input.validators.PhoneNumberValidator;
+import comp3111.input.validators.StringDoesNotContainSubstringValidator;
 import comp3111.input.validators.StringLengthCanNullValidator;
 import comp3111.input.validators.StringLengthValidator;
 import comp3111.input.validators.StringNotEqualsToIgnoreCaseValidator;
@@ -215,4 +216,21 @@ public class ValidationTests {
 		assertTrue(!validator.apply("bobbyTables", new ValueContext()).isError());
 
 	}
+
+	@Test
+	public void testStringDoesNotContainSubstringValidator() {
+		StringDoesNotContainSubstringValidator validator = ValidatorFactory
+				.getStringDoesNotContainSubstringValidator("bob");
+
+		// Fail
+		assertTrue(validator.apply("bobby", new ValueContext()).isError());
+		assertTrue(validator.apply("bobbobby", new ValueContext()).isError());
+
+		// OK
+		assertFalse(validator.apply(null, new ValueContext()).isError());
+		assertFalse(validator.apply("bo", new ValueContext()).isError());
+		assertFalse(validator.apply("BoB", new ValueContext()).isError());
+
+	}
+
 }

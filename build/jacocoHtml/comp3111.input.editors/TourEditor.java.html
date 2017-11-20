@@ -88,7 +88,7 @@ public class TourEditor extends VerticalLayout {
 	private Button subwindowConfirmButton;
 
 	// this is FINAL so we can access it inside our filtering callback function
-<span class="fc" id="L91">	private final Grid&lt;Tour&gt; tourGrid = new Grid&lt;Tour&gt;(Tour.class);</span>
+<span class="fc" id="L91">	private final Grid&lt;Tour&gt; grid = new Grid&lt;Tour&gt;(Tour.class);</span>
 
 	/* The currently edited tour */
 	Tour selectedTour;
@@ -142,10 +142,10 @@ public class TourEditor extends VerticalLayout {
 		// get the repetaingTours from GridCol
 <span class="fc" id="L143">		this.refreshData();</span>
 
-<span class="fc" id="L145">		tourGrid.setWidth(&quot;100%&quot;);</span>
-<span class="fc" id="L146">		tourGrid.setSelectionMode(SelectionMode.SINGLE);</span>
+<span class="fc" id="L145">		grid.setWidth(&quot;100%&quot;);</span>
+<span class="fc" id="L146">		grid.setSelectionMode(SelectionMode.SINGLE);</span>
 
-<span class="fc" id="L148">		tourGrid.addSelectionListener(event -&gt; {</span>
+<span class="fc" id="L148">		grid.addSelectionListener(event -&gt; {</span>
 			{
 <span class="nc bnc" id="L150" title="All 2 branches missed.">				if (event.getFirstSelectedItem().isPresent()) {</span>
 <span class="nc" id="L151">					selectedTour = event.getFirstSelectedItem().get();</span>
@@ -161,105 +161,50 @@ public class TourEditor extends VerticalLayout {
 			}
 <span class="nc" id="L162">		});</span>
 
-<span class="fc" id="L164">		tourGrid.removeColumn(GridCol.TOUR_ALLOWED_DAYS_OF_WEEK); // we'll combine days of week and dates</span>
-<span class="fc" id="L165">		tourGrid.removeColumn(GridCol.TOUR_ALLOWED_DATES);</span>
+<span class="fc" id="L164">		grid.removeColumn(GridCol.TOUR_ALLOWED_DAYS_OF_WEEK); // we'll combine days of week and dates</span>
+<span class="fc" id="L165">		grid.removeColumn(GridCol.TOUR_ALLOWED_DATES);</span>
 
-<span class="fc" id="L167">		tourGrid.setColumnOrder(GridCol.TOUR_ID, GridCol.TOUR_TOUR_NAME, GridCol.TOUR_DAYS,</span>
+<span class="fc" id="L167">		grid.setColumnOrder(GridCol.TOUR_ID, GridCol.TOUR_TOUR_NAME, GridCol.TOUR_DAYS,</span>
 				GridCol.TOUR_OFFERING_AVAILABILITY, GridCol.TOUR_DESCRIPTION, GridCol.TOUR_WEEKDAY_PRICE,
 				GridCol.TOUR_WEEKEND_PRICE, GridCol.TOUR_CHILD_DISCOUNT, GridCol.TOUR_TODDLER_DISCOUNT,
 				GridCol.TOUR_IS_CHILD_FRIENDLY);
 
-<span class="fc" id="L172">		tourGrid.addColumn(tour -&gt; {</span>
+<span class="fc" id="L172">		grid.addColumn(tour -&gt; {</span>
 <span class="nc" id="L173">			return dbManager.countNumOfferingsForTour(tour);</span>
 <span class="fc" id="L174">		}).setId(&quot;NUM_OFFERINGS&quot;).setCaption(&quot;Offering Count&quot;);</span>
 
-<span class="fc" id="L176">		HeaderRow filterRow = tourGrid.appendHeaderRow();</span>
+		
+<span class="fc" id="L177">		FilterFactory.addFilterInputBoxesToGridHeaderRow(Tour.class, grid, gridFilters);</span>
 
-		/*
-		 * every column has a header, which has a textfield. every textfield is
-		 * associated with a value change listener. if the listener detects change, it
-		 * adds a filter to the list of filters (gridFilters). if it detects change and
-		 * the textfield is empty, it removes from the list of filters.
-		 * 
-		 * the list of tilers is reapplied everytime on any textfield change.
-		 */
-<span class="fc bfc" id="L186" title="All 2 branches covered.">		for (Column&lt;Tour, ?&gt; col : tourGrid.getColumns()) {</span>
-<span class="fc" id="L187">			col.setMinimumWidth(160);</span>
-<span class="fc" id="L188">			col.setHidable(true);</span>
-<span class="fc" id="L189">			col.setExpandRatio(1);</span>
-<span class="fc" id="L190">			col.setHidingToggleCaption(col.getCaption());</span>
-<span class="fc" id="L191">			HeaderCell cell = filterRow.getCell(col.getId());</span>
-
-			// Have an input field to use for filter
-<span class="fc" id="L194">			TextField filterField = new TextField();</span>
-<span class="fc" id="L195">			filterField.setWidth(130, Unit.PIXELS);</span>
-<span class="fc" id="L196">			filterField.setHeight(30, Unit.PIXELS);</span>
-
-<span class="fc" id="L198">			filterField.addValueChangeListener(change -&gt; {</span>
-<span class="nc" id="L199">				String searchVal = change.getValue();</span>
-<span class="nc" id="L200">				String colId = col.getId();</span>
-
-<span class="nc" id="L202">				log.info(&quot;Value change in col [{}], val=[{}]&quot;, colId, searchVal);</span>
-<span class="nc" id="L203">				ListDataProvider&lt;Tour&gt; dataProvider = (ListDataProvider&lt;Tour&gt;) tourGrid.getDataProvider();</span>
-
-<span class="nc bnc" id="L205" title="All 2 branches missed.">				if (!filterField.isEmpty()) {</span>
-					try {
-						// note: if we keep typing into same textfield, we will overwrite the old filter
-						// for this column, which is desirable (rather than having filters for &quot;h&quot;,
-						// &quot;he&quot;, &quot;hel&quot;, etc
-<span class="nc" id="L210">						gridFilters.put(colId, FilterFactory.getFilterForTour(colId, searchVal));</span>
-<span class="nc" id="L211">						log.info(&quot;updated filter on attribute [{}]&quot;, colId);</span>
-
-<span class="nc" id="L213">					} catch (Exception e) {</span>
-<span class="nc" id="L214">						log.info(&quot;ignoring val=[{}], col=[{}] is invalid&quot;, searchVal, colId);</span>
-<span class="nc" id="L215">					}</span>
-				} else {
-					// the filter field was empty, so try
-					// removing the filter associated with this col
-<span class="nc" id="L219">					gridFilters.remove(colId);</span>
-<span class="nc" id="L220">					log.info(&quot;removed filter on attribute [{}]&quot;, colId);</span>
-
-				}
-<span class="nc" id="L223">				dataProvider.clearFilters();</span>
-<span class="nc bnc" id="L224" title="All 2 branches missed.">				for (String colFilter : gridFilters.keySet()) {</span>
-<span class="nc" id="L225">					ProviderAndPredicate paf = gridFilters.get(colFilter);</span>
-<span class="nc" id="L226">					dataProvider.addFilter(paf.provider, paf.predicate);</span>
-<span class="nc" id="L227">				}</span>
-<span class="nc" id="L228">				dataProvider.refreshAll();</span>
-<span class="nc" id="L229">			});</span>
-<span class="fc" id="L230">			cell.setComponent(filterField);</span>
-
-<span class="fc" id="L232">		}</span>
-
-<span class="fc" id="L234">		this.addComponent(tourGrid);</span>
+<span class="fc" id="L179">		this.addComponent(grid);</span>
 
 		// Both buttons should call the same window function now, difference is what is
 		// passed to the window
-<span class="fc" id="L238">		createTourButton.addClickListener(new ClickListener() {</span>
+<span class="fc" id="L183">		createTourButton.addClickListener(new ClickListener() {</span>
 			@Override
 			public void buttonClick(ClickEvent event) {
-<span class="nc" id="L241">				getUI();</span>
-<span class="nc" id="L242">				UI.getCurrent().addWindow(getSubwindow(tourRepo, tourCollectionCached, new Tour()));</span>
-<span class="nc" id="L243">			}</span>
+<span class="nc" id="L186">				getUI();</span>
+<span class="nc" id="L187">				UI.getCurrent().addWindow(getSubwindow(tourRepo, tourCollectionCached, new Tour()));</span>
+<span class="nc" id="L188">			}</span>
 
 		});
 
-<span class="fc" id="L247">		editTourButton.addClickListener(new ClickListener() {</span>
+<span class="fc" id="L192">		editTourButton.addClickListener(new ClickListener() {</span>
 			@Override
 			public void buttonClick(ClickEvent event) {
-<span class="nc" id="L250">				getUI();</span>
-<span class="nc" id="L251">				UI.getCurrent().addWindow(getSubwindow(tourRepo, tourCollectionCached, selectedTour));</span>
-<span class="nc" id="L252">			}</span>
+<span class="nc" id="L195">				getUI();</span>
+<span class="nc" id="L196">				UI.getCurrent().addWindow(getSubwindow(tourRepo, tourCollectionCached, selectedTour));</span>
+<span class="nc" id="L197">			}</span>
 
 		});
 
-<span class="fc" id="L256">		manageOfferingButton.addClickListener(event -&gt; {</span>
-<span class="nc" id="L257">			offeringEditor.setSelectedTour(selectedTour);</span>
-<span class="nc" id="L258">			offeringEditor.setTourEditor(this);</span>
-<span class="nc" id="L259">			getUI().getNavigator().navigateTo(OfferingManagementView.VIEW_NAME);</span>
-<span class="nc" id="L260">			refreshData();</span>
-<span class="nc" id="L261">		});</span>
-<span class="fc" id="L262">	}</span>
+<span class="fc" id="L201">		manageOfferingButton.addClickListener(event -&gt; {</span>
+<span class="nc" id="L202">			offeringEditor.setSelectedTour(selectedTour);</span>
+<span class="nc" id="L203">			offeringEditor.setTourEditor(this);</span>
+<span class="nc" id="L204">			getUI().getNavigator().navigateTo(OfferingManagementView.VIEW_NAME);</span>
+<span class="nc" id="L205">			refreshData();</span>
+<span class="nc" id="L206">		});</span>
+<span class="fc" id="L207">	}</span>
 
 	/**
 	 * Creates the popup window for creating/editing tours
@@ -274,197 +219,197 @@ public class TourEditor extends VerticalLayout {
 	 */
 	public Window getSubwindow(TourRepository tourRepo, Collection&lt;Tour&gt; tourCollectionCached, Tour tourToSave) {
 		// Creating the confirm button
-<span class="fc" id="L277">		subwindowConfirmButton = new Button(&quot;Confirm&quot;);</span>
-<span class="fc" id="L278">		getSubwindowConfirmButton().setId(&quot;btn_confirm_tour&quot;);</span>
+<span class="fc" id="L222">		subwindowConfirmButton = new Button(&quot;Confirm&quot;);</span>
+<span class="fc" id="L223">		getSubwindowConfirmButton().setId(&quot;btn_confirm_tour&quot;);</span>
 
 		// Creating the fields
-<span class="fc" id="L281">		tourName = new TextField(&quot;Tour Name&quot;);</span>
-<span class="fc" id="L282">		tourName.setId(&quot;tf_tour_name&quot;);</span>
-<span class="fc" id="L283">		days = new TextField(&quot;Duration (days)&quot;);</span>
-<span class="fc" id="L284">		days.setId(&quot;tf_days&quot;);</span>
-<span class="fc" id="L285">		tourType = new RadioButtonGroup&lt;String&gt;(&quot;Tour Type&quot;);</span>
-<span class="fc" id="L286">		tourType.setId(&quot;rbgrp_tour_type&quot;);</span>
-<span class="fc" id="L287">		allowedDaysOfWeek = new CheckBoxGroup&lt;String&gt;(&quot;Offering Availability&quot;);</span>
-<span class="fc" id="L288">		allowedDaysOfWeek.setId(&quot;chkbxgrp_allowed_days_of_week&quot;);</span>
-<span class="fc" id="L289">		allowedDates = new TextField(&quot;Offering Availability&quot;);</span>
-<span class="fc" id="L290">		allowedDates.setId(&quot;tf_allowed_dates&quot;);</span>
-<span class="fc" id="L291">		childDiscount = new TextField(&quot;Child Discount Multiplier&quot;);</span>
-<span class="fc" id="L292">		childDiscount.setId(&quot;tf_child_discount&quot;);</span>
-<span class="fc" id="L293">		toddlerDiscount = new TextField(&quot;Toddler Discount Multiplier&quot;);</span>
-<span class="fc" id="L294">		toddlerDiscount.setId(&quot;tf_toddler_discount&quot;);</span>
-<span class="fc" id="L295">		weekdayPrice = new TextField(&quot;Weekday Price&quot;);</span>
-<span class="fc" id="L296">		weekdayPrice.setId(&quot;tf_weekday_price&quot;);</span>
-<span class="fc" id="L297">		weekendPrice = new TextField(&quot;Weekend Price&quot;);</span>
-<span class="fc" id="L298">		weekendPrice.setId(&quot;tf_weekend_price&quot;);</span>
-<span class="fc" id="L299">		isChildFriendly = new RadioButtonGroup&lt;String&gt;(&quot;Child Friendly&quot;);</span>
-<span class="fc" id="L300">		isChildFriendly.setId(&quot;rbgrp_is_child_friendly&quot;);</span>
+<span class="fc" id="L226">		tourName = new TextField(&quot;Tour Name&quot;);</span>
+<span class="fc" id="L227">		tourName.setId(&quot;tf_tour_name&quot;);</span>
+<span class="fc" id="L228">		days = new TextField(&quot;Duration (days)&quot;);</span>
+<span class="fc" id="L229">		days.setId(&quot;tf_days&quot;);</span>
+<span class="fc" id="L230">		tourType = new RadioButtonGroup&lt;String&gt;(&quot;Tour Type&quot;);</span>
+<span class="fc" id="L231">		tourType.setId(&quot;rbgrp_tour_type&quot;);</span>
+<span class="fc" id="L232">		allowedDaysOfWeek = new CheckBoxGroup&lt;String&gt;(&quot;Offering Availability&quot;);</span>
+<span class="fc" id="L233">		allowedDaysOfWeek.setId(&quot;chkbxgrp_allowed_days_of_week&quot;);</span>
+<span class="fc" id="L234">		allowedDates = new TextField(&quot;Offering Availability&quot;);</span>
+<span class="fc" id="L235">		allowedDates.setId(&quot;tf_allowed_dates&quot;);</span>
+<span class="fc" id="L236">		childDiscount = new TextField(&quot;Child Discount Multiplier&quot;);</span>
+<span class="fc" id="L237">		childDiscount.setId(&quot;tf_child_discount&quot;);</span>
+<span class="fc" id="L238">		toddlerDiscount = new TextField(&quot;Toddler Discount Multiplier&quot;);</span>
+<span class="fc" id="L239">		toddlerDiscount.setId(&quot;tf_toddler_discount&quot;);</span>
+<span class="fc" id="L240">		weekdayPrice = new TextField(&quot;Weekday Price&quot;);</span>
+<span class="fc" id="L241">		weekdayPrice.setId(&quot;tf_weekday_price&quot;);</span>
+<span class="fc" id="L242">		weekendPrice = new TextField(&quot;Weekend Price&quot;);</span>
+<span class="fc" id="L243">		weekendPrice.setId(&quot;tf_weekend_price&quot;);</span>
+<span class="fc" id="L244">		isChildFriendly = new RadioButtonGroup&lt;String&gt;(&quot;Child Friendly&quot;);</span>
+<span class="fc" id="L245">		isChildFriendly.setId(&quot;rbgrp_is_child_friendly&quot;);</span>
 
-<span class="fc" id="L302">		descrip = new TextArea(&quot;Description&quot;);</span>
-<span class="fc" id="L303">		descrip.setId(&quot;tf_description&quot;);</span>
+<span class="fc" id="L247">		descrip = new TextArea(&quot;Description&quot;);</span>
+<span class="fc" id="L248">		descrip.setId(&quot;tf_description&quot;);</span>
 
-<span class="fc" id="L305">		tourType.setItems(Tour.LIMITED_TOUR_TYPE, Tour.REPEATING_TOUR_TYPE);</span>
-<span class="fc" id="L306">		allowedDaysOfWeek.setItems(Utils.getDaysOfWeek());</span>
-<span class="fc" id="L307">		tourType.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);</span>
-<span class="fc" id="L308">		allowedDaysOfWeek.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);</span>
+<span class="fc" id="L250">		tourType.setItems(Tour.LIMITED_TOUR_TYPE, Tour.REPEATING_TOUR_TYPE);</span>
+<span class="fc" id="L251">		allowedDaysOfWeek.setItems(Utils.getDaysOfWeek());</span>
+<span class="fc" id="L252">		tourType.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);</span>
+<span class="fc" id="L253">		allowedDaysOfWeek.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);</span>
 
-<span class="fc" id="L310">		isChildFriendly.setItems(&quot;true&quot;, &quot;false&quot;);</span>
-<span class="fc" id="L311">		isChildFriendly.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);</span>
+<span class="fc" id="L255">		isChildFriendly.setItems(&quot;true&quot;, &quot;false&quot;);</span>
+<span class="fc" id="L256">		isChildFriendly.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);</span>
 
-<span class="fc bfc" id="L313" title="All 2 branches covered.">		if (tourToSave.getId() == null) { // passed in an unsaved object</span>
-<span class="fc" id="L314">			subwindow = new Window(&quot;Create new tour&quot;);</span>
-<span class="fc" id="L315">			allowedDates.setVisible(false);</span>
-<span class="fc" id="L316">			tourType.setSelectedItem(Tour.REPEATING_TOUR_TYPE);</span>
+<span class="fc bfc" id="L258" title="All 2 branches covered.">		if (tourToSave.getId() == null) { // passed in an unsaved object</span>
+<span class="fc" id="L259">			subwindow = new Window(&quot;Create new tour&quot;);</span>
+<span class="fc" id="L260">			allowedDates.setVisible(false);</span>
+<span class="fc" id="L261">			tourType.setSelectedItem(Tour.REPEATING_TOUR_TYPE);</span>
 
 		} else { // passed in an object which already exists in db, just need to edit it
-<span class="fc" id="L319">			subwindow = new Window(&quot;Edit tour&quot;);</span>
+<span class="fc" id="L264">			subwindow = new Window(&quot;Edit tour&quot;);</span>
 
-<span class="fc bfc" id="L321" title="All 2 branches covered.">			if (!tourToSave.getAllowedDaysOfWeek().isEmpty()) { // if it's not a limited type (it's a repeating type)</span>
-<span class="fc bfc" id="L322" title="All 2 branches covered.">				for (int day : tourToSave.getAllowedDaysOfWeek()) {</span>
-<span class="fc" id="L323">					allowedDaysOfWeek.select(Utils.dayToString(day));</span>
-<span class="fc" id="L324">				}</span>
-<span class="fc" id="L325">				tourType.setSelectedItem(Tour.REPEATING_TOUR_TYPE);</span>
-<span class="fc" id="L326">				allowedDates.setVisible(false);</span>
+<span class="fc bfc" id="L266" title="All 2 branches covered.">			if (!tourToSave.getAllowedDaysOfWeek().isEmpty()) { // if it's not a limited type (it's a repeating type)</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">				for (int day : tourToSave.getAllowedDaysOfWeek()) {</span>
+<span class="fc" id="L268">					allowedDaysOfWeek.select(Utils.dayToString(day));</span>
+<span class="fc" id="L269">				}</span>
+<span class="fc" id="L270">				tourType.setSelectedItem(Tour.REPEATING_TOUR_TYPE);</span>
+<span class="fc" id="L271">				allowedDates.setVisible(false);</span>
 			} else { // if it's a limited type
-<span class="fc" id="L328">				allowedDates.setValue(Utils.dateCollectionToString(tourToSave.getAllowedDates()));</span>
-<span class="fc" id="L329">				tourType.setSelectedItem(Tour.LIMITED_TOUR_TYPE);</span>
-<span class="fc" id="L330">				allowedDaysOfWeek.setVisible(false);</span>
+<span class="fc" id="L273">				allowedDates.setValue(Utils.dateCollectionToString(tourToSave.getAllowedDates()));</span>
+<span class="fc" id="L274">				tourType.setSelectedItem(Tour.LIMITED_TOUR_TYPE);</span>
+<span class="fc" id="L275">				allowedDaysOfWeek.setVisible(false);</span>
 			}
 		}
 
-<span class="fc" id="L334">		FormLayout subContent = new FormLayout();</span>
-<span class="fc" id="L335">		VerticalLayout formContainer = new VerticalLayout();</span>
-<span class="fc" id="L336">		formContainer.addComponent(subContent);</span>
+<span class="fc" id="L279">		FormLayout subContent = new FormLayout();</span>
+<span class="fc" id="L280">		VerticalLayout formContainer = new VerticalLayout();</span>
+<span class="fc" id="L281">		formContainer.addComponent(subContent);</span>
 
-<span class="fc" id="L338">		subwindow.setWidth(&quot;800px&quot;);</span>
-<span class="fc" id="L339">		subwindow.setContent(formContainer);</span>
+<span class="fc" id="L283">		subwindow.setWidth(&quot;800px&quot;);</span>
+<span class="fc" id="L284">		subwindow.setContent(formContainer);</span>
 
-<span class="fc" id="L341">		subwindow.center();</span>
-<span class="fc" id="L342">		subwindow.setClosable(false);</span>
-<span class="fc" id="L343">		subwindow.setModal(true);</span>
-<span class="fc" id="L344">		subwindow.setResizable(false);</span>
-<span class="fc" id="L345">		subwindow.setDraggable(false);</span>
+<span class="fc" id="L286">		subwindow.center();</span>
+<span class="fc" id="L287">		subwindow.setClosable(false);</span>
+<span class="fc" id="L288">		subwindow.setModal(true);</span>
+<span class="fc" id="L289">		subwindow.setResizable(false);</span>
+<span class="fc" id="L290">		subwindow.setDraggable(false);</span>
 
-<span class="fc" id="L347">		subContent.addComponent(tourName);</span>
-<span class="fc" id="L348">		subContent.addComponent(days);</span>
-<span class="fc" id="L349">		subContent.addComponent(tourType);</span>
-<span class="fc" id="L350">		subContent.addComponent(allowedDaysOfWeek);</span>
-<span class="fc" id="L351">		subContent.addComponent(allowedDates);</span>
-<span class="fc" id="L352">		subContent.addComponent(childDiscount);</span>
-<span class="fc" id="L353">		subContent.addComponent(toddlerDiscount);</span>
-<span class="fc" id="L354">		subContent.addComponent(weekdayPrice);</span>
-<span class="fc" id="L355">		subContent.addComponent(weekendPrice);</span>
-<span class="fc" id="L356">		subContent.addComponent(isChildFriendly);</span>
-<span class="fc" id="L357">		subContent.addComponent(descrip);</span>
+<span class="fc" id="L292">		subContent.addComponent(tourName);</span>
+<span class="fc" id="L293">		subContent.addComponent(days);</span>
+<span class="fc" id="L294">		subContent.addComponent(tourType);</span>
+<span class="fc" id="L295">		subContent.addComponent(allowedDaysOfWeek);</span>
+<span class="fc" id="L296">		subContent.addComponent(allowedDates);</span>
+<span class="fc" id="L297">		subContent.addComponent(childDiscount);</span>
+<span class="fc" id="L298">		subContent.addComponent(toddlerDiscount);</span>
+<span class="fc" id="L299">		subContent.addComponent(weekdayPrice);</span>
+<span class="fc" id="L300">		subContent.addComponent(weekendPrice);</span>
+<span class="fc" id="L301">		subContent.addComponent(isChildFriendly);</span>
+<span class="fc" id="L302">		subContent.addComponent(descrip);</span>
 
-<span class="fc" id="L359">		HorizontalLayout buttonActions = new HorizontalLayout();</span>
-<span class="fc" id="L360">		buttonActions.addComponent(getSubwindowConfirmButton());</span>
-<span class="pc" id="L361">		buttonActions.addComponent(new Button(&quot;Cancel&quot;, event -&gt; subwindow.close()));</span>
-<span class="fc" id="L362">		subContent.addComponent(buttonActions);</span>
+<span class="fc" id="L304">		HorizontalLayout buttonActions = new HorizontalLayout();</span>
+<span class="fc" id="L305">		buttonActions.addComponent(getSubwindowConfirmButton());</span>
+<span class="pc" id="L306">		buttonActions.addComponent(new Button(&quot;Cancel&quot;, event -&gt; subwindow.close()));</span>
+<span class="fc" id="L307">		subContent.addComponent(buttonActions);</span>
 
 		// the other fields get their indicators from asRequired()
 		// However, these two cannot because only ONE of them can be filled
-<span class="fc" id="L366">		allowedDaysOfWeek.setRequiredIndicatorVisible(true);</span>
-<span class="fc" id="L367">		allowedDates.setRequiredIndicatorVisible(true);</span>
+<span class="fc" id="L311">		allowedDaysOfWeek.setRequiredIndicatorVisible(true);</span>
+<span class="fc" id="L312">		allowedDates.setRequiredIndicatorVisible(true);</span>
 
 		// For the radio button
-<span class="fc" id="L370">		tourType.addValueChangeListener(new ValueChangeListener&lt;String&gt;() {</span>
+<span class="fc" id="L315">		tourType.addValueChangeListener(new ValueChangeListener&lt;String&gt;() {</span>
 			@Override
 			public void valueChange(ValueChangeEvent event) {
 				// We need to modify the input method of offering availability
-<span class="fc bfc" id="L374" title="All 2 branches covered.">				if (event.getValue().equals(Tour.LIMITED_TOUR_TYPE)) {</span>
-<span class="fc" id="L375">					allowedDaysOfWeek.clear();</span>
-<span class="fc" id="L376">					allowedDaysOfWeek.setVisible(false);</span>
-<span class="fc" id="L377">					allowedDates.setVisible(true);</span>
+<span class="fc bfc" id="L319" title="All 2 branches covered.">				if (event.getValue().equals(Tour.LIMITED_TOUR_TYPE)) {</span>
+<span class="fc" id="L320">					allowedDaysOfWeek.clear();</span>
+<span class="fc" id="L321">					allowedDaysOfWeek.setVisible(false);</span>
+<span class="fc" id="L322">					allowedDates.setVisible(true);</span>
 				} else {
-<span class="fc" id="L379">					allowedDates.clear();</span>
-<span class="fc" id="L380">					allowedDaysOfWeek.setVisible(true);</span>
-<span class="fc" id="L381">					allowedDates.setVisible(false);</span>
+<span class="fc" id="L324">					allowedDates.clear();</span>
+<span class="fc" id="L325">					allowedDaysOfWeek.setVisible(true);</span>
+<span class="fc" id="L326">					allowedDates.setVisible(false);</span>
 				}
-<span class="fc" id="L383">			}</span>
+<span class="fc" id="L328">			}</span>
 		});
 
 		// Binding method according to docs
-<span class="fc" id="L387">		Binder&lt;Tour&gt; binder = new Binder&lt;&gt;(Tour.class);</span>
+<span class="fc" id="L332">		Binder&lt;Tour&gt; binder = new Binder&lt;&gt;(Tour.class);</span>
 
-<span class="fc" id="L389">		binder.forField(tourName).withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
-<span class="fc" id="L390">				.asRequired(Utils.generateRequiredError()).bind(Tour::getTourName, Tour::setTourName);</span>
+<span class="fc" id="L334">		binder.forField(tourName).withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
+<span class="fc" id="L335">				.asRequired(Utils.generateRequiredError()).bind(Tour::getTourName, Tour::setTourName);</span>
 
-<span class="fc" id="L392">		binder.forField(days).asRequired(Utils.generateRequiredError())</span>
-<span class="fc" id="L393">				.withConverter(ConverterFactory.getStringToIntegerConverter())</span>
-<span class="fc" id="L394">				.withValidator(ValidatorFactory.getIntegerRangeValidator(1)).bind(Tour::getDays, Tour::setDays);</span>
+<span class="fc" id="L337">		binder.forField(days).asRequired(Utils.generateRequiredError())</span>
+<span class="fc" id="L338">				.withConverter(ConverterFactory.getStringToIntegerConverter())</span>
+<span class="fc" id="L339">				.withValidator(ValidatorFactory.getIntegerRangeValidator(1)).bind(Tour::getDays, Tour::setDays);</span>
 
-<span class="fc" id="L396">		binder.forField(allowedDates).withValidator(ValidatorFactory.getListOfDatesValidator())</span>
-<span class="fc" id="L397">				.withConverter(new StringToDateCollectionConverter())</span>
-<span class="fc" id="L398">				.bind(Tour::getAllowedDates, Tour::setAllowedDates);</span>
+<span class="fc" id="L341">		binder.forField(allowedDates).withValidator(ValidatorFactory.getListOfDatesValidator())</span>
+<span class="fc" id="L342">				.withConverter(new StringToDateCollectionConverter())</span>
+<span class="fc" id="L343">				.bind(Tour::getAllowedDates, Tour::setAllowedDates);</span>
 
-<span class="fc" id="L400">		binder.forField(allowedDaysOfWeek).withConverter(new StringCollectionToIntegerCollectionConverter())</span>
-<span class="fc" id="L401">				.bind(Tour::getAllowedDaysOfWeek, Tour::setAllowedDaysOfWeek);</span>
+<span class="fc" id="L345">		binder.forField(allowedDaysOfWeek).withConverter(new StringCollectionToIntegerCollectionConverter())</span>
+<span class="fc" id="L346">				.bind(Tour::getAllowedDaysOfWeek, Tour::setAllowedDaysOfWeek);</span>
 
-<span class="fc" id="L403">		binder.forField(childDiscount).asRequired(Utils.generateRequiredError())</span>
-<span class="fc" id="L404">				.withConverter(ConverterFactory.getStringToDoubleConverter())</span>
-<span class="fc" id="L405">				.withValidator(ValidatorFactory.getDoubleRangeValidator(0, 1))</span>
-<span class="fc" id="L406">				.bind(Tour::getChildDiscount, Tour::setChildDiscount);</span>
+<span class="fc" id="L348">		binder.forField(childDiscount).asRequired(Utils.generateRequiredError())</span>
+<span class="fc" id="L349">				.withConverter(ConverterFactory.getStringToDoubleConverter())</span>
+<span class="fc" id="L350">				.withValidator(ValidatorFactory.getDoubleRangeValidator(0, 1))</span>
+<span class="fc" id="L351">				.bind(Tour::getChildDiscount, Tour::setChildDiscount);</span>
 
-<span class="fc" id="L408">		binder.forField(toddlerDiscount).asRequired(Utils.generateRequiredError())</span>
-<span class="fc" id="L409">				.withConverter(ConverterFactory.getStringToDoubleConverter())</span>
-<span class="fc" id="L410">				.withValidator(ValidatorFactory.getDoubleRangeValidator(0, 1))</span>
-<span class="fc" id="L411">				.bind(Tour::getToddlerDiscount, Tour::setToddlerDiscount);</span>
+<span class="fc" id="L353">		binder.forField(toddlerDiscount).asRequired(Utils.generateRequiredError())</span>
+<span class="fc" id="L354">				.withConverter(ConverterFactory.getStringToDoubleConverter())</span>
+<span class="fc" id="L355">				.withValidator(ValidatorFactory.getDoubleRangeValidator(0, 1))</span>
+<span class="fc" id="L356">				.bind(Tour::getToddlerDiscount, Tour::setToddlerDiscount);</span>
 
-<span class="fc" id="L413">		binder.forField(weekdayPrice).asRequired(Utils.generateRequiredError())</span>
-<span class="fc" id="L414">				.withConverter(ConverterFactory.getStringToIntegerConverter())</span>
-<span class="fc" id="L415">				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))</span>
-<span class="fc" id="L416">				.bind(Tour::getWeekdayPrice, Tour::setWeekdayPrice);</span>
+<span class="fc" id="L358">		binder.forField(weekdayPrice).asRequired(Utils.generateRequiredError())</span>
+<span class="fc" id="L359">				.withConverter(ConverterFactory.getStringToIntegerConverter())</span>
+<span class="fc" id="L360">				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))</span>
+<span class="fc" id="L361">				.bind(Tour::getWeekdayPrice, Tour::setWeekdayPrice);</span>
 
-<span class="fc" id="L418">		binder.forField(weekendPrice).asRequired(Utils.generateRequiredError())</span>
-<span class="fc" id="L419">				.withConverter(ConverterFactory.getStringToIntegerConverter())</span>
-<span class="fc" id="L420">				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))</span>
-<span class="fc" id="L421">				.bind(Tour::getWeekendPrice, Tour::setWeekendPrice);</span>
+<span class="fc" id="L363">		binder.forField(weekendPrice).asRequired(Utils.generateRequiredError())</span>
+<span class="fc" id="L364">				.withConverter(ConverterFactory.getStringToIntegerConverter())</span>
+<span class="fc" id="L365">				.withValidator(ValidatorFactory.getIntegerRangeValidator(0))</span>
+<span class="fc" id="L366">				.bind(Tour::getWeekendPrice, Tour::setWeekendPrice);</span>
 
-<span class="fc" id="L423">		binder.forField(descrip).withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
-<span class="fc" id="L424">				.asRequired(Utils.generateRequiredError()).bind(Tour::getDescription, Tour::setDescription);</span>
+<span class="fc" id="L368">		binder.forField(descrip).withValidator(ValidatorFactory.getStringLengthValidator(255))</span>
+<span class="fc" id="L369">				.asRequired(Utils.generateRequiredError()).bind(Tour::getDescription, Tour::setDescription);</span>
 
-<span class="fc" id="L426">		binder.forField(isChildFriendly).asRequired(Utils.generateRequiredError())</span>
-<span class="fc" id="L427">				.withConverter(ConverterFactory.getStringToBooleanConverter())</span>
-<span class="fc" id="L428">				.bind(Tour::isChildFriendly, Tour::setChildFriendly);</span>
+<span class="fc" id="L371">		binder.forField(isChildFriendly).asRequired(Utils.generateRequiredError())</span>
+<span class="fc" id="L372">				.withConverter(ConverterFactory.getStringToBooleanConverter())</span>
+<span class="fc" id="L373">				.bind(Tour::isChildFriendly, Tour::setChildFriendly);</span>
 
 		// Do set bean to assign value to fields
-<span class="fc" id="L431">		binder.setBean(tourToSave);</span>
+<span class="fc" id="L376">		binder.setBean(tourToSave);</span>
 
-<span class="fc" id="L433">		getSubwindowConfirmButton().addClickListener(event -&gt; {</span>
-<span class="fc" id="L434">			validationStatus = binder.validate();</span>
+<span class="fc" id="L378">		getSubwindowConfirmButton().addClickListener(event -&gt; {</span>
+<span class="fc" id="L379">			validationStatus = binder.validate();</span>
 
 			// Special case for tours only to ensure that this field must be filled
-<span class="fc bfc" id="L437" title="All 6 branches covered.">			if (validationStatus.isOk() &amp;&amp; !(allowedDates.isEmpty() &amp;&amp; allowedDaysOfWeek.isEmpty())) {</span>
-<span class="fc" id="L438">				binder.writeBeanIfValid(tourToSave);</span>
+<span class="fc bfc" id="L382" title="All 6 branches covered.">			if (validationStatus.isOk() &amp;&amp; !(allowedDates.isEmpty() &amp;&amp; allowedDaysOfWeek.isEmpty())) {</span>
+<span class="fc" id="L383">				binder.writeBeanIfValid(tourToSave);</span>
 
-<span class="fc" id="L440">				log.info(&quot;About to save tour [{}]&quot;, tourName.getValue());</span>
+<span class="fc" id="L385">				log.info(&quot;About to save tour [{}]&quot;, tourName.getValue());</span>
 
-<span class="fc" id="L442">				tourRepo.save(tourToSave);</span>
-<span class="fc" id="L443">				this.refreshData();</span>
-<span class="fc" id="L444">				subwindow.close();</span>
-<span class="fc" id="L445">				log.info(&quot;created/edited tour [{}] successfully&quot;, tourName.getValue());</span>
-<span class="pc bpc" id="L446" title="1 of 2 branches missed.">				if (Page.getCurrent() != null) // can be null in mockito testing</span>
-<span class="nc" id="L447">					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());</span>
+<span class="fc" id="L387">				tourRepo.save(tourToSave);</span>
+<span class="fc" id="L388">				this.refreshData();</span>
+<span class="fc" id="L389">				subwindow.close();</span>
+<span class="fc" id="L390">				log.info(&quot;created/edited tour [{}] successfully&quot;, tourName.getValue());</span>
+<span class="pc bpc" id="L391" title="1 of 2 branches missed.">				if (Page.getCurrent() != null) // can be null in mockito testing</span>
+<span class="nc" id="L392">					NotificationFactory.getTopBarSuccessNotification().show(Page.getCurrent());</span>
 
-<span class="fc" id="L449">				binder.removeBean();</span>
+<span class="fc" id="L394">				binder.removeBean();</span>
 			} else {
 
-<span class="fc" id="L452">				String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);</span>
-<span class="fc bfc" id="L453" title="All 4 branches covered.">				if (allowedDates.isEmpty() &amp;&amp; allowedDaysOfWeek.isEmpty()) {</span>
-<span class="fc" id="L454">					errors += &quot;[Offering Availability] cannot be empty\n&quot;;</span>
-<span class="fc bfc" id="L455" title="All 2 branches covered.">					if (tourType.getValue().equals(Tour.LIMITED_TOUR_TYPE)) {</span>
-<span class="fc" id="L456">						allowedDates.setComponentError(new UserError(Utils.generateRequiredError()));</span>
+<span class="fc" id="L397">				String errors = ValidatorFactory.getValidatorErrorsString(validationStatus);</span>
+<span class="fc bfc" id="L398" title="All 4 branches covered.">				if (allowedDates.isEmpty() &amp;&amp; allowedDaysOfWeek.isEmpty()) {</span>
+<span class="fc" id="L399">					errors += &quot;[Offering Availability] cannot be empty\n&quot;;</span>
+<span class="fc bfc" id="L400" title="All 2 branches covered.">					if (tourType.getValue().equals(Tour.LIMITED_TOUR_TYPE)) {</span>
+<span class="fc" id="L401">						allowedDates.setComponentError(new UserError(Utils.generateRequiredError()));</span>
 					} else {
-<span class="fc" id="L458">						allowedDaysOfWeek.setComponentError(new UserError(Utils.generateRequiredError()));</span>
+<span class="fc" id="L403">						allowedDaysOfWeek.setComponentError(new UserError(Utils.generateRequiredError()));</span>
 					}
 				}
-<span class="pc bpc" id="L461" title="1 of 2 branches missed.">				if (Page.getCurrent() != null) // may be null during mockito testing</span>
-<span class="nc" id="L462">					NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());</span>
+<span class="pc bpc" id="L406" title="1 of 2 branches missed.">				if (Page.getCurrent() != null) // may be null during mockito testing</span>
+<span class="nc" id="L407">					NotificationFactory.getTopBarWarningNotification(errors, 5).show(Page.getCurrent());</span>
 
 			}
-<span class="fc" id="L465">		});</span>
+<span class="fc" id="L410">		});</span>
 
-<span class="fc" id="L467">		return subwindow;</span>
+<span class="fc" id="L412">		return subwindow;</span>
 	}
 
 	/**
@@ -472,104 +417,104 @@ public class TourEditor extends VerticalLayout {
 	 */
 	public void refreshData() {
 
-<span class="fc" id="L475">		Iterable&lt;Tour&gt; tours = tourRepo.findAll();</span>
+<span class="fc" id="L420">		Iterable&lt;Tour&gt; tours = tourRepo.findAll();</span>
 
-<span class="pc bpc" id="L477" title="1 of 2 branches missed.">		if (tours != null) {</span>
-<span class="nc" id="L478">			tourCollectionCached.clear();</span>
-<span class="nc" id="L479">			tours.forEach(tourCollectionCached::add);</span>
-<span class="nc" id="L480">			ListDataProvider&lt;Tour&gt; provider = new ListDataProvider&lt;Tour&gt;(tourCollectionCached);</span>
-<span class="nc" id="L481">			tourGrid.setDataProvider(provider);</span>
+<span class="pc bpc" id="L422" title="1 of 2 branches missed.">		if (tours != null) {</span>
+<span class="nc" id="L423">			tourCollectionCached.clear();</span>
+<span class="nc" id="L424">			tours.forEach(tourCollectionCached::add);</span>
+<span class="nc" id="L425">			ListDataProvider&lt;Tour&gt; provider = new ListDataProvider&lt;Tour&gt;(tourCollectionCached);</span>
+<span class="nc" id="L426">			grid.setDataProvider(provider);</span>
 		}
 
-		// tourGrid.setItems(tourCollectionCached);
-<span class="fc" id="L485">	}</span>
+		// grid.setItems(tourCollectionCached);
+<span class="fc" id="L430">	}</span>
 
 	public Button getSubwindowConfirmButton() {
-<span class="fc" id="L488">		return subwindowConfirmButton;</span>
+<span class="fc" id="L433">		return subwindowConfirmButton;</span>
 	}
 
 	/**
 	 * @return the tourName field
 	 */
 	public TextField getTourName() {
-<span class="fc" id="L495">		return tourName;</span>
+<span class="fc" id="L440">		return tourName;</span>
 	}
 
 	/**
 	 * @return the days field
 	 */
 	public TextField getDays() {
-<span class="fc" id="L502">		return days;</span>
+<span class="fc" id="L447">		return days;</span>
 	}
 
 	/**
 	 * @return the tourType field
 	 */
 	public RadioButtonGroup&lt;String&gt; getTourType() {
-<span class="fc" id="L509">		return tourType;</span>
+<span class="fc" id="L454">		return tourType;</span>
 	}
 
 	/**
 	 * @return the allowedDaysOfWeek field
 	 */
 	public CheckBoxGroup&lt;String&gt; getAllowedDaysOfWeek() {
-<span class="fc" id="L516">		return allowedDaysOfWeek;</span>
+<span class="fc" id="L461">		return allowedDaysOfWeek;</span>
 	}
 
 	/**
 	 * @return the allowedDates field
 	 */
 	public TextField getAllowedDates() {
-<span class="fc" id="L523">		return allowedDates;</span>
+<span class="fc" id="L468">		return allowedDates;</span>
 	}
 
 	/**
 	 * @return the childDiscount field
 	 */
 	public TextField getChildDiscount() {
-<span class="fc" id="L530">		return childDiscount;</span>
+<span class="fc" id="L475">		return childDiscount;</span>
 	}
 
 	/**
 	 * @return the toddlerDiscount field
 	 */
 	public TextField getToddlerDiscount() {
-<span class="fc" id="L537">		return toddlerDiscount;</span>
+<span class="fc" id="L482">		return toddlerDiscount;</span>
 	}
 
 	/**
 	 * @return the weekdayPrice field
 	 */
 	public TextField getWeekdayPrice() {
-<span class="fc" id="L544">		return weekdayPrice;</span>
+<span class="fc" id="L489">		return weekdayPrice;</span>
 	}
 
 	/**
 	 * @return the weekendPrice field
 	 */
 	public TextField getWeekendPrice() {
-<span class="fc" id="L551">		return weekendPrice;</span>
+<span class="fc" id="L496">		return weekendPrice;</span>
 	}
 
 	/**
 	 * @return the descrip field
 	 */
 	public TextArea getDescrip() {
-<span class="fc" id="L558">		return descrip;</span>
+<span class="fc" id="L503">		return descrip;</span>
 	}
 
 	/**
 	 * @return the isChildFriendly field
 	 */
 	public RadioButtonGroup&lt;String&gt; getIsChildFriendly() {
-<span class="nc" id="L565">		return isChildFriendly;</span>
+<span class="nc" id="L510">		return isChildFriendly;</span>
 	}
 
 	/**
 	 * @return the validationStatus
 	 */
 	public BinderValidationStatus&lt;Tour&gt; getValidationStatus() {
-<span class="fc" id="L572">		return validationStatus;</span>
+<span class="fc" id="L517">		return validationStatus;</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

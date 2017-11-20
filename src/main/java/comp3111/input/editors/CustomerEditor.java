@@ -31,6 +31,7 @@ import com.vaadin.ui.components.grid.HeaderRow;
 import comp3111.Utils;
 import comp3111.data.GridCol;
 import comp3111.data.model.Customer;
+import comp3111.data.model.Tour;
 import comp3111.data.model.TourGuide;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.input.converters.ConverterFactory;
@@ -67,7 +68,7 @@ public class CustomerEditor extends VerticalLayout {
 	private Button createNewCustomerButton = new Button("Create new customer");
 	private Button editCustomerButton = new Button("Edit customer");
 
-	private Grid<Customer> customersGrid = new Grid<Customer>(Customer.class);
+	private Grid<Customer> customerGrid = new Grid<Customer>(Customer.class);
 
 	private Customer selectedCustomer;
 
@@ -103,10 +104,10 @@ public class CustomerEditor extends VerticalLayout {
 		// Get from GridCol
 		refreshData();
 
-		customersGrid.setWidth("100%");
-		customersGrid.setSelectionMode(SelectionMode.SINGLE);
+		customerGrid.setWidth("100%");
+		customerGrid.setSelectionMode(SelectionMode.SINGLE);
 
-		customersGrid.addSelectionListener(event -> {
+		customerGrid.addSelectionListener(event -> {
 			if (event.getFirstSelectedItem().isPresent()) {
 				selectedCustomer = event.getFirstSelectedItem().get();
 				editCustomerButton.setEnabled(true);
@@ -118,60 +119,13 @@ public class CustomerEditor extends VerticalLayout {
 			}
 		});
 
-		customersGrid.setColumnOrder(GridCol.CUSTOMER_ID, GridCol.CUSTOMER_NAME, GridCol.CUSTOMER_LINE_ID,
+		customerGrid.setColumnOrder(GridCol.CUSTOMER_ID, GridCol.CUSTOMER_NAME, GridCol.CUSTOMER_LINE_ID,
 				GridCol.CUSTOMER_HKID, GridCol.CUSTOMER_PHONE, GridCol.CUSTOMER_AGE);
 
-		HeaderRow filterRow = customersGrid.appendHeaderRow();
+		FilterFactory.addFilterInputBoxesToGridHeaderRow(Customer.class, customerGrid, gridFilters);
 
-		for (Column<Customer, ?> col : customersGrid.getColumns()) {
-			col.setMinimumWidth(120);
-			col.setHidable(true);
-			col.setHidingToggleCaption(col.getCaption());
-			col.setExpandRatio(1);
-			HeaderCell cell = filterRow.getCell(col.getId());
 
-			// Have an input field to use for filter
-			TextField filterField = new TextField();
-			filterField.setWidth(130, Unit.PIXELS);
-			filterField.setHeight(30, Unit.PIXELS);
-
-			filterField.addValueChangeListener(change -> {
-				String searchVal = change.getValue();
-				String colId = col.getId();
-
-				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
-				ListDataProvider<Customer> dataProvider = (ListDataProvider<Customer>) customersGrid.getDataProvider();
-
-				if (!filterField.isEmpty()) {
-					try {
-						// note: if we keep typing into same textfield, we will overwrite the old filter
-						// for this column, which is desirable (rather than having filters for "h",
-						// "he", "hel", etc
-						gridFilters.put(colId, FilterFactory.getFilterForCustomer(colId, searchVal));
-						log.info("updated filter on attribute [{}]", colId);
-
-					} catch (Exception e) {
-						log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
-					}
-				} else {
-					// the filter field was empty, so try
-					// removing the filter associated with this col
-					gridFilters.remove(colId);
-					log.info("removed filter on attribute [{}]", colId);
-
-				}
-				dataProvider.clearFilters();
-				for (String colFilter : gridFilters.keySet()) {
-					ProviderAndPredicate paf = gridFilters.get(colFilter);
-					dataProvider.addFilter(paf.provider, paf.predicate);
-				}
-				dataProvider.refreshAll();
-			});
-			cell.setComponent(filterField);
-
-		}
-
-		this.addComponent(customersGrid);
+		this.addComponent(customerGrid);
 
 		createNewCustomerButton.addClickListener(event -> {
 			getUI();
@@ -294,7 +248,7 @@ public class CustomerEditor extends VerticalLayout {
 			customerCollectionCached.clear();
 			customers.forEach(customerCollectionCached::add);
 			ListDataProvider<Customer> provider = new ListDataProvider<Customer>(customerCollectionCached);
-			customersGrid.setDataProvider(provider);
+			customerGrid.setDataProvider(provider);
 		}
 
 	}

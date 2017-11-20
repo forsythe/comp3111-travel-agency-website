@@ -28,7 +28,7 @@ import comp3111.data.repo.TourRepository;
 
 /**
  * Spring Application point of entry
- * 
+ *
  * @author Forsythe
  *
  */
@@ -78,30 +78,30 @@ public class Application {
 //			Tour lg7 = new Tour("LG7", "Bad food", 2, 0.8, 0.2, 200, 250);
 //			lg7.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7)));
 //			lg7 = tourRepo.save(lg7);
-//			Tour shimen = new Tour("Shimen National Forest Tour", 
-//					"Shimen colorful pond * stunning red maple * Staying at \"Yihua Hot Spring Hotel\"", 
+//			Tour shimen = new Tour("Shimen National Forest Tour",
+//					"Shimen colorful pond * stunning red maple * Staying at \"Yihua Hot Spring Hotel\"",
 //					2, 0.7, 0.7, 499, 599);
 //			shimen.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(1,3,6)));
 //			shimen = tourRepo.save(shimen);
-//			Tour yangshan = new Tour("Yangshan Hot Spring Tour", 
-//					"Unlimited use of hot spring * Famous Yangshan roaster cusine", 
+//			Tour yangshan = new Tour("Yangshan Hot Spring Tour",
+//					"Unlimited use of hot spring * Famous Yangshan roaster cusine",
 //					2, 0.7, 0.7, 299, 399);
 //			yangshan.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(1,3,5)));
 //			yangshan = tourRepo.save(yangshan);
-//			Tour nationalPark = new Tour("National Park Tour", 
+//			Tour nationalPark = new Tour("National Park Tour",
 //					"Green Lake District (Ferry Tour Included) * Asia tallest musical fountain * Staying at 4 stars hotel ",
 //					2, 0.7, 0.7, 299, 399);
 //			nationalPark.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(2,6)));
 //			nationalPark = tourRepo.save(nationalPark);
-//			Tour kaiping = new Tour("Kaiping culture tour", 
+//			Tour kaiping = new Tour("Kaiping culture tour",
 //					"Kaiping Watchtowers * Jinshan Hot Spring * 5 starts hotel",
 //					3, 0.7, 0.7, 699, 899);
 //			kaiping.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(1,3,6)));
 //			kaiping = tourRepo.save(kaiping);
-//			Tour baojing = new Tour("Qingyuan historic-landscape tour", 
+//			Tour baojing = new Tour("Qingyuan historic-landscape tour",
 //					"Baojing Palace of Yingde * Sankeng Hot Spring * Sankeng Hot Spring ",
 //					3, 0.7, 0.7, 899, 899);
-//			baojing.setAllowedDates(new HashSet<Date>(Arrays.asList(Utils.addDate(new Date(), 20), 
+//			baojing.setAllowedDates(new HashSet<Date>(Arrays.asList(Utils.addDate(new Date(), 20),
 //					Utils.addDate(new Date(), 25))));
 //			baojing = tourRepo.save(baojing);
 //
@@ -111,6 +111,11 @@ public class Application {
 //
 //			Booking book = new Booking(kris, offer, 2, 1, 0, 0, "No cockroaches in my food", Booking.PAYMENT_PENDING);
 //			book = bookingRepo.save(book);
+//			Offering offer2 = new Offering(lg7, kevin, Utils.addDate(new Date(), 8), "Hotel Waldo", 15, 50,
+//				Offering.STATUS_PENDING);
+//			offer2 = offerRepo.save(offer2);
+//			Booking book2 = new Booking(heng, offer2, 2, 1, 0, 0, "Non smoking room", Booking.PAYMENT_PENDING);
+//			book2 = bookingRepo.save(book2);
 //		};
 //	}
 

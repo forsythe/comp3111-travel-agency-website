@@ -23,7 +23,7 @@
 <tr>
 <td>
 <div class="infoBox" id="tests">
-<div class="counter">11</div>
+<div class="counter">12</div>
 <p>tests</p>
 </div>
 </td>
@@ -41,7 +41,11 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
+<<<<<<< HEAD
 <div class="counter">0.014s</div>
+=======
+<div class="counter">0.009s</div>
+>>>>>>> a3347685c443f6fd061f4de051ef8a62ee60214d
 <p>duration</p>
 </div>
 </td>
@@ -79,7 +83,7 @@
 </thead>
 <tr>
 <td class="success">testDateIsEarlierThanOfferingLastEditableDateValidation</td>
-<td>0.002s</td>
+<td>0.001s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
@@ -89,12 +93,16 @@
 </tr>
 <tr>
 <td class="success">testDoubleRangeValidator</td>
-<td>0s</td>
+<td>0.002s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testHKIDValidation</td>
+<<<<<<< HEAD
 <td>0.001s</td>
+=======
+<td>0.002s</td>
+>>>>>>> a3347685c443f6fd061f4de051ef8a62ee60214d
 <td class="success">passed</td>
 </tr>
 <tr>
@@ -104,7 +112,11 @@
 </tr>
 <tr>
 <td class="success">testIntegerRangeValidator</td>
+<<<<<<< HEAD
 <td>0.003s</td>
+=======
+<td>0.001s</td>
+>>>>>>> a3347685c443f6fd061f4de051ef8a62ee60214d
 <td class="success">passed</td>
 </tr>
 <tr>
@@ -123,8 +135,13 @@
 <td class="success">passed</td>
 </tr>
 <tr>
+<td class="success">testStringDoesNotContainSubstringValidator</td>
+<td>0s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
 <td class="success">testStringLengthValidator</td>
-<td>0.001s</td>
+<td>0s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
@@ -137,6 +154,7 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
+<<<<<<< HEAD
 <pre>2017-11-20 15:14:16.991  INFO 13485 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: provide at least 1 date, dd/mm/yyyy, separated by commas
 2017-11-20 15:14:16.991  INFO 13485 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong check digit
 2017-11-20 15:14:16.992  INFO 13485 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
@@ -166,6 +184,39 @@
 2017-11-20 15:14:17.006  INFO 13485 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be [1, 5)
 2017-11-20 15:14:17.006  INFO 13485 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be [1, 5)
 2017-11-20 15:14:17.006  INFO 13485 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 2
+=======
+<pre>2017-11-20 19:11:33.958  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: provide at least 1 date, dd/mm/yyyy, separated by commas
+2017-11-20 19:11:33.958  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong check digit
+2017-11-20 19:11:33.958  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
+2017-11-20 19:11:33.958  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
+2017-11-20 19:11:33.958  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
+2017-11-20 19:11:33.958  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
+2017-11-20 19:11:33.958  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: string is null
+2017-11-20 19:11:33.958  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 5 characters
+2017-11-20 19:11:33.958  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 5 characters
+2017-11-20 19:11:33.958  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= null
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: date does not exist
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: date must be later than 05/12/2017
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: there is no associated offering yet
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: there is no associated offering yet
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: No associated date value
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: date must be earlier than 01/12/2017
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must not contain &quot;bob&quot;
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must not contain &quot;bob&quot;
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: offering does not exist
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: offering is no longer open for application
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: offering is no longer open for application
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [1.0, 2.0]
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [1.0, 2.0]
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: wrong format
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: must be a number
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must not equal [bobby], case insensitive
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must not equal [bobby], case insensitive
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be [1, 5)
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be [1, 5)
+2017-11-20 19:11:33.974  INFO 10200 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 2
+>>>>>>> a3347685c443f6fd061f4de051ef8a62ee60214d
 </pre>
 </span>
 </div>
@@ -177,7 +228,11 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
+<<<<<<< HEAD
 <a href="http://www.gradle.org">Gradle 4.3-rc-1</a> at Nov 20, 2017 3:14:23 PM</p>
+=======
+<a href="http://www.gradle.org">Gradle 4.3-rc-1</a> at Nov 20, 2017 7:11:36 PM</p>
+>>>>>>> a3347685c443f6fd061f4de051ef8a62ee60214d
 </div>
 </div>
 </body>
