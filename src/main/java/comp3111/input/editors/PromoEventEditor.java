@@ -30,6 +30,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
+import com.vaadin.ui.renderers.DateRenderer;
 
 import comp3111.Utils;
 import comp3111.data.DBManager;
@@ -136,6 +137,9 @@ public class PromoEventEditor extends VerticalLayout {
 				createEventButton.setEnabled(true);
 			}
 		});
+
+		eventGrid.removeColumn(GridCol.PROMOEVENT_TRIGGER_DATE);
+		eventGrid.addColumn(GridCol.PROMOEVENT_TRIGGER_DATE, new DateRenderer(Utils.DATE_TIME_LOCALE));
 
 		eventGrid.setColumnOrder(GridCol.PROMOEVENT_IS_TRIGGERED, GridCol.PROMOEVENT_TRIGGER_DATE,
 				GridCol.PROMOEVENT_ID, GridCol.PROMOEVENT_OFFERING, GridCol.PROMOEVENT_CUSTOM_MESSAGE,
