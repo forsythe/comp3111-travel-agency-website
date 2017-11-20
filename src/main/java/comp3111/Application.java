@@ -70,17 +70,20 @@ public class Application {
 //			Customer kv = new Customer("KV", "U7e5b42b4ea64a1ff1d812a3ff33b48b0", "123-12311", 20, "A123456(3)");
 //			Customer rex = new Customer("Rex", "U8b20aa2040714d4ff45782709f7b1ba6", "123-12311", 20, "A123456(3)");
 //			Customer kris = new Customer("Kris", "U4b23c4647091ccdcce12d5392d37866d", "123-12311", 20, "A123456(3)");
+//			Customer clintkudo = new Customer("Clint Kudo", "U95c22fcea565d0e4af55d04429a36246", "852-56565656", 40,
+//					"A222444(8)");
 //			heng = customerRepo.save(heng);
 //			kv = customerRepo.save(kv);
 //			rex = customerRepo.save(rex);
 //			kris = customerRepo.save(kris);
+//			clintkudo = customerRepo.save(clintkudo);
 //
 //			Tour lg7 = new Tour("LG7", "Bad food", 2, 0.8, 0.2, 200, 250);
 //			lg7.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7)));
 //			lg7 = tourRepo.save(lg7);
 //			Tour shimen = new Tour("Shimen National Forest Tour",
-//					"Shimen colorful pond * stunning red maple * Staying at Yihua Hot Spring Hotel", 2, 0.7, 0.7, 499,
-//					599);
+//					"Shimen colorful pond * stunning red maple * Staying at \"Yihua Hot Spring Hotel\"", 2, 0.7, 0.7,
+//					499, 599);
 //			shimen.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(1, 3, 6)));
 //			shimen = tourRepo.save(shimen);
 //			Tour yangshan = new Tour("Yangshan Hot Spring Tour",
@@ -92,8 +95,8 @@ public class Application {
 //					2, 0.7, 0.7, 299, 399);
 //			nationalPark.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(2, 6)));
 //			nationalPark = tourRepo.save(nationalPark);
-//			Tour kaiping = new Tour("Kaiping culture tour",
-//					"Kaiping Watchtowers *	 Jinshan Hot Spring * 5 starts hotel", 3, 0.7, 0.7, 699, 899);
+//			Tour kaiping = new Tour("Kaiping culture tour", "Kaiping Watchtowers * Jinshan Hot Spring * 5 starts hotel",
+//					3, 0.7, 0.7, 699, 899);
 //			kaiping.setAllowedDaysOfWeek(new HashSet<Integer>(Arrays.asList(1, 3, 6)));
 //			kaiping = tourRepo.save(kaiping);
 //			Tour baojing = new Tour("Qingyuan historic-landscape tour",
