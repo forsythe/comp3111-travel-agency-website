@@ -153,16 +153,11 @@ public class OfferingEditor extends VerticalLayout {
 
 		offeringGrid.getColumn(GridCol.OFFERING_START_DATE).setCaption("Start Date");
 
-		offeringGrid.addColumn(offering -> {
-			return dbManager.countNumberOfPaidPeopleInOffering(offering);
-		}).setId(GridCol.OFFERING_NUM_CONFIRMED_CUSTOMERS).setCaption("Confirmed Participants");
-
 		offeringGrid.setColumnOrder(GridCol.OFFERING_ID, GridCol.OFFERING_STATUS, GridCol.OFFERING_START_DATE,
 				GridCol.OFFERING_TOUR_GUIDE_NAME, GridCol.OFFERING_TOUR_GUIDE_LINE_ID, GridCol.OFFERING_TOUR_NAME,
-				GridCol.OFFERING_NUM_CONFIRMED_CUSTOMERS, GridCol.OFFERING_MIN_CAPACITY, GridCol.OFFERING_MAX_CAPACITY);
+				GridCol.OFFERING_MIN_CAPACITY, GridCol.OFFERING_MAX_CAPACITY);
 
 		FilterFactory.addFilterInputBoxesToGridHeaderRow(Offering.class, offeringGrid, gridFilters);
-
 
 		this.addComponent(offeringGrid);
 
@@ -408,8 +403,9 @@ public class OfferingEditor extends VerticalLayout {
 			return false;
 		} else if (offering.getStatus().equals(Offering.STATUS_CANCELLED)) {
 			if (Page.getCurrent() != null) // can be null if using mockito
-				NotificationFactory.getTopBarWarningNotification(
-						"It's too late to edit this offering. It has been cancelled.", 5).show(Page.getCurrent());
+				NotificationFactory
+						.getTopBarWarningNotification("It's too late to edit this offering. It has been cancelled.", 5)
+						.show(Page.getCurrent());
 			return false;
 		}
 

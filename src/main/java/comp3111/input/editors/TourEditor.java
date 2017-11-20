@@ -169,11 +169,6 @@ public class TourEditor extends VerticalLayout {
 				GridCol.TOUR_WEEKEND_PRICE, GridCol.TOUR_CHILD_DISCOUNT, GridCol.TOUR_TODDLER_DISCOUNT,
 				GridCol.TOUR_IS_CHILD_FRIENDLY);
 
-		grid.addColumn(tour -> {
-			return dbManager.countNumOfferingsForTour(tour);
-		}).setId("NUM_OFFERINGS").setCaption("Offering Count");
-
-		
 		FilterFactory.addFilterInputBoxesToGridHeaderRow(Tour.class, grid, gridFilters);
 
 		this.addComponent(grid);

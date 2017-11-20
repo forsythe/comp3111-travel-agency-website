@@ -118,7 +118,6 @@ public class TourGuidesEditor extends VerticalLayout {
 
 		FilterFactory.addFilterInputBoxesToGridHeaderRow(TourGuide.class, tourGuideGrid, gridFilters);
 
-
 		this.addComponent(tourGuideGrid);
 
 		createTourGuideButton.addClickListener(event -> {

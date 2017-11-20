@@ -51,8 +51,7 @@ public class GridCol {
 	public static final String OFFERING_TOUR_GUIDE = "tourGuide";
 	public static final String OFFERING_DATE = "startDate";
 	public static final String OFFERING_LAST_EDITABLE_DATE = "lastEditableDate";
-	/* custom generated */
-	public static final String OFFERING_NUM_CONFIRMED_CUSTOMERS = "confirmedCustomers";
+	
 
 	// Customer
 	/* shown in grid */

@@ -52,13 +52,13 @@ import comp3111.data.repo.PromoEventRepository;
 	public void updatePendingOfferingStatusIfNecessary() {
 <span class="fc" id="L53">		LineMessenger.resetCounter();</span>
 <span class="fc" id="L54">		Date now = new Date();</span>
-<span class="fc" id="L55">		log.info(&quot;The time is now [{}], checking if any offerings need updating (in terms of status)&quot;,</span>
-<span class="fc" id="L56">				Utils.simpleDateFormat(now));</span>
+//		log.info(&quot;The time is now [{}], checking if any offerings need updating (in terms of status)&quot;,
+//				Utils.simpleDateFormat(now));
 
 <span class="fc bfc" id="L58" title="All 2 branches covered.">		for (Offering o : offeringRepo.findByStatus(Offering.STATUS_PENDING)) {</span>
 
 			// if now &gt;= start-3
-<span class="pc bpc" id="L61" title="1 of 4 branches missed.">			if (o.getStatus().equals(Offering.STATUS_PENDING) &amp;&amp; now.after(Utils.addDate(o.getStartDate(), -3))) {</span>
+<span class="pc bpc" id="L61" title="2 of 4 branches missed.">			if (o.getStatus().equals(Offering.STATUS_PENDING) &amp;&amp; now.after(Utils.addDate(o.getStartDate(), -3))) {</span>
 <span class="fc" id="L62">				log.info(&quot;Offering [{}] has reached t=-3 days before start!&quot;, o);</span>
 
 <span class="fc" id="L64">				int totalCustomers = actionManager.countNumberOfPaidPeopleInOffering(o);</span>
@@ -73,11 +73,11 @@ import comp3111.data.repo.PromoEventRepository;
 <span class="fc" id="L73">							totalCustomers, o.getMinCustomers());</span>
 <span class="fc" id="L74">					actionManager.notifyOfferingStatus(o, false);</span>
 				}
-<span class="fc" id="L76">			} else {</span>
-<span class="fc" id="L77">				log.info(&quot;Offering [{}] still has time left, not updating its status yet...&quot;, o);</span>
+			} else {
+				//log.info(&quot;Offering [{}] still has time left, not updating its status yet...&quot;, o);
 			}
 <span class="fc" id="L79">		}</span>
-<span class="fc" id="L80">		log.info(&quot;[{}] people were notified&quot;, LineMessenger.getCounter());</span>
+		//log.info(&quot;[{}] people were notified&quot;, LineMessenger.getCounter());
 <span class="fc" id="L81">	}</span>
 
 	/**
@@ -89,18 +89,18 @@ import comp3111.data.repo.PromoEventRepository;
 	public void updatePendingPromotionalBroadcasts() {
 <span class="fc" id="L90">		LineMessenger.resetCounter();</span>
 <span class="fc" id="L91">		Date now = Utils.localDateTimeToDate(LocalDateTime.now());</span>
-<span class="fc" id="L92">		log.info(&quot;The time is now [{}], checking if any promoevents are overdue&quot;, Utils.simpleDateFormat(now));</span>
+		//log.info(&quot;The time is now [{}], checking if any promoevents are overdue&quot;, Utils.simpleDateFormat(now));
 
 <span class="fc bfc" id="L94" title="All 2 branches covered.">		for (PromoEvent p : promoEventRepo.findByIsTriggered(false)) {</span>
 
-<span class="fc bfc" id="L96" title="All 2 branches covered.">			if (now.after(p.getTriggerDate())) {</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">			if (now.after(p.getTriggerDate())) {</span>
 <span class="fc" id="L97">				log.info(&quot;Time to trigger promoevent [{}]&quot;, p.getId());</span>
 <span class="fc" id="L98">				lineMessenger.sendToAll(p.getCustomMessage());</span>
 			}
 <span class="fc" id="L100">			p.setTriggered(true);</span>
 <span class="fc" id="L101">			promoEventRepo.save(p);</span>
 <span class="fc" id="L102">		}</span>
-<span class="fc" id="L103">		log.info(&quot;[{}] people were notified&quot;, LineMessenger.getCounter());</span>
+		//log.info(&quot;[{}] people were notified&quot;, LineMessenger.getCounter());
 
 <span class="fc" id="L105">	}</span>
 }
