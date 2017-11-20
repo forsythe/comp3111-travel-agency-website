@@ -161,7 +161,7 @@ public class BookingEditor extends VerticalLayout {
 			}
 		}).setId(GridCol.BOOKING_PROMO_DISCOUNT_MULTIPLIER_MASKED).setCaption("Promotional Discount");
 
-		FilterFactory.addFilterInputBoxesToGridHeaderRow(BookingEditor.class, bookingGrid, gridFilters);
+		FilterFactory.addFilterInputBoxesToGridHeaderRow(Booking.class, bookingGrid, gridFilters);
 
 		this.addComponent(bookingGrid);
 
