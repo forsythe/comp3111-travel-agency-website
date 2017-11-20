@@ -24,24 +24,31 @@ public class DateNotEarlierThanValidator implements Validator<Date> {
 	/**
 	 * Constructor for the validator
 	 * 
-	 * @param notEarlierThanThis The date that is to be compared to
+	 * @param notEarlierThanThis
+	 *            The date that is to be compared to
 	 */
 	DateNotEarlierThanValidator(Date notEarlierThanThis) {
 		this.notEarlierThanThis = notEarlierThanThis;
 	}
-	/** 
-	 * Overrides the apply method in vaadin validators, checks whether the given value
-	 * is earlier than the date object that the validator has
-	 * @param value The date value that is going to be validated
-	 * @param context A value context for converters. Contains relevant information for converting values. 
-	 * @see com.vaadin.data.Validator#apply(java.lang.Object, com.vaadin.data.ValueContext)
+
+	/**
+	 * Overrides the apply method in vaadin validators, checks whether the given
+	 * value is earlier than the date object that the validator has
+	 * 
+	 * @param value
+	 *            The date value that is going to be validated
+	 * @param context
+	 *            A value context for converters. Contains relevant information for
+	 *            converting values.
+	 * @see com.vaadin.data.Validator#apply(java.lang.Object,
+	 *      com.vaadin.data.ValueContext)
 	 */
 	@Override
 	public ValidationResult apply(Date value, ValueContext context) {
 		if (value != null) {
 			if (value.before(notEarlierThanThis)) {
 				return getValidationErrorLogged(
-						"date must be later than " + notEarlierThanThis);
+						"date must be later than " + notEarlierThanThis + ", but was actually " + value);
 			} else {
 				return ValidationResult.ok();
 			}

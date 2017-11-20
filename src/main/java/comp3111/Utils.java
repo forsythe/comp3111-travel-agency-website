@@ -436,6 +436,7 @@ public class Utils {
 	 */
 	public static DateTimeField getDateTimeFieldWithOurLocale(String caption) {
 		DateTimeField d = new DateTimeField(caption);
+		
 		d.setDateFormat(DATE_TIME_LOCALE);
 		d.setResolution(DateTimeResolution.MINUTE);
 		return d;
