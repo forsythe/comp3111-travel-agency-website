@@ -52,8 +52,8 @@ public class ScheduledTasks {
 	public void updatePendingOfferingStatusIfNecessary() {
 		LineMessenger.resetCounter();
 		Date now = new Date();
-		log.info("The time is now [{}], checking if any offerings need updating (in terms of status)",
-				Utils.simpleDateFormat(now));
+//		log.info("The time is now [{}], checking if any offerings need updating (in terms of status)",
+//				Utils.simpleDateFormat(now));
 
 		for (Offering o : offeringRepo.findByStatus(Offering.STATUS_PENDING)) {
 
@@ -74,10 +74,10 @@ public class ScheduledTasks {
 					actionManager.notifyOfferingStatus(o, false);
 				}
 			} else {
-				log.info("Offering [{}] still has time left, not updating its status yet...", o);
+				//log.info("Offering [{}] still has time left, not updating its status yet...", o);
 			}
 		}
-		log.info("[{}] people were notified", LineMessenger.getCounter());
+		//log.info("[{}] people were notified", LineMessenger.getCounter());
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class ScheduledTasks {
 	public void updatePendingPromotionalBroadcasts() {
 		LineMessenger.resetCounter();
 		Date now = Utils.localDateTimeToDate(LocalDateTime.now());
-		log.info("The time is now [{}], checking if any promoevents are overdue", Utils.simpleDateFormat(now));
+		//log.info("The time is now [{}], checking if any promoevents are overdue", Utils.simpleDateFormat(now));
 
 		for (PromoEvent p : promoEventRepo.findByIsTriggered(false)) {
 
@@ -100,7 +100,7 @@ public class ScheduledTasks {
 			p.setTriggered(true);
 			promoEventRepo.save(p);
 		}
-		log.info("[{}] people were notified", LineMessenger.getCounter());
+		//log.info("[{}] people were notified", LineMessenger.getCounter());
 
 	}
 }

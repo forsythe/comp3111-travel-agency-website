@@ -116,49 +116,8 @@ public class TourGuidesEditor extends VerticalLayout {
 
 		tourGuideGrid.setColumnOrder(GridCol.TOURGUIDE_ID, GridCol.TOURGUIDE_NAME, GridCol.TOURGUIDE_LINE_USERNAME);
 
-		HeaderRow filterRow = tourGuideGrid.appendHeaderRow();
+		FilterFactory.addFilterInputBoxesToGridHeaderRow(TourGuide.class, tourGuideGrid, gridFilters);
 
-		for (Column<TourGuide, ?> col : tourGuideGrid.getColumns()) {
-			col.setMinimumWidth(120);
-			col.setHidable(true);
-			col.setHidingToggleCaption(col.getCaption());
-			col.setExpandRatio(1);
-
-			HeaderCell cell = filterRow.getCell(col.getId());
-			TextField filterField = new TextField();
-			filterField.setWidth(130, Unit.PIXELS);
-			filterField.setHeight(30, Unit.PIXELS);
-
-			filterField.addValueChangeListener(change -> {
-				String searchVal = change.getValue();
-				String colId = col.getId();
-
-				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
-				ListDataProvider<TourGuide> dataProvider = (ListDataProvider<TourGuide>) tourGuideGrid
-						.getDataProvider();
-
-				if (!filterField.isEmpty()) {
-					try {
-						gridFilters.put(colId, FilterFactory.getFilterForTourGuide(colId, searchVal));
-						log.info("updated filter on attribute [{}]", colId);
-
-					} catch (Exception e) {
-						log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
-					}
-				} else {
-					gridFilters.remove(colId);
-					log.info("removed filter on attribute [{}]", colId);
-
-				}
-				dataProvider.clearFilters();
-				for (String colFilter : gridFilters.keySet()) {
-					ProviderAndPredicate paf = gridFilters.get(colFilter);
-					dataProvider.addFilter(paf.provider, paf.predicate);
-				}
-				dataProvider.refreshAll();
-			});
-			cell.setComponent(filterField);
-		}
 
 		this.addComponent(tourGuideGrid);
 

@@ -35,6 +35,7 @@ import comp3111.data.DBManager;
 import comp3111.data.GridCol;
 import comp3111.data.model.Offering;
 import comp3111.data.model.PromoEvent;
+import comp3111.data.model.Tour;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
@@ -140,55 +141,9 @@ public class PromoEventEditor extends VerticalLayout {
 				GridCol.PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER, GridCol.PROMOEVENT_PROMO_CODE,
 				GridCol.PROMOEVENT_PROMO_CODE_USES_LEFT, GridCol.PROMOEVENT_DISCOUNT);
 
-		HeaderRow filterRow = eventGrid.appendHeaderRow();
 
-		for (Column<PromoEvent, ?> col : eventGrid.getColumns()) {
-			col.setMinimumWidth(160);
-			col.setHidable(true);
-			col.setExpandRatio(1);
-			col.setHidingToggleCaption(col.getCaption());
-			HeaderCell cell = filterRow.getCell(col.getId());
+		FilterFactory.addFilterInputBoxesToGridHeaderRow(PromoEvent.class, eventGrid, gridFilters);
 
-			// Have an input field to use for filter
-			TextField filterField = new TextField();
-			filterField.setWidth(130, Unit.PIXELS);
-			filterField.setHeight(30, Unit.PIXELS);
-
-			filterField.addValueChangeListener(change -> {
-				String searchVal = change.getValue();
-				String colId = col.getId();
-
-				log.info("Value change in col [{}], val=[{}]", colId, searchVal);
-				ListDataProvider<PromoEvent> dataProvider = (ListDataProvider<PromoEvent>) eventGrid.getDataProvider();
-
-				if (!filterField.isEmpty()) {
-					try {
-						// note: if we keep typing into same textfield, we will overwrite the old filter
-						// for this column, which is desirable (rather than having filters for "h",
-						// "he", "hel", etc
-						gridFilters.put(colId, FilterFactory.getFilterForPromoEvent(colId, searchVal));
-						log.info("updated filter on attribute [{}]", colId);
-
-					} catch (Exception e) {
-						log.info("ignoring val=[{}], col=[{}] is invalid", searchVal, colId);
-					}
-				} else {
-					// the filter field was empty, so try
-					// removing the filter associated with this col
-					gridFilters.remove(colId);
-					log.info("removed filter on attribute [{}]", colId);
-
-				}
-				dataProvider.clearFilters();
-				for (String colFilter : gridFilters.keySet()) {
-					ProviderAndPredicate paf = gridFilters.get(colFilter);
-					dataProvider.addFilter(paf.provider, paf.predicate);
-				}
-				dataProvider.refreshAll();
-			});
-			cell.setComponent(filterField);
-
-		}
 
 		this.addComponent(eventGrid);
 
