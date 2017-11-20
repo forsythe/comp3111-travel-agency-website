@@ -181,7 +181,7 @@ public class PromoEventEditor extends VerticalLayout {
 			if (Page.getCurrent() != null) // mockito
 				NotificationFactory
 						.getTopBarWarningNotification(
-								"It's too late to edit this promotion, it triggered on: " + triggerDate, 5)
+								"It's too late to edit this promotion, it triggered on: " + Utils.simpleDateTimeFormat(triggerDate), 5)
 						.show(Page.getCurrent());
 			return false;
 		}

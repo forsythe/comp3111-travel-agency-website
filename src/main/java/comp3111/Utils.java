@@ -219,6 +219,18 @@ public class Utils {
 	}
 
 	/**
+	 * Converts a Date (with time) object to a nicely formatted string
+	 * 
+	 * @param d
+	 *            The Date object
+	 * @return A nicely formatted string following {@link #DATE_TIME_LOCALE}
+	 */
+	public static String simpleDateTimeFormat(Date d) {
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_TIME_LOCALE);
+		return sdf.format(d);
+	}
+
+	/**
 	 * Parses a string into a Date object
 	 * 
 	 * @param s
