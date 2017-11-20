@@ -252,6 +252,7 @@ public class PromoEventEditor extends VerticalLayout {
 		promoCode = new TextField("Promo Code");
 		promoCodeUses = new TextField("Promo Code Max Use Count");
 		customMessage = new TextArea("Message");
+		CustomMessageContainer msgContainer = new CustomMessageContainer(customMessage);
 
 		offering.setPopupWidth(null);
 
@@ -294,6 +295,23 @@ public class PromoEventEditor extends VerticalLayout {
 			promoCode.setReadOnly(true);
 		}
 
+		// custom message should auto update
+		offering.addValueChangeListener(e -> {
+			msgContainer.setOffering(e.getValue());
+		});
+		discountMultiplier.addValueChangeListener(e -> {
+			msgContainer.setDiscountMultiplier(e.getValue());
+		});
+		maxReservationsPerCustomer.addValueChangeListener(e -> {
+			msgContainer.setMaxReservationsPerCustomer(e.getValue());
+		});
+		promoCode.addValueChangeListener(e -> {
+			msgContainer.setPromoCode(e.getValue());
+		});
+		promoCodeUses.addValueChangeListener(e -> {
+			msgContainer.setPromoCodeUses(e.getValue());
+		});
+
 		HorizontalLayout buttonActions = new HorizontalLayout();
 		buttonActions.addComponent(confirmButton);
 		buttonActions.addComponent(new Button("Cancel", event -> subwindow.close()));
@@ -329,6 +347,7 @@ public class PromoEventEditor extends VerticalLayout {
 		binder.forField(promoCode).asRequired(Utils.generateRequiredError())
 				.withValidator(ValidatorFactory.getStringLengthValidator(255))
 				.withValidator(ValidatorFactory.getStringNotEqualsToIgnoreCaseValidator("none"))
+				.withValidator(ValidatorFactory.getStringDoesNotContainSubstringValidator(" "))
 				.bind(PromoEvent::getPromoCode, PromoEvent::setPromoCode);
 
 		binder.forField(promoCodeUses).asRequired(Utils.generateRequiredError())
@@ -359,7 +378,7 @@ public class PromoEventEditor extends VerticalLayout {
 					if (promoEvent.getId() == null) {
 						log.info("Saved a new promo event [{}] successfully", promoEvent);
 					} else {
-						log.info("Saved an edited booking [{}] successfully", promoEvent);
+						log.info("Saved an edited promo event [{}] successfully", promoEvent);
 					}
 
 					binder.removeBean();

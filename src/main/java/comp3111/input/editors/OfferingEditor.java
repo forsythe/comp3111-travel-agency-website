@@ -342,7 +342,7 @@ public class OfferingEditor extends VerticalLayout {
 		Binder<Offering> binder = new Binder<>(Offering.class);
 
 		binder.forField(tourGuide).asRequired(Utils.generateRequiredError())
-				.withValidator(ValidatorFactory.getTourGuideAvailableForDatesValidationIgnoreOneOffering(startDate,
+				.withValidator(ValidatorFactory.getTourGuideAvailableForDatesValidaterIgnoreOneOffering(startDate,
 						hostTour.getDays(), dbManager, isCreatingNewOffering ? null : offeringToSave))
 				.bind(Offering::getTourGuide, Offering::setTourGuide);
 
