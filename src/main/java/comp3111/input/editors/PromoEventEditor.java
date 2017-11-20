@@ -1,6 +1,8 @@
 package comp3111.input.editors;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -19,7 +21,6 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextArea;
@@ -27,15 +28,13 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.components.grid.HeaderCell;
-import com.vaadin.ui.components.grid.HeaderRow;
+import com.vaadin.ui.renderers.DateRenderer;
 
 import comp3111.Utils;
 import comp3111.data.DBManager;
 import comp3111.data.GridCol;
 import comp3111.data.model.Offering;
 import comp3111.data.model.PromoEvent;
-import comp3111.data.model.Tour;
 import comp3111.data.repo.BookingRepository;
 import comp3111.data.repo.CustomerRepository;
 import comp3111.data.repo.OfferingRepository;
@@ -136,14 +135,17 @@ public class PromoEventEditor extends VerticalLayout {
 			}
 		});
 
+		eventGrid.removeColumn(GridCol.PROMOEVENT_TRIGGER_DATE);
+
+		eventGrid.addColumn(GridCol.PROMOEVENT_TRIGGER_DATE,
+				new DateRenderer(new SimpleDateFormat(Utils.DATE_TIME_LOCALE)));
+
 		eventGrid.setColumnOrder(GridCol.PROMOEVENT_IS_TRIGGERED, GridCol.PROMOEVENT_TRIGGER_DATE,
 				GridCol.PROMOEVENT_ID, GridCol.PROMOEVENT_OFFERING, GridCol.PROMOEVENT_CUSTOM_MESSAGE,
 				GridCol.PROMOEVENT_MAX_RESERVATIONS_PER_CUSTOMER, GridCol.PROMOEVENT_PROMO_CODE,
 				GridCol.PROMOEVENT_PROMO_CODE_USES_LEFT, GridCol.PROMOEVENT_DISCOUNT);
 
-
 		FilterFactory.addFilterInputBoxesToGridHeaderRow(PromoEvent.class, eventGrid, gridFilters);
-
 
 		this.addComponent(eventGrid);
 
@@ -285,7 +287,10 @@ public class PromoEventEditor extends VerticalLayout {
 		binder.forField(triggerDate).asRequired(Utils.generateRequiredError())
 				.withConverter(ConverterFactory.getLocalDateTimeToUtilDateTimeConverter())
 				.withValidator(ValidatorFactory.getDateIsEarlierThanOfferingLastEditableDateValidator(offering))
-				.withValidator(ValidatorFactory.getDateNotEarlierThanValidator(Date.from(Instant.now())))
+				// .withValidator(ValidatorFactory.getDateNotEarlierThanValidator(
+				// Date.from(Instant.now().atZone(ZoneId.of(Utils.TIMEZONE)).toInstant())))
+				.withValidator(ValidatorFactory.getDateNotEarlierThanValidator(
+						Date.from(Instant.now().atZone(ZoneId.systemDefault()).toInstant())))
 				.bind(PromoEvent::getTriggerDate, PromoEvent::setTriggerDate);
 
 		binder.forField(discountMultiplier).asRequired(Utils.generateRequiredError())

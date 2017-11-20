@@ -27,7 +27,7 @@ import java.util.Date;
 	public LocalDate convertToPresentation(Date date, ValueContext context) {
 <span class="fc bfc" id="L28" title="All 2 branches covered.">		if (date == null)</span>
 <span class="fc" id="L29">			return LocalDate.now();</span>
-<span class="fc" id="L30">		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();</span>
+<span class="fc" id="L30">		return date.toInstant().atZone(ZoneId.of(Utils.TIMEZONE)).toLocalDate();</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

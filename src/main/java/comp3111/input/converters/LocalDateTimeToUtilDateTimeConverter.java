@@ -12,6 +12,7 @@ import comp3111.Utils;
 
 /**
  * Converts between LocalDateTime objects and DateTime objects
+ * 
  * @author Forsythe
  *
  */
@@ -29,5 +30,6 @@ public class LocalDateTimeToUtilDateTimeConverter implements Converter<LocalDate
 		if (date == null)
 			return LocalDateTime.now();
 		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		// return date.toInstant().atZone(ZoneId.of(Utils.TIMEZONE)).toLocalDateTime();
 	}
 }

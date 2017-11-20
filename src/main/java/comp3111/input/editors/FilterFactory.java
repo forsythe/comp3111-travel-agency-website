@@ -363,7 +363,7 @@ public class FilterFactory {
 
 			// Have an input field to use for filter
 			TextField filterField = new TextField();
-			filterField.setWidth(130, Unit.PIXELS);
+			filterField.setWidth("100%");
 			filterField.setHeight(30, Unit.PIXELS);
 
 			filterField.addValueChangeListener(change -> {

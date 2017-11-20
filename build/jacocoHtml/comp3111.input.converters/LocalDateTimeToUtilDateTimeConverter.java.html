@@ -28,7 +28,7 @@ import comp3111.Utils;
 	public LocalDateTime convertToPresentation(Date date, ValueContext context) {
 <span class="fc bfc" id="L29" title="All 2 branches covered.">		if (date == null)</span>
 <span class="fc" id="L30">			return LocalDateTime.now();</span>
-<span class="fc" id="L31">		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();</span>
+<span class="fc" id="L31">		return date.toInstant().atZone(ZoneId.of(Utils.TIMEZONE)).toLocalDateTime();</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

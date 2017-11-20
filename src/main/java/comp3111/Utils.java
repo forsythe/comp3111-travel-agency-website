@@ -27,7 +27,7 @@ import com.vaadin.ui.DateTimeField;
 public class Utils {
 
 	public static final String DATE_LOCALE = "dd/MM/yyyy";
-	public static final String DATE_TIME_LOCALE = DATE_LOCALE + " HH:mm:ss Z";
+	public static final String DATE_TIME_LOCALE = DATE_LOCALE + " HH:mm:ss zzzz";
 
 	/**
 	 * Returns the error to show when a required field is left empty
@@ -381,7 +381,9 @@ public class Utils {
 	 * @return The corresponding Date object
 	 */
 	public static Date localDateTimeToDate(LocalDateTime local) {
+
 		return Date.from(local.atZone(ZoneId.systemDefault()).toInstant());
+		// return Date.from(local.atZone(ZoneId.of(TIMEZONE)).toInstant());
 	}
 
 	/**

@@ -1,13 +1,14 @@
 package comp3111.input.converters;
 
-import com.vaadin.data.Converter;
-import com.vaadin.data.Result;
-import com.vaadin.data.ValueContext;
-import comp3111.Utils;
-
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+
+import com.vaadin.data.Converter;
+import com.vaadin.data.Result;
+import com.vaadin.data.ValueContext;
+
+import comp3111.Utils;
 
 /**
  * Converts between LocalDate objects and Date objects
@@ -28,5 +29,6 @@ public class LocalDateToUtilDateConverter implements Converter<LocalDate, Date> 
 		if (date == null)
 			return LocalDate.now();
 		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		//return date.toInstant().atZone(ZoneId.of(Utils.TIMEZONE)).toLocalDate();
 	}
 }
