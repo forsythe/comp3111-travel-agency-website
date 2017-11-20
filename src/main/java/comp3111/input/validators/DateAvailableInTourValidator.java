@@ -10,11 +10,13 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
+import org.apache.commons.lang3.time.DateUtils;
+
 import static comp3111.input.validators.ReturnValidationErrorWithLogging.getValidationErrorLogged;
 
 /**
- * Validates whether a date is available for use in a tour.
- * As in whether the date is legal for a certain to
+ * Validates whether a date is available for use in a tour. As in whether the
+ * date is legal for a certain to
  * 
  * @author Kristian Suhartono
  * @version 1.0
@@ -26,20 +28,25 @@ public class DateAvailableInTourValidator implements Validator<Date> {
 
 	/**
 	 * Constructor for the validator
-	 * @param tour This is the tour object that is going to use for validation
+	 * 
+	 * @param tour
+	 *            This is the tour object that is going to use for validation
 	 */
 	DateAvailableInTourValidator(Tour tour) {
 		this.tour = tour;
 	}
 
-
-	/** 
-	 * Overrides the apply method in vaadin validators, checks whether the given value
-	 * is valid in the tour object that the validator has.
+	/**
+	 * Overrides the apply method in vaadin validators, checks whether the given
+	 * value is valid in the tour object that the validator has.
 	 * 
-	 * @param value The value that is going to be validated
-	 * @param context A value context for converters. Contains relevant information for converting values. 
-	 * @see com.vaadin.data.Validator#apply(java.lang.Object, com.vaadin.data.ValueContext)
+	 * @param value
+	 *            The value that is going to be validated
+	 * @param context
+	 *            A value context for converters. Contains relevant information for
+	 *            converting values.
+	 * @see com.vaadin.data.Validator#apply(java.lang.Object,
+	 *      com.vaadin.data.ValueContext)
 	 */
 	@Override
 	public ValidationResult apply(Date value, ValueContext context) {
@@ -61,7 +68,15 @@ public class DateAvailableInTourValidator implements Validator<Date> {
 		}
 
 		Collection<Date> supportedDates = tour.getAllowedDates();
-		if (!supportedDates.isEmpty() && !supportedDates.contains(value)) {
+		boolean containsDate = false;
+		for (Date d : supportedDates) {
+			if (DateUtils.isSameDay(d, value)) {
+				containsDate = true;
+				break;
+			}
+		}
+
+		if (!supportedDates.isEmpty() && !containsDate) {
 			StringBuilder msgBuilder = new StringBuilder();
 			msgBuilder.append("only the following dates are supported: ");
 
