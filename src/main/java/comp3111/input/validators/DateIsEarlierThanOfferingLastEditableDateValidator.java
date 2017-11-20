@@ -48,7 +48,7 @@ public class DateIsEarlierThanOfferingLastEditableDateValidator implements Valid
 		if (value != null) {
 			if (!value.before(o.getValue().getLastEditableDate())) {
 				return getValidationErrorLogged(
-						"date must be earlier than " + Utils.simpleDateFormat(o.getValue().getLastEditableDate()));
+						"date must be earlier than " + o.getValue().getLastEditableDate());
 			} else {
 				return ValidationResult.ok();
 			}
