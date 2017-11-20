@@ -29,6 +29,7 @@ public class Utils {
 	public static final String DATE_LOCALE = "dd/MM/yyyy";
 	public static final String DATE_TIME_LOCALE = DATE_LOCALE + " HH:mm:ss Z";
 	public static final String TIMEZONE = "Hongkong";
+
 	/**
 	 * Returns the error to show when a required field is left empty
 	 * 
@@ -423,7 +424,7 @@ public class Utils {
 	 */
 	public static DateField getDateFieldWithOurLocale(String caption) {
 		DateField d = new DateField(caption);
-		d.setDateFormat(DATE_LOCALE);
+		//d.setDateFormat(DATE_LOCALE);
 		return d;
 	}
 
@@ -436,8 +437,7 @@ public class Utils {
 	 */
 	public static DateTimeField getDateTimeFieldWithOurLocale(String caption) {
 		DateTimeField d = new DateTimeField(caption);
-		
-		d.setDateFormat(DATE_TIME_LOCALE);
+		//d.setDateFormat(DATE_TIME_LOCALE);
 		d.setResolution(DateTimeResolution.MINUTE);
 		return d;
 	}
