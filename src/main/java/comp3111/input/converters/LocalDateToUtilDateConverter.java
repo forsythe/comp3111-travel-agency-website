@@ -27,6 +27,6 @@ public class LocalDateToUtilDateConverter implements Converter<LocalDate, Date> 
 	public LocalDate convertToPresentation(Date date, ValueContext context) {
 		if (date == null)
 			return LocalDate.now();
-		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		return date.toInstant().atZone(ZoneId.of(Utils.TIMEZONE)).toLocalDate();
 	}
 }

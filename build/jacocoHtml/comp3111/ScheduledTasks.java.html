@@ -3,6 +3,7 @@
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import comp3111.suggest.TourCluster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,9 @@ import comp3111.data.repo.PromoEventRepository;
  *
  */
 @Component
-<span class="fc" id="L27">public class ScheduledTasks {</span>
+<span class="fc" id="L28">public class ScheduledTasks {</span>
 
-<span class="fc" id="L29">	private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);</span>
+<span class="fc" id="L30">	private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);</span>
 
 	@Autowired
 	private OfferingRepository offeringRepo;
@@ -39,6 +40,8 @@ import comp3111.data.repo.PromoEventRepository;
 	private DBManager actionManager;
 	@Autowired
 	private LineMessenger lineMessenger;
+	@Autowired
+	private TourCluster tourCluster;
 
 	public static final String EVERYDAY_8_AM = &quot;0 0 8 * * *&quot;;
 	public static final String EVERY_10_SECONDS = &quot;*/10 * * * * *&quot;;
@@ -50,35 +53,35 @@ import comp3111.data.repo.PromoEventRepository;
 	 */
 	@Scheduled(cron = EVERY_10_SECONDS)
 	public void updatePendingOfferingStatusIfNecessary() {
-<span class="fc" id="L53">		LineMessenger.resetCounter();</span>
-<span class="fc" id="L54">		Date now = new Date();</span>
+<span class="fc" id="L56">		LineMessenger.resetCounter();</span>
+<span class="fc" id="L57">		Date now = new Date();</span>
 //		log.info(&quot;The time is now [{}], checking if any offerings need updating (in terms of status)&quot;,
 //				Utils.simpleDateFormat(now));
 
-<span class="fc bfc" id="L58" title="All 2 branches covered.">		for (Offering o : offeringRepo.findByStatus(Offering.STATUS_PENDING)) {</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">		for (Offering o : offeringRepo.findByStatus(Offering.STATUS_PENDING)) {</span>
 
 			// if now &gt;= start-3
-<span class="pc bpc" id="L61" title="2 of 4 branches missed.">			if (o.getStatus().equals(Offering.STATUS_PENDING) &amp;&amp; now.after(Utils.addDate(o.getStartDate(), -3))) {</span>
-<span class="fc" id="L62">				log.info(&quot;Offering [{}] has reached t=-3 days before start!&quot;, o);</span>
+<span class="pc bpc" id="L64" title="2 of 4 branches missed.">			if (o.getStatus().equals(Offering.STATUS_PENDING) &amp;&amp; now.after(Utils.addDate(o.getStartDate(), -3))) {</span>
+<span class="fc" id="L65">				log.info(&quot;Offering [{}] has reached t=-3 days before start!&quot;, o);</span>
 
-<span class="fc" id="L64">				int totalCustomers = actionManager.countNumberOfPaidPeopleInOffering(o);</span>
+<span class="fc" id="L67">				int totalCustomers = actionManager.countNumberOfPaidPeopleInOffering(o);</span>
 
-<span class="fc bfc" id="L66" title="All 2 branches covered.">				if (totalCustomers &gt;= o.getMinCustomers()) {</span>
-<span class="fc" id="L67">					log.info(</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">				if (totalCustomers &gt;= o.getMinCustomers()) {</span>
+<span class="fc" id="L70">					log.info(</span>
 							&quot;Success! Offering [{}] can be offered, having [{}] of [{}] minimum confirmed payment customers&quot;,
-<span class="fc" id="L69">							o, totalCustomers, o.getMinCustomers());</span>
-<span class="fc" id="L70">					actionManager.notifyOfferingStatus(o, true);</span>
+<span class="fc" id="L72">							o, totalCustomers, o.getMinCustomers());</span>
+<span class="fc" id="L73">					actionManager.notifyOfferingStatus(o, true);</span>
 				} else {
-<span class="fc" id="L72">					log.info(&quot;Fail! Offering [{}] cannot be offered, having only [{}] of [{}] minimum customers&quot;, o,</span>
-<span class="fc" id="L73">							totalCustomers, o.getMinCustomers());</span>
-<span class="fc" id="L74">					actionManager.notifyOfferingStatus(o, false);</span>
+<span class="fc" id="L75">					log.info(&quot;Fail! Offering [{}] cannot be offered, having only [{}] of [{}] minimum customers&quot;, o,</span>
+<span class="fc" id="L76">							totalCustomers, o.getMinCustomers());</span>
+<span class="fc" id="L77">					actionManager.notifyOfferingStatus(o, false);</span>
 				}
 			} else {
 				//log.info(&quot;Offering [{}] still has time left, not updating its status yet...&quot;, o);
 			}
-<span class="fc" id="L79">		}</span>
+<span class="fc" id="L82">		}</span>
 		//log.info(&quot;[{}] people were notified&quot;, LineMessenger.getCounter());
-<span class="fc" id="L81">	}</span>
+<span class="fc" id="L84">	}</span>
 
 	/**
 	 * Checks if there are any promotional events which need to be triggered (that
@@ -87,21 +90,30 @@ import comp3111.data.repo.PromoEventRepository;
 	 */
 	@Scheduled(cron = EVERY_10_SECONDS)
 	public void updatePendingPromotionalBroadcasts() {
-<span class="fc" id="L90">		LineMessenger.resetCounter();</span>
-<span class="fc" id="L91">		Date now = Utils.localDateTimeToDate(LocalDateTime.now());</span>
+<span class="fc" id="L93">		LineMessenger.resetCounter();</span>
+<span class="fc" id="L94">		Date now = Utils.localDateTimeToDate(LocalDateTime.now());</span>
 		//log.info(&quot;The time is now [{}], checking if any promoevents are overdue&quot;, Utils.simpleDateFormat(now));
 
-<span class="fc bfc" id="L94" title="All 2 branches covered.">		for (PromoEvent p : promoEventRepo.findByIsTriggered(false)) {</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">		for (PromoEvent p : promoEventRepo.findByIsTriggered(false)) {</span>
 
-<span class="pc bpc" id="L96" title="1 of 2 branches missed.">			if (now.after(p.getTriggerDate())) {</span>
-<span class="fc" id="L97">				log.info(&quot;Time to trigger promoevent [{}]&quot;, p.getId());</span>
-<span class="fc" id="L98">				lineMessenger.sendToAll(p.getCustomMessage());</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">			if (now.after(p.getTriggerDate())) {</span>
+<span class="fc" id="L100">				log.info(&quot;Time to trigger promoevent [{}]&quot;, p.getId());</span>
+<span class="fc" id="L101">				lineMessenger.sendToAll(p.getCustomMessage());</span>
 			}
-<span class="fc" id="L100">			p.setTriggered(true);</span>
-<span class="fc" id="L101">			promoEventRepo.save(p);</span>
-<span class="fc" id="L102">		}</span>
+<span class="fc" id="L103">			p.setTriggered(true);</span>
+<span class="fc" id="L104">			promoEventRepo.save(p);</span>
+<span class="fc" id="L105">		}</span>
 		//log.info(&quot;[{}] people were notified&quot;, LineMessenger.getCounter());
 
-<span class="fc" id="L105">	}</span>
+<span class="fc" id="L108">	}</span>
+
+	/* Commented out because it is too slow
+	@Scheduled(cron = EVERYDAY_8_AM)
+	public void retrainNNModel(){
+		log.info(&quot;Starting training model&quot;);
+		tourCluster.clusterTour(true);
+		log.info(&quot;Training finished&quot;);
+	}
+	*/
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
