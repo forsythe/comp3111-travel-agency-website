@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.158s</div>
+<div class="counter">0.131s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,37 +79,37 @@
 </thead>
 <tr>
 <td class="success">testAllInvalidInputsCaughtWhenMakingLimitedTour</td>
-<td>0.013s</td>
+<td>0.011s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testAllInvalidInputsCaughtWhenMakingRepeatingTour</td>
-<td>0.014s</td>
+<td>0.011s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testCanLoadSavedLimitedTourIntoForm</td>
-<td>0.005s</td>
+<td>0.006s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testCanLoadSavedRepeatingTourIntoForm</td>
-<td>0.007s</td>
+<td>0.006s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testCanSaveValidLimitedTour</td>
-<td>0.019s</td>
-<td class="success">passed</td>
-</tr>
-<tr>
-<td class="success">testCanSaveValidRepeatingTour</td>
 <td>0.014s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
+<td class="success">testCanSaveValidRepeatingTour</td>
+<td>0.010s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
 <td class="success">testCaughtErrorWhenMissingAvailability</td>
-<td>0.086s</td>
+<td>0.073s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -117,57 +117,57 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>2017-11-20 02:02:16.719  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 02:02:16.731  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.732  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.732  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 02:02:16.732  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.734  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.735  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
-2017-11-20 02:02:16.735  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.735  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
-2017-11-20 02:02:16.735  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.736  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
-2017-11-20 02:02:16.736  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.736  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
-2017-11-20 02:02:16.736  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.736  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.737  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.737  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.738  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 02:02:16.738  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
-2017-11-20 02:02:16.739  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
-2017-11-20 02:02:16.739  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
-2017-11-20 02:02:16.739  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
-2017-11-20 02:02:16.739  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.753  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 02:02:16.758  INFO 4672 --- [    Test worker] comp3111.input.editors.TourEditor        : About to save tour [LG7]
-2017-11-20 02:02:16.758  INFO 4672 --- [    Test worker] comp3111.input.editors.TourEditor        : created/edited tour [LG7] successfully
-2017-11-20 02:02:16.772  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.772  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.773  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 02:02:16.773  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.774  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.774  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
-2017-11-20 02:02:16.774  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.775  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
-2017-11-20 02:02:16.775  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.775  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
-2017-11-20 02:02:16.775  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.776  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
-2017-11-20 02:02:16.776  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.776  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.776  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.777  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.777  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 02:02:16.778  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
-2017-11-20 02:02:16.778  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
-2017-11-20 02:02:16.778  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
-2017-11-20 02:02:16.778  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
-2017-11-20 02:02:16.778  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
-2017-11-20 02:02:16.786  INFO 4672 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
-2017-11-20 02:02:16.796  INFO 4672 --- [    Test worker] comp3111.input.editors.TourEditor        : About to save tour [LG7]
-2017-11-20 02:02:16.797  INFO 4672 --- [    Test worker] comp3111.input.editors.TourEditor        : created/edited tour [LG7] successfully
+<pre>2017-11-20 12:06:49.803  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 12:06:49.812  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.812  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.812  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 12:06:49.813  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.814  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.814  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
+2017-11-20 12:06:49.814  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.815  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
+2017-11-20 12:06:49.815  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.815  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
+2017-11-20 12:06:49.815  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.815  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
+2017-11-20 12:06:49.816  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.816  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.816  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.816  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.816  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 12:06:49.817  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
+2017-11-20 12:06:49.817  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
+2017-11-20 12:06:49.817  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
+2017-11-20 12:06:49.817  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
+2017-11-20 12:06:49.818  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.829  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 12:06:49.832  INFO 7916 --- [    Test worker] comp3111.input.editors.TourEditor        : About to save tour [LG7]
+2017-11-20 12:06:49.833  INFO 7916 --- [    Test worker] comp3111.input.editors.TourEditor        : created/edited tour [LG7] successfully
+2017-11-20 12:06:49.844  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.844  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.844  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 12:06:49.844  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.845  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.845  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
+2017-11-20 12:06:49.846  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.846  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
+2017-11-20 12:06:49.846  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.846  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
+2017-11-20 12:06:49.846  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.847  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
+2017-11-20 12:06:49.847  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.847  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.847  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.848  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.848  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 12:06:49.849  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
+2017-11-20 12:06:49.850  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the number must be [0.0, 1.0]
+2017-11-20 12:06:49.850  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
+2017-11-20 12:06:49.850  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 0
+2017-11-20 12:06:49.850  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the string must be &lt;= 255 characters
+2017-11-20 12:06:49.857  INFO 7916 --- [    Test worker] c.i.v.ReturnValidationErrorWithLogging   : Validation error: the integer must be &gt;= 1
+2017-11-20 12:06:49.864  INFO 7916 --- [    Test worker] comp3111.input.editors.TourEditor        : About to save tour [LG7]
+2017-11-20 12:06:49.865  INFO 7916 --- [    Test worker] comp3111.input.editors.TourEditor        : created/edited tour [LG7] successfully
 </pre>
 </span>
 </div>
@@ -179,7 +179,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 4.3-rc-1</a> at Nov 20, 2017 2:02:34 AM</p>
+<a href="http://www.gradle.org">Gradle 4.3-rc-1</a> at Nov 20, 2017 12:07:05 PM</p>
 </div>
 </div>
 </body>
