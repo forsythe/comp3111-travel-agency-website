@@ -3,6 +3,7 @@ package comp3111;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import comp3111.suggest.TourCluster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,8 @@ public class ScheduledTasks {
 	private DBManager actionManager;
 	@Autowired
 	private LineMessenger lineMessenger;
+	@Autowired
+	private TourCluster tourCluster;
 
 	public static final String EVERYDAY_8_AM = "0 0 8 * * *";
 	public static final String EVERY_10_SECONDS = "*/10 * * * * *";
@@ -103,4 +106,13 @@ public class ScheduledTasks {
 		log.info("[{}] people were notified", LineMessenger.getCounter());
 
 	}
+
+	/* Commented out because it is too slow
+	@Scheduled(cron = EVERYDAY_8_AM)
+	public void retrainNNModel(){
+		log.info("Starting training model");
+		tourCluster.clusterTour(true);
+		log.info("Training finished");
+	}
+	*/
 }

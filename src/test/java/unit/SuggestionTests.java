@@ -36,12 +36,6 @@ public class SuggestionTests {
     @Autowired
     TourGuideRepository tourGuideRepo;
 
-    @Before
-    public void setUp() throws Exception {
-        dbManager.deleteAll();
-        populateDatabase();
-    }
-
     @After
     public void tearDown() {
         dbManager.deleteAll();
@@ -268,6 +262,9 @@ public class SuggestionTests {
 
     @Test
     public void testTourCluster(){
+        dbManager.deleteAll();
+        populateDatabase();
+
         suggestTour.initCluster();
 
         //Create a test customer for suggestion
@@ -290,5 +287,67 @@ public class SuggestionTests {
         createBookingForCustomer(shoOffering[2], cus3);
         List<Tour> sug3 = suggestTour.suggestForCustomer(cus3);
         System.out.println(sug3);
+    }
+
+    @Test
+    public void testSimpleCluster(){
+        dbManager.deleteAll();
+
+        TourGuide kim = new TourGuide("Kim", "tensorflowboss");
+        kim = tourGuideRepo.save(kim);
+
+        Customer cus1 = new Customer();
+        Customer cus2 = new Customer();
+
+        cus1 = customerRepo.save(cus1);
+        cus2 = customerRepo.save(cus2);
+
+        Tour t1 = new Tour();
+        t1.setAllowedDaysOfWeek(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
+        t1.setDays(1);
+        t1.setTourName("T1");
+        t1.setDescription("D1");
+        t1 = tourRepo.save(t1);
+
+        Tour t2 = new Tour();
+        t2.setAllowedDaysOfWeek(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
+        t2.setDays(1);
+        t2.setTourName("T2");
+        t2.setDescription("D2");
+        t2 = tourRepo.save(t2);
+
+        Offering o1 = new Offering();
+        o1.setStartDate(Utils.addDate(LocalDate.now(), 10));
+        o1.setTour(t1);
+        o1.setTourGuide(kim);
+        o1.setStatus(Offering.STATUS_PENDING);
+        o1.setMinCustomers(0);
+        o1.setMaxCustomers(100);
+        try {
+            dbManager.createOfferingForTour(o1);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        Offering o2 = new Offering();
+        o2.setStartDate(Utils.addDate(LocalDate.now(), 15));
+        o2.setTour(t2);
+        o2.setTourGuide(kim);
+        o2.setStatus(Offering.STATUS_PENDING);
+        o2.setMinCustomers(0);
+        o2.setMaxCustomers(100);
+        try {
+            dbManager.createOfferingForTour(o2);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        createBookingForCustomer(o1, cus1);
+        createBookingForCustomer(o2, cus1);
+        createBookingForCustomer(o1, cus2);
+
+        suggestTour.initCluster();
+        List<Tour> suggestion = suggestTour.suggestForCustomer(cus2);
+        System.out.println(suggestion);
     }
 }

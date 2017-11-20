@@ -20,6 +20,7 @@ import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreproc
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.cpu.nativecpu.NDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.ops.transforms.Transforms;
 import org.slf4j.Logger;
@@ -116,7 +117,7 @@ public class TourCluster {
     /**
      * Generate the cluster set based on information in the database
      */
-    public void clusterTour(){
+    public void clusterTour(boolean trainNN){
         KMeansClustering kmc = KMeansClustering.setup(clusterCount, maxIterationCount, distanceMeasure);
 
         List<Point> pointsLst = new ArrayList<>();
@@ -153,7 +154,7 @@ public class TourCluster {
                         clusterIDToTour.get(getClusterForTour(tempList.get(index)).getId()).add(tempList.get(index));
                     });
         }
-        loadDoc2VecModel();
+        loadDoc2VecModel(trainNN);
         secondCluster();
     }
 
@@ -170,7 +171,12 @@ public class TourCluster {
             Iterable<Tour> tourIterable = tourRepo.findAll();
             tourIterable.forEach(tour -> {
                 float customerVector[] = getCustomerVector(tour);
-                INDArray desVec = paragraphVectors.inferVector(tour.getDescription());
+                INDArray desVec;
+                try {
+                    desVec = paragraphVectors.inferVector(tour.getDescription());
+                }catch (Exception e){
+                    desVec = Nd4j.zeros(6);
+                }
                 INDArray vector = Nd4j.hstack(Nd4j.create(customerVector), desVec.div(200));
                 Point pt = new Point(tour.getTourName(), vector);
                 pointsLst.add(pt);
@@ -203,7 +209,7 @@ public class TourCluster {
     /**
      * Load the Doc2Vec Model, either from file, or train it from scratch
      */
-    private void loadDoc2VecModel() {
+    private void loadDoc2VecModel(boolean trainNN) {
         List<Cluster> clusterList = tourClusterSet.getClusters();
 
         //Put all the labels into a string
@@ -227,26 +233,24 @@ public class TourCluster {
             TokenizerFactory tokenizerFactory = new DefaultTokenizerFactory();
             tokenizerFactory.setTokenPreProcessor(new CommonPreprocessor());
 
-            /* Uncomment this part to train the model
-            paragraphVectors = new ParagraphVectors.Builder()
-                    .learningRate(0.03)
-                    .minLearningRate(0.01)
-                    .batchSize(1)
-                    .epochs(100)
-                    .layerSize(6)
-                    .iterate(iterator)
-                    .trainWordVectors(true)
-                    .tokenizerFactory(tokenizerFactory)
-                    .build();
-            paragraphVectors.fit();
-            WordVectorSerializer.writeParagraphVectors(paragraphVectors, "weight.txt");
-            */
-
-            //Comment this part to train the model
-            paragraphVectors = WordVectorSerializer.readParagraphVectors("weight.txt");
-            paragraphVectors.setTokenizerFactory(tokenizerFactory);
-            paragraphVectors.getConfiguration().setIterations(1);
-            //Comment til here
+            if (trainNN) {
+                paragraphVectors = new ParagraphVectors.Builder()
+                        .learningRate(0.03)
+                        .minLearningRate(0.01)
+                        .batchSize(1)
+                        .epochs(100)
+                        .layerSize(6)
+                        .iterate(iterator)
+                        .trainWordVectors(true)
+                        .tokenizerFactory(tokenizerFactory)
+                        .build();
+                paragraphVectors.fit();
+                WordVectorSerializer.writeParagraphVectors(paragraphVectors, "weight.txt");
+            }else{
+                paragraphVectors = WordVectorSerializer.readParagraphVectors("weight.txt");
+                paragraphVectors.setTokenizerFactory(tokenizerFactory);
+                paragraphVectors.getConfiguration().setIterations(1);
+            }
 
             INDArray origS1 = paragraphVectors.inferVector("One day trip to Mars: Do you want to explore the beauty of space? Do you want to take a spaceship and travel" +
                     "to Mars in just one day? You must not miss this opportunity! Explore the cosmo with us!");
@@ -290,13 +294,29 @@ public class TourCluster {
         return clusterIDToTour.get(c.getId());
     }
 
-    Cluster getClusterWithPoint(Point pt){
+    Cluster getClusterWithPointPreferResult(Point pt){
+        List<Cluster> clusterList = tourClusterSet.getClusters();
+        double max = 0.0;
+        Cluster maxCluster = clusterList.get(0);
+        for(Cluster c: clusterList) {
+            if (!clusterIDToTour.get(c.getId()).isEmpty()) {
+                double dis = c.getDistanceToCenter(pt);
+                if (dis > max) {
+                    max = dis;
+                    maxCluster = c;
+                }
+            }
+        }
+        return maxCluster;
+    }
+
+    private Cluster getClusterWithPoint(Point pt){
         List<Cluster> clusterList = tourClusterSet.getClusters();
         double max = 0.0;
         Cluster maxCluster = clusterList.get(0);
         for(Cluster c: clusterList) {
             double dis = c.getDistanceToCenter(pt);
-            if (dis > max){
+            if (dis > max) {
                 max = dis;
                 maxCluster = c;
             }
