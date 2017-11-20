@@ -83,6 +83,13 @@ public class Application {
 //
 //			Booking book = new Booking(kris, offer, 2, 1, 0, 0, "No cockroaches in my food", Booking.PAYMENT_PENDING);
 //			book = bookingRepo.save(book);
+//
+//			Offering offer2 = new Offering(lg7, kevin, Utils.addDate(new Date(), 8), "Hotel Waldo", 15, 50,
+//					Offering.STATUS_PENDING);
+//			offer2 = offerRepo.save(offer2);
+//			Booking book2 = new Booking(heng, offer2, 2, 1, 0, 0, "Non smoking room", Booking.PAYMENT_PENDING);
+//			book2 = bookingRepo.save(book2);
+//
 //		};
 //	}
 

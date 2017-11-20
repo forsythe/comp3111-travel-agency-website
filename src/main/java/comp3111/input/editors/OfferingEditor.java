@@ -305,7 +305,7 @@ public class OfferingEditor extends VerticalLayout {
 		tourGuide.setPopupWidth(null);
 
 		Iterable<TourGuide> tourGuidesIterable = tourGuideRepo.findAll();
-		if(tourGuidesIterable != null) {
+		if (tourGuidesIterable != null) {
 			tourGuide.setItems(Utils.iterableToCollection(tourGuidesIterable).stream()
 					.sorted((tg1, tg2) -> tg1.getId().compareTo(tg2.getId())));
 		}
@@ -430,7 +430,8 @@ public class OfferingEditor extends VerticalLayout {
 
 	/**
 	 * Check whether an offering is editable or not based on start date and current
-	 * date
+	 * date. If the offering is cancelled but has not reached the time of
+	 * confirmation, it also returns false, but displays a different error message
 	 * 
 	 * @param offering
 	 *            The offering to check
@@ -451,7 +452,13 @@ public class OfferingEditor extends VerticalLayout {
 						5).show(Page.getCurrent());
 
 			return false;
+		} else if (offering.getStatus().equals(Offering.STATUS_CANCELLED)) {
+			if (Page.getCurrent() != null) // can be null if using mockito
+				NotificationFactory.getTopBarWarningNotification(
+						"It's too late to edit this offering. It has been cancelled.", 5).show(Page.getCurrent());
+			return false;
 		}
+
 		return true;
 	}
 
