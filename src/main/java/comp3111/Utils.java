@@ -424,7 +424,7 @@ public class Utils {
 	 */
 	public static DateField getDateFieldWithOurLocale(String caption) {
 		DateField d = new DateField(caption);
-		//d.setDateFormat(DATE_LOCALE);
+		d.setDateFormat(DATE_LOCALE);
 		return d;
 	}
 
@@ -437,7 +437,7 @@ public class Utils {
 	 */
 	public static DateTimeField getDateTimeFieldWithOurLocale(String caption) {
 		DateTimeField d = new DateTimeField(caption);
-		//d.setDateFormat(DATE_TIME_LOCALE);
+		d.setDateFormat(DATE_TIME_LOCALE);
 		d.setResolution(DateTimeResolution.MINUTE);
 		return d;
 	}
