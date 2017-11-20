@@ -27,7 +27,7 @@ import com.vaadin.ui.DateTimeField;
 public class Utils {
 
 	public static final String DATE_LOCALE = "dd/MM/yyyy";
-	public static final String DATE_TIME_LOCALE = DATE_LOCALE + " HH:mm:ss Z";
+	public static final String DATE_TIME_LOCALE = DATE_LOCALE + " HH:mm:ss z";
 	//public static final String TIMEZONE = "Hongkong";
 
 	/**
